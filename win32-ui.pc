@@ -1,0 +1,8 @@
+prefix=/usr/local
+vapidir=${prefix}/share/vala/vapi
+
+Name: win32-ui
+Description: Win32 GUI bindings for Vala (vapi relay)
+Version: 0.0.0
+Libs:
+Cflags:

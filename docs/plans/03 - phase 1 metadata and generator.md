@@ -1,0 +1,161 @@
+# 03 — Phase 1: Metadata + generator
+
+**Status:** **⏳** In progress — generator pipeline works; **apps still use Phase 0 spike vapi**
+
+**Layout:** `~/gitlive/OLLMchat/docs/guide-to-writing-plans.md`
+
+**Coding standards:** `~/gitlive/OLLMchat/.cursor/rules/CODING_STANDARDS.md` — apply checklist to new Vala (`GLib.*`, multiline docblocks, no `@"` interpolation, `this.`, etc.). No GObject app layer in this repo.
+
+**Parent:** [01 - project overview.md](01%20-%20project%20overview.md) · **Depends on:** [02 - phase 0 foundation.md](02%20-%20phase%200%20foundation.md)
+
+---
+
+## Two vapi tracks (do not mix)
+
+- **Spike (Phase 0)**
+  - Files: `vapi/win32-ui-native.vapi`, placeholder `vapi/win32-ui.vapi`
+  - Used by: `meson compile -C build compile-check`, `build-win/hello-window`, `examples/hello-window.vala`
+- **Generated (Phase 1)**
+  - Files: `vapi/win32-ui.generated.vapi` (gitignored until emit is good enough to commit)
+  - Used by: `meson compile -C build regen`, `meson compile -C build check-regen` only
+
+**🔷** Phase 1 proves **JSON → filter → emit → drift check**. It does **not** require `hello-window.vala` (or `compile-check`) to compile against the generated file.
+
+**🚫** Do not point `compile-check` at `win32-ui.generated.vapi`. Switching the example app to generated bindings is **Phase 2+** once emit quality is intentionally validated.
+
+---
+
+## Where we are (2026-06-02)
+
+- Vendor + metadata pins — **✅** `win32json-api.files`, `win32json-ref.txt`, `vendor-win32json.sh`, `gui.filter`
+- JSON load — **✅** `Generate.Parse.*` in `src/Generate/Parser/`
+- Filter + emit — **✅** `SymbolFilter`, `NameMapper`, `VapiEmitter` (+ dedupe by Vala name)
+- CLI — **✅** `tools/generate-binding.vala` (`--basename` for output file)
+- Build — **✅** Meson → Ninja
+- Regen — **✅** `meson compile -C build regen` → `vapi/win32-ui.generated.vapi` (~1.2 MB)
+- Drift check — **✅** `meson compile -C build check-regen` (diff vs committed/generated baseline; CI **⏳**)
+- Spike consumer build — **✅** `compile-check` / cross `hello-window` use **spike** vapi only
+- Generated vapi syntax — **✅** `valac` accepts full file (pointer constants omitted; declaration-only scalars OK)
+- Generated vapi app-ready — **⏳** Not Phase 1 (const values, `TypeRef`/enums, less `void*` — Phase 2+)
+
+**Next:** commit a `win32-ui.generated.vapi` baseline for `check-regen` when ready. Leave spike path alone until a later phase swaps the app to generated vapi.
+
+---
+
+## Purpose
+
+- **🔷** Vendor a **JSON subset** from [win32json](https://github.com/marlersoft/win32json).
+- **🔷** **`generate-binding`** reads vendored JSON + `gui.filter` → writes **`vapi/win32-ui.generated.vapi`**.
+- **🔷** Naming and mapping in **`NameMapper`** / **`VapiEmitter`** — no TOML config.
+- **🔷** **`meson compile -C build regen`** and **`meson compile -C build check-regen`** on the **generated** file.
+- **🚫** Phase 1 does **not** replace spike vapi or require generated vapi to pass `valac` on `hello-window.vala`.
+
+---
+
+## Repo layout (generator)
+
+```
+src/Generate/
+├── Parser/                    # Generate.Parse — win32json JSON models
+├── SymbolFilter.vala
+├── NameMapper.vala
+└── VapiEmitter.vala
+
+tools/generate-binding.vala
+meson.build                    # regen / check-regen run_target; compile-check → spike pkgs
+scripts/check-regen.sh
+cross/mingw-w64.ini
+
+vapi/
+├── win32-ui-native.vapi       # Phase 0 spike — apps
+├── win32-ui.vapi              # placeholder pkg (spike)
+└── win32-ui.generated.vapi    # generator output (gitignored)
+```
+
+---
+
+## Intended files
+
+- `metadata/win32json-api.files` — **✅** — which `api/*.json` to vendor
+- `scripts/vendor-win32json.sh` — **✅** — clone + copy JSON
+- `metadata/filters/gui.filter` — **✅** — symbol `-` excludes
+- `src/Generate/**` — **✅** — parse + emit
+- `tools/generate-binding.vala` — **✅** — CLI
+- `vapi/win32-ui.generated.vapi` — **⏳** — generator output; drift baseline when committed
+- `vapi/win32-ui-native.vapi` — **✅** — spike — **not** overwritten by regen
+- `meson.build` — **✅** — `compile-check` → spike; `regen` / `check-regen` → generated
+
+---
+
+## `generate-binding` behaviour
+
+**Regen** (generated file only):
+
+```bash
+./scripts/vendor-win32json.sh
+meson setup build
+meson compile -C build generate-binding regen
+# → vapi/win32-ui.generated.vapi
+```
+
+**Drift check** (does not touch spike vapi):
+
+```bash
+meson compile -C build generate-binding check-regen
+```
+
+**Spike smoke test** (unchanged from Phase 0):
+
+```bash
+meson compile -C build compile-check
+meson compile -C build-win hello-window
+```
+
+---
+
+## Tasks
+
+- [x] **✅** Vendor metadata + `gui.filter`
+- [x] **✅** `Generate.Parse` + emit + `generate-binding`
+- [x] **✅** Meson `regen` + `check-regen`; spike `compile-check` separate
+- [x] **✅** First regen produces `win32-ui.generated.vapi`
+- [x] **✅** Emitter dedupe by Vala identifier
+- [ ] **🔷** **⏳** Commit `win32-ui.generated.vapi` baseline for `check-regen` (optional until emit stabilizes)
+- [ ] **💩** **⏳** CI: vendor + `check-regen` + spike `compile-check` (two tracks)
+- [ ] **⏳** (Later phase) Generated vapi good enough for `hello-window.vala` — **not Phase 1**
+
+---
+
+## Verification
+
+**Phase 1 (generator only):**
+
+```bash
+./scripts/vendor-win32json.sh
+meson setup build
+meson compile -C build generate-binding regen
+meson compile -C build check-regen
+```
+
+**Phase 0 (still required; spike vapi):**
+
+```bash
+meson compile -C build compile-check
+meson setup build-win --cross-file cross/mingw-w64.ini
+meson compile -C build-win hello-window
+```
+
+**Phase 1 done when:** `regen` + `check-regen` work on **`win32-ui.generated.vapi`**, spike verification still passes **without** the generated file, and generated vapi is **syntax-valid** (`valac` on the file — not app-complete).
+
+Optional syntax check:
+
+```bash
+echo 'void main () { uint m = Win32.WM_DESTROY; }' > /tmp/gen-smoke.vala
+valac vapi/win32-ui.generated.vapi /tmp/gen-smoke.vala -C -d /tmp
+```
+
+---
+
+## Hand-off to Phase 2
+
+**ℹ️** [04 - phase 2](04%20-%20phase%202%20ergonomic%20vapi.md) — review generated vapi, ergonomic emit, and (when ready) **move `hello-window.vala` off spike vapi** onto generated bindings.

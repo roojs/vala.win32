@@ -1,0 +1,13 @@
+build/
+build-win/
+vapi/win32-ui.generated.vapi
+mingw-libs/
+metadata/win32json/
+metadata/win32metadata/
+metadata/cache/
+tools/generate-binding
+*.o
+*.exe
+*.dll
+*.~*
+.DS_Store

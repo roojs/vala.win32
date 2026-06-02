@@ -1,0 +1,40 @@
+# win32json api/*.json to vendor (one basename per line).
+# Namespace per file: Windows.Win32.<name without .json>
+# Edit this list to widen/narrow what generate-binding sees.
+
+# Phase 0 / message loop
+UI.WindowsAndMessaging.json
+Graphics.Gdi.json
+
+# Common controls (Phase 3 targets)
+UI.Controls.json
+UI.Controls.Dialogs.json
+UI.Controls.RichEdit.json
+
+# Shell, input, accessibility (typical GUI apps)
+UI.Shell.json
+UI.Shell.Common.json
+UI.Shell.PropertiesSystem.json
+UI.Input.json
+UI.Input.KeyboardAndMouse.json
+UI.Accessibility.json
+UI.HiDpi.json
+
+# Optional — uncomment when you want them in metadata/win32json/api/
+# UI.Animation.json
+# UI.ColorSystem.json
+# UI.Input.Ime.json
+# UI.Input.Ink.json
+# UI.Input.Pointer.json
+# UI.Input.Radial.json
+# UI.Input.Touch.json
+# UI.Input.XboxController.json
+# UI.InteractionContext.json
+# UI.LegacyWindowsEnvironmentFeatures.json
+# UI.Magnification.json
+# UI.Notifications.json
+# UI.Ribbon.json
+# UI.TabletPC.json
+# UI.TextServices.json
+# UI.Wpf.json
+# UI.Xaml.Diagnostics.json

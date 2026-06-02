@@ -1,0 +1,2 @@
+# Pin for scripts/vendor-win32json.sh (WIN32JSON_REF). Update when bumping metadata.
+main

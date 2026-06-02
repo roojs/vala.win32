@@ -1,0 +1,6 @@
+# Symbol-level excludes for generate-binding (last matching line wins).
+# Which JSON files are vendored is metadata/win32json-api.files + vendor-win32json.sh.
+
+- Windows.Win32.UI.*.Interop.*
+- *.*.Tests.*
+- *Ansi*
