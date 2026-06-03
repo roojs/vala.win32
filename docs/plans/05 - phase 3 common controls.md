@@ -73,17 +73,17 @@ Document in the example or a one-line comment; add generator helpers later if we
 
 ## Step 1 — Gap list from Button spike
 
-After the spike compiles and clicks work under Wine/Windows, record gaps. **Expected candidates:**
+**Step 0 done:** `build/button-demo.exe` links. Click handler uses `WM_COMMAND` + `BN_CLICKED`; window title becomes `"Clicked!"`.
 
-| Gap | Likely fix |
-|-----|------------|
-| `WC_BUTTON`, `WC_EDIT`, … string constants | Emit string `public const` (UTF-16 literal or `@"Button"`) from metadata `ValueType: String` |
-| `BN_CLICKED` only as empty const | Optional **`ButtonNotify`** enum from `BN_*` constants, or compare to `0` |
-| Control styles (`BS_PUSHBUTTON`, …) | Emit enum from Controls metadata (same as Phase 2 `WindowStyle`) |
-| `SendMessage` / `GetWindowText` for Edit | Likely already in `win32-ui-windowsandmessaging` — verify in spike |
-| Ergonomic `signal clicked` | Track B — **not** required for first demo |
+| Gap | Status |
+|-----|--------|
+| `WC_BUTTON` string constant | **⏳** — demo uses UTF-16 `"Button"` literal; emitter skips string consts |
+| `LOWORD` / `HIWORD` | **⏳** — demo uses inline `wm_command_*` helpers |
+| `BN_CLICKED` / `BS_*` | **✅** works — declaration-only const from `windows.h` |
+| WndProc assign warning | **✅** same as hello — not a functional blocker |
+| Ergonomic `signal clicked` | Track B — later |
 
-Fix gaps in **`VapiEmitter` / `NameMapper`** only — no hand-editing generated `.vapi`.
+Fix generator gaps in Step 1 before Edit spike.
 
 ---
 
