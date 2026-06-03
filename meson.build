@@ -10,11 +10,31 @@ gee = dependency('gee-0.8')
 json_glib = dependency('json-glib-1.0')
 
 valac = find_program('valac')
-vapidir = meson.project_source_root() / 'vapi'
-metadata_root = meson.project_source_root() / 'metadata'
+project_root = meson.project_source_root()
+vapidir = project_root / 'vapi'
+metadata_root = project_root / 'metadata'
 filter_file = metadata_root / 'filters' / 'gui.filter'
+api_list_file = metadata_root / 'win32json-api.files'
+
+example_pkgs = [
+  'win32-ui-windowsandmessaging',
+  'win32-ui-controls',
+  'win32-system-stub',
+]
+
+example_vala_args = ['--vapidir', vapidir]
+foreach pkg : example_pkgs
+  example_vala_args += ['--pkg', pkg]
+endforeach
+example_vala_args += '--profile=posix'
+
+example_apps = [
+  ['hello-window', 'examples/hello-window.vala'],
+  ['button-demo', 'examples/button-demo.vala'],
+]
 
 generate_sources = files(
+  'src/Generate/ApiFileList.vala',
   'src/Generate/ApplicationInterface.vala',
   'src/Generate/NameMapper.vala',
   'src/Generate/SymbolFilter.vala',
@@ -39,55 +59,70 @@ generate_binding = executable(
   install: false,
 )
 
-# Linux smoke test: compile example to C only (no Windows link).
-custom_target(
-  'compile-check',
-  input: files('examples/hello-window.vala'),
-  output: 'hello-window.vala.c',
-  command: [
-    valac,
-    '--vapidir', vapidir,
-    '--pkg', 'win32-ui',
-    '--pkg', 'win32-ui-native',
-    '--profile=posix',
-    '-C',
-    '-d', '@OUTDIR@',
-    '@INPUT@',
-  ],
-  build_by_default: not meson.is_cross_build(),
+regen_base_cmd = [
+  generate_binding,
+  '--metadata', metadata_root / 'win32json',
+  '--filter', filter_file,
+  '--api-list', api_list_file,
+  '--out', vapidir,
+  '--debug-critical',
+]
+
+regen_vapi = custom_target(
+  'regen-vapi',
+  output: 'regen.stamp',
+  command: regen_base_cmd + ['&&', 'touch', '@OUTPUT@'],
+  build_by_default: true,
 )
 
-# Cross build (meson setup build-win --cross-file cross/mingw-w64.ini).
-if meson.is_cross_build()
-  executable(
-    'hello-window',
-    files('examples/hello-window.vala'),
-    vala_args: [
-      '--vapidir', vapidir,
-      '--pkg', 'win32-ui',
-    '--pkg', 'win32-ui-native',
-      '--profile=posix',
-      '-X', '-mwindows',
-      '-X', '-luser32',
-      '-X', '-lgdi32',
-    ],
-    install: false,
-  )
-endif
+mingw_cc = find_program('x86_64-w64-mingw32-gcc', required: false)
 
-generated_vapi = vapidir / 'win32-ui.generated.vapi'
+foreach app : example_apps
+  app_name = app[0]
+  app_source = app[1]
+  if host_machine.system() == 'windows'
+    executable(
+      app_name,
+      files(app_source),
+      vala_args: example_vala_args + ['-X', '-mwindows', '-X', '-luser32', '-X', '-lgdi32'],
+      link_args: ['-mwindows', '-luser32', '-lgdi32'],
+      depends: regen_vapi,
+      install: false,
+    )
+  elif mingw_cc.found()
+    custom_target(
+      app_name,
+      input: files(app_source),
+      output: app_name + '.exe',
+      command: [
+        valac,
+        example_vala_args,
+        '-C',
+        '-d', '@OUTDIR@',
+        '@INPUT@',
+        '&&',
+        mingw_cc,
+        '-mwindows',
+        '-o', '@OUTPUT@',
+        '@OUTDIR@/' + app_name + '.c',
+        '-luser32',
+        '-lgdi32',
+      ],
+      depends: regen_vapi,
+      build_by_default: true,
+    )
+  else
+    warning(app_name + '.exe skipped: x86_64-w64-mingw32-gcc not found')
+  endif
+endforeach
+
 check_regen = find_program('scripts/check-regen.sh')
 
+run_target('regen', command: regen_base_cmd)
+
 run_target(
-  'regen',
-  command: [
-    generate_binding,
-    '--metadata', metadata_root / 'win32json',
-    '--filter', filter_file,
-    '--out', vapidir,
-    '--basename', 'win32-ui.generated.vapi',
-    '--debug-critical',
-  ],
+  'regen-monolith',
+  command: regen_base_cmd + ['--monolith', '--basename', 'win32-ui.generated.vapi'],
 )
 
 run_target(
@@ -97,7 +132,8 @@ run_target(
     generate_binding,
     metadata_root / 'win32json',
     filter_file,
-    meson.current_build_dir(),
-    generated_vapi,
+    meson.current_build_dir() / 'vapi-check',
+    api_list_file,
+    vapidir,
   ],
 )

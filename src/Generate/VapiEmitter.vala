@@ -34,6 +34,9 @@ namespace Generate {
 			this.buffer.append ("[CCode (cprefix = \"\", cheader_filename = \"windows.h\")]\n");
 			this.buffer.append_printf ("namespace %s {\n", ns);
 			this.emit_shard_body (entry);
+			if (entry.basename == "UI.WindowsAndMessaging.json") {
+				this.emit_word_helpers ();
+			}
 			this.buffer.append ("}\n");
 			return this.buffer.str;
 		}
@@ -131,6 +134,14 @@ namespace Generate {
 			if (!this.claim_vala_name (vala_name)) {
 				return;
 			}
+			if (VapiEmitter.is_string_constant (c)) {
+				this.buffer.append_printf (
+					"\t[CCode (cname = \"%s\")]\n\tpublic const unowned uint16* %s;\n\n",
+					c.Name,
+					vala_name
+				);
+				return;
+			}
 			var vala_type = VapiEmitter.vala_type_for (c.Type, c.ValueType);
 			if (!VapiEmitter.is_valid_const_vala_type (vala_type)) {
 				return;
@@ -141,6 +152,25 @@ namespace Generate {
 				vala_type,
 				vala_name
 			);
+		}
+
+		void emit_word_helpers () {
+			this.buffer.append ("\tpublic static uint loword (ulong l) {\n");
+			this.buffer.append ("\t\treturn (uint) (l & 0xffff);\n");
+			this.buffer.append ("\t}\n\n");
+			this.buffer.append ("\tpublic static uint hiword (ulong l) {\n");
+			this.buffer.append ("\t\treturn (uint) ((l >> 16) & 0xffff);\n");
+			this.buffer.append ("\t}\n\n");
+		}
+
+		static bool is_string_constant (Parse.Constant c) {
+			if (c.ValueType == "String") {
+				return true;
+			}
+			if (c.Type.Kind == "Native" && c.Type.Name == "String") {
+				return true;
+			}
+			return false;
 		}
 
 		void emit_enum (Parse.MetadataType t) {
