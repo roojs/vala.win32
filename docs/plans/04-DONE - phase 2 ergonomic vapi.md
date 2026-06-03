@@ -1,10 +1,10 @@
 # 04 — Phase 2: Generated vapi + hello-window
 
-**Status:** **✅** Track A mostly done — see progress table below
+**Status:** **✅** Done — Track A complete; Track B deferred to Phase 3/5
 
 **Layout:** `~/gitlive/OLLMchat/docs/guide-to-writing-plans.md`
 
-**Parent:** [01-DONE - project overview.md](01-DONE%20-%20project%20overview.md) · **Depends on:** [03 - phase 1 metadata and generator.md](03%20-%20phase%201%20metadata%20and%20generator.md)
+**Parent:** [01-DONE - project overview.md](01-DONE%20-%20project%20overview.md) · **Depends on:** [03-DONE - phase 1 metadata and generator.md](03-DONE%20-%20phase%201%20metadata%20and%20generator.md)
 
 ---
 
@@ -313,4 +313,4 @@ wine build/hello-window.exe
 
 ## Hand-off to Phase 3
 
-**ℹ️** [05 - phase 3 common controls.md](05%20-%20phase%203%20common%20controls.md) — widen `win32json-api.files`, generator emit for Button/Edit, `BN_CLICKED` → `clicked`, on top of a working hello baseline.
+**ℹ️** [05-DONE - phase 3 common controls.md](05-DONE%20-%20phase%203%20common%20controls.md) — widen `win32json-api.files`, generator emit for Button/Edit, `BN_CLICKED` → `clicked`, on top of a working hello baseline.

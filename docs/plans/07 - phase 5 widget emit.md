@@ -4,7 +4,7 @@
 
 **Layout:** `~/gitlive/OLLMchat/docs/guide-to-writing-plans.md`
 
-**Parent:** [01-DONE - project overview.md](01-DONE%20-%20project%20overview.md) · **After:** [06 - phase 4 dialogs and resources.md](06%20-%20phase%204%20dialogs%20and%20resources.md) · **Prerequisite:** [05 - phase 3 common controls.md](05%20-%20phase%203%20common%20controls.md) Track B (**✅** template + `WidgetEmitter` regen)
+**Parent:** [01-DONE - project overview.md](01-DONE%20-%20project%20overview.md) · **After:** [06-DONE - phase 4 dialogs and resources.md](06-DONE%20-%20phase%204%20dialogs%20and%20resources.md) (**✅**) · **Prerequisite:** [05-DONE - phase 3 common controls.md](05-DONE%20-%20phase%203%20common%20controls.md) Track B (**✅** template + `WidgetEmitter` regen)
 
 ---
 
@@ -22,7 +22,16 @@ Replace the **hand-maintained** `src/Generate/templates/win32-widgets.vala` body
 | Regen + **`check-regen`** or diff for `generated/win32-widgets.vala` | Monolith vapi |
 | **G3** (optional) — `win32-wide-strings.vala` regen; use vapi `ES_*` / `PBM_*` not numeric literals | **B5** `Window.destroyed` (optional **G4** or Phase 6) |
 
-**Source of truth today:** Phase 3 [control → signal map](05%20-%20phase%203%20common%20controls.md#control--signal-map-first-emit-set); B3 only copies the template.
+**Source of truth today:** Phase 3 [control → signal map](05-DONE%20-%20phase%203%20common%20controls.md#control--signal-map-first-emit-set); B3 copies the template.
+
+**Hand baseline (Phase 4 ergonomic — compare after 5b emit):**
+
+| Hand type / API | Template region | Track B demo |
+|-----------------|-----------------|--------------|
+| `Button`, `Edit`, … (controls) | `src/Generate/templates/win32-widgets.vala` | `ergonomic-button-demo` |
+| `Window.show_message`, `NativeDialogs` | same template, `NativeDialogs` class | `ergonomic-dialog-demo`, `ergonomic-common-dialog-demo` |
+| `MenuBar`, `MenuPopup` | same template | `ergonomic-menu-demo` |
+| `win32_bool_ok` (not widgets) | `generated/win32-errors.vala` | `ergonomic-error-demo` |
 
 ---
 

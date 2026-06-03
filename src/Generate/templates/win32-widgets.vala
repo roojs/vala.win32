@@ -4,6 +4,7 @@ using GLib;
 using Win32.System;
 using Win32.Ui;
 using Win32.Ui.Controls;
+using Win32.Ui.Controls.Dialogs;
 using Win32.Ui.WindowsAndMessaging;
 
 namespace Win32 {
@@ -110,7 +111,7 @@ public class WidgetDispatch {
 	}
 }
 
-private enum WmCommandKind { BUTTON, EDIT, LISTBOX, COMBOBOX }
+private enum WmCommandKind { BUTTON, EDIT, LISTBOX, COMBOBOX, MENU }
 
 /* Plain struct (no GObject refs) — Vala would GBox-copy an array of boxed structs and
  * discard updates when register helpers free the duplicate from registry_get (). */
@@ -125,6 +126,7 @@ private Button?[]? wm_command_buttons = null;
 private Edit?[]? wm_command_edits = null;
 private ListBox?[]? wm_command_list_boxes = null;
 private ComboBox?[]? wm_command_combo_boxes = null;
+private MenuBar?[]? wm_command_menu_bars = null;
 
 private int wm_scroll_count = 0;
 private void*[]? wm_scroll_handles = null;
@@ -167,6 +169,7 @@ private void wm_command_registry_ensure () {
 		wm_command_edits = new Edit[64];
 		wm_command_list_boxes = new ListBox[64];
 		wm_command_combo_boxes = new ComboBox[64];
+		wm_command_menu_bars = new MenuBar[64];
 	}
 }
 
@@ -211,6 +214,12 @@ private void wm_command_register_combo_box (ComboBox combo_box) {
 	var idx = wm_command_slot (combo_box.control_id);
 	wm_command_entries[idx].kind = WmCommandKind.COMBOBOX;
 	wm_command_combo_boxes[idx] = combo_box;
+}
+
+private void wm_command_register_menu (MenuBar bar, int menu_id) {
+	var idx = wm_command_slot (menu_id);
+	wm_command_entries[idx].kind = WmCommandKind.MENU;
+	wm_command_menu_bars[idx] = bar;
 }
 
 private string list_box_item_text (void* hwnd, int index) {
@@ -288,6 +297,12 @@ private bool wm_command_dispatch (ulong w_param) {
 			return true;
 		}
 		break;
+	case WmCommandKind.MENU:
+		if (widget_debug_enabled ()) {
+			stderr.printf ("  -> MenuBar.activated id=%d\n", control_id);
+		}
+		wm_command_menu_bars[idx].activated (control_id);
+		return true;
 	}
 	return false;
 }
@@ -301,7 +316,8 @@ public class Window {
 		string class_name,
 		string window_title,
 		int width,
-		int height
+		int height,
+		bool default_arrow_cursor = false
 	) {
 		instance = get_module_handle (null);
 		_class_name = WideString (class_name);
@@ -313,6 +329,9 @@ public class Window {
 		wc.hInstance = instance;
 		wc.hbrBackground = (void*) (SysColorIndex.COLOR_WINDOW + 1);
 		wc.lpszClassName = wide_class;
+		if (default_arrow_cursor) {
+			wc.hCursor = load_cursor (null, (uint16*) (ulong) IDC_ARROW);
+		}
 
 		if (register_class_ex (ref wc) == 0) {
 			stderr.printf ("RegisterClassExW failed\n");
@@ -345,6 +364,126 @@ public class Window {
 	public string title {
 		owned get { return window_text_get (handle); }
 		set { window_text_set (handle, value); }
+	}
+
+	public void close () {
+		if (handle != null) {
+			destroy_window (handle);
+		}
+	}
+
+	/** Modal message box owned by this window (hand baseline — Phase 5+ may emit). */
+	public MESSAGEBOXRESULT show_message (
+		string text,
+		string caption,
+		MESSAGEBOXSTYLE style = MESSAGEBOXSTYLE.MB_OK | MESSAGEBOXSTYLE.MB_ICONINFORMATION
+	) {
+		return NativeDialogs.show_message (this, text, caption, style);
+	}
+}
+
+/* IDC_ARROW — not emitted as vapi const yet (see menu-demo Track A). */
+const int IDC_ARROW = 32512;
+
+/**
+ * Hand-maintained Phase 4 baseline: common dialogs. Compare to generator emit in Phase 5+.
+ */
+public class NativeDialogs {
+	const int FILE_BUF_CHARS = 260;
+
+	public static MESSAGEBOXRESULT show_message (
+		Window? parent,
+		string text,
+		string caption,
+		MESSAGEBOXSTYLE style
+	) {
+		return message_box (
+			parent != null ? parent.handle : null,
+			WideString (text).ptr,
+			WideString (caption).ptr,
+			(uint) style
+		);
+	}
+
+	public static bool try_open_file (Window parent, out string path) {
+		var file_buf = new uint16[FILE_BUF_CHARS];
+		var filter = WideString ("Text (*.txt)\0*.txt\0All (*.*)\0*.*\0");
+		var ofn = OPENFILENAME ();
+		ofn.lStructSize = (uint) sizeof (OPENFILENAME);
+		ofn.hwndOwner = parent.handle;
+		ofn.lpstrFilter = filter.ptr;
+		ofn.nFilterIndex = 1;
+		ofn.lpstrFile = file_buf;
+		ofn.nMaxFile = FILE_BUF_CHARS;
+		ofn.Flags = (
+			OPENFILENAMEFLAGS.OFN_PATHMUSTEXIST |
+			OPENFILENAMEFLAGS.OFN_FILEMUSTEXIST |
+			OPENFILENAMEFLAGS.OFN_EXPLORER
+		);
+		if (get_open_file_name (ref ofn) != 0) {
+			path = (string) file_buf;
+			return true;
+		}
+		path = "";
+		return false;
+	}
+
+	public static bool try_choose_color (Window parent, ref uint rgb) {
+		var cc = CHOOSECOLOR ();
+		cc.lStructSize = (uint) sizeof (CHOOSECOLOR);
+		cc.hwndOwner = parent.handle;
+		cc.rgbResult = (void*) (&rgb);
+		cc.Flags = CHOOSECOLORFLAGS.CC_RGBINIT | CHOOSECOLORFLAGS.CC_FULLOPEN;
+		return choose_color (ref cc) != 0;
+	}
+}
+
+/**
+ * Hand-maintained Phase 4 baseline: menu bar + WM_COMMAND menu ids.
+ */
+public class MenuBar {
+	public signal void activated (int menu_id);
+	public Window parent { get; private set; }
+	public void* handle { get; private set; }
+
+	public MenuBar (Window parent) {
+		this.parent = parent;
+		handle = create_menu ();
+	}
+
+	public MenuPopup add_submenu (string label) {
+		var popup = create_menu ();
+		append_menu (
+			handle,
+			MENUITEMFLAGS.MF_POPUP | MENUITEMFLAGS.MF_STRING,
+			popup,
+			WideString (label).ptr
+		);
+		return new MenuPopup (this, popup);
+	}
+
+	public void attach () {
+		set_menu (parent.handle, handle);
+	}
+}
+
+public class MenuPopup {
+	MenuBar bar;
+	public void* handle { get; private set; }
+
+	public MenuPopup (MenuBar bar, void* popup_handle) {
+		this.bar = bar;
+		handle = popup_handle;
+	}
+
+	public void add_item (int menu_id, string label) {
+		append_menu (
+			handle,
+			MENUITEMFLAGS.MF_STRING,
+			(void*) menu_id,
+			WideString (label).ptr
+		);
+		wm_command_register_menu (bar, menu_id);
 	}
 }
 

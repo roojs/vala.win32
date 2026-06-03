@@ -13,24 +13,24 @@ namespace Generate {
 
 namespace Win32 {
 
-	/** Win32 API failure with GetLastError code (HRESULT-style apps can map separately). */
-	public errordomain Win32Error {
-		CODE (win32_code);
-		public uint win32_code;
+	/** Returns false and sets err from GetLastError when ok == 0. */
+	public bool win32_bool_ok (int ok, out uint err) {
+		if (ok != 0) {
+			err = 0;
+			return true;
+		}
+		err = get_last_error ();
+		return false;
 	}
 
-	/** Call after a BOOL-returning API returns zero. */
-	public void check_bool (int ok) throws Win32Error {
-		if (ok == 0) {
-			throw new Win32Error.CODE (get_last_error ());
+	/** Returns false and sets err from GetLastError when p == null. */
+	public bool win32_pointer_ok (void* p, out uint err) {
+		if (p != null) {
+			err = 0;
+			return true;
 		}
-	}
-
-	/** Call after a handle-returning API returns null. */
-	public void check_pointer (void* p) throws Win32Error {
-		if (p == null) {
-			throw new Win32Error.CODE (get_last_error ());
-		}
+		err = get_last_error ();
+		return false;
 	}
 }
 ";

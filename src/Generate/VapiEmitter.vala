@@ -319,7 +319,7 @@ namespace Win32 {
 					continue;
 				}
 				var ftype = VapiEmitter.vala_type_for_field (field.Type, this.shard_basename);
-				if (field.Type.Name.has_prefix ("Anonymous")) {
+				if (ftype.index_of ("Anonymous") >= 0) {
 					ftype = "void*";
 				}
 				this.buffer.append (@"		public $(ftype) $(field.Name);
@@ -437,7 +437,11 @@ namespace Win32 {
 			string[] suffixes = {
 				"RESULT", "FLAGS", "STYLE", "STYLES", "DLG", "COLOR", "FONT",
 				"PAGE", "NOTIFY", "SETUP", "EX", "INFO", "MASK", "TYPE",
+				"NAME", "MODE", "PROC", "HOOK", "REPLACE", "DLG",
 			};
+			if (name.has_prefix ("OPENFILENAME") || name.has_prefix ("CHOOSE")) {
+				return true;
+			}
 			foreach (var suffix in suffixes) {
 				if (name.has_suffix (suffix)) {
 					return true;

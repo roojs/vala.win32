@@ -65,13 +65,13 @@ public static int main (string[] args) {
 	void* file_menu = create_menu ();
 	append_menu (
 		file_menu,
-		(void*) (uint) MENUITEMFLAGS.MF_STRING,
+		MENUITEMFLAGS.MF_STRING,
 		(void*) ID_FILE_HELLO,
 		WideString ("Say &hello").ptr
 	);
 	append_menu (
 		file_menu,
-		(void*) (uint) MENUITEMFLAGS.MF_STRING,
+		MENUITEMFLAGS.MF_STRING,
 		(void*) ID_FILE_EXIT,
 		WideString ("E&xit").ptr
 	);
@@ -79,7 +79,7 @@ public static int main (string[] args) {
 	void* bar = create_menu ();
 	append_menu (
 		bar,
-		(void*) (uint) (MENUITEMFLAGS.MF_POPUP | MENUITEMFLAGS.MF_STRING),
+		MENUITEMFLAGS.MF_POPUP | MENUITEMFLAGS.MF_STRING,
 		file_menu,
 		WideString ("&File").ptr
 	);

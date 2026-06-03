@@ -1,6 +1,6 @@
 # 03 — Phase 1: Metadata + generator
 
-**Status:** **⏳** In progress — generator pipeline works; **apps still use Phase 0 spike vapi**
+**Status:** **✅** Done — generator pipeline + per-shard vapi (apps on generated bindings since Phase 2)
 
 **Layout:** `~/gitlive/OLLMchat/docs/guide-to-writing-plans.md`
 
@@ -158,4 +158,4 @@ valac vapi/win32-ui.generated.vapi /tmp/gen-smoke.vala -C -d /tmp
 
 ## Hand-off to Phase 2
 
-**ℹ️** [04 - phase 2](04%20-%20phase%202%20ergonomic%20vapi.md) — review generated vapi, ergonomic emit, and (when ready) **move `hello-window.vala` off spike vapi** onto generated bindings.
+**ℹ️** [04-DONE - phase 2](04-DONE%20-%20phase%202%20ergonomic%20vapi.md) — review generated vapi, ergonomic emit, and (when ready) **move `hello-window.vala` off spike vapi** onto generated bindings.

@@ -1,6 +1,6 @@
 # 01 — Vala Win32 UI binding (overview)
 
-**Status:** **⏳** Active — phased plans below
+**Status:** **⏳** Active — Phases 0–6 **✅** done; **07–08** open (see index)
 
 **Layout:** `~/gitlive/OLLMchat/docs/guide-to-writing-plans.md`
 
@@ -23,14 +23,14 @@
 
 - [02-DONE - phase 0 foundation.md](02-DONE%20-%20phase%200%20foundation.md) — **✅** Done
   - Repo, hand spike, `make check` / `make win`
-- [03 - phase 1 metadata and generator.md](03%20-%20phase%201%20metadata%20and%20generator.md) — **⏳** In progress
-  - win32json vendor, `generate-binding`, `check-regen` (generated vapi separate from spike apps)
-- [04 - phase 2 ergonomic vapi.md](04%20-%20phase%202%20ergonomic%20vapi.md) — **✅** Track A done (hello on generated vapi)
+- [03-DONE - phase 1 metadata and generator.md](03-DONE%20-%20phase%201%20metadata%20and%20generator.md) — **✅** Done
+  - win32json vendor, `generate-binding`, `check-regen`, per-shard vapi
+- [04-DONE - phase 2 ergonomic vapi.md](04-DONE%20-%20phase%202%20ergonomic%20vapi.md) — **✅** Done
   - Per-shard vapi, enums, `hello-window.exe`
-- [05 - phase 3 common controls.md](05%20-%20phase%203%20common%20controls.md) — **✅** Closed (Track A + Track B B0–B4)
+- [05-DONE - phase 3 common controls.md](05-DONE%20-%20phase%203%20common%20controls.md) — **✅** Done
   - Common-controls demos; ergonomic widgets (template regen until Phase 5)
-- [06 - phase 4 dialogs and resources.md](06%20-%20phase%204%20dialogs%20and%20resources.md) — **⏳** Not started
-  - MessageBox, file/color/font dialogs, menus, `.rc`, generator error mapping
+- [06-DONE - phase 4 dialogs and resources.md](06-DONE%20-%20phase%204%20dialogs%20and%20resources.md) — **✅** Done
+  - MessageBox, common dialogs, menus, `.rc` doc, `win32-errors.vala`
 - [07 - phase 5 widget emit.md](07%20-%20phase%205%20widget%20emit.md) — **⏳** Not started
   - Convention table → emit `generated/win32-widgets.vala`
 - [08 - phase 6 polish and ci.md](08%20-%20phase%206%20polish%20and%20ci.md) — **⏳** Not started

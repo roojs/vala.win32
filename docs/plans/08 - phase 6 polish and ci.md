@@ -4,7 +4,7 @@
 
 **Layout:** `~/gitlive/OLLMchat/docs/guide-to-writing-plans.md`
 
-**Parent:** [01-DONE - project overview.md](01-DONE%20-%20project%20overview.md) · **Depends on:** Phases 1–5 materially complete · **Win32.*** widget layer ([05 - phase 3 common controls.md](05%20-%20phase%203%20common%20controls.md) Track B; [07 - phase 5 widget emit.md](07%20-%20phase%205%20widget%20emit.md) for emitted docs)
+**Parent:** [01-DONE - project overview.md](01-DONE%20-%20project%20overview.md) · **Depends on:** Phases 1–5 materially complete · **Win32.*** widget layer ([05-DONE - phase 3 common controls.md](05-DONE%20-%20phase%203%20common%20controls.md) Track B; [07 - phase 5 widget emit.md](07%20-%20phase%205%20widget%20emit.md) for emitted docs)
 
 ---
 

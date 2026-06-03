@@ -42,11 +42,11 @@ posix_example_apps = [
     'common-dialog-demo',
     'examples/common-dialog-demo.vala',
     [control_strings_vala, wide_strings_vala],
-    [example_pkg_dialogs, example_pkg_gdi],
+    [example_pkg_dialogs],
     ['comdlg32'],
   ],
   ['menu-demo', 'examples/menu-demo.vala', [wide_strings_vala], [], []],
-  ['error-demo', 'examples/error-demo.vala', [errors_vala], [], []],
+  ['error-demo', 'examples/error-demo.vala', [errors_vala, wide_strings_vala], [], []],
 ]
 
 generate_sources = files(
@@ -191,61 +191,118 @@ foreach app : posix_example_apps
 endforeach
 
 # Track B — ergonomic widgets (--profile=gobject + MinGW GLib)
-ergonomic_companion = [control_strings_vala, wide_strings_vala, widgets_vala]
-if mingw_cc.found() and have_mingw_glib
-  ergo_vala_args = ['--vapidir', vapidir, '--profile=gobject']
-  foreach pkg : example_pkgs
-    ergo_vala_args += ['--pkg', pkg]
-  endforeach
-  ergo_build_dir = 'track-b-ergonomic'
-  ergo_companion_c = []
-  ergo_vala_inputs = [files('examples/ergonomic-button-demo.vala')]
-  foreach src : ergonomic_companion
-    ergo_vala_inputs += src
-    parts = src.split('/')
-    vala_name = parts[-1]
-    ergo_companion_c += ergo_build_dir + '/' + vala_name.substring(0, -5) + '.c'
-  endforeach
-  custom_target(
+# [name, source, extra companion .vala, extra --pkg, extra -l libs]
+ergonomic_widget_companion = [control_strings_vala, wide_strings_vala, widgets_vala]
+
+ergonomic_apps = [
+  [
     'ergonomic-button-demo',
-    input: ergo_vala_inputs,
-    output: 'ergonomic-button-demo.exe',
-    command: [
-      'mkdir', '-p', ergo_build_dir,
-      '&&',
-      valac,
-      ergo_vala_args,
-      '-C',
-      '-d', ergo_build_dir,
-      '@INPUT@',
-      '&&',
-      mingw_cc,
-      '-mwindows',
-      glib_cflags,
-      '-o', '@OUTPUT@',
-      ergo_build_dir + '/ergonomic-button-demo.c',
-      ergo_companion_c,
-      glib_link,
-      '-luser32',
-      '-lgdi32',
-      '-lcomctl32',
-      '&&',
-      'sh',
-      '-c',
-      'cp "' + mingw64_lib / 'bin' + '"/*.dll "$1"',
-      '--',
-      '.',
-    ],
-    depends: regen_vapi,
-    build_by_default: true,
-  )
+    'examples/ergonomic-button-demo.vala',
+    ergonomic_widget_companion,
+    [],
+    [],
+  ],
+  [
+    'ergonomic-dialog-demo',
+    'examples/ergonomic-dialog-demo.vala',
+    ergonomic_widget_companion,
+    [],
+    [],
+  ],
+  [
+    'ergonomic-common-dialog-demo',
+    'examples/ergonomic-common-dialog-demo.vala',
+    ergonomic_widget_companion,
+    [],
+    ['comdlg32'],
+  ],
+  [
+    'ergonomic-menu-demo',
+    'examples/ergonomic-menu-demo.vala',
+    ergonomic_widget_companion,
+    [],
+    [],
+  ],
+  [
+    'ergonomic-error-demo',
+    'examples/ergonomic-error-demo.vala',
+    [errors_vala, wide_strings_vala],
+    [],
+    [],
+  ],
+]
+
+if mingw_cc.found() and have_mingw_glib
+  track_b_pkgs = example_pkgs + ['win32-ui-controls', example_pkg_dialogs]
+  ergo_vala_args_base = ['--vapidir', vapidir, '--profile=gobject']
+  foreach pkg : track_b_pkgs
+    ergo_vala_args_base += ['--pkg', pkg]
+  endforeach
+  ergo_link_libs = ['-luser32', '-lgdi32', '-lcomctl32']
+  foreach app : ergonomic_apps
+    app_name = app[0]
+    app_source = app[1]
+    app_companion = app[2]
+    app_extra_pkgs = app[3]
+    app_extra_libs = app[4]
+    ergo_vala_args = []
+    foreach a : ergo_vala_args_base
+      ergo_vala_args += a
+    endforeach
+    foreach pkg : app_extra_pkgs
+      ergo_vala_args += ['--pkg', pkg]
+    endforeach
+    ergo_build_dir = 'track-b-' + app_name
+    ergo_companion_c = []
+    ergo_vala_inputs = [files(app_source)]
+    foreach src : app_companion
+      ergo_vala_inputs += src
+      parts = src.split('/')
+      vala_name = parts[-1]
+      ergo_companion_c += ergo_build_dir + '/' + vala_name.substring(0, -5) + '.c'
+    endforeach
+    app_link = glib_link + ergo_link_libs
+    foreach lib : app_extra_libs
+      app_link += ['-l' + lib]
+    endforeach
+    custom_target(
+      app_name,
+      input: ergo_vala_inputs,
+      output: app_name + '.exe',
+      command: [
+        'mkdir', '-p', ergo_build_dir,
+        '&&',
+        valac,
+        ergo_vala_args,
+        '-C',
+        '-d', ergo_build_dir,
+        '@INPUT@',
+        '&&',
+        mingw_cc,
+        '-mwindows',
+        glib_cflags,
+        '-o', '@OUTPUT@',
+        ergo_build_dir + '/' + app_name + '.c',
+        ergo_companion_c,
+      ] + app_link + [
+        '&&',
+        'sh',
+        '-c',
+        'cp "' + mingw64_lib / 'bin' + '"/*.dll "$1"',
+        '--',
+        '.',
+      ],
+      depends: regen_vapi,
+      build_by_default: true,
+    )
+  endforeach
 else
   if mingw_cc.found() and not have_mingw_glib
     warning(
-      'ergonomic-button-demo.exe skipped: run ./scripts/setup-mingw-libs.sh',
+      'Track B ergonomic demos skipped: run ./scripts/setup-mingw-libs.sh',
     )
   elif not mingw_cc.found()
-    warning('ergonomic-button-demo.exe skipped: x86_64-w64-mingw32-gcc not found')
+    warning('Track B ergonomic demos skipped: x86_64-w64-mingw32-gcc not found')
   endif
 endif
 

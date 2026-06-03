@@ -4,12 +4,10 @@ using Win32.Ui;
 using Win32.Ui.Controls.Dialogs;
 using Win32.Ui.Controls;
 using Win32.Ui.WindowsAndMessaging;
-using Win32.Graphics.Gdi;
 using Win32.System;
 
 const int ID_OPEN = 200;
 const int ID_COLOR = 201;
-const int ID_FONT = 202;
 const int FILE_BUF_CHARS = 260;
 
 private void* frame_hwnd = null;
@@ -27,7 +25,7 @@ private void show_open_file () {
 	ofn.nFilterIndex = 1;
 	ofn.lpstrFile = file_buf;
 	ofn.nMaxFile = FILE_BUF_CHARS;
-	ofn.Flags = (void*) (uint) (
+	ofn.Flags = (
 		OPENFILENAMEFLAGS.OFN_PATHMUSTEXIST |
 		OPENFILENAMEFLAGS.OFN_FILEMUSTEXIST |
 		OPENFILENAMEFLAGS.OFN_EXPLORER
@@ -48,31 +46,11 @@ private void show_choose_color () {
 	cc.lStructSize = (uint) sizeof (CHOOSECOLOR);
 	cc.hwndOwner = frame_hwnd;
 	cc.rgbResult = (void*) (&rgb);
-	cc.Flags = (void*) (uint) (CHOOSECOLORFLAGS.CC_RGBINIT | CHOOSECOLORFLAGS.CC_FULLOPEN);
+	cc.Flags = CHOOSECOLORFLAGS.CC_RGBINIT | CHOOSECOLORFLAGS.CC_FULLOPEN;
 	if (choose_color (ref cc) != 0) {
 		window_text_set (frame_hwnd, "Color 0x%06x".printf (rgb & 0xffffff));
 	} else {
 		window_text_set (frame_hwnd, "(color cancelled)");
-	}
-}
-
-private void show_choose_font () {
-	if (frame_hwnd == null) {
-		return;
-	}
-	var lf = LOGFONT ();
-	lf.lfHeight = -16;
-	var face = WideString ("Segoe UI");
-	lf.lfFaceName = (void*) face.ptr;
-	var cf = CHOOSEFONT ();
-	cf.lStructSize = (uint) sizeof (CHOOSEFONT);
-	cf.hwndOwner = frame_hwnd;
-	cf.lpLogFont = (void**) (&lf);
-	cf.Flags = (void*) (uint) CHOOSEFONTFLAGS.CF_INITTOLOGFONTSTRUCT;
-	if (choose_font (ref cf) != 0) {
-		window_text_set (frame_hwnd, "Font dialog OK (height %d)".printf (lf.lfHeight));
-	} else {
-		window_text_set (frame_hwnd, "(font cancelled)");
 	}
 }
 
@@ -92,10 +70,6 @@ private int64 window_proc (
 			}
 			if (id == ID_COLOR) {
 				show_choose_color ();
-				return 0;
-			}
-			if (id == ID_FONT) {
-				show_choose_font ();
 				return 0;
 			}
 		}
@@ -173,8 +147,7 @@ public static int main (string[] args) {
 	}
 
 	if (add_button (frame_hwnd, inst, ID_OPEN, "Open file…", 20) == null
-		|| add_button (frame_hwnd, inst, ID_COLOR, "Choose color…", 56) == null
-		|| add_button (frame_hwnd, inst, ID_FONT, "Choose font…", 92) == null) {
+		|| add_button (frame_hwnd, inst, ID_COLOR, "Choose color…", 56) == null) {
 		stderr.printf ("CreateWindowExW (button) failed\n");
 		return 1;
 	}
