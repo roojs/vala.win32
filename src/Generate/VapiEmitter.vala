@@ -37,6 +37,10 @@ namespace Generate {
 			return true;
 		}
 
+		static string quoted_c_string (string value) {
+			return "\"" + value + "\"";
+		}
+
 		void reset_shard () {
 			this.buffer = new GLib.StringBuilder ();
 			this.emitted_vala_names.clear ();
@@ -45,7 +49,7 @@ namespace Generate {
 
 		void append_namespace_open (string ns, bool with_ccode) {
 			if (with_ccode) {
-				this.buffer.append (@"$(GENERATED_HEADER)[CCode (cprefix = "", cheader_filename = ""windows.h"")]
+				this.buffer.append (@"$(GENERATED_HEADER)[CCode (cprefix = $(VapiEmitter.quoted_c_string ("")), cheader_filename = $(VapiEmitter.quoted_c_string ("windows.h")))]
 namespace $(ns) {
 ");
 			} else {
@@ -106,7 +110,7 @@ namespace $(ns) {
 		/** Phase 1 monolith (deprecated for apps). */
 		public string emit_all (Generate.Parse.ApiFileEntry[] files) {
 			this.reset_shard ();
-			this.buffer.append (@"$(GENERATED_HEADER)[CCode (cprefix = "", cheader_filename = ""windows.h"")]
+			this.buffer.append (@"$(GENERATED_HEADER)[CCode (cprefix = $(VapiEmitter.quoted_c_string ("")), cheader_filename = $(VapiEmitter.quoted_c_string ("windows.h")))]
 namespace Win32 {
 ");
 			foreach (var entry in files) {
@@ -205,7 +209,7 @@ namespace Win32 {
 				return;
 			}
 			this.buffer.append (@"
-	[CCode (cname = ""$(c.Name)"")]
+	[CCode (cname = $(VapiEmitter.quoted_c_string (c.Name)))]
 	public const $(vala_type) $(vala_name);
 
 ");
@@ -252,7 +256,8 @@ $(chars)0
 				return;
 			}
 			var flags = t.Flags ? "\t[Flags]\n" : "";
-			this.buffer.append (@"$(flags)	[CCode (cname = ""$(VapiEmitter.enum_c_type_id (t.IntegerBase))"", has_type_id = false)]
+			var enum_cname = VapiEmitter.enum_c_type_id (t.IntegerBase);
+			this.buffer.append (@"$(flags)	[CCode (cname = $(VapiEmitter.quoted_c_string (enum_cname)), has_type_id = false)]
 	public enum $(vala_name) {
 ");
 			var members = new Gee.HashSet<string> ();
@@ -265,7 +270,7 @@ $(chars)0
 				}
 				members.add (v.Name);
 				this.buffer.append (@"
-		[CCode (cname = ""$(v.Name)"")]
+		[CCode (cname = $(VapiEmitter.quoted_c_string (v.Name)))]
 		$(v.Name) = $(VapiEmitter.format_enum_value (v.Value)),
 ");
 			}
@@ -307,7 +312,7 @@ $(chars)0
 				return;
 			}
 			this.buffer.append (@"
-	[CCode (cname = ""$(t.Name)"")]
+	[CCode (cname = $(VapiEmitter.quoted_c_string (t.Name)))]
 	public struct $(vala_name) {
 ");
 			foreach (var field in t.Fields) {
@@ -336,7 +341,7 @@ $(chars)0
 			}
 			var ret_type = VapiEmitter.vala_type_for (t.ReturnType, "");
 			this.buffer.append (@"
-	[CCode (cname = ""$(t.Name)"", has_target = false)]
+	[CCode (cname = $(VapiEmitter.quoted_c_string (t.Name)), has_target = false)]
 	public delegate $(ret_type) $(vala_name) (
 ");
 			var n = t.Params.size;
@@ -361,7 +366,7 @@ $(chars)0
 			}
 			var ret = VapiEmitter.vala_type_for (f.ReturnType, "");
 			this.buffer.append (@"
-	[CCode (cname = ""$(f.Name)"")]
+	[CCode (cname = $(VapiEmitter.quoted_c_string (f.Name)))]
 	public extern $(ret) $(vala_name) (
 ");
 			var n = f.Params.size;
