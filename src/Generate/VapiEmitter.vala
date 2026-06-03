@@ -279,7 +279,11 @@ namespace Generate {
 		}
 
 		public static string vala_type_for_field (Parse.TypeRef type_ref) {
-			return VapiEmitter.vala_type_for_ref (type_ref, "", null);
+			var base_type = VapiEmitter.vala_type_for_ref (type_ref, "", null);
+			if (VapiEmitter.is_wide_string_vala_type (type_ref, base_type)) {
+				return "unowned " + base_type;
+			}
+			return base_type;
 		}
 
 		public static string vala_param_type (Parse.Parameter p) {
@@ -291,7 +295,21 @@ namespace Generate {
 			if (tid == null) {
 				return base_type;
 			}
+			// unowned on extern In wide-string params is already Vala's default — explicit unowned warns.
 			return "[CCode (type_id = \"%s\")] ".printf (tid) + base_type;
+		}
+
+		static bool is_wide_string_vala_type (Parse.TypeRef type_ref, string base_type) {
+			if (base_type != "uint16*") {
+				return false;
+			}
+			if (type_ref.Kind == "ApiRef") {
+				return VapiEmitter.type_id_for (type_ref.Name) == "LPCWSTR";
+			}
+			if (type_ref.Kind == "PointerTo" && type_ref.Child != null) {
+				return type_ref.Child.Name == "UInt16" || type_ref.Child.Name == "WCHAR";
+			}
+			return false;
 		}
 
 		static string vala_type_for_ref (
