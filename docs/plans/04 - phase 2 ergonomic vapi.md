@@ -20,7 +20,7 @@
 | Spike archived | **✅** | `vapi/archive/win32-ui-native.vapi` |
 | Default build | **✅** | `meson compile -C build` → regen + `build/hello-window.exe` |
 | Run under Wine | **⏳** | `wine build/hello-window.exe` |
-| P1 const values / `WS_*` enums | **⏳** | hello still uses local `const` literals |
+| P1 enums (`WindowStyle`, `SysColorIndex`) | **✅** | hello uses generated names, not hex literals |
 | Track B ergonomic layer | **⏳** | Phase 3+ stretch |
 
 **Legend:** **✅** done · **⏳** open / partial · **❌** blocked
@@ -325,7 +325,7 @@ wine build/hello-window.exe
 - **✅** Archive spike `vapi/archive/win32-ui-native.vapi`
 - **✅** Default `meson compile -C build` (regen + exe)
 - **⏳** Run `.exe` on Windows / Wine (manual)
-- **⏳** P1: const values / `WS_*` / `COLOR_WINDOW` where possible
+- **⏳** P1: `unowned` wide strings (optional)
 
 ### Track B — ergonomic (stretch)
 
