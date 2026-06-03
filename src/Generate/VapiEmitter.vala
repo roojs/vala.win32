@@ -158,9 +158,8 @@ namespace Generate {
 			}
 			this.buffer.append ("\t[CCode (array_length = false, array_null_terminated = true)]\n");
 			this.buffer.append_printf ("\tpublic const uint16[] %s = {\n", vala_name);
-			for (int i = 0; i < c.ValueText.length; i = c.ValueText.next_char (i)) {
-				unichar ch = c.ValueText.get_char (i);
-				this.buffer.append_printf ("\t\t'%C', ", ch);
+			for (int i = 0; i < c.ValueText.length; i++) {
+				this.buffer.append_printf ("\t\t'%c', ", c.ValueText[i]);
 			}
 			this.buffer.append ("0\n\t};\n\n");
 		}
