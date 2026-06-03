@@ -1,6 +1,6 @@
 # 05 — Phase 3: Common controls
 
-**Status:** **✅** Step 0 done · **⏳** Step 1 gap pass next
+**Status:** **✅** Step 1 done · **⏳** Step 2 Edit spike next
 
 **Layout:** `~/gitlive/OLLMchat/docs/guide-to-writing-plans.md`
 
@@ -12,8 +12,8 @@
 
 | Step / area | Status | Notes |
 |-------------|--------|-------|
-| Step 0 — Button spike | **✅** | app + build only; generator/vapi unchanged |
-| Step 1 — Gap pass (generator) | **⏳** | `WC_*` strings, `LOWORD`/`HIWORD`, … |
+| Step 0 — Button spike | **✅** | app + build only |
+| Step 1 — Gap pass (generator) | **✅** | `WC_*` → generated `.vala`; `loword`/`hiword` in vapi |
 | Step 2 — Edit spike | **⏳** | not started |
 | Step 3 — Static / ListBox / ComboBox | **⏳** | after Edit |
 | Track B — ergonomic wrappers | **⏳** | optional, after Track A |
@@ -26,12 +26,13 @@ Each finished step gets a **`### Changes`** subsection **before** behaviour note
 
 1. **Generator** — `src/Generate/*` changed? (yes/no + one line)
 2. **Generated vapi** — `vapi/win32-*.vapi` regen diff? (yes/no + which symbols landed)
-3. **Hand vapi / stubs** — new or edited hand `.vapi`? (yes/no)
-4. **Header relay** — new `cheader_filename` / `#include` workarounds? (yes/no — separate from “namespace already points at `windows.h`”)
-5. **Metadata / vendor** — `win32json-api.files`, filters, vendor script? (yes/no)
-6. **Files changed** — bullet list of paths touched this step
-7. **App workarounds** — symbols or logic living **only** in example source because vapi is not ready yet (empty if none)
-8. **Binding surface used** — what the demo imports from generated/hand vapi (unchanged counts if prior phase)
+3. **Generated vala** — `generated/*.vala` regen diff? (yes/no — when Vala vapi cannot hold const values, e.g. `WC_*`)
+4. **Hand vapi / stubs** — new or edited hand `.vapi`? (yes/no)
+5. **Header relay** — new `cheader_filename` / `#include` workarounds? (yes/no — separate from “namespace already points at `windows.h`”)
+6. **Metadata / vendor** — `win32json-api.files`, filters, vendor script? (yes/no)
+7. **Files changed** — bullet list of paths touched this step
+8. **App workarounds** — symbols or logic living **only** in example source because vapi is not ready yet (empty if none)
+9. **Binding surface used** — what the demo imports from generated/hand vapi (unchanged counts if prior phase)
 
 **⏳** steps omit **`### Changes`** until done; list intended touch points in Step 1 gap table instead.
 
@@ -51,7 +52,7 @@ Prove that **generated vapi** is enough to build real child controls — not jus
 
 | Track | Goal | Phase 3 required? | Status |
 |-------|------|-------------------|--------|
-| **A — raw Win32 controls** | `examples/button-demo.vala`: `CreateWindowEx` child `"Button"`, `WM_COMMAND` / `BN_CLICKED`, optional Edit | **Yes** | **✅** Step 0 · **⏳** Steps 1–3 |
+| **A — raw Win32 controls** | `examples/button-demo.vala`: `CreateWindowEx` child `"Button"`, `WM_COMMAND` / `BN_CLICKED`, optional Edit | **Yes** | **✅** Steps 0–1 · **⏳** Steps 2–3 |
 | **B — ergonomic wrappers** | `[Compact]` `Button` type, Vala `signal clicked` from generator | **No** — after Track A works | **⏳** |
 
 Track A is “use the vapi we already generate.” Track B is Gtk-*like* sugar on top — only after we know the raw surface is right.
@@ -65,9 +66,9 @@ Track A is “use the vapi we already generate.” Track B is Gtk-*like* sugar o
 | `UI.Controls.json` vendored | **✅** in `win32json-api.files` → `win32-ui-controls.vapi` |
 | `UI.WindowsAndMessaging.json` | **✅** → `create_window_ex`, message loop, `WM_COMMAND`, `BN_CLICKED` (declaration-only const) |
 | Enum emit (`WindowStyle`, …) | **✅** Phase 2 |
-| Control class strings (`WC_BUTTON`, `WC_EDIT`, …) | **⏳** in metadata as string constants — **not emitted yet** (emitter skips string `#define`s) |
-| `BN_*` as enums | **⏳** metadata has them as constants; may want a small **notification enum** for readable `WM_COMMAND` handling |
-| `LOWORD` / `HIWORD` helpers | **❌** not in vapi — demo uses shifts inline or we add tiny helpers |
+| Control class strings (`WC_BUTTON`, `WC_EDIT`, …) | **✅** — `generated/win32-ui-control-strings.vala` from `UI.Controls.json` (`WC_*` only; Vala vapi cannot hold string const values) |
+| `BN_*` as enums | **⏳** metadata has them as constants; optional notification enum later |
+| `LOWORD` / `HIWORD` helpers | **✅** — `loword` / `hiword` in `win32-ui-windowsandmessaging.vapi` (inline; not in win32metadata) |
 
 So Phase 3 is **not** “vendor more JSON first.” It is mostly **make a demo, list gaps, extend the generator**, repeat.
 
@@ -125,27 +126,46 @@ Document in the example or a one-line comment; add generator helpers later if we
 
 ---
 
-## Step 1 — Gap list from Button spike **⏳ Next**
+## Step 1 — Gap pass from Button spike **✅ Done**
 
-Recorded after Step 0 compile. Fix generator gaps here before Edit spike.
+### Changes
 
-**Expected changes when Step 1 is done** (preview — not done yet):
+- **Generator:** **Yes** — `VapiEmitter` (string `WC_*` → `.vala`, `loword`/`hiword`, cross-shard delegate refs, skip Ansi struct variants), `NameMapper.skip_ansi_variant_name`, `generate-binding` writes companion `.vala`.
+- **Generated vapi:** **Yes** — regen all shards; `loword`/`hiword` at end of `win32-ui-windowsandmessaging.vapi`; `win32-ui-controls.vapi` smaller (Ansi `PROPSHEETPAGEA_*` skipped; `DLGPROC` fields qualified).
+- **Generated vala:** **Yes** — `generated/win32-ui-control-strings.vala` (`WC_*` UTF-16 arrays from metadata `ValueText`). **Not vapi** — Vala rejects const values in `.vapi` files (same Phase 2 limitation).
+- **Hand vapi / stubs:** **No**.
+- **Header relay:** **No new** — `WC_*` are pure Vala literals; `BN_*` / `BS_*` still declaration-only via existing `windows.h` namespace.
+- **Metadata / vendor:** **No**.
 
-- **Generator:** **Yes** — `VapiEmitter` (string `WC_*`, maybe `LOWORD`/`HIWORD`, control enums)
-- **Generated vapi:** **Yes** — regen diff in affected shards
-- **Hand vapi / stubs:** **No** (unless gap trace says otherwise)
-- **Header relay:** **No** (prefer emitted values over new header hacks)
-- **App workarounds:** remove from `button-demo.vala` as each gap closes
+**Files changed:**
+
+- `src/Generate/VapiEmitter.vala`
+- `src/Generate/NameMapper.vala`
+- `tools/generate-binding.vala`
+- `vapi/win32-*.vapi` — regen
+- `generated/win32-ui-control-strings.vala` — regen (new)
+- `examples/button-demo.vala` — uses `WC_BUTTON`, `loword`/`hiword`; drops Step 0 workarounds
+- `meson.build` — per-app pkgs; button-demo compiles companion `.vala`
+- `docs/plans/05 - phase 3 common controls.md` — this plan
+
+**App workarounds removed:**
+
+- UTF-16 `"Button"` literal → **`WC_BUTTON`** from generated `.vala`
+- `wm_command_notify` / `wm_command_id` → **`loword` / `hiword`** from vapi
+
+**Still open (not Step 1):**
+
+- `BN_*` notification enum — optional readability polish
+- WndProc assign warning — cosmetic (same as hello)
+- Full `win32-ui-controls` pkg for apps — blocked until more cross-shard / struct emit gaps fixed; button demo does **not** link it yet
 
 | Gap | Status |
 |-----|--------|
-| `WC_BUTTON` string constant | **⏳** — demo uses UTF-16 `"Button"` literal; emitter skips string consts |
-| `LOWORD` / `HIWORD` | **⏳** — demo uses inline `wm_command_*` helpers |
-| `BN_CLICKED` / `BS_*` | **✅** works — declaration-only const from `windows.h` |
-| WndProc assign warning | **✅** same as hello — not a functional blocker |
+| `WC_BUTTON` string constant | **✅** — `generated/win32-ui-control-strings.vala` |
+| `LOWORD` / `HIWORD` | **✅** — `loword` / `hiword` in `win32-ui-windowsandmessaging.vapi` |
+| `BN_CLICKED` / `BS_*` | **✅** — declaration-only const from `windows.h` |
+| WndProc assign warning | **✅** — not a functional blocker |
 | Ergonomic `signal clicked` | **⏳** Track B — later |
-
-Fix gaps in **`VapiEmitter` / `NameMapper`** only — no hand-editing generated `.vapi`.
 
 ---
 
@@ -246,7 +266,7 @@ wine build/button-demo.exe
 ### Track A — raw controls (required)
 
 - [x] **✅** **🔷** `button-demo.vala` — child Button + `WM_COMMAND` / `BN_CLICKED`
-- [ ] **🔷** **⏳** Gap pass after Button — document + fix emitter (string `WC_*`, styles, …)
+- [x] **✅** **🔷** Gap pass after Button — `WC_*` generated `.vala`, `loword`/`hiword` in vapi
 - [ ] **🔷** **⏳** Edit demo — text get/set
 - [ ] **🔷** **⏳** Gap pass after Edit
 - [ ] **🔷** **⏳** Static, ListBox, ComboBox (P1) — one at a time
