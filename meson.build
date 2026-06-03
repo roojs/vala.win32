@@ -26,20 +26,10 @@ control_strings_vala = generated_root / 'win32-ui-control-strings.vala'
 wide_strings_vala = generated_root / 'win32-wide-strings.vala'
 widgets_vala = generated_root / 'win32-widgets.vala'
 
-example_apps = [
-  ['hello-window', 'examples/hello-window.vala', example_pkgs, [wide_strings_vala]],
-  [
-    'button-demo',
-    'examples/button-demo.vala',
-    example_pkgs,
-    [control_strings_vala, wide_strings_vala],
-  ],
-  [
-    'ergonomic-button-demo',
-    'examples/ergonomic-button-demo.vala',
-    example_pkgs,
-    [control_strings_vala, wide_strings_vala, widgets_vala],
-  ],
+# Track A — raw Win32 (--profile=posix, no GLib)
+posix_example_apps = [
+  ['hello-window', 'examples/hello-window.vala', [wide_strings_vala]],
+  ['button-demo', 'examples/button-demo.vala', [control_strings_vala, wide_strings_vala]],
 ]
 
 generate_sources = files(
@@ -48,6 +38,7 @@ generate_sources = files(
   'src/Generate/NameMapper.vala',
   'src/Generate/SymbolFilter.vala',
   'src/Generate/VapiEmitter.vala',
+  'src/Generate/WidgetEmitter.vala',
   'src/Generate/Parser/ApiFileEntry.vala',
   'src/Generate/Parser/ApiFile.vala',
   'src/Generate/Parser/Base.vala',
@@ -85,18 +76,38 @@ regen_vapi = custom_target(
 )
 
 mingw_cc = find_program('x86_64-w64-mingw32-gcc', required: false)
+mingw64_lib = project_root / 'mingw-libs' / 'mingw64'
+mingw_pc_dir = mingw64_lib / 'lib' / 'pkgconfig'
+gobject_spike_pc = mingw_pc_dir / 'glib-2.0.pc'
+have_mingw_glib = run_command('test', '-f', gobject_spike_pc, check: false).returncode() == 0
 
-foreach app : example_apps
+glib_pc_env = ['env', 'PKG_CONFIG_LIBDIR=' + mingw_pc_dir]
+glib_cflags = []
+glib_link = [
+  '-L' + (mingw64_lib / 'lib'),
+  '-lgobject-2.0',
+  '-lglib-2.0',
+  '-liconv',
+]
+if have_mingw_glib
+  glib_cflags = run_command(
+    glib_pc_env,
+    'pkg-config',
+    '--cflags',
+    'glib-2.0',
+    'gobject-2.0',
+    check: true,
+  ).stdout().strip().split()
+endif
+
+foreach app : posix_example_apps
   app_name = app[0]
   app_source = app[1]
-  app_pkgs = app[2]
-  app_extra_sources = app[3]
-  app_vala_args = ['--vapidir', vapidir]
-  foreach pkg : app_pkgs
+  app_extra_sources = app[2]
+  app_vala_args = ['--vapidir', vapidir, '--profile=posix']
+  foreach pkg : example_pkgs
     app_vala_args += ['--pkg', pkg]
   endforeach
-  app_vala_args += '--profile=posix'
-  app_inputs = files(app_source)
   app_companion_sources = app_extra_sources
   if host_machine.system() == 'windows'
     win_inputs = [files(app_source)]
@@ -112,30 +123,32 @@ foreach app : example_apps
       install: false,
     )
   elif mingw_cc.found()
+    app_build_dir = 'track-a-' + app_name
     companion_c_files = []
-    companion_vala_cmd = []
+    app_vala_inputs = [files(app_source)]
     foreach src : app_companion_sources
-      companion_vala_cmd += src
+      app_vala_inputs += src
       parts = src.split('/')
       vala_name = parts[-1]
-      companion_c_files += '@OUTDIR@/' + vala_name.substring(0, -5) + '.c'
+      companion_c_files += app_build_dir + '/' + vala_name.substring(0, -5) + '.c'
     endforeach
     custom_target(
       app_name,
-      input: files(app_source),
+      input: app_vala_inputs,
       output: app_name + '.exe',
       command: [
+        'mkdir', '-p', app_build_dir,
+        '&&',
         valac,
         app_vala_args,
         '-C',
-        '-d', '@OUTDIR@',
+        '-d', app_build_dir,
         '@INPUT@',
-        companion_vala_cmd,
         '&&',
         mingw_cc,
         '-mwindows',
         '-o', '@OUTPUT@',
-        '@OUTDIR@/' + app_name + '.c',
+        app_build_dir + '/' + app_name + '.c',
         companion_c_files,
         '-luser32',
         '-lgdi32',
@@ -148,6 +161,65 @@ foreach app : example_apps
     warning(app_name + '.exe skipped: x86_64-w64-mingw32-gcc not found')
   endif
 endforeach
+
+# Track B — ergonomic widgets (--profile=gobject + MinGW GLib)
+ergonomic_companion = [control_strings_vala, wide_strings_vala, widgets_vala]
+if mingw_cc.found() and have_mingw_glib
+  ergo_vala_args = ['--vapidir', vapidir, '--profile=gobject']
+  foreach pkg : example_pkgs
+    ergo_vala_args += ['--pkg', pkg]
+  endforeach
+  ergo_build_dir = 'track-b-ergonomic'
+  ergo_companion_c = []
+  ergo_vala_inputs = [files('examples/ergonomic-button-demo.vala')]
+  foreach src : ergonomic_companion
+    ergo_vala_inputs += src
+    parts = src.split('/')
+    vala_name = parts[-1]
+    ergo_companion_c += ergo_build_dir + '/' + vala_name.substring(0, -5) + '.c'
+  endforeach
+  custom_target(
+    'ergonomic-button-demo',
+    input: ergo_vala_inputs,
+    output: 'ergonomic-button-demo.exe',
+    command: [
+      'mkdir', '-p', ergo_build_dir,
+      '&&',
+      valac,
+      ergo_vala_args,
+      '-C',
+      '-d', ergo_build_dir,
+      '@INPUT@',
+      '&&',
+      mingw_cc,
+      '-mwindows',
+      glib_cflags,
+      '-o', '@OUTPUT@',
+      ergo_build_dir + '/ergonomic-button-demo.c',
+      ergo_companion_c,
+      glib_link,
+      '-luser32',
+      '-lgdi32',
+      '-lcomctl32',
+      '&&',
+      'sh',
+      '-c',
+      'cp "' + mingw64_lib / 'bin' + '"/*.dll "$1"',
+      '--',
+      '.',
+    ],
+    depends: regen_vapi,
+    build_by_default: true,
+  )
+else
+  if mingw_cc.found() and not have_mingw_glib
+    warning(
+      'ergonomic-button-demo.exe skipped: run ./scripts/setup-mingw-libs.sh',
+    )
+  elif not mingw_cc.found()
+    warning('ergonomic-button-demo.exe skipped: x86_64-w64-mingw32-gcc not found')
+  endif
+endif
 
 check_regen = find_program('scripts/check-regen.sh')
 

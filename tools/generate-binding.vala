@@ -99,13 +99,15 @@ int main (string[] args) {
 		print ("wrote %s (%u bytes)\n", out_path, text.length);
 	}
 
+	var project_root = GLib.Path.get_dirname (GLib.Path.get_dirname (opt_metadata));
+	var generated_dir = GLib.Path.build_filename (project_root, "generated");
+	GLib.DirUtils.create_with_parents (generated_dir, 0755);
+
 	foreach (var file_entry in files) {
 		if (file_entry.basename != "UI.Controls.json") {
 			continue;
 		}
 		var literals = emitter.emit_control_class_strings (file_entry);
-		var generated_dir = GLib.Path.build_filename (GLib.Path.get_dirname (opt_out), "generated");
-		GLib.DirUtils.create_with_parents (generated_dir, 0755);
 		var literals_path = GLib.Path.build_filename (generated_dir, "win32-ui-control-strings.vala");
 		try {
 			GLib.FileUtils.set_contents (literals_path, literals);
@@ -116,5 +118,20 @@ int main (string[] args) {
 		print ("wrote %s (%u bytes)\n", literals_path, literals.length);
 		break;
 	}
+
+	var widget_emitter = new Generate.WidgetEmitter ();
+	var widgets_template = GLib.Path.build_filename (
+		project_root, "src", "Generate", "templates", "win32-widgets.vala"
+	);
+	try {
+		var widgets = widget_emitter.emit_from_template (widgets_template);
+		var widgets_path = GLib.Path.build_filename (generated_dir, "win32-widgets.vala");
+		GLib.FileUtils.set_contents (widgets_path, widgets);
+		print ("wrote %s (%u bytes)\n", widgets_path, widgets.length);
+	} catch (GLib.Error e) {
+		stderr.printf ("widgets emit: %s\n", e.message);
+		return 1;
+	}
+
 	return 0;
 }
