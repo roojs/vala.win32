@@ -28,7 +28,7 @@ namespace Generate {
 			this.shard_basename = "";
 		}
 
-		/** WC_* wide class strings — Vala literals in a CCode-free namespace (see win32-ui-control-strings.vapi). */
+		/** WC_* wide class strings — emitted as .vala (Vala vapi cannot hold const values). */
 		public string emit_control_class_strings (Parse.ApiFileEntry entry) {
 			this.reset_shard ();
 			var ns = NameMapper.vala_namespace_from_basename (entry.basename);

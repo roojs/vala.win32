@@ -22,11 +22,12 @@ example_pkgs = [
 ]
 
 example_apps = [
-  ['hello-window', 'examples/hello-window.vala', example_pkgs],
+  ['hello-window', 'examples/hello-window.vala', example_pkgs, []],
   [
     'button-demo',
     'examples/button-demo.vala',
-    example_pkgs + ['win32-ui-control-strings'],
+    example_pkgs,
+    [project_root / 'generated' / 'win32-ui-control-strings.vala'],
   ],
 ]
 
@@ -78,24 +79,33 @@ foreach app : example_apps
   app_name = app[0]
   app_source = app[1]
   app_pkgs = app[2]
+  app_extra_sources = app[3]
   app_vala_args = ['--vapidir', vapidir]
   foreach pkg : app_pkgs
     app_vala_args += ['--pkg', pkg]
   endforeach
   app_vala_args += '--profile=posix'
+  app_inputs = [files(app_source)]
+  foreach src : app_extra_sources
+    app_inputs += files(src)
+  endforeach
   if host_machine.system() == 'windows'
     executable(
       app_name,
-      files(app_source),
+      app_inputs,
       vala_args: app_vala_args + ['-X', '-mwindows', '-X', '-luser32', '-X', '-lgdi32'],
       link_args: ['-mwindows', '-luser32', '-lgdi32'],
       depends: regen_vapi,
       install: false,
     )
   elif mingw_cc.found()
+    extra_src_args = []
+    foreach src : app_extra_sources
+      extra_src_args += files(src)
+    endforeach
     custom_target(
       app_name,
-      input: files(app_source),
+      input: files(app_source) + extra_src_args,
       output: app_name + '.exe',
       command: [
         valac,

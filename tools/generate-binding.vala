@@ -104,7 +104,9 @@ int main (string[] args) {
 			continue;
 		}
 		var literals = emitter.emit_control_class_strings (file_entry);
-		var literals_path = GLib.Path.build_filename (opt_out, "win32-ui-control-strings.vapi");
+		var literals_path = GLib.Path.build_filename (opt_out, "..", "generated", "win32-ui-control-strings.vala");
+		literals_path = GLib.Path.canonicalize_filename (literals_path, opt_out);
+		GLib.DirUtils.create_with_parents (GLib.Path.get_dirname (literals_path), 0755);
 		try {
 			GLib.FileUtils.set_contents (literals_path, literals);
 		} catch (GLib.Error e) {
