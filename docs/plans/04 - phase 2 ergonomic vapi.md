@@ -28,9 +28,8 @@
 
 ## Generated file today (after Phase 1)
 
-- **File:** `vapi/win32-ui.generated.vapi` (~1 MB, ~42k lines, GUI filter).
-- **Syntax:** **✅** Full file passes `valac` (pointer `public const` omitted; scalars are declaration-only).
-- **Namespace:** `Win32 { … }` (spike uses `Win32Ui.Native`).
+- **File (Phase 1 monolith):** `vapi/win32-ui.generated.vapi` — all shards merged; **Phase 2 moves to per-json files under `vapi/generated/`**
+- **Namespace (monolith today):** `Win32 { … }` — Phase 2: **one Vala namespace per JSON basename** (spike uses `Win32Ui.Native` until migrated)
 - **Rough counts:** ~6.4k `public const`, ~2.2k `extern`, ~734 `struct`, ~87 `delegate`; ~7.5k `void*` type slots.
 - **Emitted kinds:** `Struct`, `FunctionPointer` (delegate), top-level `Function`, `Constant` only.
 - **Not emitted:** `Enum`, `NativeTypedef`, `Union`, `Com` — enums like `WS_*` flags often live there or as `#define` constants.
@@ -148,25 +147,79 @@ Spike today: `--pkg win32-ui` + `--pkg win32-ui-native`, plus **local `const`** 
 - [ ] `[Compact]` ergonomic wrappers + signals in generator.
 - [ ] `win32-plumbing.c` if delegate marshalling still unsafe.
 - [ ] Broader `TypeRef` (`ApiRef`, pointers, `MemorySize` attrs).
-- [ ] Split huge vapi vs single pkg (see below).
+- [ ] Broader `TypeRef` (`ApiRef`, pointers, `MemorySize` attrs).
+- [ ] **Per-json vapi emit** (see package layout — replaces monolithic `win32-ui.generated.vapi` for apps).
 
---- 
+---
 
-## Package layout options
+## Package layout — mirror win32json files
 
-- **Option 1 — Single generated pkg**
-  - `win32-ui.generated.vapi` → rename or install as `win32-ui-native.vapi`; hello uses `--pkg win32-ui` only.
-  - Pros: one regen artifact. Cons: ~42k lines, slow `valac`, hard review.
+win32json is already split into **distinct namespace JSON files** (`UI.WindowsAndMessaging.json`, `UI.Controls.json`, …). `metadata/win32json-api.files` lists which blobs we vendor. **Phase 2 should emit vapi the same way**, not flatten everything into one ~42k-line file.
 
-- **Option 2 — Curated hello slice**
-  - Generator flag or filter profile `hello.filter` emits only message-loop + GDI brush constant symbols into `win32-ui-hello.vapi`.
-  - Pros: small, fast, proves pipeline. Cons: two regen targets to maintain.
+**Current (Phase 1):** all vendored JSON → single `vapi/win32-ui.generated.vapi`, one flat `namespace Win32 { … }`. Fine for pipeline proof; wrong shape for apps.
 
-- **Option 3 — Generated + tiny hand shard**
-  - Generated bulk + hand `win32-ui-bootstrap.vapi` for `get_module_handle` and literals until metadata complete.
-  - Pros: unblocks hello quickly. Cons: two sources (document clearly).
+**Target (Phase 2):** **one input JSON → one output `.vapi`** (plus optional umbrella pkg).
 
-**🔷** Decide in Phase 2 kickoff; default recommendation: **Option 2 or 3** for first hello switch, **Option 1** when emit quality is stable.
+Example layout:
+
+```
+vapi/generated/
+  UI.WindowsAndMessaging.vapi   # message loop, WNDCLASS, CreateWindowExW, …
+  Graphics.Gdi.vapi             # GDI types/constants hello may need
+  UI.Controls.vapi              # Phase 3 — only if listed in win32json-api.files
+  …
+```
+
+**Mapping (already in parser):**
+
+- `UI.WindowsAndMessaging.json` → filter symbols as `Windows.Win32.UI.WindowsAndMessaging.*`
+- Vala namespace per file — e.g. nested `Win32.Ui.WindowsAndMessaging { … }` (exact spelling TBD; align with `ApiFile.namespace_from_basename`)
+- `--pkg` name derived from basename — e.g. `win32-ui-UI.WindowsAndMessaging` or a shortened pkg id + `.pc` per shard
+
+**What hello-window needs (minimal pkgs):**
+
+- `UI.WindowsAndMessaging.vapi` — core loop APIs
+- `Graphics.Gdi.vapi` — if `COLOR_WINDOW` / brush constants live there
+- Add JSON for loader APIs when vendored (e.g. `System.*` for `GetModuleHandleW`) — **same per-file rule**, not a special-case monolith
+
+Apps then:
+
+```vala
+// using Win32.Ui.WindowsAndMessaging;  // after namespace decision
+// valac --pkg win32-ui --pkg win32-ui-UI.WindowsAndMessaging …
+```
+
+**Benefits**
+
+- Matches upstream metadata boundaries — vendor list, filter, and vapi stay aligned
+- `valac` only parses shards the app imports
+- `check-regen` can diff **per file** (smaller, reviewable)
+- Phase 3 widens surface by **adding lines to `win32json-api.files`**, not by growing one blob
+
+**Emitter changes for split output**
+
+- [ ] `VapiEmitter.emit_file` → write `vapi/generated/<basename>.vapi` (one namespace block per file)
+- [ ] `generate-binding` reads **`win32json-api.files`** (or api dir filtered by that list) — not “every `.json` in api/”
+- [ ] Dedupe policy: **within a shard only**; cross-file duplicates become explicit (rare; handle if they appear)
+- [ ] Optional thin `win32-ui.vapi` umbrella that `using`-aggregates common pkgs for convenience — not required for hello
+
+**Still allowed: tiny hand shard**
+
+- One extern file only for symbols **missing from vendored JSON** until the right namespace JSON is added — not a second full API layer.
+
+**Deprecated for apps**
+
+- **Monolithic** `win32-ui.generated.vapi` — keep temporarily for Phase 1 `check-regen` smoke, or replace check-regen with per-shard diffs; do **not** point `hello-window` at the monolith.
+
+**🔷** Default Phase 2 decision: **per-metadata-file vapi** (this section), not Option 1 monolith rename.
+
+---
+
+## Package layout options (legacy notes)
+
+- ~~**Option 1 — Single generated pkg**~~ — conflicts with win32json file boundaries; avoid for apps.
+- ~~**Option 2 — Curated hello slice**~~ — largely superseded by **hello = subset of pkgs** (`WindowsAndMessaging` + `Gdi` + …); only keep a dedicated `hello.filter` if we need fewer symbols *inside* one JSON blob.
+- **Option 3 — Generated shards + tiny hand stub** — still valid for `GetModuleHandleW` until metadata includes it.
 
 ---
 
@@ -176,7 +229,9 @@ Spike today: `--pkg win32-ui` + `--pkg win32-ui-native`, plus **local `const`** 
 - `src/Generate/NameMapper.vala` — extend — Unicode-only policy, param names
 - `metadata/filters/gui.filter` — extend — drop Ansi duplicates if not already
 - `metadata/win32json-api.files` — extend — add namespace JSON for `GetModuleHandleW` (if exists in win32json)
-- `vapi/win32-ui.generated.vapi` — regen — target artifact
+- `tools/generate-binding.vala` — extend — read `win32json-api.files`; emit **one `.vapi` per JSON basename**
+- `vapi/generated/*.vapi` — regen — per-shard artifacts (replace monolith for apps)
+- `vapi/win32-ui.generated.vapi` — optional — Phase 1 monolith; retire or concat-only for CI
 - `vapi/win32-ui-native.vapi` — remove or replace — after hello migrates
 - `examples/hello-window.vala` — update — `using` / packages; fewer local consts as emit improves
 - `meson.build` — update — `compile-check` / `hello-window` link generated vapi
@@ -214,7 +269,7 @@ meson compile -C build-win hello-window # runs on Windows / Wine
 
 ### Track A — hello-window
 
-- [ ] **🔷** **⏳** Document package option (1/2/3) and namespace
+- [ ] **🔷** **⏳** Per-json vapi emit + pkg names; hello uses `UI.WindowsAndMessaging` (+ `Graphics.Gdi`, loader JSON when added)
 - [ ] **🔷** **⏳** P0 emitter: delegate fields, `out`/`ref` Msg, scalar types
 - [ ] **🔷** **⏳** Metadata/vendor: `GetModuleHandleW`
 - [ ] **🔷** **⏳** Filter: Unicode-first API surface for hello path
