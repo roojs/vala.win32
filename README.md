@@ -23,7 +23,7 @@ Design and roadmap: [docs/plans/01-DONE - project overview.md](docs/plans/01-DON
 meson setup build          # once
 meson compile -C build     # regen vapi + build/hello-window.exe + build/button-demo.exe
 wine build/hello-window.exe
-wine build/button-demo.exe   # click button → title changes
+wine build/button-demo.exe   # edit text, click button → title shows edit contents
 ```
 
 Or `make` (same as `meson compile -C build` after setup).

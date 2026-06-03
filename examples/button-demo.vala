@@ -1,10 +1,13 @@
-/* Phase 3 Track A: child Button + WM_COMMAND / BN_CLICKED. */
+/* Phase 3 Track A: Button + Edit child controls; WM_COMMAND; get/set window text. */
 
 using Win32.Ui.Controls;
 using Win32.Ui.WindowsAndMessaging;
 using Win32.System;
 
 const int ID_CLICK_ME = 100;
+const int ID_EDIT = 101;
+const int EDIT_TEXT_MAX = 256;
+const uint ES_AUTOHSCROLL = 0x0080;
 
 [CCode (array_length = false, array_null_terminated = true)]
 const uint16[] CLASS_NAME = {
@@ -22,9 +25,11 @@ const uint16[] BUTTON_LABEL = {
 };
 
 [CCode (array_length = false, array_null_terminated = true)]
-const uint16[] CLICKED_TITLE = {
-	'C', 'l', 'i', 'c', 'k', 'e', 'd', '!', 0
+const uint16[] EDIT_INITIAL = {
+	'H', 'e', 'l', 'l', 'o', ',', ' ', 'E', 'd', 'i', 't', 0
 };
+
+private void* edit_hwnd = null;
 
 private long window_proc (
 	[CCode (type_id = "HWND")] void* h_wnd,
@@ -33,8 +38,12 @@ private long window_proc (
 	long l_param
 ) {
 	if (msg == WM_COMMAND) {
-		if (loword (w_param) == BN_CLICKED && hiword (w_param) == ID_CLICK_ME) {
-			set_window_text (h_wnd, CLICKED_TITLE);
+		if (loword (w_param) == ID_CLICK_ME && hiword (w_param) == BN_CLICKED) {
+			if (edit_hwnd != null) {
+				var text = new uint16[EDIT_TEXT_MAX];
+				get_window_text (edit_hwnd, text, EDIT_TEXT_MAX);
+				set_window_text (h_wnd, text);
+			}
 			return 0;
 		}
 	}
@@ -68,7 +77,7 @@ public static int main (string[] args) {
 		CW_USEDEFAULT,
 		CW_USEDEFAULT,
 		320,
-		200,
+		220,
 		null,
 		null,
 		inst,
@@ -104,6 +113,34 @@ public static int main (string[] args) {
 		stderr.printf ("CreateWindowExW (button) failed\n");
 		return 1;
 	}
+
+	uint edit_style = (uint) (
+		WindowStyle.WS_CHILD |
+		WindowStyle.WS_VISIBLE |
+		WindowStyle.WS_BORDER |
+		WindowStyle.WS_TABSTOP |
+		ES_AUTOHSCROLL
+	);
+
+	edit_hwnd = create_window_ex (
+		0,
+		WC_EDIT,
+		"",
+		edit_style,
+		20,
+		64,
+		260,
+		24,
+		hwnd,
+		(void*) ID_EDIT,
+		inst,
+		null
+	);
+	if (edit_hwnd == null) {
+		stderr.printf ("CreateWindowExW (edit) failed\n");
+		return 1;
+	}
+	set_window_text (edit_hwnd, EDIT_INITIAL);
 
 	Msg msg;
 	while (get_message (out msg, null, 0, 0) > 0) {
