@@ -137,7 +137,7 @@ Spike today: `--pkg win32-ui` + `--pkg win32-ui-native`, plus **local `const`** 
 - [ ] **Unicode-only** emit or filter so hello does not need `_a` symbols.
 
 **P1 — should have for faithful hello**
-
+  
 - [ ] Emit **enum** types (or const values) for `WS_OVERLAPPEDWINDOW`, `WS_VISIBLE`, `COLOR_WINDOW` if present in metadata.
 - [ ] Emit **numeric const values** from JSON where Vala permits; document exceptions.
 - [ ] Parameter **names** from metadata (`h_wnd` not `param0`) for delegates used by app code.
@@ -150,7 +150,7 @@ Spike today: `--pkg win32-ui` + `--pkg win32-ui-native`, plus **local `const`** 
 - [ ] Broader `TypeRef` (`ApiRef`, pointers, `MemorySize` attrs).
 - [ ] Split huge vapi vs single pkg (see below).
 
----
+--- 
 
 ## Package layout options
 
