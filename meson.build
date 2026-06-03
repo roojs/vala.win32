@@ -19,6 +19,7 @@ api_list_file = metadata_root / 'win32json-api.files'
 example_pkgs = [
   'win32-ui-windowsandmessaging',
   'win32-system-stub',
+  'win32-foundation-stub',
 ]
 
 generated_root = project_root / 'generated'

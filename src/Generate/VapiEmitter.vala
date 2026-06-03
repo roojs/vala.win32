@@ -391,6 +391,21 @@ namespace Win32 {
 			return vala_type.index_of_char ('*') < 0;
 		}
 
+		static string foundation_vala_type (string name) {
+			switch (name) {
+			case "POINT":
+				return "Win32.Foundation.Point";
+			case "RECT":
+				return "Win32.Foundation.Rect";
+			case "SIZE":
+				return "Win32.Foundation.Size";
+			case "BOOL":
+				return "int";
+			default:
+				return VapiEmitter.map_type_name (name);
+			}
+		}
+
 		static string api_ref_vala_name (string name) {
 			if (NameMapper.skip_ansi_name (name)) {
 				return "void*";
@@ -411,7 +426,7 @@ namespace Win32 {
 				? NameMapper.to_vala_type (type_ref.Name)
 				: VapiEmitter.api_ref_vala_name (type_ref.Name);
 			if (type_ref.Api == "Foundation") {
-				return type_name;
+				return VapiEmitter.foundation_vala_type (type_ref.Name);
 			}
 			if (type_ref.Api == "" || shard_basename == "") {
 				return type_name;

@@ -64,7 +64,11 @@ public static int main (string[] args) {
 		WideString ("Phase 4a").ptr,
 		style
 	);
-	stderr.printf ("MessageBox returned %d (IDOK=%d)\n", (int) result, (int) MESSAGEBOXRESULT.IDOK);
+	stderr.printf (
+		"MessageBox returned %d (IDOK=%d)\n",
+		(int) result,
+		(int) MESSAGEBOXRESULT.IDOK
+	);
 
 	Msg msg;
 	while (get_message (out msg, null, 0, 0) > 0) {
