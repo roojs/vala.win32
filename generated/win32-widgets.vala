@@ -39,7 +39,8 @@ private void control_text_set (void* handle, string value) {
 	if (handle == null) {
 		return;
 	}
-	set_window_text (handle, value);
+	long[] wide = value.to_utf16 ();
+	set_window_text (handle, (uint16*) wide);
 }
 
 private void control_text_read_into (void* handle, uint16[] buffer, int max_count) {

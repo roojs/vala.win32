@@ -24,6 +24,7 @@ meson setup build          # once
 meson compile -C build     # regen vapi + build/hello-window.exe + build/button-demo.exe
 wine build/hello-window.exe
 wine build/button-demo.exe   # all controls; scroll updates progress bar
+wine build/ergonomic-button-demo.exe   # Track B: Win32.Button / Edit + WidgetDispatch
 ```
 
 Or `make` (same as `meson compile -C build` after setup).

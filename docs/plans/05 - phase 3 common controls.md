@@ -1,6 +1,6 @@
 # 05 — Phase 3: Common controls
 
-**Status:** **✅** Track A complete · **⏳** Track B — flat **`Win32.*`**, B0 spike next
+**Status:** **✅** Track A complete · **🌗** Track B — B0 + B1 done
 
 **Layout:** `~/gitlive/OLLMchat/docs/guide-to-writing-plans.md`
 
@@ -16,7 +16,7 @@
 | Step 1 — Gap pass (generator) | **✅** | `WC_*` → generated `.vala`; `loword`/`hiword` in vapi |
 | Step 2 — Edit spike | **✅** | `WC_EDIT`, `set_window_text` / `get_window_text` in button-demo |
 | Step 3 — Static / ListBox / ComboBox / ScrollBar / ProgressBar | **✅** | full common-controls demo |
-| Track B — ergonomic wrappers | **⏳** | design expanded below; spike next |
+| Track B — ergonomic wrappers | **🌗** | B0 + B1 done; struct API (not `[Compact]` signals) |
 
 **Legend:** **✅** done · **⏳** open / partial · **❌** blocked
 
