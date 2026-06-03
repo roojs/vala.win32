@@ -12,13 +12,28 @@
 
 | Step / area | Status | Notes |
 |-------------|--------|-------|
-| Step 0 — Button spike | **✅** | `examples/button-demo.vala`, `build/button-demo.exe` |
+| Step 0 — Button spike | **✅** | app + build only; generator/vapi unchanged |
 | Step 1 — Gap pass (generator) | **⏳** | `WC_*` strings, `LOWORD`/`HIWORD`, … |
 | Step 2 — Edit spike | **⏳** | not started |
 | Step 3 — Static / ListBox / ComboBox | **⏳** | after Edit |
 | Track B — ergonomic wrappers | **⏳** | optional, after Track A |
 
 **Legend:** **✅** done · **⏳** open / partial · **❌** blocked
+
+### Step completion block (use on every **✅** step)
+
+Each finished step gets a **`### Changes`** subsection **before** behaviour notes. Answer these in order — that is how you tell generator work from demo hacks:
+
+1. **Generator** — `src/Generate/*` changed? (yes/no + one line)
+2. **Generated vapi** — `vapi/win32-*.vapi` regen diff? (yes/no + which symbols landed)
+3. **Hand vapi / stubs** — new or edited hand `.vapi`? (yes/no)
+4. **Header relay** — new `cheader_filename` / `#include` workarounds? (yes/no — separate from “namespace already points at `windows.h`”)
+5. **Metadata / vendor** — `win32json-api.files`, filters, vendor script? (yes/no)
+6. **Files changed** — bullet list of paths touched this step
+7. **App workarounds** — symbols or logic living **only** in example source because vapi is not ready yet (empty if none)
+8. **Binding surface used** — what the demo imports from generated/hand vapi (unchanged counts if prior phase)
+
+**⏳** steps omit **`### Changes`** until done; list intended touch points in Step 1 gap table instead.
 
 ---
 
@@ -60,6 +75,31 @@ So Phase 3 is **not** “vendor more JSON first.” It is mostly **make a demo, 
 
 ## Step 0 — Button spike (Track A entry point) **✅ Done**
 
+### Changes
+
+- **Generator:** **No** — `src/Generate/*` untouched.
+- **Generated vapi:** **No** — no regen diff; uses Phase 2 shards as committed.
+- **Hand vapi / stubs:** **No** — same pkgs as hello (`win32-ui-windowsandmessaging`, `win32-system-stub`).
+- **Header relay:** **No new** — demo does not add `#include` or extra `[CCode (cheader_filename = …)]`; existing generated namespace already relays declaration-only consts to `windows.h`.
+- **Metadata / vendor:** **No**.
+
+**Files changed:**
+
+- `examples/button-demo.vala` — new demo
+- `meson.build` — `button-demo` in `example_apps`
+- `README.md` — build / run lines for `button-demo.exe`
+- `docs/plans/05 - phase 3 common controls.md` — this plan
+
+**App workarounds** (example source only — fix in Step 1 generator pass):
+
+- UTF-16 `"Button"` class string — `WC_BUTTON` not emitted yet
+- `wm_command_notify()` / `wm_command_id()` — `LOWORD` / `HIWORD` not in vapi
+
+**Binding surface used** (already generated — not added this step):
+
+- `WM_COMMAND`, `BN_CLICKED`, `BS_DEFPUSHBUTTON` — declaration-only `public const` in `win32-ui-windowsandmessaging.vapi`
+- `WindowStyle`, `SysColorIndex`, `create_window_ex`, message loop — Phase 2 generator
+
 **Deliverable:** **✅** `examples/button-demo.vala` + builds with `meson compile -C build` (same as hello).
 
 **Behaviour:**
@@ -88,6 +128,14 @@ Document in the example or a one-line comment; add generator helpers later if we
 ## Step 1 — Gap list from Button spike **⏳ Next**
 
 Recorded after Step 0 compile. Fix generator gaps here before Edit spike.
+
+**Expected changes when Step 1 is done** (preview — not done yet):
+
+- **Generator:** **Yes** — `VapiEmitter` (string `WC_*`, maybe `LOWORD`/`HIWORD`, control enums)
+- **Generated vapi:** **Yes** — regen diff in affected shards
+- **Hand vapi / stubs:** **No** (unless gap trace says otherwise)
+- **Header relay:** **No** (prefer emitted values over new header hacks)
+- **App workarounds:** remove from `button-demo.vala` as each gap closes
 
 | Gap | Status |
 |-----|--------|
@@ -152,15 +200,18 @@ Widen the list only when a gap trace shows a symbol lives in a **different** JSO
 
 ## Intended files
 
-| File | Action | Status |
-|------|--------|--------|
-| `examples/button-demo.vala` | create — Track A first demo | **✅** |
-| `examples/edit-demo.vala` | create — optional split from button demo | **⏳** |
-| `meson.build` | extend — build demos (same pattern as `hello-window.exe`) | **✅** `button-demo.exe` |
-| `src/Generate/VapiEmitter.vala` | extend — string constants, control enums, any new gaps | **⏳** Step 1 |
-| `src/Generate/NameMapper.vala` | extend — control class names if needed | **⏳** Step 1 |
-| `metadata/win32json-api.files` | extend — **only when** gap analysis requires new JSON | **✅** no change needed yet |
-| `docs/plans/05 - phase 3 common controls.md` | this plan | **⏳** living doc |
+Rolling checklist — each **✅** step’s **`### Changes`** block is the authoritative file list for that step.
+
+| File | Typical role | Step 0 | Step 1+ |
+|------|--------------|--------|---------|
+| `examples/button-demo.vala` | Track A demo | **✅** new | **⏳** drop workarounds |
+| `examples/edit-demo.vala` | Edit spike | — | **⏳** |
+| `meson.build` | example exes | **✅** | — |
+| `src/Generate/VapiEmitter.vala` | emit fixes | — | **⏳** |
+| `src/Generate/NameMapper.vala` | naming / skip rules | — | **⏳** if needed |
+| `vapi/win32-*.vapi` | generated shards | — unchanged | **⏳** regen |
+| `metadata/win32json-api.files` | vendor list | — unchanged | **⏳** only if gap trace requires |
+| Hand stubs (`vapi/win32-system-stub.vapi`, …) | missing JSON symbols | — unchanged | **⏳** only if gap trace requires |
 
 **Not:** regenerate a monolith `win32-ui.vapi` — apps use **`win32-ui-controls`**, **`win32-ui-windowsandmessaging`**, etc.
 
