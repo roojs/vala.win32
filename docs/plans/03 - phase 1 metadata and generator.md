@@ -6,7 +6,7 @@
 
 **Coding standards:** `~/gitlive/OLLMchat/.cursor/rules/CODING_STANDARDS.md` — apply checklist to new Vala (`GLib.*`, multiline docblocks, no `@"` interpolation, `this.`, etc.). No GObject app layer in this repo.
 
-**Parent:** [01 - project overview.md](01%20-%20project%20overview.md) · **Depends on:** [02 - phase 0 foundation.md](02%20-%20phase%200%20foundation.md)
+**Parent:** [01-DONE - project overview.md](01-DONE%20-%20project%20overview.md) · **Depends on:** [02-DONE - phase 0 foundation.md](02-DONE%20-%20phase%200%20foundation.md)
 
 ---
 

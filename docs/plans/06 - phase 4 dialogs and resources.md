@@ -4,7 +4,7 @@
 
 **Layout:** `~/gitlive/OLLMchat/docs/guide-to-writing-plans.md`
 
-**Parent:** [01 - project overview.md](01%20-%20project%20overview.md)
+**Parent:** [01-DONE - project overview.md](01-DONE%20-%20project%20overview.md)
 
 ---
 
