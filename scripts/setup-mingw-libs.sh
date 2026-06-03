@@ -29,7 +29,7 @@ PACKAGE_BASES=(
 	pcre2
 	zlib
 	libiconv
-	gettext
+	gettext-runtime
 	libwinpthread
 	gcc-libs
 )
@@ -100,7 +100,11 @@ Example link flags:
 
   pkg-config --cflags --libs glib-2.0 gobject-2.0
 
-Copy runtime DLLs from \$MINGW_LIBDIR/mingw64/bin next to your .exe when testing with Wine.
+Copy runtime DLLs from \$MINGW_LIBDIR/mingw64/bin next to your .exe when testing with Wine
+(meson build does this automatically for ergonomic-button-demo).
+
+If libintl-8.dll was missing, re-run this script after upgrading gettext-runtime
+(was: gettext → gettext-tools only, no libintl DLL).
 
 EOF
 }

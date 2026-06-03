@@ -1,3 +1,5 @@
+/* Track B widget template — edited here; regen writes generated/win32-widgets.vala */
+
 using GLib;
 using Win32.System;
 using Win32.Ui;

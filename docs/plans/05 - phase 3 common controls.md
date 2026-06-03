@@ -1,6 +1,6 @@
 # 05 — Phase 3: Common controls
 
-**Status:** **✅** Track A complete · **🌗** Track B — B0 + B1 done
+**Status:** **✅** Track A complete · **🌗** Track B — B0–B3 done; **B4 next**
 
 **Layout:** `~/gitlive/OLLMchat/docs/guide-to-writing-plans.md`
 
@@ -16,8 +16,8 @@
 | Step 1 — Gap pass (generator) | **✅** | `WC_*` → generated `.vala`; `loword`/`hiword` in vapi |
 | Step 2 — Edit spike | **✅** | `WC_EDIT`, `set_window_text` / `get_window_text` in button-demo |
 | Step 3 — Static / ListBox / ComboBox / ScrollBar / ProgressBar | **✅** | full common-controls demo |
-| Step 4 — plain UTF-8 strings | **✅** | **`win32-wide-strings.vala`** — **blocks B3** |
-| Track B — ergonomic wrappers | **🌗** | B0 + B1 done; struct API (not `[Compact]` signals) |
+| Step 4 — plain UTF-8 strings | **✅** | **`win32-wide-strings.vala`** |
+| Track B — ergonomic wrappers | **🌗** | B0–B3 done; **gobject profile**; widgets **regen** from template; **B4** ScrollBar/ProgressBar next |
 
 **Legend:** **✅** done · **⏳** open / partial · **❌** blocked
 
@@ -56,7 +56,7 @@ Prove that **generated vapi** is enough to build real child controls — not jus
 | Track | Goal | Phase 3 required? | Status |
 |-------|------|-------------------|--------|
 | **A — raw Win32 controls** | `examples/button-demo.vala`: all standard child controls | **Yes** | **✅** Step 3 complete |
-| **B — ergonomic wrappers** | `Win32.Button` / `Edit` structs, delegate callbacks, `WidgetDispatch` | **No** — after Track A works | **🌗** B0 + B1 done |
+| **B — ergonomic wrappers** | `Win32.*` classes, Vala `signal`s, `--profile=gobject` + MinGW GLib | **No** — after Track A works | **🌗** B0 + B1 done |
 
 Track A is “use the vapi we already generate.” Track B is Gtk-*like* sugar on top — only after we know the raw surface is right.
 
@@ -265,7 +265,7 @@ Document in the example or a one-line comment; add generator helpers later if we
 
 ---
 
-## Step 4 — Plain UTF-8 strings in examples **✅ Done** · **🔷 blocks B3**
+## Step 4 — Plain UTF-8 strings in examples **✅ Done**
 
 **Problem:** Examples used hand-built **`const uint16[] { 'v', 'a', …, 0 }`** because **`--profile=posix`** has no GLib — no **`string.to_utf16()`**, no **`unichar`**. That noise obscured the actual Win32 API lessons.
 
@@ -297,25 +297,28 @@ Document in the example or a one-line comment; add generator helpers later if we
 - `meson.build` — link wide-strings into all examples
 - `docs/plans/04 - phase 2 ergonomic vapi.md`, `docs/plans/05 - phase 3 common controls.md`
 
-**🔷 Gate:** **B3 generator emit** waits on this — widget templates assume **`string`** at the app call site.
+**Prerequisite for B3:** plain **`string`** at the app call site (this step). **Next Track B step:** **B3** generator emit — not blocked on anything else.
 
 ---
 
-## Track B — ergonomic layer (optional in Phase 3) **🌗 B0 + B1 done**
+## Track B — ergonomic layer (optional in Phase 3) **🌗 B0 + B1 + B2 done**
 
 **Prerequisite:** Track A is **✅** — raw `create_window_ex` + `WM_COMMAND` / `WM_HSCROLL` paths work in `button-demo.vala`. Safe to start Track B.
 
 ### Goal
 
-**🔷** Gtk-*like* call sites on top of relay-only vapi — **no** binding library, **no** GObject.
+**🔷** Gtk-*like* call sites on top of relay-only vapi — **`public class`** widgets under **`--profile=gobject`**.
 
-- Wrapper **structs** holding an `HWND` + control id (see **posix constraint** below)
-- **Delegate callbacks** (`clicked`, `changed`, …) instead of manual `loword`/`hiword` parsing in app code
-- **`valac` emits handlers into app C** — same relay model as Phase 2; optional tiny **`win32-plumbing.c`** only if a spike proves Vala cannot hold `WndProc` / delegate lifetime safely
+- **`new Win32.Button (…)`**, Vala **`signal`s** (`clicked.connect`, …), **`text` / `title` properties**
+- Hidden **`get_module_handle`**, default **`WndProc`**, **`frame.run ()`** message loop
+- **`generated/win32-widgets.vala`** — **✅** regen from `src/Generate/templates/win32-widgets.vala` via **`WidgetEmitter`**
+- **Requires MinGW GLib** — `./scripts/setup-mingw-libs.sh` (same trade as normal Vala / [emrevit/vala-win32](https://github.com/emrevit/vala-win32))
 
-**⚠️ posix constraint (B0 spike):** Examples compile with **`--profile=posix`** (no GLib link). On **Vala 0.56.18**, **`[Compact]` classes** and **class instance methods** often emit **extern-only** — no method bodies in `.c` → link failures. **`signal`s on compact classes** are also rejected. **B0/B1 use `public struct` + struct constructors** (`Win32.Button (…)`) and **`clicked (delegate)`** instead of **`new`** + **`signal clicked.connect`**. Revisit **`[Compact]` + signals** in B3+ only if build profile changes (e.g. GObject profile) or a newer valac fixes posix codegen.
+**Track A** stays **`--profile=posix`** for raw demos. Users who want lean Win32 use Track A, not a second widget layer.
 
-**🚫** No `src/win32/*.vala` monolith. **🚫** No per-control `.c` in the binding repo. **🚫** No TOML config layer (`oop-map.toml` etc.) — rules live in **`src/Generate/`** Vala once we automate emit.
+**🚫 `[Compact]` + signals** — Vala rejects signals on compact classes (any profile). Use **`public class`**, not `[Compact]`.
+
+**🚫** No posix struct widget layer — dropped after B-GObject spike (duplicate plumbing, worse API).
 
 **ℹ️** Parent: [01-DONE - project overview.md](01-DONE%20-%20project%20overview.md) § architecture · [04 - phase 2 ergonomic vapi.md](04%20-%20phase%202%20ergonomic%20vapi.md) Track B notes.
 
@@ -335,65 +338,40 @@ if (msg == WM_COMMAND) {
 // create_window_ex (0, WC_BUTTON, BUTTON_LABEL, btn_style, …, (void*) ID_CLICK_ME, …);
 ```
 
-Track B implemented (`examples/ergonomic-button-demo.vala` — **fully qualified, no `using`**):
-
-**✅** Widget layer namespace: flat **`Win32.*`** — **`Win32.Window`**, **`Win32.Button`**, **`Win32.Edit`**, **`Win32.WidgetDispatch`**. No **`Ui`**, no **`Ergonomics`**.
+Track B implemented (`examples/ergonomic-button-demo.vala`):
 
 ```vala
-void* inst = Win32.System.get_module_handle (null);
-
-frame = Win32.Window (
-    inst, CLASS_NAME, WINDOW_TITLE, window_proc, 360, 120
-);
-name_edit = Win32.Edit (frame, inst, 72, 12, 260, 24, ID_EDIT);
-name_edit.set_text ("Hello, Edit");
-
-click_btn = Win32.Button (
-    frame, inst, 20, 44, 120, 32, ID_CLICK_ME, BUTTON_LABEL
-);
-click_btn.clicked (() => {
-    frame.set_title (name_edit.get_text ());
-});
-
-// WndProc — raw relay stays on metadata shards:
-if (msg == Win32.Ui.WindowsAndMessaging.WM_COMMAND) {
-    if (Win32.WidgetDispatch.try_wm_command (w_param)) {
-        return 0;
-    }
-}
-if (msg == Win32.Ui.WindowsAndMessaging.WM_DESTROY) {
-    Win32.Ui.WindowsAndMessaging.post_quit_message (0);
-    return 0;
-}
-return Win32.Ui.WindowsAndMessaging.def_window_proc (h_wnd, msg, w_param, l_param);
+var frame = new Win32.Window ("ValaWin32Ergo", "vala.win32 ergo", 360, 120);
+var name_edit = new Win32.Edit (frame, 72, 12, 260, 24, ID_EDIT);
+name_edit.text = "Hello, Edit";
+var click_btn = new Win32.Button (frame, 20, 44, 120, 32, ID_CLICK_ME, "Click me");
+click_btn.clicked.connect (() => { frame.title = name_edit.text; });
+return frame.run ();
 ```
 
-**🔷** **Struct constructors** — `Win32.Button (…)` / `Win32.Window (…)` (no `new` keyword). Constructors call `create_window_ex` internally via `WC_*` in the widgets file.
-
-**⏳** Object initializer `{ text = "…" }` after ctor — **not used in B0/B1** (struct + posix profile; use **`set_text`** after construction). Revisit in B3 if we add property sugar.
-
-**🔷** Ergonomic demo must **not** replace `button-demo.vala` — keep raw demo as the binding regression test.
+**🔷** No app **`get_module_handle`**, **`window_proc`**, or manual message loop.
 
 ---
 
-### Vala construction syntax (B0/B1 actual)
+### Vala construction syntax (B0–B2 actual)
 
-**✅ Struct constructors** — `Win32.Edit (frame, inst, x, y, w, h, id)` creates the HWND in the ctor body.
+**✅ GObject `public class`** — `new Win32.Edit (frame, x, y, w, h, id)` creates the HWND in the ctor body.
 
-**✅ Text at call site** — plain **`string`** literals; **`WideString ("…").ptr`** or **`window_text_set`** (Step 4):
+**✅ Text at call site** — plain **`string`** literals; widgets use **`WideString`** / **`window_text_*`** internally (Step 4):
 
 ```vala
-var class_name = WideString ("ValaWin32Ergo");
-frame = Win32.Window (inst, "ValaWin32Ergo", "vala.win32 ergo", window_proc, 360, 120);
-name_edit.set_text ("Hello, Edit");
-click_btn = Win32.Button (frame, inst, 20, 44, 120, 32, ID_CLICK_ME, "Click me");
+var frame = new Win32.Window ("ValaWin32Ergo", "vala.win32 ergo", 360, 300);
+var name_edit = new Win32.Edit (frame, 72, 12, 260, 24, ID_EDIT);
+name_edit.text = "Hello, Edit";
+var click_btn = new Win32.Button (frame, 20, 44, 120, 32, ID_CLICK_ME, "Click me");
+var color_list = new Win32.ListBox (frame, 20, 84, 320, 80, ID_LIST);
+color_list.add_item ("Red");
+color_list.selection_changed.connect (() => { frame.title = color_list.selected_text; });
 ```
-
-**⏳ Object initializer `{ text = "…" }`** — planned for **`[Compact]`** + properties; **not validated** on struct layer yet.
 
 **🚫 Named constructor arguments** — `Edit (parent: frame, x: 72, …)` — **not supported** in Vala **0.56.18** (`Named arguments are not supported yet`).
 
-**⏳ Gtk-style properties** — **`get_text` / `set_text`**, **`get_title` / `set_title`** methods instead of **`text` / `title` properties** (posix struct codegen). Generator may emit **`{ get; set; }`** later if profile changes.
+**✅ Gtk-style properties** — **`text` / `title`** properties on **`Edit`** / **`Window`**; Vala **`signal`s** + **`.connect`**.
 
 **ℹ️** GObject **`construct`** properties and **`Object (prop: val)`** are out of scope per overview.
 
@@ -416,7 +394,7 @@ click_btn = Win32.Button (frame, inst, 20, 44, 120, 32, ID_CLICK_ME, "Click me")
 - No collision with vapi shards — they use **`Win32.Ui.*`**, **`Win32.System`**, **`Win32.Graphics.*`**; none define **`Win32.Window`** as a class today
 - Clear mental model: **`Win32.*`** = app-facing widgets; **`Win32.Ui.*`** = raw generated relay from metadata
 
-**Generated file:** **`generated/win32-widgets.vala`** — `namespace Win32 { … }` holding widget **structs** + **`WidgetDispatch`** (hand-maintained until B3)
+**Generated file:** **`generated/win32-widgets.vala`** — `namespace Win32 { … }` holding widget **`public class`**es + internal **`widget_window_proc`** (B3 regen)
 
 **🚫 Rejected:** **`Win32.Ui.Ergonomics`**, **`Win32.Ui.Ergo`**, **`Win32.Ui.Controls.Widgets`**, mixing widgets into **`Win32.Ui.Controls`** with **`WC_*`**
 
@@ -429,7 +407,7 @@ click_btn = Win32.Button (frame, inst, 20, 44, 120, 32, ID_CLICK_ME, "Click me")
     │  click_btn.clicked (delegate)
     │  WidgetDispatch.try_wm_command (w_param)
     ▼
-  generated/win32-widgets.vala   ← widget structs `namespace Win32` (B0/B1 hand → B3 regen)
+  generated/win32-widgets.vala   ← widget classes `namespace Win32` (B3 regen from template)
   generated/win32-ui-control-strings.vala   ← WC_* (Track A, already exists)
     ▼
   vapi/win32-ui-*.vapi            ← raw create_window_ex, SendMessage, WM_*, BN_* (Track A)
@@ -441,7 +419,7 @@ click_btn = Win32.Button (frame, inst, 20, 44, 120, 32, ID_CLICK_ME, "Click me")
 |-------|------------|--------|
 | Raw relay | `VapiEmitter` → `vapi/` | extern C API, enums, `loword`/`hiword` |
 | String consts | `VapiEmitter` → `generated/win32-ui-control-strings.vala` | `WC_*`, `PROGRESS_CLASS` |
-| Ergonomic | **✅** hand spike (B0/B1) → **⏳** generator (B3) → `generated/win32-widgets.vala` | widget **structs**, `WidgetDispatch`, delegate callbacks |
+| Ergonomic | **✅** B0–B2 spike → **✅** B3 `WidgetEmitter` → `generated/win32-widgets.vala` | widget **classes**, Vala **signals**, internal WndProc |
 
 **💩** Separate `--pkg` for ergonomic layer — defer; compile companion `.vala` into each example first.
 
@@ -484,8 +462,8 @@ Derived from Track A demo behaviour — generator can hardcode this table in Val
 | **Button** | `WC_BUTTON` | **`clicked (delegate)`** | `BN_CLICKED` via `WM_COMMAND` | **✅** B0 |
 | **Edit** | `WC_EDIT` | **`changed (delegate)`** | `EN_CHANGE` via `WM_COMMAND` | **✅** B1 — **`get_text` / `set_text`** |
 | **Static** | `WC_STATIC` | — | — | label only; **`text`** property |
-| **ListBox** | `WC_LISTBOX` | `selection_changed` | `LBN_SELCHANGE` | helpers: `add_item`, `selected_index` |
-| **ComboBox** | `WC_COMBOBOX` | `selection_changed` | `CBN_SELCHANGE` | same pattern as list |
+| **ListBox** | `WC_LISTBOX` | **`selection_changed`** | `LBN_SELCHANGE` | **✅** B2 — `add_item`, `selected_index`, `selected_text` |
+| **ComboBox** | `WC_COMBOBOX` | **`selection_changed`** | `CBN_SELCHANGE` | **✅** B2 — same pattern as list |
 | **ScrollBar** | `WC_SCROLLBAR` | `value_changed` | `WM_HSCROLL` / `WM_VSCROLL` | match `l_param` to scrollbar `HWND`; not `WM_COMMAND` |
 | **ProgressBar** | `PROGRESS_CLASS` | — | — | property **`value`** / **`range`** via `PBM_*` (literals until `commctrl.h` relay) |
 
@@ -493,50 +471,51 @@ Derived from Track A demo behaviour — generator can hardcode this table in Val
 
 ---
 
-### Widget struct shape (B0/B1 actual; generator target for B3)
+### Widget class shape (B0–B2 actual; generator target for B3)
 
-Namespace **`Win32`** — flat, no **`Ui`** segment. Hand file: **`generated/win32-widgets.vala`**.
+Namespace **`Win32`** — flat, no **`Ui`** segment. Template: **`src/Generate/templates/win32-widgets.vala`**.
 
 ```vala
 namespace Win32 {
 
-public struct WidgetDispatch {
-    public int _reserved;  // valac: struct cannot be empty
-    public static bool try_wm_command (ulong w_param) { … }
+public class Window {
+    public void* handle { get; private set; }
+    public Window (string class_name, string title, int width, int height) { … }
+    public int run () { … }
+    public string title { owned get; set; }
 }
 
-public struct Window {
-    public void* handle;
-    public Window (void* instance, uint16[] class_name, …) { … }
-    public string get_title () { … }
-    public void set_title (string value) { … }
+public class Button {
+    public signal void clicked ();
+    public Button (Window parent, …, string label) { … }
 }
 
-public struct Button {
-    public void* handle;
-    public int id;
-    public Button (Window parent, void* instance, …, uint16[] label) { … }
-    public void clicked (owned ButtonClickedCallback callback) { … }
+public class Edit {
+    public signal void changed ();
+    public string text { owned get; set; }
 }
 
-public struct Edit {
-    public void* handle;
-    public int id;
-    public Edit (Window parent, void* instance, …) { … }
-    public string get_text () { … }
-    public void set_text (string value) { … }
-    public void changed (owned EditChangedCallback callback) { … }
+public class ListBox {
+    public signal void selection_changed ();
+    public void add_item (string text) { … }
+    public int selected_index { get; set; }
+    public string selected_text { owned get; }
+}
+
+public class ComboBox {
+    public signal void selection_changed ();
+    /* same helpers as ListBox */
 }
 }
 ```
 
-**Construction:** **`Win32.Button (…)`** — struct ctor (no **`new`**). **`WC_*`** stays **`Win32.Ui.Controls`** inside ctor bodies.
-
-**⏳ Aspirational (if posix/valac fixed or profile changes):** **`[Compact]`** classes + Vala **`signal`s** + **`new`** + **`{ get; set; }`** properties — original design sketch retained in git history; not used in B0/B1.
+**Construction:** **`new Win32.Button (…)`** — gobject **`public class`**. **`WC_*`** stays **`Win32.Ui.Controls`** inside ctor bodies.
 
 **Parent argument:** **`Win32.Window`** — pass **`frame`**, not **`frame.handle`**.
 
-**Implementation home:** **`generated/win32-widgets.vala`**
+**Dispatch:** internal **`widget_window_proc`** + registry; apps call **`frame.run ()`** only.
+
+**Implementation home:** **`generated/win32-widgets.vala`** (regen). Edit **`src/Generate/templates/win32-widgets.vala`**, then **`meson compile -C build regen`**.
 
 ---
 
@@ -546,8 +525,8 @@ public struct Edit {
 |------|--------|------------|-------------|
 | **B0 — hand spike** | `Button` + `WidgetDispatch.try_wm_command` | **No** — hand `generated/win32-widgets.vala` | **✅** `examples/ergonomic-button-demo.vala` |
 | **B1 — Edit** | `get_text` / `set_text` + `changed (delegate)` | **No** — extend hand file | **✅** same demo: button copies edit like Track A |
-| **B2 — ListBox / ComboBox** | `selection_changed` + `add_item` | **No** | extend demo or second tab |
-| **B3 — generator emit** | Move hand file contents into `VapiEmitter` / new emitter | **Yes** | **⏳ blocked until Step 4 ✅** — regen companion `.vala`; delete hand dup |
+| **B2 — ListBox / ComboBox** | `selection_changed` + `add_item` | **No** | **✅** same demo: list/combo → title like Track A |
+| **B3 — generator emit** | Move hand file contents into `WidgetEmitter` + template | **Yes** | **✅** `generated/win32-widgets.vala` regen; template `src/Generate/templates/win32-widgets.vala` |
 | **B4 — ScrollBar + ProgressBar** | `value_changed`, progress `value` | **Yes** | `try_wm_hscroll`; optional sync like Track A |
 | **B5 — Window wrapper** | `destroyed`, message loop helper | **⏳** optional | only after B0–B3 stable; may trigger plumbing C spike |
 
@@ -560,9 +539,8 @@ Each finished step gets a **`### Changes`** block (same rules as Track A).
 ### Changes — B0 (hand spike) **✅**
 
 - **Generator:** **No** — hand `generated/win32-widgets.vala`.
-- **Widget shape:** **`public struct`** + namespace **`private`** helpers (posix codegen); **`WidgetDispatch`** struct with dummy field + **`static try_wm_command`**.
-- **Registry:** fixed **`WmCommandRegistration[]`** (no Gee); **`BN_CLICKED`** dispatch in namespace helper.
-- **Demo:** **`examples/ergonomic-button-demo.vala`** — `Win32.Window`, `Win32.Button`, `click_btn.clicked (delegate)`; WndProc calls **`WidgetDispatch.try_wm_command`** only.
+- **Widget shape:** **`public class`** under **`--profile=gobject`**; hidden **`widget_window_proc`** + **`frame.run ()`**
+- **Demo:** **`examples/ergonomic-button-demo.vala`** — `new Win32.*`, `clicked.connect`, properties
 
 **Files changed:**
 
@@ -572,24 +550,71 @@ Each finished step gets a **`### Changes`** block (same rules as Track A).
 - `README.md` — run line
 - `docs/plans/05 - phase 3 common controls.md` — this plan
 
-**Spike findings:**
+**Spike findings (superseded by gobject decision):**
 
-- **`[Compact]` + `signal`** — **no** under `--profile=posix` (valac 0.56.18)
-- **Class methods** — often **extern-only** under posix → use **namespace private functions**
-- **Struct with only static methods** — invalid; **`WidgetDispatch`** needs at least one instance field
+- **`[Compact]` + `signal`** — **no** (Vala language rule)
+- **Posix struct widgets** — dropped; Track A covers lean Win32
+- **Gobject `public class`** — **`new`**, **`clicked.connect`**, properties, **`frame.run ()`**
+
+---
+
+### GObject profile decision **✅**
+
+**User decision:** one ergonomic track — **gobject only**. Posix struct/delegate widget layer removed.
+
+| Layer | Profile | Build |
+|-------|---------|-------|
+| Track A (`hello-window`, `button-demo`) | posix | user32 only |
+| Track B (`ergonomic-button-demo`, `win32-widgets.vala`) | gobject | + MinGW GLib (`mingw-libs/`) |
+
+**Files:** `generated/win32-widgets.vala`, `examples/ergonomic-button-demo.vala` — **`public class`**, **`clicked.connect`**, properties, hidden WndProc.
+
+**Removed:** `win32-widgets-gobject.vala`, `ergonomic-button-demo-gobject.vala` (merged into canonical names).
 
 ---
 
 ### Changes — B1 (Edit) **✅**
 
-- **`Win32.Edit`** struct — `create_window_ex` + **`get_text` / `set_text`** (UTF-16 via **`to_utf16()`** in **`control_text_set`**)
-- **`changed (EditChangedCallback)`** — registers **`EN_CHANGE`** in same registry as buttons (demo does not connect **`changed`** yet)
-- **`Win32.Window`** — **`get_title` / `set_title`** for demo title update
+- **`Win32.Edit`** — `create_window_ex` + **`text`** property via **`window_text_*`**
+- **`changed`** signal — registers **`EN_CHANGE`** in same registry as buttons
+- **`Win32.Window`** — **`title`** property for demo title update
 
 **Files changed:**
 
-- `generated/win32-widgets.vala` — `Edit`, title helpers, edit registry branch
-- `examples/ergonomic-button-demo.vala` — edit field + **`set_title (get_text ())`** on click
+- `generated/win32-widgets.vala` — `Edit`, edit registry branch
+- `examples/ergonomic-button-demo.vala` — edit field + **`frame.title = name_edit.text`** on click
+
+---
+
+### Changes — B2 (ListBox / ComboBox) **✅**
+
+- **`Win32.ListBox`** — **`LBS_NOTIFY`**, **`add_item`**, **`selected_index`**, **`selected_text`**, **`selection_changed`** signal
+- **`Win32.ComboBox`** — **`CBS_DROPDOWNLIST`**, same helpers; **`CBN_SELCHANGE`** dispatch
+- Registry extended for **`LBN_SELCHANGE`** / **`CBN_SELCHANGE`**
+
+**Files changed:**
+
+- `generated/win32-widgets.vala` — `ListBox`, `ComboBox`, dispatch branches
+- `examples/ergonomic-button-demo.vala` — Red/Green/Blue list + Small/Medium/Large combo; selection updates **`frame.title`**
+
+---
+
+### Changes — B3 (generator emit) **✅**
+
+- **`WidgetEmitter`** — reads `src/Generate/templates/win32-widgets.vala`, writes `generated/win32-widgets.vala` with standard generated header
+- **`generate-binding`** — emits widgets on every regen (alongside `win32-ui-control-strings.vala`)
+- **Template** holds B0–B2 widget layer (dispatch registry fix, `control_id`, debug hooks)
+
+**Files changed:**
+
+- `src/Generate/WidgetEmitter.vala` — new
+- `src/Generate/templates/win32-widgets.vala` — new (source of truth)
+- `tools/generate-binding.vala` — widget emit
+- `meson.build` — `WidgetEmitter.vala` in generator sources
+- `generated/win32-widgets.vala` — regen header (`/* Generated by generate-binding … */`)
+- `README.md`, `docs/plans/05 - phase 3 common controls.md` — maintainer flow
+
+**Not in B3:** metadata-driven widget codegen; `win32-wide-strings.vala` still hand-maintained.
 
 ---
 
@@ -603,26 +628,27 @@ Each finished step gets a **`### Changes`** block (same rules as Track A).
 
 **💩** Parse win32json for “notification enum” emit (`BN_*`, `LBN_*`) — improves raw Track A too; optional polish before or during B3.
 
-**Files (expected after B3):**
+**Files (after B3):**
 
-- `src/Generate/VapiEmitter.vala` — extend, or **`WidgetEmitter.vala`** if emit logic grows
-- `tools/generate-binding.vala` — write `generated/win32-widgets.vala` (name follows namespace)
-- `generated/win32-widgets.vala` — regen
-- `meson.build` — add to ergonomic example(s)
-- `examples/ergonomic-button-demo.vala` — new
+- `src/Generate/WidgetEmitter.vala` — prepend generated header; read template
+- `src/Generate/templates/win32-widgets.vala` — source of truth for Track B widgets (B0–B2 body)
+- `tools/generate-binding.vala` — writes `generated/win32-widgets.vala` on every regen
+- `generated/win32-widgets.vala` — regen output (do not hand-edit)
+- `meson.build` — `WidgetEmitter.vala` in `generate-binding` sources
 - `src/win32-plumbing.c` — **only if B5 / WndProc spike fails**
 
 ---
 
 ### Risks and open questions (B0 spike — resolved)
 
-| Question | B0/B1 answer |
+| Question | B0–B2 answer |
 |----------|----------------|
-| Do Vala **`signal`s on `[Compact]`** compile with example pkgs + posix? | **No** — use **delegate methods** (`clicked (cb)`) |
-| Does **`new Button (…)`** on a compact class work? | **N/A** — use **struct ctor** `Win32.Button (…)` (no `new`) |
-| **`Win32.Window`** wrapper in first slice? | **✅** — included in B0 (register class + frame HWND) |
+| Do Vala **`signal`s on `[Compact]`** compile? | **No** — use **`public class`** under **`--profile=gobject`** |
+| Does **`new Button (…)`** work? | **✅** — gobject profile |
+| **`Win32.Window`** wrapper in first slice? | **✅** — register class + frame HWND + **`run ()`** |
 | **`Gee.HashMap` for dispatch registry?** | **No** — plain fixed array; no extra pkg |
-| **`get_window_text` → `string`** | **✅** — **`get_text` / `set_text`** + UTF-16 buffer helper |
+| **Struct array holding widget refs?** | **No** — unboxed `WmCommandEntry` + parallel ref arrays (GBoxed struct copies dropped registry writes) |
+| **`get_window_text` → `string`** | **✅** — **`text` / `title` properties** + **`window_text_*`** |
 | **ScrollBar** not in `WM_COMMAND` | Separate **`try_wm_hscroll`** — **⏳** B4 |
 | **`PBM_*` numeric literals** | Ergonomic **`ProgressBar`** — **⏳** B4 |
 | **GC / lifetime** — widgets collected while HWND live? | App holds refs (fields in `main`) — **✅** documented in demo |
@@ -636,14 +662,16 @@ Same build dir; **add** ergonomic demo target:
 
 ```bash
 meson compile -C build
-wine build/ergonomic-button-demo.exe
+wine build/ergonomic-button-demo.exe   # GLib DLLs copied into build/ on compile
+# wine32:i386 warning is harmless for 64-bit exes; install only if you need 32-bit Wine
+# or: ./scripts/run-wine.sh build/ergonomic-button-demo.exe
 ```
 
 **Phase 3 Track B done when (minimal — B0 + B3):**
 
 - **✅** `ergonomic-button-demo.vala` uses **`click_btn.clicked (delegate)`** — no manual `BN_CLICKED` / `loword` in app
 - **✅** `WidgetDispatch.try_wm_command` is the only `WM_COMMAND` unpack in app WndProc
-- **⏳** `generated/win32-widgets.vala` is **generator output** (post-B3), not hand-edited
+- **✅** `generated/win32-widgets.vala` is **generator output** (B3), not hand-edited
 - **✅** `button-demo.vala` unchanged behaviour — raw regression
 
 **Phase 3 Track B stretch (B1–B4):**
@@ -678,8 +706,8 @@ Rolling checklist — each **✅** step’s **`### Changes`** block is the autho
 | `vapi/win32-*.vapi` | generated shards | — unchanged | **✅** regen |
 | `generated/win32-ui-control-strings.vala` | `WC_*` literals | — | **✅** regen |
 | `generated/win32-wide-strings.vala` | UTF-8 ↔ UTF-16 for apps | — | **✅** Step 4 hand → **⏳** generator emit |
-| `generated/win32-widgets.vala` | Track B widget layer (`namespace Win32`) | — | **✅** B0/B1 hand → **⏳** B3 regen |
-| `examples/ergonomic-button-demo.vala` | Track B demo | — | **✅** B0/B1 |
+| `generated/win32-widgets.vala` | Track B widget layer (`namespace Win32`) | — | **✅** B3 regen (`WidgetEmitter` + template) |
+| `examples/ergonomic-button-demo.vala` | Track B demo | — | **✅** B0–B2 |
 | `src/win32-plumbing.c` | WndProc thunk if Vala unsafe | — | **⏳** only if B5 spike fails |
 | `metadata/win32json-api.files` | vendor list | — unchanged | **⏳** only if gap trace requires |
 | Hand stubs (`vapi/win32-system-stub.vapi`, …) | missing JSON symbols | — unchanged | **⏳** only if gap trace requires |
@@ -709,7 +737,7 @@ wine build/button-demo.exe
 **Phase 3 Track B done when (optional — see Track B section for full criteria):**
 
 - **✅** `ergonomic-button-demo.vala`: **`clicked (delegate)`** + `WidgetDispatch.try_wm_command` — no raw `BN_CLICKED` parsing in app
-- **⏳** `generated/win32-widgets.vala` emitted by generator (after B3 spike)
+- **✅** `generated/win32-widgets.vala` emitted by generator (B3)
 
 ---
 
@@ -723,15 +751,15 @@ wine build/button-demo.exe
 - [x] **✅** **🔷** Gap pass after Edit — no generator gaps (documented style literals only)
 - [x] **✅** **🔷** Static, ListBox, ComboBox (P1) — in `button-demo.vala`
 - [x] **✅** **🔷** ScrollBar, ProgressBar (P2) — scroll → progress in demo
-- [x] **✅** **🔷** **Step 4** — plain **`string`** in examples via **`generated/win32-wide-strings.vala`** (**blocks B3**)
+- [x] **✅** **🔷** **Step 4** — plain **`string`** in examples via **`generated/win32-wide-strings.vala`**
 
 ### Track B — ergonomic (optional)
 
 - [x] **✅** **🔷** **B0** — hand `generated/win32-widgets.vala` (`Win32.Button`, `Win32.WidgetDispatch`)
 - [x] **✅** **🔷** **B0** — `examples/ergonomic-button-demo.vala` (Track A demo stays raw)
 - [x] **✅** **B1** — `Edit` **`get_text` / `set_text`** + **`changed (delegate)`** in widgets file
-- [ ] **⏳** **B2** — ListBox / ComboBox `selection_changed`
-- [ ] **🔷** **⏳** **B3** — generator emit replaces hand widgets file
+- [x] **✅** **B2** — ListBox / ComboBox `selection_changed` + demo extension
+- [x] **✅** **B3** — `WidgetEmitter` + template → regen `generated/win32-widgets.vala`
 - [ ] **⏳** **B4** — ScrollBar / ProgressBar ergonomic API
 - [ ] **⏳** **B5** — `Window` wrapper + `win32-plumbing.c` **only if** WndProc spike requires it
 

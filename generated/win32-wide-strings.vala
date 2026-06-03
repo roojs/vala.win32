@@ -1,13 +1,21 @@
 /* Hand-maintained UTF-8 ↔ UTF-16 helpers for examples (generator emit TBD).
- * Use WideString while Win32 retains the LPCWSTR pointer (e.g. registered class name).
+ *
+ * WideString lifetime (when to cache vs copy):
+ * - WC_* in win32-ui-control-strings.vala: compile-time UTF-16 arrays (already static).
+ * - RegisterClass class name: keep a WideString field (e.g. Window._class_name) for app lifetime.
+ * - Control captions / item text: prefer window_text_set (Win32 copies); do not pass a
+ *   short-lived WideString.ptr to CreateWindowEx unless you keep the WideString alive.
+ * - ListBox/ComboBox LB_ADDSTRING / CB_ADDSTRING: Win32 copies the buffer; temp WideString is OK.
+ * - intern(): optional UTF-16 cache for repeated literals — defer to B3 generator (Gee/hash).
+ *
  * Pure Vala — no GLib; --profile=posix has no string.to_utf16 () or unichar. */
 
 using Win32.Ui.WindowsAndMessaging;
 
 namespace Win32.Ui {
 
-private long[] utf8_to_utf16 (string text) {
-	var wide = new long[text.length * 2 + 1];
+private uint16[] utf8_to_utf16 (string text) {
+	var wide = new uint16[text.length * 2 + 1];
 	int out = 0;
 	unowned char* p = text;
 	while (*p != '\0') {
@@ -36,11 +44,11 @@ private long[] utf8_to_utf16 (string text) {
 			continue;
 		}
 		if (c <= 0xffff) {
-			wide[out++] = c;
+			wide[out++] = (uint16) c;
 		} else {
 			c -= 0x10000;
-			wide[out++] = 0xd800 + (c >> 10);
-			wide[out++] = 0xdc00 + (c & 0x3ff);
+			wide[out++] = (uint16) (0xd800 + (c >> 10));
+			wide[out++] = (uint16) (0xdc00 + (c & 0x3ff));
 		}
 	}
 	wide[out++] = 0;
@@ -48,15 +56,57 @@ private long[] utf8_to_utf16 (string text) {
 	return wide;
 }
 
+public string utf16_buffer_to_string (uint16[] wide) {
+	return utf16_to_utf8 (wide);
+}
+
+private int utf8_append_codepoint (uint8[] buf, int len, uint32 c) {
+	if (c <= 0x7f) {
+		buf[len++] = (uint8) c;
+	} else if (c <= 0x7ff) {
+		buf[len++] = (uint8) (0xc0 | (c >> 6));
+		buf[len++] = (uint8) (0x80 | (c & 0x3f));
+	} else if (c <= 0xffff) {
+		buf[len++] = (uint8) (0xe0 | (c >> 12));
+		buf[len++] = (uint8) (0x80 | ((c >> 6) & 0x3f));
+		buf[len++] = (uint8) (0x80 | (c & 0x3f));
+	} else {
+		buf[len++] = (uint8) (0xf0 | (c >> 18));
+		buf[len++] = (uint8) (0x80 | ((c >> 12) & 0x3f));
+		buf[len++] = (uint8) (0x80 | ((c >> 6) & 0x3f));
+		buf[len++] = (uint8) (0x80 | (c & 0x3f));
+	}
+	return len;
+}
+
+private string utf16_to_utf8 (uint16[] wide) {
+	var bytes = new uint8[wide.length * 4 + 1];
+	int len = 0;
+	for (int i = 0; i < wide.length && wide[i] != 0; i++) {
+		uint32 c = wide[i];
+		if (c >= 0xd800 && c <= 0xdbff && i + 1 < wide.length) {
+			uint32 low = wide[i + 1];
+			if (low >= 0xdc00 && low <= 0xdfff) {
+				c = 0x10000 + ((c - 0xd800) << 10) + (low - 0xdc00);
+				i++;
+			}
+		}
+		len = utf8_append_codepoint (bytes, len, c);
+	}
+	bytes[len] = 0;
+	bytes.length = len + 1;
+	return (string) bytes;
+}
+
 public struct WideString {
-	long[] _utf16;
+	uint16[] _utf16;
 
 	public WideString (string text) {
 		_utf16 = utf8_to_utf16 (text);
 	}
 
 	public uint16* ptr {
-		get { return (uint16*) _utf16; }
+		get { return _utf16; }
 	}
 }
 
@@ -66,15 +116,15 @@ public string window_text_get (void* hwnd, int max_chars = 256) {
 	}
 	var buf = new uint16[max_chars];
 	get_window_text (hwnd, buf, max_chars);
-	return (string) buf;
+	return utf16_to_utf8 (buf);
 }
 
 public void window_text_set (void* hwnd, string text) {
 	if (hwnd == null) {
 		return;
 	}
-	long[] wide = utf8_to_utf16 (text);
-	set_window_text (hwnd, (uint16*) wide);
+	uint16[] wide = utf8_to_utf16 (text);
+	set_window_text (hwnd, wide);
 }
 
 }

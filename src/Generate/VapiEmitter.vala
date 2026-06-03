@@ -216,14 +216,13 @@ namespace Win32 {
 			if (c.ValueText.length == 0) {
 				return;
 			}
-			string chars = "";
+			var parts = new Gee.ArrayList<string> ();
 			for (int i = 0; i < c.ValueText.length; i++) {
-				chars += @"		'$(c.ValueText[i])', ";
+				parts.add (@"'$(c.ValueText[i])'");
 			}
+			var chars = string.joinv (", ", parts.to_array ());
 			this.buffer.append (@"	[CCode (array_length = false, array_null_terminated = true)]
-	public const uint16[] $(vala_name) = {
-$(chars)0
-	};
+	public const uint16[] $(vala_name) = { $(chars), 0 };
 
 ");
 		}

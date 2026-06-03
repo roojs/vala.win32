@@ -1,82 +1,103 @@
-/* Phase 3 Track B (B0/B1): Win32.Button / Win32.Edit + WidgetDispatch. */
+/* Track B: Win32 ergonomic controls — gobject profile, signals + properties. */
+
+using GLib;
 
 const int ID_CLICK_ME = 100;
 const int ID_EDIT = 101;
-
-private Win32.Window frame;
-private Win32.Button click_btn;
-private Win32.Edit name_edit;
-
-private int64 window_proc (
-	[CCode (type_id = "HWND")] void* h_wnd,
-	uint msg,
-	ulong w_param,
-	int64 l_param
-) {
-	if (msg == Win32.Ui.WindowsAndMessaging.WM_COMMAND) {
-		if (Win32.WidgetDispatch.try_wm_command (w_param)) {
-			return 0;
-		}
-	}
-	if (msg == Win32.Ui.WindowsAndMessaging.WM_DESTROY) {
-		Win32.Ui.WindowsAndMessaging.post_quit_message (0);
-		return 0;
-	}
-	return Win32.Ui.WindowsAndMessaging.def_window_proc (h_wnd, msg, w_param, l_param);
-}
+const int ID_LIST = 102;
+const int ID_COMBO = 103;
 
 public static int main (string[] args) {
-	void* inst = Win32.System.get_module_handle (null);
-
-	frame = Win32.Window (
-		inst,
+	var frame = new Win32.Window (
 		"ValaWin32Ergo",
 		"vala.win32 ergo",
-		window_proc,
 		360, // width
-		120  // height
+		300  // height
 	);
 	if (frame.handle == null) {
 		return 1;
 	}
 
-	name_edit = Win32.Edit (
+	new Win32.Label (frame, 20, 16, 48, 20, "Name:");
+
+	var name_edit = new Win32.Edit (
 		frame,
-		inst,
 		72,      // x
 		12,      // y
 		260,     // width
 		24,      // height
-		ID_EDIT  // control id (WM_COMMAND)
+		ID_EDIT
 	);
-	name_edit.set_text ("Hello, Edit");
+	name_edit.text = "Hello, Edit";
 	if (name_edit.handle == null) {
 		return 1;
 	}
 
-	click_btn = Win32.Button (
+	var click_btn = new Win32.Button (
 		frame,
-		inst,
 		20,          // x
 		44,          // y
 		120,         // width
 		32,          // height
-		ID_CLICK_ME, // control id (WM_COMMAND)
+		ID_CLICK_ME, // control id
 		"Click me"   // label
 	);
 	if (click_btn.handle == null) {
 		return 1;
 	}
 
-	click_btn.clicked (() => {
-		frame.set_title (name_edit.get_text ());
-	});
+	new Win32.Label (frame, 20, 84, 40, 20, "List:");
 
-	Win32.Ui.WindowsAndMessaging.Msg msg;
-	while (Win32.Ui.WindowsAndMessaging.get_message (out msg, null, 0, 0) > 0) {
-		Win32.Ui.WindowsAndMessaging.translate_message (ref msg);
-		Win32.Ui.WindowsAndMessaging.dispatch_message (ref msg);
+	var color_list = new Win32.ListBox (
+		frame,
+		20,      // x
+		104,     // y
+		320,     // height row
+		60,      // height
+		ID_LIST
+	);
+	if (color_list.handle == null) {
+		return 1;
+	}
+	color_list.add_item ("Red");
+	color_list.add_item ("Green");
+	color_list.add_item ("Blue");
+	color_list.selected_index = 0;
+
+	new Win32.Label (frame, 20, 172, 40, 20, "Pick:");
+
+	var size_combo = new Win32.ComboBox (
+		frame,
+		20,       // x
+		192,      // y
+		320,      // width
+		100,      // height (dropdown room)
+		ID_COMBO
+	);
+	if (size_combo.handle == null) {
+		return 1;
+	}
+	size_combo.add_item ("Small");
+	size_combo.add_item ("Medium");
+	size_combo.add_item ("Large");
+	size_combo.selected_index = 0;
+
+	if (Environment.get_variable ("WIN32_WIDGET_DEBUG") != null) {
+		stderr.printf ("WIN32_WIDGET_DEBUG: tracing WM_COMMAND on stderr\n");
+		Win32.WidgetDispatch.debug_dump_registry ();
 	}
 
-	return 0;
+	click_btn.clicked.connect (() => {
+		frame.title = name_edit.text;
+	});
+
+	color_list.selection_changed.connect (() => {
+		frame.title = color_list.selected_text;
+	});
+
+	size_combo.selection_changed.connect (() => {
+		frame.title = size_combo.selected_text;
+	});
+
+	return frame.run ();
 }

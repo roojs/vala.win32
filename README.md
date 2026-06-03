@@ -10,21 +10,28 @@ Design and roadmap: [docs/plans/01-DONE - project overview.md](docs/plans/01-DON
 
 **Apps** use **generated vapi shards** (`win32-ui-windowsandmessaging`, …) plus a tiny hand stub (`win32-system-stub`) for `GetModuleHandleW` until loader JSON is vendored. Regen writes one `.vapi` per line in `metadata/win32json-api.files`.
 
-`examples/hello-window.vala`:
+**Track A** (`hello-window`, `button-demo`) — raw vapi, `--profile=posix`, no GLib.
 
-- `using Win32.Ui.WindowsAndMessaging` + `Win32.System`
-- Registers a window class, creates a top-level window, runs `GetMessage` / `DispatchMessage`
-- `WM_DESTROY` → `PostQuitMessage` (clean exit)
-- A few Win32 literals remain as local `const` in the example (Vala + `[CCode]` relay limitation)
+**Track B** (`ergonomic-button-demo`) — `Win32.Window` / `Button` / `Edit` / `ListBox` / `ComboBox` with signals and properties; `--profile=gobject` + MinGW GLib (see below). After compile, runtime DLLs from `mingw-libs/` are copied next to the `.exe` so plain `wine build/ergonomic-button-demo.exe` works.
 
 ### Build
 
 ```bash
 meson setup build          # once
-meson compile -C build     # regen vapi + build/hello-window.exe + build/button-demo.exe
+./scripts/setup-mingw-libs.sh   # required for ergonomic-button-demo
+meson setup build --reconfigure # after mingw-libs
+meson compile -C build
 wine build/hello-window.exe
-wine build/button-demo.exe   # all controls; scroll updates progress bar
-wine build/ergonomic-button-demo.exe   # Track B: Win32.Button / Edit + WidgetDispatch
+wine build/button-demo.exe
+wine build/ergonomic-button-demo.exe
+
+Debug WM_COMMAND / signals:
+
+```bash
+WIN32_WIDGET_DEBUG=1 wine build/ergonomic-button-demo.exe 2>&1 | tee /tmp/ergo-debug.log
+```
+
+You should see registry dump at startup and `WM_COMMAND id=… notify=…` lines when clicking controls.
 ```
 
 Or `make` (same as `meson compile -C build` after setup).
@@ -52,14 +59,19 @@ vapi/
   win32-ui-windowsandmessaging.vapi   # generated (regen)
   win32-system-stub.vapi                # hand stub until loader JSON vendored
   archive/win32-ui-native.vapi          # Phase 0 spike (reference only)
+generated/
+  win32-ui-control-strings.vala         # WC_* (regen)
+  win32-wide-strings.vala               # UTF-8 → UTF-16 helpers
+  win32-widgets.vala                    # Track B widgets (regen from src/Generate/templates/)
 examples/             # Consumer apps only
 metadata/             # win32json-api.files, gui.filter; win32json/ from vendor script
 tools/                # generate-binding (Phase 1+)
 scripts/vendor-win32json.sh   # clone win32json → copy filtered api/*.json
+scripts/setup-mingw-libs.sh   # MSYS2 GLib tree for Track B cross-link
 docs/plans/           # Project plans
 ```
 
-Do not hand-edit generated shard vapi; change `src/Generate/` or metadata instead.
+Do not hand-edit generated shard vapi or `generated/win32-widgets.vala`; change `src/Generate/` (or `src/Generate/templates/win32-widgets.vala` for Track B widgets) and run `meson compile -C build regen`.
 
 ## License
 
