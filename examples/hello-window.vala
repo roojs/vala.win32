@@ -1,12 +1,7 @@
-/* Phase 0: native Win32 message loop via vapi relay (no binding library). */
+/* Phase 2: native Win32 message loop via generated vapi shards. */
 
-using Win32Ui.Native;
-
-const int WM_DESTROY = 2;
-const uint WS_OVERLAPPEDWINDOW = 0x00CF0000;
-const uint WS_VISIBLE = 0x10000000;
-const int CW_USEDEFAULT = (int) 0x80000000;
-const int COLOR_WINDOW = 5;
+using Win32.Ui.WindowsAndMessaging;
+using Win32.System;
 
 [CCode (array_length = false, array_null_terminated = true)]
 const uint16[] CLASS_NAME = {
@@ -15,7 +10,7 @@ const uint16[] CLASS_NAME = {
 
 [CCode (array_length = false, array_null_terminated = true)]
 const uint16[] WINDOW_TITLE = {
-	'v', 'a', 'l', 'a', '.', 'w', 'i', 'n', '3', '2', ' ', 'P', 'h', 'a', 's', 'e', ' ', '0', 0
+	'v', 'a', 'l', 'a', '.', 'w', 'i', 'n', '3', '2', ' ', 'P', 'h', 'a', 's', 'e', ' ', '2', 0
 };
 
 private long window_proc (
@@ -38,7 +33,7 @@ public static int main (string[] args) {
 	wc.cbSize = (uint) sizeof (WndClassEx);
 	wc.lpfnWndProc = window_proc;
 	wc.hInstance = inst;
-	wc.hbrBackground = (void*) (COLOR_WINDOW + 1);
+	wc.hbrBackground = (void*) (SysColorIndex.COLOR_WINDOW + 1);
 	wc.lpszClassName = CLASS_NAME;
 
 	if (register_class_ex (ref wc) == 0) {
@@ -50,7 +45,7 @@ public static int main (string[] args) {
 		0,
 		CLASS_NAME,
 		WINDOW_TITLE,
-		WS_OVERLAPPEDWINDOW | WS_VISIBLE,
+		WindowStyle.WS_OVERLAPPEDWINDOW | WindowStyle.WS_VISIBLE,
 		CW_USEDEFAULT,
 		CW_USEDEFAULT,
 		640,

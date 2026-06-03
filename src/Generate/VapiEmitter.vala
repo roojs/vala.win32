@@ -231,7 +231,12 @@ namespace Generate {
 				var p = t.Params.get (i);
 				var ptype = VapiEmitter.vala_param_type (p);
 				var comma = i < n - 1 ? "," : "";
-				this.buffer.append_printf ("\t\t%s %s%s\n", ptype, NameMapper.to_snake (p.Name), comma);
+				this.buffer.append_printf (
+					"\t\t%s %s%s\n",
+					ptype,
+					NameMapper.delegate_param_name (t.Name, p.Name, i),
+					comma
+				);
 			}
 			this.buffer.append ("\t);\n\n");
 		}
