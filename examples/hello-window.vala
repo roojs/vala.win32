@@ -13,11 +13,11 @@ const uint16[] WINDOW_TITLE = {
 	'v', 'a', 'l', 'a', '.', 'w', 'i', 'n', '3', '2', ' ', 'P', 'h', 'a', 's', 'e', ' ', '2', 0
 };
 
-private long window_proc (
+private int64 window_proc (
 	[CCode (type_id = "HWND")] void* h_wnd,
 	uint msg,
 	ulong w_param,
-	long l_param
+	int64 l_param
 ) {
 	if (msg == WM_DESTROY) {
 		post_quit_message (0);

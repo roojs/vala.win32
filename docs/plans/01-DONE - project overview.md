@@ -25,14 +25,14 @@
   - Repo, hand spike, `make check` / `make win`
 - [03 - phase 1 metadata and generator.md](03%20-%20phase%201%20metadata%20and%20generator.md) — **⏳** In progress
   - win32json vendor, `generate-binding`, `check-regen` (generated vapi separate from spike apps)
-- [04 - phase 2 ergonomic vapi.md](04%20-%20phase%202%20ergonomic%20vapi.md) — **⏳** Not started
-  - Ergonomic emit in generator, optional plumbing
+- [04 - phase 2 ergonomic vapi.md](04%20-%20phase%202%20ergonomic%20vapi.md) — **✅** Track A done (hello on generated vapi)
+  - Per-shard vapi, enums, `hello-window.exe`
 - [05 - phase 3 common controls.md](05%20-%20phase%203%20common%20controls.md) — **⏳** Not started
-  - Button, Edit, ListBox, … via generator only
+  - Button-first demos, gap-driven generator fixes; optional ergonomic `clicked`
 - [06 - phase 4 dialogs and resources.md](06%20-%20phase%204%20dialogs%20and%20resources.md) — **⏳** Not started
   - MessageBox, file dialogs, menus, `.rc`
 - [07 - phase 5 polish and ci.md](07%20-%20phase%205%20polish%20and%20ci.md) — **⏳** Not started
-  - Docs, examples, cross-compile CI
+  - Docs, **Valadoc**, examples, cross-compile CI
 
 ---
 

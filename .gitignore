@@ -1,6 +1,8 @@
 build/
 build-win/
 vapi/win32-ui.generated.vapi
+vapi/win32-ui-*.vapi
+vapi/win32-graphics-*.vapi
 mingw-libs/
 metadata/win32json/
 metadata/win32metadata/

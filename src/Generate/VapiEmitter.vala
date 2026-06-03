@@ -72,7 +72,7 @@ namespace $(ns) {
 				if (NameMapper.skip_ansi_name (c.Name)) {
 					continue;
 				}
-				if (!c.Name.has_prefix ("WC_")) {
+				if (!VapiEmitter.is_control_class_string (c.Name)) {
 					continue;
 				}
 				if (!VapiEmitter.is_string_constant (c)) {
@@ -230,6 +230,13 @@ $(chars)0
 
 		void emit_word_helpers () {
 			this.buffer.append (WORD_HELPERS);
+		}
+
+		static bool is_control_class_string (string name) {
+			if (name.has_prefix ("WC_")) {
+				return true;
+			}
+			return name == "PROGRESS_CLASS";
 		}
 
 		static bool is_string_constant (Parse.Constant c) {
@@ -525,11 +532,11 @@ $(chars)0
 			case "PWSTR":
 				return "uint16*";
 			case "LRESULT":
-				return "long";
+				return "int64";
 			case "WPARAM":
 				return "ulong";
 			case "LPARAM":
-				return "long";
+				return "int64";
 			case "ATOM":
 				return "ushort";
 			case "MSG":

@@ -98,8 +98,8 @@ foreach app : example_apps
     executable(
       app_name,
       win_inputs,
-      vala_args: app_vala_args + ['-X', '-mwindows', '-X', '-luser32', '-X', '-lgdi32'],
-      link_args: ['-mwindows', '-luser32', '-lgdi32'],
+      vala_args: app_vala_args + ['-X', '-mwindows', '-X', '-luser32', '-X', '-lgdi32', '-X', '-lcomctl32'],
+      link_args: ['-mwindows', '-luser32', '-lgdi32', '-lcomctl32'],
       depends: regen_vapi,
       install: false,
     )
@@ -131,6 +131,7 @@ foreach app : example_apps
         companion_c_files,
         '-luser32',
         '-lgdi32',
+        '-lcomctl32',
       ],
       depends: regen_vapi,
       build_by_default: true,

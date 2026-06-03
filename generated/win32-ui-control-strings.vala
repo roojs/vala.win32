@@ -7,6 +7,11 @@ namespace Win32.Ui.Controls {
 	};
 
 	[CCode (array_length = false, array_null_terminated = true)]
+	public const uint16[] PROGRESS_CLASS = {
+		'm', 		's', 		'c', 		't', 		'l', 		's', 		'_', 		'p', 		'r', 		'o', 		'g', 		'r', 		'e', 		's', 		's', 		'3', 		'2', 0
+	};
+
+	[CCode (array_length = false, array_null_terminated = true)]
 	public const uint16[] WC_LINK = {
 		'S', 		'y', 		's', 		'L', 		'i', 		'n', 		'k', 0
 	};
