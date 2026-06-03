@@ -137,11 +137,7 @@ namespace Generate {
 				return;
 			}
 			if (VapiEmitter.is_string_constant (c)) {
-				this.buffer.append_printf (
-					"\t[CCode (cname = \"%s\")]\n\tpublic const uint16* %s;\n\n",
-					c.Name,
-					vala_name
-				);
+				this.emit_string_constant (c, vala_name);
 				return;
 			}
 			var vala_type = VapiEmitter.vala_type_for (c.Type, c.ValueType);
@@ -154,6 +150,19 @@ namespace Generate {
 				vala_type,
 				vala_name
 			);
+		}
+
+		void emit_string_constant (Parse.Constant c, string vala_name) {
+			if (c.ValueText.length == 0) {
+				return;
+			}
+			this.buffer.append ("\t[CCode (array_length = false, array_null_terminated = true)]\n");
+			this.buffer.append_printf ("\tpublic const uint16[] %s = {\n", vala_name);
+			for (int i = 0; i < c.ValueText.length; i = c.ValueText.next_char (i)) {
+				unichar ch = c.ValueText.get_char (i);
+				this.buffer.append_printf ("\t\t'%C', ", ch);
+			}
+			this.buffer.append ("0\n\t};\n\n");
 		}
 
 		void emit_word_helpers () {
