@@ -88,14 +88,16 @@ foreach app : example_apps
     app_vala_args += ['--pkg', pkg]
   endforeach
   app_vala_args += '--profile=posix'
-  app_inputs = [files(app_source)]
-  foreach src : app_extra_sources
-    app_inputs += files(src)
-  endforeach
+  app_inputs = files(app_source)
+  app_companion_sources = app_extra_sources
   if host_machine.system() == 'windows'
+    win_inputs = [files(app_source)]
+    foreach src : app_companion_sources
+      win_inputs += src
+    endforeach
     executable(
       app_name,
-      app_inputs,
+      win_inputs,
       vala_args: app_vala_args + ['-X', '-mwindows', '-X', '-luser32', '-X', '-lgdi32'],
       link_args: ['-mwindows', '-luser32', '-lgdi32'],
       depends: regen_vapi,
@@ -103,16 +105,16 @@ foreach app : example_apps
     )
   elif mingw_cc.found()
     companion_c_files = []
-    foreach src : app_companion_sources
-      companion_c_files += '@OUTDIR@/' + src.name_base() + '.c'
-    endforeach
     companion_vala_cmd = []
     foreach src : app_companion_sources
       companion_vala_cmd += src
+      parts = src.split('/')
+      vala_name = parts[-1]
+      companion_c_files += '@OUTDIR@/' + vala_name.substring(0, -5) + '.c'
     endforeach
     custom_target(
       app_name,
-      input: app_inputs,
+      input: files(app_source),
       output: app_name + '.exe',
       command: [
         valac,
