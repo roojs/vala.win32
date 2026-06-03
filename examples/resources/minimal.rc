@@ -1,0 +1,9 @@
+/* Minimal Win32 resource script (see docs/win32-rc.md).
+ * Link with: x86_64-w64-mingw32-windres -i minimal.rc -o minimal.res.o */
+
+#include <windows.h>
+
+/* Example named resource ids — add app.ico beside this file to compile an icon. */
+#define IDI_APP 101
+
+/* IDI_APP ICON "app.ico" */

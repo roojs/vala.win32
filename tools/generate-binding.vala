@@ -133,5 +133,16 @@ int main (string[] args) {
 		return 1;
 	}
 
+	var errors_emitter = new Generate.ErrorEmitter ();
+	var errors_path = GLib.Path.build_filename (generated_dir, "win32-errors.vala");
+	try {
+		var errors_text = errors_emitter.emit ();
+		GLib.FileUtils.set_contents (errors_path, errors_text);
+		print ("wrote %s (%u bytes)\n", errors_path, errors_text.length);
+	} catch (GLib.Error e) {
+		stderr.printf ("errors emit: %s\n", e.message);
+		return 1;
+	}
+
 	return 0;
 }

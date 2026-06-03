@@ -12,7 +12,7 @@ Design and roadmap: [docs/plans/01-DONE - project overview.md](docs/plans/01-DON
 
 **Track A** (`hello-window`, `button-demo`) — raw vapi, `--profile=posix`, no GLib.
 
-**Track B** (`ergonomic-button-demo`) — `Win32.Window` / `Button` / `Edit` / `ListBox` / `ComboBox` with signals and properties; `--profile=gobject` + MinGW GLib (see below). After compile, runtime DLLs from `mingw-libs/` are copied next to the `.exe` so plain `wine build/ergonomic-button-demo.exe` works.
+**Track B** (`ergonomic-button-demo`) — `Win32.Window` / `Button` / `Edit` / `ListBox` / `ComboBox` / `ScrollBar` / `ProgressBar` with signals and properties; `--profile=gobject` + MinGW GLib (see below). After compile, runtime DLLs from `mingw-libs/` are copied next to the `.exe` so plain `wine build/ergonomic-button-demo.exe` works.
 
 ### Build
 

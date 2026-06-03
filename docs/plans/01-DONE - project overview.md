@@ -27,12 +27,14 @@
   - win32json vendor, `generate-binding`, `check-regen` (generated vapi separate from spike apps)
 - [04 - phase 2 ergonomic vapi.md](04%20-%20phase%202%20ergonomic%20vapi.md) — **✅** Track A done (hello on generated vapi)
   - Per-shard vapi, enums, `hello-window.exe`
-- [05 - phase 3 common controls.md](05%20-%20phase%203%20common%20controls.md) — **⏳** Not started
-  - Button-first demos, gap-driven generator fixes; optional ergonomic `clicked`
+- [05 - phase 3 common controls.md](05%20-%20phase%203%20common%20controls.md) — **✅** Closed (Track A + Track B B0–B4)
+  - Common-controls demos; ergonomic widgets (template regen until Phase 5)
 - [06 - phase 4 dialogs and resources.md](06%20-%20phase%204%20dialogs%20and%20resources.md) — **⏳** Not started
-  - MessageBox, file dialogs, menus, `.rc`
-- [07 - phase 5 polish and ci.md](07%20-%20phase%205%20polish%20and%20ci.md) — **⏳** Not started
-  - Docs, **Valadoc**, examples, cross-compile CI
+  - MessageBox, file/color/font dialogs, menus, `.rc`, generator error mapping
+- [07 - phase 5 widget emit.md](07%20-%20phase%205%20widget%20emit.md) — **⏳** Not started
+  - Convention table → emit `generated/win32-widgets.vala`
+- [08 - phase 6 polish and ci.md](08%20-%20phase%206%20polish%20and%20ci.md) — **⏳** Not started
+  - **Valadoc**, examples index, cross-compile CI
 
 ---
 

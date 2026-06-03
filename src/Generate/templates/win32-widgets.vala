@@ -10,6 +10,14 @@ namespace Win32 {
 
 const int ITEM_TEXT_MAX = 256;
 const int LBS_NOTIFY = 0x0001;
+const uint PBM_SETPOS = 0x0402;
+const uint PBM_GETPOS = 0x0408;
+const uint PBM_SETRANGE32 = 0x0406;
+const uint PBS_SMOOTH = 0x0001;
+
+private int64 makelparam_uint (uint lo, uint hi) {
+	return (int64) (lo | (hi << 16));
+}
 
 /* Set WIN32_WIDGET_DEBUG=1 (or true) to trace WM_COMMAND on stderr. */
 private bool widget_debug_enabled () {
@@ -23,7 +31,7 @@ private int64 widget_window_proc (
 	ulong w_param,
 	int64 l_param
 ) {
-	if (widget_debug_enabled () && (msg == WM_COMMAND || msg == WM_NOTIFY)) {
+	if (widget_debug_enabled () && (msg == WM_COMMAND || msg == WM_NOTIFY || msg == WM_HSCROLL || msg == WM_VSCROLL)) {
 		stderr.printf (
 			"wndproc msg=0x%04x wParam=0x%llx lParam=0x%llx\n",
 			msg, (ulong) w_param, (ulong) l_param
@@ -37,6 +45,10 @@ private int64 widget_window_proc (
 			stderr.printf ("WM_COMMAND not handled (see dispatch log)\n");
 		}
 	}
+	int64 scroll_result;
+	if (WidgetDispatch.try_wm_hscroll (h_wnd, msg, w_param, l_param, out scroll_result)) {
+		return scroll_result;
+	}
 	if (msg == WM_DESTROY) {
 		post_quit_message (0);
 		return 0;
@@ -49,6 +61,37 @@ public class WidgetDispatch {
 		return wm_command_dispatch (w_param);
 	}
 
+	/* ScrollBar: call def_window_proc, then emit value_changed when l_param is a registered HWND. */
+	public static bool try_wm_hscroll (
+		void* parent_wnd,
+		uint msg,
+		ulong w_param,
+		int64 l_param,
+		out int64 proc_result
+	) {
+		proc_result = 0;
+		if (msg != WM_HSCROLL && msg != WM_VSCROLL) {
+			return false;
+		}
+		var scroll_hwnd = (void*) l_param;
+		var idx = wm_scroll_find_handle (scroll_hwnd);
+		if (idx < 0) {
+			return false;
+		}
+		if (widget_debug_enabled ()) {
+			stderr.printf (
+				"WM_SCROLL hwnd=%p (SB_THUMBTRACK=%u SB_ENDSCROLL=%u)\n",
+				scroll_hwnd, SB_THUMBTRACK, SB_ENDSCROLL
+			);
+		}
+		proc_result = def_window_proc (parent_wnd, msg, w_param, l_param);
+		if (widget_debug_enabled ()) {
+			stderr.printf ("  -> ScrollBar.value_changed hwnd=%p\n", scroll_hwnd);
+		}
+		wm_scroll_bars[idx].value_changed ();
+		return true;
+	}
+
 	public static void debug_dump_registry () {
 		if (!widget_debug_enabled ()) {
 			return;
@@ -59,6 +102,10 @@ public class WidgetDispatch {
 				"  [%d] id=%d kind=%d\n",
 				i, wm_command_entries[i].control_id, (int) wm_command_entries[i].kind
 			);
+		}
+		stderr.printf ("WM_SCROLL registry (%d scrollbars):\n", wm_scroll_count);
+		for (int i = 0; i < wm_scroll_count; i++) {
+			stderr.printf ("  [%d] hwnd=%p\n", i, wm_scroll_handles[i]);
 		}
 	}
 }
@@ -78,6 +125,40 @@ private Button?[]? wm_command_buttons = null;
 private Edit?[]? wm_command_edits = null;
 private ListBox?[]? wm_command_list_boxes = null;
 private ComboBox?[]? wm_command_combo_boxes = null;
+
+private int wm_scroll_count = 0;
+private void*[]? wm_scroll_handles = null;
+private ScrollBar?[]? wm_scroll_bars = null;
+
+private void wm_scroll_registry_ensure () {
+	if (wm_scroll_handles == null) {
+		wm_scroll_handles = new void*[64];
+		wm_scroll_bars = new ScrollBar[64];
+	}
+}
+
+private int wm_scroll_find_handle (void* hwnd) {
+	for (int i = 0; i < wm_scroll_count; i++) {
+		if (wm_scroll_handles[i] == hwnd) {
+			return i;
+		}
+	}
+	return -1;
+}
+
+private void wm_scroll_register (ScrollBar scroll_bar) {
+	wm_scroll_registry_ensure ();
+	var hwnd = scroll_bar.handle;
+	for (int i = 0; i < wm_scroll_count; i++) {
+		if (wm_scroll_handles[i] == hwnd) {
+			wm_scroll_bars[i] = scroll_bar;
+			return;
+		}
+	}
+	wm_scroll_handles[wm_scroll_count] = hwnd;
+	wm_scroll_bars[wm_scroll_count] = scroll_bar;
+	wm_scroll_count++;
+}
 
 private void wm_command_registry_ensure () {
 	if (wm_command_entries == null) {
@@ -418,6 +499,84 @@ public class ComboBox {
 
 	public string selected_text {
 		owned get { return combo_box_item_text (handle, selected_index); }
+	}
+}
+
+public class ScrollBar {
+	public signal void value_changed ();
+	public void* handle { get; private set; }
+	public int control_id { get; private set; }
+
+	public ScrollBar (
+		Window parent,
+		int x,
+		int y,
+		int width,
+		int height,
+		int control_id,
+		int range_min = 0,
+		int range_max = 100,
+		int initial_value = 0
+	) {
+		this.control_id = control_id;
+		uint style = (uint) (
+			WindowStyle.WS_CHILD | WindowStyle.WS_VISIBLE |
+			WindowStyle.WS_TABSTOP | SBS_HORZ
+		);
+		handle = create_window_ex (
+			0, WC_SCROLLBAR, null, style,
+			x, y, width, height,
+			parent.handle, (void*) (intptr) control_id, parent.instance, null
+		);
+		if (handle != null) {
+			send_message (
+				handle, SBM_SETRANGE, 0,
+				makelparam_uint ((uint) range_min, (uint) range_max)
+			);
+			send_message (handle, SBM_SETPOS, 1, (ulong) initial_value);
+		}
+		wm_scroll_register (this);
+	}
+
+	public int value {
+		get { return (int) send_message (handle, SBM_GETPOS, 0, 0); }
+		set { send_message (handle, SBM_SETPOS, 1, (ulong) value); }
+	}
+}
+
+public class ProgressBar {
+	public void* handle { get; private set; }
+
+	public ProgressBar (
+		Window parent,
+		int x,
+		int y,
+		int width,
+		int height,
+		int range_max = 100
+	) {
+		uint style = (uint) (
+			WindowStyle.WS_CHILD | WindowStyle.WS_VISIBLE | PBS_SMOOTH
+		);
+		handle = create_window_ex (
+			0, PROGRESS_CLASS, null, style,
+			x, y, width, height,
+			parent.handle, null, parent.instance, null
+		);
+		if (handle != null) {
+			send_message (handle, PBM_SETRANGE32, 0, (int64) range_max);
+		}
+	}
+
+	public int value {
+		get { return (int) send_message (handle, PBM_GETPOS, 0, 0); }
+		set { send_message (handle, PBM_SETPOS, (ulong) value, 0); }
+	}
+
+	public int range_max {
+		set {
+			send_message (handle, PBM_SETRANGE32, 0, (int64) value);
+		}
 	}
 }
 

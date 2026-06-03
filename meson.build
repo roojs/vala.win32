@@ -25,11 +25,26 @@ generated_root = project_root / 'generated'
 control_strings_vala = generated_root / 'win32-ui-control-strings.vala'
 wide_strings_vala = generated_root / 'win32-wide-strings.vala'
 widgets_vala = generated_root / 'win32-widgets.vala'
+errors_vala = generated_root / 'win32-errors.vala'
+
+example_pkg_dialogs = 'win32-ui-controls-dialogs'
+example_pkg_gdi = 'win32-graphics-gdi'
 
 # Track A — raw Win32 (--profile=posix, no GLib)
+# [name, source, companion .vala sources, extra --pkg, extra -l libs]
 posix_example_apps = [
-  ['hello-window', 'examples/hello-window.vala', [wide_strings_vala]],
-  ['button-demo', 'examples/button-demo.vala', [control_strings_vala, wide_strings_vala]],
+  ['hello-window', 'examples/hello-window.vala', [wide_strings_vala], [], []],
+  ['button-demo', 'examples/button-demo.vala', [control_strings_vala, wide_strings_vala], [], []],
+  ['dialog-demo', 'examples/dialog-demo.vala', [wide_strings_vala], [], []],
+  [
+    'common-dialog-demo',
+    'examples/common-dialog-demo.vala',
+    [control_strings_vala, wide_strings_vala],
+    [example_pkg_dialogs, example_pkg_gdi],
+    ['comdlg32'],
+  ],
+  ['menu-demo', 'examples/menu-demo.vala', [wide_strings_vala], [], []],
+  ['error-demo', 'examples/error-demo.vala', [errors_vala], [], []],
 ]
 
 generate_sources = files(
@@ -38,6 +53,7 @@ generate_sources = files(
   'src/Generate/NameMapper.vala',
   'src/Generate/SymbolFilter.vala',
   'src/Generate/VapiEmitter.vala',
+  'src/Generate/ErrorEmitter.vala',
   'src/Generate/WidgetEmitter.vala',
   'src/Generate/Parser/ApiFileEntry.vala',
   'src/Generate/Parser/ApiFile.vala',
@@ -104,9 +120,22 @@ foreach app : posix_example_apps
   app_name = app[0]
   app_source = app[1]
   app_extra_sources = app[2]
+  app_extra_pkgs = app[3]
+  app_extra_libs = app[4]
   app_vala_args = ['--vapidir', vapidir, '--profile=posix']
   foreach pkg : example_pkgs
     app_vala_args += ['--pkg', pkg]
+  endforeach
+  foreach pkg : app_extra_pkgs
+    app_vala_args += ['--pkg', pkg]
+  endforeach
+  app_link_libs = ['-luser32', '-lgdi32', '-lcomctl32']
+  foreach lib : app_extra_libs
+    app_link_libs += ['-l' + lib]
+  endforeach
+  app_vala_link = ['-X', '-mwindows']
+  foreach lib : app_link_libs
+    app_vala_link += ['-X', lib]
   endforeach
   app_companion_sources = app_extra_sources
   if host_machine.system() == 'windows'
@@ -117,8 +146,8 @@ foreach app : posix_example_apps
     executable(
       app_name,
       win_inputs,
-      vala_args: app_vala_args + ['-X', '-mwindows', '-X', '-luser32', '-X', '-lgdi32', '-X', '-lcomctl32'],
-      link_args: ['-mwindows', '-luser32', '-lgdi32', '-lcomctl32'],
+      vala_args: app_vala_args + app_vala_link,
+      link_args: ['-mwindows'] + app_link_libs,
       depends: regen_vapi,
       install: false,
     )
@@ -150,10 +179,7 @@ foreach app : posix_example_apps
         '-o', '@OUTPUT@',
         app_build_dir + '/' + app_name + '.c',
         companion_c_files,
-        '-luser32',
-        '-lgdi32',
-        '-lcomctl32',
-      ],
+      ] + app_link_libs,
       depends: regen_vapi,
       build_by_default: true,
     )

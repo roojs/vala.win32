@@ -1,10 +1,10 @@
-# 07 — Phase 5: Polish and CI
+# 08 — Phase 6: Polish and CI
 
 **Status:** **⏳** Not started
 
 **Layout:** `~/gitlive/OLLMchat/docs/guide-to-writing-plans.md`
 
-**Parent:** [01-DONE - project overview.md](01-DONE%20-%20project%20overview.md) · **Depends on:** Phases 1–4 materially complete · **Win32.*** widget layer ([05 - phase 3 common controls.md](05%20-%20phase%203%20common%20controls.md) Track B) for widget Valadoc
+**Parent:** [01-DONE - project overview.md](01-DONE%20-%20project%20overview.md) · **Depends on:** Phases 1–5 materially complete · **Win32.*** widget layer ([05 - phase 3 common controls.md](05%20-%20phase%203%20common%20controls.md) Track B; [07 - phase 5 widget emit.md](07%20-%20phase%205%20widget%20emit.md) for emitted docs)
 
 ---
 
@@ -15,13 +15,13 @@
 - **🔷** **CI** on Linux: `vendor-win32json.sh` + `meson compile -C build check-regen` + `compile-check` + cross `hello-window`.
 - **🔷** Policy in README: never hand-edit `vapi/`; how to bump `win32json-ref.txt`.
 
-**ℹ️** Valadoc work lives **here**, not in Phase 3 — Track B only needs **`/** … */`** on emitted symbols where easy; **building and publishing** docs is Phase 5.
+**ℹ️** Valadoc work lives **here**, not in Phase 3/5 — Phase 5 emits **`/** … */`** on widgets; **building and publishing** HTML is Phase 6.
 
 ---
 
 ## Valadoc (generated API documentation)
 
-**🔷** Once **`generated/win32-widgets.vala`** (`Win32.Window`, `Win32.Button`, …) and core vapi shards are stable, ship **`valadoc`** output so app authors do not read raw vapi or the plan to learn the widget API.
+**🔷** Once **`generated/win32-widgets.vala`** is **table-emitted** (Phase 5) and core vapi shards are stable, ship **`valadoc`** output so app authors do not read raw vapi or the plan to learn the widget API.
 
 ### Scope (prioritized)
 
@@ -36,8 +36,8 @@
 
 ### Doc comments (upstream of Valadoc)
 
-- **Phase 3 Track B (generator emit):** add **`/** … */`** on public compact types, signals, and **`WidgetDispatch`** when **`win32-widgets.vala`** is generated — keeps Phase 5 from hand-maintaining prose.
-- **Raw vapi:** win32json rarely carries user-facing blurbs; Phase 5 may add **minimal** hand **`/** … */`** only on high-traffic relay symbols (hello + button-demo surface) or defer raw vapi docs to Microsoft + shard name.
+- **Phase 5:** **`/** … */`** on emitted public compact types, signals, and **`WidgetDispatch`** — Phase 6 only builds HTML.
+- **Raw vapi:** win32json rarely carries user-facing blurbs; Phase 6 may add **minimal** hand **`/** … */`** only on high-traffic relay symbols (hello + button-demo surface) or defer raw vapi docs to Microsoft + shard name.
 
 ### Build and layout (intended)
 
@@ -55,10 +55,10 @@ meson compile -C build valadoc
 # open build/docs/valadoc/index.htm — Win32.Button, signals, WidgetDispatch visible
 ```
 
-**Phase 5 Valadoc done when:**
+**Phase 6 Valadoc done when:**
 
 - **⏳** `meson compile -C build valadoc` succeeds on Linux
-- **⏳** **`Win32.Button`** (and at least one signal) has generated HTML from **`/** … */`** in **`win32-widgets.vala`**
+- **⏳** **`Win32.Button`** (and at least one signal) has generated HTML from Phase 5 **`/** … */`**
 - **⏳** README points maintainers and app authors at the doc output path
 
 ---
@@ -71,7 +71,6 @@ meson compile -C build valadoc
 - `meson.build` — extend — **`valadoc`** target; doc-bundle `--pkg` list
 - `examples/*.vala` — maintain — at least hello + control + dialog demos
 - `Makefile` — extend — `make vendor`, CI-friendly targets; optional **`make docs`**
-- `src/Generate/*` — extend (Phase 3 B3+, consumed here) — emit **`/** … */`** on **`Win32.*`** public API
 
 ---
 
@@ -87,7 +86,6 @@ meson compile -C build valadoc
 
 - [ ] **🔷** **⏳** Define doc-bundle **`--pkg`** set (widgets + windowsandmessaging + system-stub minimum)
 - [ ] **🔷** **⏳** `meson.build` **`valadoc`** target → `build/docs/valadoc/`
-- [ ] **🔷** **⏳** Generator **`/** … */`** on **`Win32.*`** public types (coordinate with Phase 3 Track B B3 — emit comments in generator, build docs here)
 - [ ] **⏳** P1 raw vapi: minimal comments or shard index page in README
 - [ ] **⏳** CI: `valadoc` target runs clean (optional artifact upload)
 

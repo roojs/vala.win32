@@ -1,6 +1,6 @@
 # 05 — Phase 3: Common controls
 
-**Status:** **✅** Track A complete · **🌗** Track B — B0–B3 done; **B4 next**
+**Status:** **✅** Phase 3 complete (Track A + Track B). **B5** and metadata-driven widget emit deferred.
 
 **Layout:** `~/gitlive/OLLMchat/docs/guide-to-writing-plans.md`
 
@@ -17,7 +17,7 @@
 | Step 2 — Edit spike | **✅** | `WC_EDIT`, `set_window_text` / `get_window_text` in button-demo |
 | Step 3 — Static / ListBox / ComboBox / ScrollBar / ProgressBar | **✅** | full common-controls demo |
 | Step 4 — plain UTF-8 strings | **✅** | **`win32-wide-strings.vala`** |
-| Track B — ergonomic wrappers | **🌗** | B0–B3 done; **gobject profile**; widgets **regen** from template; **B4** ScrollBar/ProgressBar next |
+| Track B — ergonomic wrappers | **✅** | B0–B4 shipped; template + **`WidgetEmitter`** regen; **B5** deferred |
 
 **Legend:** **✅** done · **⏳** open / partial · **❌** blocked
 
@@ -467,7 +467,7 @@ Derived from Track A demo behaviour — generator can hardcode this table in Val
 | **ScrollBar** | `WC_SCROLLBAR` | `value_changed` | `WM_HSCROLL` / `WM_VSCROLL` | match `l_param` to scrollbar `HWND`; not `WM_COMMAND` |
 | **ProgressBar** | `PROGRESS_CLASS` | — | — | property **`value`** / **`range`** via `PBM_*` (literals until `commctrl.h` relay) |
 
-**💩** Top-level **`Window`** with `destroyed` signal — nice for replacing `hello-window.vala` boilerplate; **defer until Button + Edit ergonomic path is proven**.
+**💩** Top-level **`Window`** with `destroyed` signal — nice for replacing `hello-window.vala` boilerplate; **deferred (B5 out of scope for Phase 3 close)** — current **`Window.run ()`** + hidden **`widget_window_proc`** are sufficient.
 
 ---
 
@@ -527,8 +527,8 @@ public class ComboBox {
 | **B1 — Edit** | `get_text` / `set_text` + `changed (delegate)` | **No** — extend hand file | **✅** same demo: button copies edit like Track A |
 | **B2 — ListBox / ComboBox** | `selection_changed` + `add_item` | **No** | **✅** same demo: list/combo → title like Track A |
 | **B3 — generator emit** | Move hand file contents into `WidgetEmitter` + template | **Yes** | **✅** `generated/win32-widgets.vala` regen; template `src/Generate/templates/win32-widgets.vala` |
-| **B4 — ScrollBar + ProgressBar** | `value_changed`, progress `value` | **Yes** | `try_wm_hscroll`; optional sync like Track A |
-| **B5 — Window wrapper** | `destroyed`, message loop helper | **⏳** optional | only after B0–B3 stable; may trigger plumbing C spike |
+| **B4 — ScrollBar + ProgressBar** | `value_changed`, progress `value` | **Yes** | **✅** `try_wm_hscroll`; ergo demo scroll → progress |
+| **B5 — Window wrapper** | `destroyed`, message loop helper | **💩 deferred** | Out of scope for Phase 3 close; optional in [Phase 5 widget emit](07%20-%20phase%205%20widget%20emit.md) (5d) or Phase 6 |
 
 **🔷** Do **B0 before B3** — validate signal + dispatch ergonomics without locking generator shape too early.
 
@@ -618,6 +618,28 @@ Each finished step gets a **`### Changes`** block (same rules as Track A).
 
 ---
 
+### Changes — B4 (ScrollBar / ProgressBar) **✅**
+
+- **`Win32.ScrollBar`** — `WC_SCROLLBAR` + `SBS_HORZ`; **`value`** property; **`value_changed`** via **`WM_HSCROLL`** / **`WM_VSCROLL`** (HWND registry, not `WM_COMMAND`)
+- **`Win32.ProgressBar`** — `PROGRESS_CLASS`; **`value`** / **`range_max`** via `PBM_*` literals (same as Track A until commctrl relay)
+- **`WidgetDispatch.try_wm_hscroll`** — runs **`def_window_proc`**, then emits **`value_changed`**
+- **`ergonomic-button-demo.vala`** — scroll → progress sync (matches **`button-demo`** layout)
+
+**Files changed:**
+
+- `src/Generate/templates/win32-widgets.vala` — ScrollBar, ProgressBar, scroll dispatch
+- `generated/win32-widgets.vala` — regen
+- `examples/ergonomic-button-demo.vala` — scroll + progress
+- `docs/plans/05 - phase 3 common controls.md`
+
+---
+
+### Phase 3 close **✅**
+
+Track A and Track B meet their done criteria. **B5** (`Window.destroyed`, app-owned WndProc replacement, `win32-plumbing.c`) is explicitly **out of scope** — existing **`Win32.Window`** (`run ()`, `title`, hidden dispatch) is the shipped API.
+
+---
+
 ### Generator automation (after B0 spike)
 
 **⏳** No new metadata blobs required — mapping is **convention + hardcoded table** in `src/Generate/`:
@@ -649,8 +671,8 @@ Each finished step gets a **`### Changes`** block (same rules as Track A).
 | **`Gee.HashMap` for dispatch registry?** | **No** — plain fixed array; no extra pkg |
 | **Struct array holding widget refs?** | **No** — unboxed `WmCommandEntry` + parallel ref arrays (GBoxed struct copies dropped registry writes) |
 | **`get_window_text` → `string`** | **✅** — **`text` / `title` properties** + **`window_text_*`** |
-| **ScrollBar** not in `WM_COMMAND` | Separate **`try_wm_hscroll`** — **⏳** B4 |
-| **`PBM_*` numeric literals** | Ergonomic **`ProgressBar`** — **⏳** B4 |
+| **ScrollBar** not in `WM_COMMAND` | **`try_wm_hscroll`** + HWND registry — **✅** B4 |
+| **`PBM_*` numeric literals** | **`ProgressBar`** uses local `PBM_*` / `PBS_SMOOTH` — **✅** B4 |
 | **GC / lifetime** — widgets collected while HWND live? | App holds refs (fields in `main`) — **✅** documented in demo |
 | **Replace app `WndProc` entirely** | **Defer** — B5 / plumbing C if needed |
 
@@ -677,8 +699,14 @@ wine build/ergonomic-button-demo.exe   # GLib DLLs copied into build/ on compile
 **Phase 3 Track B stretch (B1–B4):**
 
 - **✅** Edit **`get_text` / `set_text`** + **`changed (delegate)`** in widgets file (demo uses get/set only)
-- **⏳** ListBox + ComboBox signals in same or second demo
-- **⏳** ScrollBar → ProgressBar via ergonomic API (optional)
+- **✅** ListBox + ComboBox signals in **`ergonomic-button-demo.vala`**
+- **✅** ScrollBar → ProgressBar via ergonomic API (ergo demo)
+
+**Deferred (not blocking Phase 3):**
+
+- **B5** — `Window.destroyed`, richer message-loop / replace-app-WndProc (no plumbing C spike needed — Vala WndProc works)
+- **Phase 5** — [widget generator emit](07%20-%20phase%205%20widget%20emit.md) (convention table; template → emitted classes)
+- **`win32-wide-strings.vala`** — generator emit (Phase 5 optional 5c)
 
 ---
 
@@ -707,8 +735,8 @@ Rolling checklist — each **✅** step’s **`### Changes`** block is the autho
 | `generated/win32-ui-control-strings.vala` | `WC_*` literals | — | **✅** regen |
 | `generated/win32-wide-strings.vala` | UTF-8 ↔ UTF-16 for apps | — | **✅** Step 4 hand → **⏳** generator emit |
 | `generated/win32-widgets.vala` | Track B widget layer (`namespace Win32`) | — | **✅** B3 regen (`WidgetEmitter` + template) |
-| `examples/ergonomic-button-demo.vala` | Track B demo | — | **✅** B0–B2 |
-| `src/win32-plumbing.c` | WndProc thunk if Vala unsafe | — | **⏳** only if B5 spike fails |
+| `examples/ergonomic-button-demo.vala` | Track B demo | — | **✅** B0–B4 |
+| `src/win32-plumbing.c` | WndProc thunk if Vala unsafe | — | **💩** deferred (B5 not needed) |
 | `metadata/win32json-api.files` | vendor list | — unchanged | **⏳** only if gap trace requires |
 | Hand stubs (`vapi/win32-system-stub.vapi`, …) | missing JSON symbols | — unchanged | **⏳** only if gap trace requires |
 
@@ -734,10 +762,11 @@ wine build/button-demo.exe
 - **✅** Edit demo (combined with button demo) gets/sets text
 - **✅** P1 + P2 controls in demo; scroll bar drives progress bar
 
-**Phase 3 Track B done when (optional — see Track B section for full criteria):**
+**Phase 3 Track B done when:**
 
-- **✅** `ergonomic-button-demo.vala`: **`clicked (delegate)`** + `WidgetDispatch.try_wm_command` — no raw `BN_CLICKED` parsing in app
-- **✅** `generated/win32-widgets.vala` emitted by generator (B3)
+- **✅** `ergonomic-button-demo.vala`: signals + properties; no raw `BN_CLICKED` / `WM_HSCROLL` parsing in app
+- **✅** `generated/win32-widgets.vala` emitted by generator (B3 template regen)
+- **✅** Full common-controls parity with Track A (through ScrollBar / ProgressBar)
 
 ---
 
@@ -753,18 +782,22 @@ wine build/button-demo.exe
 - [x] **✅** **🔷** ScrollBar, ProgressBar (P2) — scroll → progress in demo
 - [x] **✅** **🔷** **Step 4** — plain **`string`** in examples via **`generated/win32-wide-strings.vala`**
 
-### Track B — ergonomic (optional)
+### Track B — ergonomic **✅ closed**
 
 - [x] **✅** **🔷** **B0** — hand `generated/win32-widgets.vala` (`Win32.Button`, `Win32.WidgetDispatch`)
 - [x] **✅** **🔷** **B0** — `examples/ergonomic-button-demo.vala` (Track A demo stays raw)
 - [x] **✅** **B1** — `Edit` **`get_text` / `set_text`** + **`changed (delegate)`** in widgets file
 - [x] **✅** **B2** — ListBox / ComboBox `selection_changed` + demo extension
 - [x] **✅** **B3** — `WidgetEmitter` + template → regen `generated/win32-widgets.vala`
-- [ ] **⏳** **B4** — ScrollBar / ProgressBar ergonomic API
-- [ ] **⏳** **B5** — `Window` wrapper + `win32-plumbing.c` **only if** WndProc spike requires it
+- [x] **✅** **B4** — ScrollBar / ProgressBar + `try_wm_hscroll`
+- [x] **💩** **B5** — **deferred** (`destroyed` / plumbing C not required for Phase 3 exit)
 
 ---
 
-## Hand-off to Phase 4
+## Hand-off
 
-**ℹ️** [06 - phase 4 dialogs and resources.md](06%20-%20phase%204%20dialogs%20and%20resources.md) — MessageBox, common dialogs, menus, `.rc` — builds on controls that already work in a child window.
+| Phase | Plan |
+|-------|------|
+| **4** | [06 - phase 4 dialogs and resources.md](06%20-%20phase%204%20dialogs%20and%20resources.md) — 4a–4d: dialogs, menus/`.rc`, error mapping (vapi/demos) |
+| **5** | [07 - phase 5 widget emit.md](07%20-%20phase%205%20widget%20emit.md) — convention table + emit `Win32.*` classes |
+| **6** | [08 - phase 6 polish and ci.md](08%20-%20phase%206%20polish%20and%20ci.md) — Valadoc, CI, README |

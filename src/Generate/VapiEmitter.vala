@@ -350,14 +350,14 @@ namespace Win32 {
 			if (!this.claim_vala_name (vala_name)) {
 				return;
 			}
-			var ret = VapiEmitter.vala_type_for (f.ReturnType, "");
+			var ret = VapiEmitter.vala_type_for_ref (f.ReturnType, "", null, this.shard_basename);
 			this.buffer.append (@"	[CCode (cname = $(VapiEmitter.quoted_c_string (f.Name)))]
 	public extern $(ret) $(vala_name) (
 ");
 			var n = f.Params.size;
 			for (int i = 0; i < n; i++) {
 				var p = f.Params.get (i);
-				var ptype = VapiEmitter.vala_param_type (p);
+				var ptype = VapiEmitter.vala_param_type (p, this.shard_basename);
 				var pname = VapiEmitter.param_vala_name (f.Name, p);
 				var comma = i < n - 1 ? "," : "";
 				this.buffer.append (@"		$(ptype) $(pname)$(comma)
@@ -370,6 +370,17 @@ namespace Win32 {
 			if (p.Name == "param0" && function_c_name.has_prefix ("RegisterClassEx")) {
 				return "lp_wcx";
 			}
+			if (p.Name == "param0") {
+				if (function_c_name.has_prefix ("GetOpenFileName")
+					|| function_c_name.has_prefix ("GetSaveFileName")
+					|| function_c_name.has_prefix ("ChooseColor")
+					|| function_c_name.has_prefix ("ChooseFont")
+					|| function_c_name.has_prefix ("FindText")
+					|| function_c_name.has_prefix ("ReplaceText")
+					|| function_c_name.has_prefix ("PrintDlg")) {
+					return "lp_dialog";
+				}
+			}
 			return NameMapper.to_snake (p.Name);
 		}
 
@@ -380,10 +391,28 @@ namespace Win32 {
 			return vala_type.index_of_char ('*') < 0;
 		}
 
+		static string api_ref_vala_name (string name) {
+			if (NameMapper.skip_ansi_name (name)) {
+				return "void*";
+			}
+			var mapped = VapiEmitter.map_type_name (name);
+			if (mapped != "void*") {
+				return mapped;
+			}
+			/* HBITMAP, HWND, … — keep void* + CCode type_id; not Vala struct names. */
+			if (name.length >= 2 && name[0] == 'H' && name == name.up () && name.index_of_char ('_') < 0) {
+				return "void*";
+			}
+			return NameMapper.to_vala_type (name);
+		}
+
 		static string qualified_api_type (Parse.TypeRef type_ref, string shard_basename) {
 			var type_name = type_ref.TargetKind == "FunctionPointer"
 				? NameMapper.to_vala_type (type_ref.Name)
-				: VapiEmitter.map_type_name (type_ref.Name);
+				: VapiEmitter.api_ref_vala_name (type_ref.Name);
+			if (type_ref.Api == "Foundation") {
+				return type_name;
+			}
 			if (type_ref.Api == "" || shard_basename == "") {
 				return type_name;
 			}
@@ -407,8 +436,8 @@ namespace Win32 {
 			return base_type;
 		}
 
-		public static string vala_param_type (Parse.Parameter p) {
-			var base_type = VapiEmitter.vala_type_for_ref (p.Type, "", p.Attrs);
+		public static string vala_param_type (Parse.Parameter p, string shard_basename = "") {
+			var base_type = VapiEmitter.vala_type_for_ref (p.Type, "", p.Attrs, shard_basename);
 			var tid = VapiEmitter.type_id_for (p.Type.Name);
 			if (tid == null && p.Type.Child != null) {
 				tid = VapiEmitter.type_id_for (p.Type.Child.Name);
@@ -441,6 +470,13 @@ namespace Win32 {
 		) {
 			if (type_ref.Kind == "PointerTo" && type_ref.Child != null) {
 				var inner = VapiEmitter.vala_type_for_ref (type_ref.Child, "", null, shard_basename);
+				if (attrs != null
+					&& VapiEmitter.attrs_contain (attrs, "In")
+					&& VapiEmitter.attrs_contain (attrs, "Out")) {
+					if (inner != "void*" && inner.index_of_char ('*') < 0) {
+						return "ref " + inner;
+					}
+				}
 				if (attrs != null && VapiEmitter.attrs_contain (attrs, "Out")) {
 					return "out " + inner;
 				}
@@ -460,7 +496,7 @@ namespace Win32 {
 				if (type_ref.TargetKind == "FunctionPointer") {
 					return VapiEmitter.qualified_api_type (type_ref, shard_basename);
 				}
-				return VapiEmitter.map_type_name (type_ref.Name);
+				return VapiEmitter.qualified_api_type (type_ref, shard_basename);
 			}
 
 			if (type_ref.Name != "") {
