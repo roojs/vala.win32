@@ -156,6 +156,7 @@ namespace Generate {
 			if (c.ValueText.length == 0) {
 				return;
 			}
+			this.buffer.append ("\t[CCode (cheader_filename = \"\")]\n");
 			this.buffer.append ("\t[CCode (array_length = false, array_null_terminated = true)]\n");
 			this.buffer.append_printf ("\tpublic const uint16[] %s = {\n", vala_name);
 			for (int i = 0; i < c.ValueText.length; i++) {
@@ -165,6 +166,7 @@ namespace Generate {
 		}
 
 		void emit_word_helpers () {
+			this.buffer.append ("\t[CCode (cheader_filename = \"\")]\n");
 			this.buffer.append ("\tpublic static uint loword (ulong l) {\n");
 			this.buffer.append ("\t\treturn (uint) (l & 0xffff);\n");
 			this.buffer.append ("\t}\n\n");
