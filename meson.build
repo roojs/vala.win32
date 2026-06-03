@@ -99,13 +99,13 @@ foreach app : example_apps
       install: false,
     )
   elif mingw_cc.found()
-    extra_src_args = []
+    companion_c_files = []
     foreach src : app_extra_sources
-      extra_src_args += files(src)
+      companion_c_files += '@OUTDIR@/' + src.name_base() + '.c'
     endforeach
     custom_target(
       app_name,
-      input: files(app_source) + extra_src_args,
+      input: app_inputs,
       output: app_name + '.exe',
       command: [
         valac,
@@ -118,6 +118,7 @@ foreach app : example_apps
         '-mwindows',
         '-o', '@OUTPUT@',
         '@OUTDIR@/' + app_name + '.c',
+        companion_c_files,
         '-luser32',
         '-lgdi32',
       ],
