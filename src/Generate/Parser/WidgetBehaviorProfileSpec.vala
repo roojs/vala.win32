@@ -7,6 +7,8 @@ namespace Generate.Parse {
 		public string dispatch_route { get; set; default = "NONE"; }
 		public string? signal_name { get; set; }
 		public string? wm_notify_const { get; set; }
+		public string? wm_notify_code_expr { get; set; }
+		public bool init_common_controls { get; set; default = false; }
 		public bool uses_control_id { get; set; default = true; }
 		public Gee.ArrayList<string> window_style_tokens { get; set; default = new Gee.ArrayList<string> (); }
 		public Gee.ArrayList<string> control_style_tokens { get; set; default = new Gee.ArrayList<string> (); }
@@ -15,12 +17,17 @@ namespace Generate.Parse {
 		public bool selection_helpers { get; set; default = false; }
 		public bool scroll_value_property { get; set; default = false; }
 		public bool progress_value_property { get; set; default = false; }
+		public bool list_view_helpers { get; set; default = false; }
+		public bool tree_view_helpers { get; set; default = false; }
+		public bool tab_page_helpers { get; set; default = false; }
 
 		public Generate.WidgetBehaviorProfile to_profile (string wc_symbol) throws GLib.Error {
 			Generate.WidgetBehaviorProfile result = {};
 			result.dispatch_route = parse_dispatch_route (wc_symbol, dispatch_route);
 			result.signal_name = signal_name;
 			result.wm_notify_const = wm_notify_const;
+			result.wm_notify_code_expr = wm_notify_code_expr;
+			result.init_common_controls = init_common_controls;
 			result.uses_control_id = uses_control_id;
 			result.window_style_tokens = window_style_tokens.to_array ();
 			result.control_style_tokens = control_style_tokens.to_array ();
@@ -29,6 +36,9 @@ namespace Generate.Parse {
 			result.selection_helpers = selection_helpers;
 			result.scroll_value_property = scroll_value_property;
 			result.progress_value_property = progress_value_property;
+			result.list_view_helpers = list_view_helpers;
+			result.tree_view_helpers = tree_view_helpers;
+			result.tab_page_helpers = tab_page_helpers;
 			return result;
 		}
 
@@ -40,6 +50,8 @@ namespace Generate.Parse {
 				return Generate.WidgetDispatchRoute.WM_COMMAND;
 			case "WM_SCROLL":
 				return Generate.WidgetDispatchRoute.WM_SCROLL;
+			case "WM_NOTIFY":
+				return Generate.WidgetDispatchRoute.WM_NOTIFY;
 			default:
 				throw new GLib.IOError.FAILED (
 					"profile %s: unknown dispatch_route %s",

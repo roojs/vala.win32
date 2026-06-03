@@ -28,16 +28,26 @@ wine build/common-dialog-demo.exe
 wine build/menu-demo.exe
 wine build/error-demo.exe
 wine build/ergonomic-button-demo.exe
+wine build/ergonomic-widgets-demo.exe   # grouped layout; comctl32 v6 manifest on native Windows
 wine build/ergonomic-dialog-demo.exe
 wine build/ergonomic-common-dialog-demo.exe
 wine build/ergonomic-menu-demo.exe
 wine build/ergonomic-error-demo.exe
 
-# Debug WM_COMMAND / signals (ergonomic-button-demo):
-# WIN32_WIDGET_DEBUG=1 wine build/ergonomic-button-demo.exe 2>&1 | tee /tmp/ergo-debug.log
+# Debug WM_COMMAND / WM_NOTIFY (ergonomic-widgets-demo exercises most Track B widgets):
+# WIN32_WIDGET_DEBUG=1 wine build/ergonomic-widgets-demo.exe 2>&1 | tee /tmp/ergo-debug.log
 ```
 
 Or `make` (same as `meson compile -C build` after setup).
+
+**Phase 6 checks:**
+
+```bash
+meson compile -C build check-regen      # vapi drift vs metadata
+meson compile -C build compile-check    # Track A examples → C (no link)
+meson compile -C build coverage-report  # docs/coverage/6a-coverage-matrix.md (ergonomic examples)
+# Gap analysis (Phase 6e): docs/coverage/6e-gap-report.md
+```
 
 Win32 JSON for regen: run `./scripts/vendor-win32json.sh` once if `metadata/win32json/api/` is empty.
 

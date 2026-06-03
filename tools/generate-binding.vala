@@ -11,8 +11,10 @@ int main (string[] args) {
 	var opt_monolith = false;
 	var opt_debug = false;
 	var opt_debug_critical = false;
+	var opt_coverage_report = "";
+	var opt_coverage_only = false;
 
-	var options = new OptionEntry[9];
+	var options = new OptionEntry[11];
 	options[0] = { "metadata", 'm', 0, OptionArg.STRING, ref opt_metadata, "Vendored win32json root (api/ subdir)", "DIR" };
 	options[1] = { "filter", 'f', 0, OptionArg.STRING, ref opt_filter, "Symbol filter file", "FILE" };
 	options[2] = { "api-list", 'l', 0, OptionArg.STRING, ref opt_api_list, "JSON basename list (win32json-api.files)", "FILE" };
@@ -22,7 +24,11 @@ int main (string[] args) {
 	options[6] = { "debug", 'd', 0, OptionArg.NONE, ref opt_debug, "Enable debug output", null };
 	options[7] = { "debug-critical", 0, 0, OptionArg.NONE, ref opt_debug_critical,
 		"Treat critical warnings as errors", null };
-	options[8] = { null };
+	options[8] = { "coverage-report", 0, 0, OptionArg.STRING, ref opt_coverage_report,
+		"Write Phase 6a coverage matrix markdown to PATH", "FILE" };
+	options[9] = { "coverage-only", 0, 0, OptionArg.NONE, ref opt_coverage_only,
+		"Only write --coverage-report (skip vapi / generated emit)", null };
+	options[10] = { null };
 
 	try {
 		var ctx = new OptionContext ("Generate Win32 vapi from vendored win32json");
@@ -69,6 +75,49 @@ int main (string[] args) {
 		return 1;
 	}
 
+	var project_root = GLib.Path.get_dirname (GLib.Path.get_dirname (opt_metadata));
+
+	Generate.Parse.ApiFileEntry? controls_entry = null;
+	foreach (var file_entry in files) {
+		if (file_entry.basename == "UI.Controls.json") {
+			controls_entry = file_entry;
+			break;
+		}
+	}
+
+	var conventions_path = GLib.Path.build_filename (project_root, "metadata", "widget-conventions.json");
+	Generate.WidgetCodegen? widget_codegen = null;
+	try {
+		var conventions = Generate.Parse.WidgetConventionsFile.load_from_file (conventions_path);
+		widget_codegen = new Generate.WidgetCodegen (filter, conventions);
+		if (controls_entry != null) {
+			widget_codegen.load_catalog (controls_entry);
+		}
+	} catch (GLib.Error e) {
+		stderr.printf ("widget conventions: %s\n", e.message);
+		return 1;
+	}
+
+	if (opt_coverage_report.length > 0) {
+		var report_path = opt_coverage_report;
+		if (!GLib.Path.is_absolute (report_path)) {
+			report_path = GLib.Path.build_filename (project_root, report_path);
+		}
+		var coverage = new Generate.CoverageReport (filter, widget_codegen, opt_out, project_root);
+		var markdown = coverage.emit_markdown (files);
+		try {
+			Generate.CoverageReport.write_to_file (report_path, markdown);
+		} catch (GLib.Error e) {
+			stderr.printf ("coverage report: %s\n", e.message);
+			return 1;
+		}
+		print ("wrote %s (%u bytes)\n", report_path, markdown.length);
+	}
+
+	if (opt_coverage_only) {
+		return 0;
+	}
+
 	GLib.DirUtils.create_with_parents (opt_out, 0755);
 	var emitter = new Generate.VapiEmitter (filter);
 
@@ -99,17 +148,11 @@ int main (string[] args) {
 		print ("wrote %s (%u bytes)\n", out_path, text.length);
 	}
 
-	var project_root = GLib.Path.get_dirname (GLib.Path.get_dirname (opt_metadata));
 	var generated_dir = GLib.Path.build_filename (project_root, "generated");
 	GLib.DirUtils.create_with_parents (generated_dir, 0755);
 
-	Generate.Parse.ApiFileEntry? controls_entry = null;
-	foreach (var file_entry in files) {
-		if (file_entry.basename != "UI.Controls.json") {
-			continue;
-		}
-		controls_entry = file_entry;
-		var literals = emitter.emit_control_class_strings (file_entry);
+	if (controls_entry != null) {
+		var literals = emitter.emit_control_class_strings (controls_entry);
 		var literals_path = GLib.Path.build_filename (generated_dir, "win32-ui-control-strings.vala");
 		try {
 			GLib.FileUtils.set_contents (literals_path, literals);
@@ -118,23 +161,11 @@ int main (string[] args) {
 			return 1;
 		}
 		print ("wrote %s (%u bytes)\n", literals_path, literals.length);
-		break;
 	}
 
-	var conventions_path = GLib.Path.build_filename (project_root, "metadata", "widget-conventions.json");
-	Generate.Parse.WidgetConventionsFile conventions;
-	Generate.WidgetCodegen widget_codegen;
-	try {
-		conventions = Generate.Parse.WidgetConventionsFile.load_from_file (conventions_path);
-		widget_codegen = new Generate.WidgetCodegen (filter, conventions);
-	} catch (GLib.Error e) {
-		stderr.printf ("widget conventions: %s\n", e.message);
-		return 1;
-	}
-	if (controls_entry != null) {
-		widget_codegen.load_catalog (controls_entry);
+	if (widget_codegen != null) {
 		print (
-			"widget catalog: %u WC_* classes, %u Track B profiles (%s)\n",
+			"widget catalog: %u control classes, %u Track B profiles (%s)\n",
 			widget_codegen.catalog_size (),
 			widget_codegen.profiled_size (),
 			conventions_path

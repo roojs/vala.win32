@@ -1,6 +1,6 @@
 # 08 — Phase 6: Full API coverage and testing
 
-**Status:** **🔷** In progress (6a done)
+**Status:** **🔷** In progress — **6a ✅** · **6b ✅** · **6c ✅** · **6d ⏭ skipped** · **6e ✅** · **6f ⏳**
 
 **Layout:** `~/gitlive/OLLMchat/docs/guide-to-writing-plans.md`
 
@@ -12,14 +12,14 @@
 
 Phase 5 proved **WidgetCodegen** (catalog + profiles + emit). Phase 6 answers the product question: **how much of the vendored win32json GUI surface can we actually use from Vala** — vapi shards, generated widgets, Track A demos, and compile/runtime gaps.
 
-This is **exploration and testing**, not polish. Do not treat “7 profiled widgets” or “16 catalog shells” as the ceiling.
+This is **exploration and testing**, not polish. Do not treat “7 profiled widgets” or “20 catalog shells” as the ceiling.
 
 | In scope **✅** | Out of scope **💩** |
 |----------------|---------------------|
 | **Coverage matrix** — shard × symbol × compile × (optional) Wine run | GitHub Actions / Valadoc (Phase 7) |
 | **Filter expansion** — widen `gui.filter` / `win32json-api.files` with measured tradeoffs | Monolith vapi |
 | **Profile growth** — more `widget-conventions.json` entries where Track B pays off | Gtk hybrid |
-| **Track A spikes** — raw vapi for controls not yet profiled (`ListView`, `TreeView`, …) | Hand-editing `vapi/` |
+| **Track B integration demo** — `ergonomic-widgets-demo` for commctrl + shells | Track A per-family spikes (skipped; see 6e) |
 | **Relay gaps** — document or emit missing `commctrl` / `WM_*` / init (e.g. `InitCommonControlsEx`) | Full win32json (42k-line) bind |
 
 ---
@@ -30,7 +30,7 @@ This is **exploration and testing**, not polish. Do not treat “7 profiled widg
 |-------|--------|-------------------|
 | **Vapi shards** | Filtered `vapi/win32-*.vapi` from `generate-binding` | More JSON files + symbols; compile-check per shard |
 | **Control strings** | All filtered `WC_*` in `generated/win32-ui-control-strings.vala` | Same pipeline; grows with filter |
-| **Widgets** | **16** catalog classes; **7** Track B profiles | Profiles + dispatch for high-value controls; shell-only → exercised |
+| **Widgets** | **22** catalog classes; **10** Track B profiles | ListView / TreeView / TabControl + WM_NOTIFY (6c) |
 | **Demos** | hello, button, dialog, menu, ergonomic twins | One demo per major control family where feasible |
 
 ---
@@ -39,11 +39,11 @@ This is **exploration and testing**, not polish. Do not treat “7 profiled widg
 
 | Step | Deliverable |
 |------|-------------|
-| **6a — Inventory** | Coverage spreadsheet: metadata symbol → vapi? → widget class? → demo? → Wine OK? → **[6a-coverage-matrix.md](../coverage/6a-coverage-matrix.md)** (regen: `./scripts/coverage-inventory.py -o …`) |
-| **6b — Filter / shard trials** | Incremental `gui.filter` / api-list changes; regen + `compile-check` after each bump |
-| **6c — Widget profiles** | Add conventions + emit for controls beyond button-demo parity (e.g. `ListView`, `TreeView`, `TabControl`) |
-| **6d — Track A reference apps** | Minimal `.vala` per family using raw vapi (baseline before Track B) |
-| **6e — Gap report** | What blocks full API (missing relay, Vala types, init order, ANSI-only symbols, …) |
+| **✅** **6a — Inventory** | **Ergonomic example matrix** — each `ergonomic-*-demo` + widget mapping → **[6a-coverage-matrix.md](../coverage/6a-coverage-matrix.md)** (`meson compile -C build coverage-report`) |
+| **✅** **6b — Filter / shard trials** | Catalog scope trial + `compile-check`; filter/api-list unchanged → **[6b-filter-trials.md](../coverage/6b-filter-trials.md)** (trial 2 deferred) |
+| **✅** **6c — Widget profiles** | `ListView`, `TreeView`, `TabControl` profiles + `WM_NOTIFY` dispatch + `InitCommonControlsEx` in template |
+| **⏭ 6d — Track A reference apps** | **Skipped** — `ergonomic-widgets-demo` covers commctrl; raw vapi remains for debug only |
+| **✅ 6e — Gap report** | **[6e-gap-report.md](../coverage/6e-gap-report.md)** — blockers vs next profile work |
 
 **Phase 6 done when:** We have a **maintained coverage picture** and **compile-checked** examples for substantially more than the Phase 3/5 demo set; clear list of **hard blockers** vs **next profile work**.
 
@@ -51,22 +51,26 @@ This is **exploration and testing**, not polish. Do not treat “7 profiled widg
 
 ## Intended files
 
-- `metadata/filters/gui.filter` — widen as trials succeed
-- `metadata/win32json-api.files` — optional extra API JSON basenames
+- `metadata/filters/gui.filter` — unchanged in 6b; widen later if needed
+- `metadata/win32json-api.files` — optional shards deferred (6b trial 2)
 - `metadata/widget-conventions.json` — new profiles from 6c
-- `examples/` — Track A + ergonomic spikes per control family
+- `examples/ergonomic-widgets-demo.vala` — Track B commctrl showcase (replaces 6d intent)
+- **✅** `docs/coverage/6e-gap-report.md` — published gap analysis (6e)
+- **✅** `src/Generate/CoverageReport.vala` + `meson compile -C build coverage-report` — 6a matrix
+- **✅** `docs/coverage/6a-coverage-matrix.md` — maintained coverage picture (6a)
+- **✅** `docs/coverage/6b-filter-trials.md` — shard / catalog trial log (6b)
 - `docs/plans/08 - phase 6 full api coverage.md` — matrix + gap notes (this doc)
-- `scripts/check-regen.sh` / `meson compile -C build compile-check` — already; use heavily
+- **✅** `scripts/check-regen.sh` · **✅** `scripts/compile-check.sh` / `meson compile -C build compile-check`
 
 ---
 
 ## Tasks
 
 - [x] **✅** **6a** — Build coverage matrix (vapi / widget / demo / runtime) — [docs/coverage/6a-coverage-matrix.md](../coverage/6a-coverage-matrix.md)
-- [ ] **🔷** **6b** — Trial filter expansion; record shard size and compile time
-- [ ] **🔷** **6c** — Profile + emit next N high-value `WC_*` (not hand class bodies)
-- [ ] **🔷** **6d** — Track A demo per major missing family
-- [ ] **🔷** **6e** — Publish gap report (relay, generator, Vala limits)
+- [x] **✅** **6b** — Trial filter expansion; record shard size and compile time — [docs/coverage/6b-filter-trials.md](../coverage/6b-filter-trials.md)
+- [x] **✅** **6c** — Profile + emit next N high-value `WC_*` (not hand class bodies) — `WM_NOTIFY` route; see `metadata/widget-conventions.json`
+- [x] **⏭** **6d** — Track A demo per major missing family — **skipped** (see [6e-gap-report.md](../coverage/6e-gap-report.md#6d-track-a-reference-apps--skipped))
+- [x] **✅** **6e** — Publish gap report — [docs/coverage/6e-gap-report.md](../coverage/6e-gap-report.md)
 - [ ] **⏳** **6f** — Wine smoke for new demos (best-effort)
 
 ### Success metrics (guidance)

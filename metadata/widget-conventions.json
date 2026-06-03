@@ -1,7 +1,14 @@
 {
   "class_name_overrides": {
     "WC_STATIC": "Label",
-    "PROGRESS_CLASS": "ProgressBar"
+    "PROGRESS_CLASS": "ProgressBar",
+    "TOOLBARCLASSNAME": "Toolbar",
+    "MONTHCAL_CLASS": "MonthCalendar",
+    "DATETIMEPICK_CLASS": "DateTimePicker",
+    "TOOLTIPS_CLASS": "ToolTips",
+    "WC_LISTVIEW": "ListView",
+    "WC_TREEVIEW": "TreeView",
+    "WC_TABCONTROL": "TabControl"
   },
   "profiles": {
     "WC_BUTTON": {
@@ -97,6 +104,53 @@
       "control_style_tokens": [],
       "style_literal_exprs": ["PBS_SMOOTH"],
       "progress_value_property": true
+    },
+    "WC_LISTVIEW": {
+      "dispatch_route": "WM_NOTIFY",
+      "signal_name": "selection_changed",
+      "wm_notify_code_expr": "0xFFFFFF9Bu",
+      "uses_control_id": true,
+      "init_common_controls": true,
+      "window_style_tokens": [
+        "WindowStyle.WS_CHILD",
+        "WindowStyle.WS_VISIBLE",
+        "WindowStyle.WS_TABSTOP",
+        "WindowStyle.WS_BORDER"
+      ],
+      "control_style_tokens": ["LVS_REPORT", "LVS_SINGLESEL"],
+      "style_literal_exprs": [],
+      "list_view_helpers": true
+    },
+    "WC_TREEVIEW": {
+      "dispatch_route": "WM_NOTIFY",
+      "signal_name": "selection_changed",
+      "wm_notify_code_expr": "0xFFFFFF0Du",
+      "uses_control_id": true,
+      "init_common_controls": true,
+      "window_style_tokens": [
+        "WindowStyle.WS_CHILD",
+        "WindowStyle.WS_VISIBLE",
+        "WindowStyle.WS_TABSTOP",
+        "WindowStyle.WS_BORDER"
+      ],
+      "control_style_tokens": ["TVS_HASLINES", "TVS_LINESATROOT", "TVS_HASBUTTONS"],
+      "style_literal_exprs": [],
+      "tree_view_helpers": true
+    },
+    "WC_TABCONTROL": {
+      "dispatch_route": "WM_NOTIFY",
+      "signal_name": "selection_changed",
+      "wm_notify_code_expr": "0xFFFFFDD5u",
+      "uses_control_id": true,
+      "init_common_controls": true,
+      "window_style_tokens": [
+        "WindowStyle.WS_CHILD",
+        "WindowStyle.WS_VISIBLE",
+        "WindowStyle.WS_TABSTOP"
+      ],
+      "control_style_tokens": ["TCS_TABS"],
+      "style_literal_exprs": [],
+      "tab_page_helpers": true
     }
   }
 }

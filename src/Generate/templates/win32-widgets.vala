@@ -1,6 +1,7 @@
 /* Track B widget shell — dispatch, Window, dialogs, menus; control classes emitted at @TRACK_B_WIDGETS@ */
 
 using GLib;
+using Win32.Graphics.Gdi;
 using Win32.System;
 using Win32.Ui;
 using Win32.Ui.Controls;
@@ -10,6 +11,28 @@ using Win32.Ui.WindowsAndMessaging;
 namespace Win32 {
 
 const int ITEM_TEXT_MAX = 256;
+
+private const uint WM_SETFONT = 0x0030;
+
+private void* _control_font_default;
+
+private void* control_font_default () {
+	if (_control_font_default == null) {
+		_control_font_default = get_stock_object (GetSTOCKOBJECTFLAGS.DEFAULT_GUI_FONT);
+	}
+	return _control_font_default;
+}
+
+/**
+ * Apply the OS default GUI font to a child HWND (including group boxes created outside widget classes).
+ */
+public class ControlFont {
+	public static void apply_default ([CCode (type_id = "HWND")] void* hwnd) {
+		if (hwnd != null) {
+			send_message (hwnd, WM_SETFONT, (ulong) control_font_default (), 1);
+		}
+	}
+}
 
 private int window_registry_count = 0;
 private void*[]? window_registry_handles = null;
@@ -69,6 +92,11 @@ private int64 widget_window_proc (
 			"wndproc msg=0x%04x wParam=0x%llx lParam=0x%llx\n",
 			msg, (ulong) w_param, (ulong) l_param
 		);
+	}
+	if (msg == WM_NOTIFY) {
+		if (wm_notify_dispatch (l_param)) {
+			return 0;
+		}
 	}
 	if (msg == WM_COMMAND) {
 		if (wm_command_dispatch (w_param)) {
@@ -142,6 +170,161 @@ public class WidgetDispatch {
 			stderr.printf ("  [%d] hwnd=%p\n", i, wm_scroll_handles[i]);
 		}
 	}
+}
+
+/* InitCommonControlsEx — commctrl.h (not pulled in via win32-ui-controls.vapi C header). */
+[CCode (cheader_filename = "commctrl.h")]
+struct CommonControlsInit {
+	public uint dwSize;
+	public uint dwICC;
+}
+
+[CCode (cheader_filename = "commctrl.h", cname = "InitCommonControlsEx")]
+extern int init_common_controls_ex_native (void* picce);
+
+const uint ICC_LISTVIEW_CLASSES_MASK = 1;
+const uint ICC_TREEVIEW_CLASSES_MASK = 2;
+const uint ICC_BAR_CLASSES_MASK = 4;
+const uint ICC_TAB_CLASSES_MASK = 8;
+const uint ICC_PROGRESS_CLASS_MASK = 32;
+const uint ICC_DATE_CLASSES_MASK = 256;
+
+/* Commctrl WM_NOTIFY codes (not in win32json as named constants). */
+const uint LVN_ITEMCHANGED = 0xFFFFFF9Bu;
+const uint TVN_SELCHANGED = 0xFFFFFF0Du;
+const uint TCN_SELCHANGE = 0xFFFFFDD5u;
+
+private static bool common_controls_inited = false;
+
+private void ensure_common_controls () {
+	if (common_controls_inited) {
+		return;
+	}
+	var icce = CommonControlsInit ();
+	icce.dwSize = (uint) sizeof (CommonControlsInit);
+	icce.dwICC = (
+		ICC_LISTVIEW_CLASSES_MASK |
+		ICC_TREEVIEW_CLASSES_MASK |
+		ICC_TAB_CLASSES_MASK |
+		ICC_BAR_CLASSES_MASK |
+		ICC_DATE_CLASSES_MASK |
+		ICC_PROGRESS_CLASS_MASK
+	);
+	init_common_controls_ex_native (&icce);
+	common_controls_inited = true;
+}
+
+private enum WmNotifyKind { LISTVIEW, TREEVIEW, TABCONTROL }
+
+private int wm_notify_count = 0;
+private void*[]? wm_notify_hwnds = null;
+private WmNotifyKind[]? wm_notify_kinds = null;
+private ListView?[]? wm_notify_list_views = null;
+private TreeView?[]? wm_notify_tree_views = null;
+private TabControl?[]? wm_notify_tab_controls = null;
+
+private void wm_notify_registry_ensure () {
+	if (wm_notify_hwnds == null) {
+		wm_notify_hwnds = new void*[64];
+		wm_notify_kinds = new WmNotifyKind[64];
+		wm_notify_list_views = new ListView[64];
+		wm_notify_tree_views = new TreeView[64];
+		wm_notify_tab_controls = new TabControl[64];
+	}
+}
+
+private int wm_notify_find_hwnd (void* hwnd) {
+	for (int i = 0; i < wm_notify_count; i++) {
+		if (wm_notify_hwnds[i] == hwnd) {
+			return i;
+		}
+	}
+	return -1;
+}
+
+private void wm_notify_register (void* hwnd, WmNotifyKind kind) {
+	wm_notify_registry_ensure ();
+	for (int i = 0; i < wm_notify_count; i++) {
+		if (wm_notify_hwnds[i] == hwnd) {
+			wm_notify_kinds[i] = kind;
+			return;
+		}
+	}
+	wm_notify_hwnds[wm_notify_count] = hwnd;
+	wm_notify_kinds[wm_notify_count] = kind;
+	wm_notify_count++;
+}
+
+private void wm_notify_register_list_view (ListView list_view) {
+	if (list_view.handle == null) {
+		return;
+	}
+	wm_notify_register (list_view.handle, WmNotifyKind.LISTVIEW);
+	var idx = wm_notify_find_hwnd (list_view.handle);
+	if (idx >= 0) {
+		wm_notify_list_views[idx] = list_view;
+	}
+}
+
+private void wm_notify_register_tree_view (TreeView tree_view) {
+	if (tree_view.handle == null) {
+		return;
+	}
+	wm_notify_register (tree_view.handle, WmNotifyKind.TREEVIEW);
+	var idx = wm_notify_find_hwnd (tree_view.handle);
+	if (idx >= 0) {
+		wm_notify_tree_views[idx] = tree_view;
+	}
+}
+
+private void wm_notify_register_tab_control (TabControl tab_control) {
+	if (tab_control.handle == null) {
+		return;
+	}
+	wm_notify_register (tab_control.handle, WmNotifyKind.TABCONTROL);
+	var idx = wm_notify_find_hwnd (tab_control.handle);
+	if (idx >= 0) {
+		wm_notify_tab_controls[idx] = tab_control;
+	}
+}
+
+private bool wm_notify_dispatch (int64 l_param) {
+	var hdr = (NMHDR*) l_param;
+	if (hdr == null) {
+		return false;
+	}
+	var idx = wm_notify_find_hwnd (hdr.hwndFrom);
+	if (idx < 0) {
+		return false;
+	}
+	var code = hdr.code;
+	if (widget_debug_enabled ()) {
+		stderr.printf (
+			"WM_NOTIFY hwnd=%p code=0x%08x kind=%d\n",
+			hdr.hwndFrom, code, (int) wm_notify_kinds[idx]
+		);
+	}
+	switch (wm_notify_kinds[idx]) {
+	case WmNotifyKind.LISTVIEW:
+		if (code == LVN_ITEMCHANGED) {
+			wm_notify_list_views[idx].selection_changed ();
+			return true;
+		}
+		break;
+	case WmNotifyKind.TREEVIEW:
+		if (code == TVN_SELCHANGED) {
+			wm_notify_tree_views[idx].selection_changed ();
+			return true;
+		}
+		break;
+	case WmNotifyKind.TABCONTROL:
+		if (code == TCN_SELCHANGE) {
+			wm_notify_tab_controls[idx].selection_changed ();
+			return true;
+		}
+		break;
+	}
+	return false;
 }
 
 private enum WmCommandKind { BUTTON, EDIT, LISTBOX, COMBOBOX, MENU }
@@ -520,6 +703,29 @@ public class MenuPopup {
 			WideString (label).ptr
 		);
 		wm_command_register_menu (bar, menu_id);
+	}
+}
+
+/**
+ * Layout group (WC_BUTTON + BS_GROUPBOX). Decorative frame only — no command signal.
+ */
+public class GroupBox {
+	public void* handle { get; private set; }
+
+	public GroupBox (
+		Window parent,
+		int x, int y, int width, int height,
+		string title
+	) {
+		uint style = (uint) (
+			WindowStyle.WS_CHILD | WindowStyle.WS_VISIBLE | BS_GROUPBOX
+		);
+		handle = create_window_ex (
+			0, WC_BUTTON, WideString (title).ptr, style,
+			x, y, width, height,
+			parent.handle, null, parent.instance, null
+		);
+		ControlFont.apply_default (handle);
 	}
 }
 

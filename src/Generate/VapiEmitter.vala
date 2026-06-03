@@ -231,11 +231,21 @@ namespace Win32 {
 			this.buffer.append (WORD_HELPERS);
 		}
 
+		/** Registerable Win32 / commctrl window class string constants (CreateWindow lpClassName). */
 		public static bool is_control_class_string (string name) {
 			if (name.has_prefix ("WC_")) {
 				return true;
 			}
-			return name == "PROGRESS_CLASS";
+			switch (name) {
+			case "PROGRESS_CLASS":
+			case "TOOLBARCLASSNAME":
+			case "MONTHCAL_CLASS":
+			case "DATETIMEPICK_CLASS":
+			case "TOOLTIPS_CLASS":
+				return true;
+			default:
+				return false;
+			}
 		}
 
 		public static bool is_string_constant (Parse.Constant c) {

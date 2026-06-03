@@ -55,6 +55,7 @@ generate_sources = files(
   'src/Generate/NameMapper.vala',
   'src/Generate/SymbolFilter.vala',
   'src/Generate/VapiEmitter.vala',
+  'src/Generate/CoverageReport.vala',
   'src/Generate/ErrorEmitter.vala',
   'src/Generate/WidgetCodegen.vala',
   'src/Generate/WidgetEmitter.vala',
@@ -98,6 +99,8 @@ regen_vapi = custom_target(
 )
 
 mingw_cc = find_program('x86_64-w64-mingw32-gcc', required: false)
+mingw_windres = find_program('x86_64-w64-mingw32-windres', required: false)
+ergonomic_widgets_rc = project_root / 'examples' / 'ergonomic-widgets-demo.rc'
 mingw64_lib = project_root / 'mingw-libs' / 'mingw64'
 mingw_pc_dir = mingw64_lib / 'lib' / 'pkgconfig'
 gobject_spike_pc = mingw_pc_dir / 'glib-2.0.pc'
@@ -207,6 +210,13 @@ ergonomic_apps = [
     [],
   ],
   [
+    'ergonomic-widgets-demo',
+    'examples/ergonomic-widgets-demo.vala',
+    ergonomic_widget_companion,
+    [],
+    [],
+  ],
+  [
     'ergonomic-dialog-demo',
     'examples/ergonomic-dialog-demo.vala',
     ergonomic_widget_companion,
@@ -269,26 +279,43 @@ if mingw_cc.found() and have_mingw_glib
     foreach lib : app_extra_libs
       app_link += ['-l' + lib]
     endforeach
+    ergo_cc_extra = []
+    ergo_link_objs = []
+    if app_name == 'ergonomic-widgets-demo' and mingw_windres.found()
+      ergo_link_objs += [ergo_build_dir + '/manifest.o']
+    endif
+    ergo_link_cmd = [
+      mingw_cc,
+      '-mwindows',
+    ] + ergo_cc_extra + glib_cflags + [
+      '-o', '@OUTPUT@',
+      ergo_build_dir + '/' + app_name + '.c',
+      ergo_companion_c,
+    ] + ergo_link_objs + app_link
+    ergo_build_cmd = [
+      'mkdir', '-p', ergo_build_dir,
+      '&&',
+      valac,
+      ergo_vala_args,
+      '-C',
+      '-d', ergo_build_dir,
+      '@INPUT@',
+    ]
+    if app_name == 'ergonomic-widgets-demo' and mingw_windres.found()
+      ergo_build_cmd += [
+        '&&',
+        mingw_windres,
+        '-I', project_root / 'examples',
+        '-i', ergonomic_widgets_rc,
+        '-o', ergo_build_dir + '/manifest.o',
+      ]
+    endif
+    ergo_build_cmd += ['&&'] + ergo_link_cmd
     custom_target(
       app_name,
       input: ergo_vala_inputs,
       output: app_name + '.exe',
-      command: [
-        'mkdir', '-p', ergo_build_dir,
-        '&&',
-        valac,
-        ergo_vala_args,
-        '-C',
-        '-d', ergo_build_dir,
-        '@INPUT@',
-        '&&',
-        mingw_cc,
-        '-mwindows',
-        glib_cflags,
-        '-o', '@OUTPUT@',
-        ergo_build_dir + '/' + app_name + '.c',
-        ergo_companion_c,
-      ] + app_link + [
+      command: ergo_build_cmd + [
         '&&',
         'sh',
         '-c',
@@ -311,6 +338,7 @@ else
 endif
 
 check_regen = find_program('scripts/check-regen.sh')
+compile_check = find_program('scripts/compile-check.sh')
 
 run_target('regen', command: regen_base_cmd)
 
@@ -329,5 +357,19 @@ run_target(
     meson.current_build_dir() / 'vapi-check',
     api_list_file,
     vapidir,
+  ],
+)
+
+run_target(
+  'compile-check',
+  command: [compile_check],
+  depends: regen_vapi,
+)
+
+run_target(
+  'coverage-report',
+  command: regen_base_cmd + [
+    '--coverage-only',
+    '--coverage-report', project_root / 'docs/coverage/6a-coverage-matrix.md',
   ],
 )

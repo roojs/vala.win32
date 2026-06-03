@@ -11,6 +11,7 @@ namespace Generate {
 		const string TRACK_B_MARKER = "/* @TRACK_B_WIDGETS@ */";
 
 		const string MESSAGING_PKG = "Win32.Ui.WindowsAndMessaging";
+		const string CONTROLS_PKG = "Win32.Ui.Controls";
 
 		public string emit (WidgetCodegen codegen, string template_path) throws GLib.Error {
 			string body;
@@ -109,6 +110,7 @@ public class $(d.class_name ()) {
 		if (caption != null && handle != null) {
 			window_text_set (handle, caption);
 		}
+		ControlFont.apply_default (handle);
 	}
 }
 
@@ -148,6 +150,10 @@ $(control_id_field)
 				break;
 			case WidgetDispatchRoute.WM_SCROLL:
 				route_line = " * Signal `value_changed` after WM_HSCROLL / WM_VSCROLL (parent def_window_proc).\n";
+				break;
+			case WidgetDispatchRoute.WM_NOTIFY:
+				route_line = @" * Signal `$(d.signal_name ())` on WM_NOTIFY ($(d.wm_notify_code_expr () ?? d.wm_notify_const ())). 
+";
 				break;
 			default:
 				route_line = " * No WM_COMMAND / WM_SCROLL dispatch registration.\n";
@@ -198,6 +204,7 @@ $(control_id_init)		uint style = (uint) (
 ");
 			emit_post_create (sb, d, symbols);
 			emit_dispatch_register (sb, d);
+			sb.append ("\t\tControlFont.apply_default (handle);\n");
 			sb.append ("\t}\n");
 		}
 
@@ -230,6 +237,9 @@ $(control_id_init)		uint style = (uint) (
 			WidgetControlDescriptor d,
 			WidgetCodegen symbols
 		) {
+			if (d.needs_init_common_controls ()) {
+				sb.append ("\t\tensure_common_controls ();\n");
+			}
 			if (d.wc_symbol == "WC_BUTTON") {
 				sb.append (@"		if (handle != null) {
 			window_text_set (handle, label);
@@ -265,6 +275,12 @@ $(control_id_init)		uint style = (uint) (
 ");
 			} else if (d.dispatch_route () == WidgetDispatchRoute.WM_SCROLL) {
 				sb.append ("\t\twm_scroll_register (this);\n");
+			} else if (d.dispatch_route () == WidgetDispatchRoute.WM_NOTIFY) {
+				var notify_reg = wm_notify_register_fn (d.wc_symbol);
+				if (notify_reg != null) {
+					sb.append (@"		$(notify_reg) (this);
+");
+				}
 			}
 		}
 
@@ -283,12 +299,25 @@ $(control_id_init)		uint style = (uint) (
 			}
 		}
 
+		static string? wm_notify_register_fn (string wc_symbol) {
+			switch (wc_symbol) {
+			case "WC_LISTVIEW":
+				return "wm_notify_register_list_view";
+			case "WC_TREEVIEW":
+				return "wm_notify_register_tree_view";
+			case "WC_TABCONTROL":
+				return "wm_notify_register_tab_control";
+			default:
+				return null;
+			}
+		}
+
 		static void emit_members (
 			GLib.StringBuilder sb,
 			WidgetControlDescriptor d,
 			WidgetCodegen symbols
 		) {
-			if (d.has_text_property () && d.uses_control_id ()) {
+			if (d.has_text_property ()) {
 				sb.append (@"
 
 	public string text {
@@ -299,6 +328,15 @@ $(control_id_init)		uint style = (uint) (
 			}
 			if (d.has_selection_helpers ()) {
 				emit_selection_helpers (sb, d);
+			}
+			if (d.has_list_view_helpers ()) {
+				emit_list_view_helpers (sb);
+			}
+			if (d.has_tree_view_helpers ()) {
+				emit_tree_view_helpers (sb);
+			}
+			if (d.has_tab_page_helpers ()) {
+				emit_tab_page_helpers (sb);
 			}
 			if (d.has_scroll_value_property ()) {
 				sb.append (@"
@@ -344,6 +382,12 @@ $(control_id_init)		uint style = (uint) (
 			case "SBS_HORZ":
 				return MESSAGING_PKG + "." + token;
 			default:
+				if (token.has_prefix ("LVS_")
+					|| token.has_prefix ("TVS_")
+					|| token.has_prefix ("TCS_")
+					|| token.has_prefix ("PBS_")) {
+					return CONTROLS_PKG + "." + token;
+				}
 				return token;
 			}
 		}
@@ -368,6 +412,80 @@ $(control_id_init)		uint style = (uint) (
 
 	public string selected_text {
 		owned get { return $(item_helper) (handle, selected_index); }
+	}
+");
+		}
+
+		static void emit_list_view_helpers (GLib.StringBuilder sb) {
+			sb.append (@"
+
+	private int _list_view_column = 0;
+	private int _list_view_row = 0;
+
+	public void add_column (string title, int width = 120) {
+		var col = LVCOLUMN ();
+		col.mask = LVCOLUMNWMASK.LVCF_WIDTH | LVCOLUMNWMASK.LVCF_TEXT;
+		col.cx = width;
+		col.pszText = WideString (title).ptr;
+		send_message (handle, LVM_INSERTCOLUMN, (ulong) _list_view_column, (int64) &col);
+		_list_view_column++;
+	}
+
+	public void append_row (string primary, string? secondary = null) {
+		var item = LVITEM ();
+		item.mask = LVIF_TEXT;
+		item.iItem = _list_view_row;
+		item.pszText = WideString (primary).ptr;
+		send_message (handle, LVM_INSERTITEM, 0, (int64) &item);
+		if (secondary != null) {
+			item.iSubItem = 1;
+			item.pszText = WideString (secondary).ptr;
+			send_message (handle, LVM_SETITEMTEXT, 0, (int64) &item);
+		}
+		_list_view_row++;
+	}
+");
+		}
+
+		static void emit_tree_view_helpers (GLib.StringBuilder sb) {
+			sb.append (@"
+
+	private const int64 TVI_ROOT = -65536;
+	private const int64 TVI_LAST = -65534;
+
+	private struct TreeInsertRow {
+		public void* h_parent;
+		public void* h_insert_after;
+		public TVITEM item;
+	}
+
+	public void* add_root (string text) {
+		return insert_item (null, text);
+	}
+
+	public void* add_child (void* parent, string text) {
+		return insert_item (parent, text);
+	}
+
+	private void* insert_item (void* parent_item, string text) {
+		var ins = TreeInsertRow ();
+		ins.h_parent = parent_item != null ? parent_item : (void*) TVI_ROOT;
+		ins.h_insert_after = (void*) TVI_LAST;
+		ins.item.mask = TVITEMMASK.TVIF_TEXT;
+		ins.item.pszText = WideString (text).ptr;
+		return (void*) send_message (handle, TVM_INSERTITEM, 0, (int64) &ins);
+	}
+");
+		}
+
+		static void emit_tab_page_helpers (GLib.StringBuilder sb) {
+			sb.append (@"
+
+	public void add_page (string title) {
+		var item = TCITEM ();
+		item.mask = TCITEMHEADERAMASK.TCIF_TEXT;
+		item.pszText = WideString (title).ptr;
+		send_message (handle, TCM_INSERTITEM, 0, (int64) &item);
 	}
 ");
 		}

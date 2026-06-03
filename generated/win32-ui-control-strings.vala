@@ -5,6 +5,12 @@ namespace Win32.Ui.Controls {
 	public const uint16[] WC_HEADER = { 'S', 'y', 's', 'H', 'e', 'a', 'd', 'e', 'r', '3', '2', 0 };
 
 	[CCode (array_length = false, array_null_terminated = true)]
+	public const uint16[] TOOLBARCLASSNAME = { 'T', 'o', 'o', 'l', 'b', 'a', 'r', 'W', 'i', 'n', 'd', 'o', 'w', '3', '2', 0 };
+
+	[CCode (array_length = false, array_null_terminated = true)]
+	public const uint16[] TOOLTIPS_CLASS = { 't', 'o', 'o', 'l', 't', 'i', 'p', 's', '_', 'c', 'l', 'a', 's', 's', '3', '2', 0 };
+
+	[CCode (array_length = false, array_null_terminated = true)]
 	public const uint16[] PROGRESS_CLASS = { 'm', 's', 'c', 't', 'l', 's', '_', 'p', 'r', 'o', 'g', 'r', 'e', 's', 's', '3', '2', 0 };
 
 	[CCode (array_length = false, array_null_terminated = true)]
@@ -27,6 +33,12 @@ namespace Win32.Ui.Controls {
 
 	[CCode (array_length = false, array_null_terminated = true)]
 	public const uint16[] WC_TABCONTROL = { 'S', 'y', 's', 'T', 'a', 'b', 'C', 'o', 'n', 't', 'r', 'o', 'l', '3', '2', 0 };
+
+	[CCode (array_length = false, array_null_terminated = true)]
+	public const uint16[] MONTHCAL_CLASS = { 'S', 'y', 's', 'M', 'o', 'n', 't', 'h', 'C', 'a', 'l', '3', '2', 0 };
+
+	[CCode (array_length = false, array_null_terminated = true)]
+	public const uint16[] DATETIMEPICK_CLASS = { 'S', 'y', 's', 'D', 'a', 't', 'e', 'T', 'i', 'm', 'e', 'P', 'i', 'c', 'k', '3', '2', 0 };
 
 	[CCode (array_length = false, array_null_terminated = true)]
 	public const uint16[] WC_IPADDRESS = { 'S', 'y', 's', 'I', 'P', 'A', 'd', 'd', 'r', 'e', 's', 's', '3', '2', 0 };

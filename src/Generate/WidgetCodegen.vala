@@ -10,12 +10,16 @@ public enum WidgetDispatchRoute {
 	NONE,
 	WM_COMMAND,
 	WM_SCROLL,
+	WM_NOTIFY,
 }
 
 public struct WidgetBehaviorProfile {
 	public WidgetDispatchRoute dispatch_route;
 	public string? signal_name;
 	public string? wm_notify_const;
+	/** Vala expression for NMHDR.code when wm_notify_const is not in metadata (e.g. LVN_ITEMCHANGED). */
+	public string? wm_notify_code_expr;
+	public bool init_common_controls;
 	public bool uses_control_id;
 	public string[] window_style_tokens;
 	public string[] control_style_tokens;
@@ -24,6 +28,9 @@ public struct WidgetBehaviorProfile {
 	public bool selection_helpers;
 	public bool scroll_value_property;
 	public bool progress_value_property;
+	public bool list_view_helpers;
+	public bool tree_view_helpers;
+	public bool tab_page_helpers;
 }
 
 public struct WidgetControlDescriptor {
@@ -58,6 +65,18 @@ public struct WidgetControlDescriptor {
 
 	public string? wm_notify_const () {
 		return profile?.wm_notify_const;
+	}
+
+	public string? wm_notify_code_expr () {
+		return profile?.wm_notify_code_expr;
+	}
+
+	public bool needs_init_common_controls () {
+		return profile != null && profile.init_common_controls;
+	}
+
+	public bool uses_wm_notify_dispatch () {
+		return dispatch_route () == WidgetDispatchRoute.WM_NOTIFY;
 	}
 
 	public string[] window_style_tokens () {
@@ -95,6 +114,18 @@ public struct WidgetControlDescriptor {
 
 	public bool has_progress_value_property () {
 		return profile != null && profile.progress_value_property;
+	}
+
+	public bool has_list_view_helpers () {
+		return profile != null && profile.list_view_helpers;
+	}
+
+	public bool has_tree_view_helpers () {
+		return profile != null && profile.tree_view_helpers;
+	}
+
+	public bool has_tab_page_helpers () {
+		return profile != null && profile.tab_page_helpers;
 	}
 }
 
