@@ -18,19 +18,16 @@ api_list_file = metadata_root / 'win32json-api.files'
 
 example_pkgs = [
   'win32-ui-windowsandmessaging',
-  'win32-ui-controls',
   'win32-system-stub',
 ]
 
-example_vala_args = ['--vapidir', vapidir]
-foreach pkg : example_pkgs
-  example_vala_args += ['--pkg', pkg]
-endforeach
-example_vala_args += '--profile=posix'
-
 example_apps = [
-  ['hello-window', 'examples/hello-window.vala'],
-  ['button-demo', 'examples/button-demo.vala'],
+  ['hello-window', 'examples/hello-window.vala', example_pkgs],
+  [
+    'button-demo',
+    'examples/button-demo.vala',
+    example_pkgs + ['win32-ui-controls'],
+  ],
 ]
 
 generate_sources = files(
@@ -80,11 +77,17 @@ mingw_cc = find_program('x86_64-w64-mingw32-gcc', required: false)
 foreach app : example_apps
   app_name = app[0]
   app_source = app[1]
+  app_pkgs = app[2]
+  app_vala_args = ['--vapidir', vapidir]
+  foreach pkg : app_pkgs
+    app_vala_args += ['--pkg', pkg]
+  endforeach
+  app_vala_args += '--profile=posix'
   if host_machine.system() == 'windows'
     executable(
       app_name,
       files(app_source),
-      vala_args: example_vala_args + ['-X', '-mwindows', '-X', '-luser32', '-X', '-lgdi32'],
+      vala_args: app_vala_args + ['-X', '-mwindows', '-X', '-luser32', '-X', '-lgdi32'],
       link_args: ['-mwindows', '-luser32', '-lgdi32'],
       depends: regen_vapi,
       install: false,
@@ -96,7 +99,7 @@ foreach app : example_apps
       output: app_name + '.exe',
       command: [
         valac,
-        example_vala_args,
+        app_vala_args,
         '-C',
         '-d', '@OUTDIR@',
         '@INPUT@',

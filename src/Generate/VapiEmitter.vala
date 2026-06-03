@@ -7,6 +7,7 @@ namespace Generate {
 		SymbolFilter filter;
 		GLib.StringBuilder buffer;
 		private Gee.HashSet<string> emitted_vala_names = new Gee.HashSet<string> ();
+		private string shard_basename = "";
 
 		public VapiEmitter (SymbolFilter filter) {
 			this.filter = filter;
@@ -64,6 +65,7 @@ namespace Generate {
 		}
 
 		void emit_shard_body (Parse.ApiFileEntry entry) {
+			this.shard_basename = entry.basename;
 			var basename = entry.basename;
 			var doc = entry.document;
 
@@ -136,7 +138,7 @@ namespace Generate {
 			}
 			if (VapiEmitter.is_string_constant (c)) {
 				this.buffer.append_printf (
-					"\t[CCode (cname = \"%s\")]\n\tpublic const unowned uint16* %s;\n\n",
+					"\t[CCode (cname = \"%s\")]\n\tpublic const uint16* %s;\n\n",
 					c.Name,
 					vala_name
 				);
@@ -228,6 +230,9 @@ namespace Generate {
 		}
 
 		void emit_struct (Parse.MetadataType t) {
+			if (NameMapper.skip_ansi_variant_name (t.Name)) {
+				return;
+			}
 			var vala_name = NameMapper.to_vala_type (t.Name);
 			if (!this.claim_vala_name (vala_name)) {
 				return;
@@ -240,7 +245,7 @@ namespace Generate {
 					this.buffer.append ("\t\tpublic int pt_y;\n");
 					continue;
 				}
-				var ftype = VapiEmitter.vala_type_for_field (field.Type);
+				var ftype = VapiEmitter.vala_type_for_field (field.Type, this.shard_basename);
 				this.buffer.append_printf ("\t\tpublic %s %s;\n", ftype, field.Name);
 			}
 			this.buffer.append ("\t}\n\n");
@@ -304,12 +309,27 @@ namespace Generate {
 			return vala_type.index_of_char ('*') < 0;
 		}
 
+		static string qualified_api_type (Parse.TypeRef type_ref, string shard_basename) {
+			var type_name = type_ref.TargetKind == "FunctionPointer"
+				? NameMapper.to_vala_type (type_ref.Name)
+				: VapiEmitter.map_type_name (type_ref.Name);
+			if (type_ref.Api == "" || shard_basename == "") {
+				return type_name;
+			}
+			var ref_basename = type_ref.Api + ".json";
+			if (ref_basename == shard_basename) {
+				return type_name;
+			}
+			var ns = NameMapper.vala_namespace_from_basename (ref_basename);
+			return ns + "." + type_name;
+		}
+
 		public static string vala_type_for (Parse.TypeRef type_ref, string value_type_fallback) {
 			return VapiEmitter.vala_type_for_ref (type_ref, value_type_fallback, null);
 		}
 
-		public static string vala_type_for_field (Parse.TypeRef type_ref) {
-			var base_type = VapiEmitter.vala_type_for_ref (type_ref, "", null);
+		public static string vala_type_for_field (Parse.TypeRef type_ref, string shard_basename = "") {
+			var base_type = VapiEmitter.vala_type_for_ref (type_ref, "", null, shard_basename);
 			if (VapiEmitter.is_wide_string_vala_type (type_ref, base_type)) {
 				return "unowned " + base_type;
 			}
@@ -345,10 +365,11 @@ namespace Generate {
 		static string vala_type_for_ref (
 			Parse.TypeRef type_ref,
 			string value_type_fallback,
-			Gee.ArrayList<string>? attrs
+			Gee.ArrayList<string>? attrs,
+			string shard_basename = ""
 		) {
 			if (type_ref.Kind == "PointerTo" && type_ref.Child != null) {
-				var inner = VapiEmitter.vala_type_for_ref (type_ref.Child, "", null);
+				var inner = VapiEmitter.vala_type_for_ref (type_ref.Child, "", null, shard_basename);
 				if (attrs != null && VapiEmitter.attrs_contain (attrs, "Out")) {
 					return "out " + inner;
 				}
@@ -362,10 +383,13 @@ namespace Generate {
 			}
 
 			if (type_ref.Kind == "ApiRef") {
-				if (type_ref.TargetKind == "FunctionPointer") {
-					return NameMapper.to_vala_type (type_ref.Name);
+				if (NameMapper.skip_ansi_name (type_ref.Name)) {
+					return "void*";
 				}
-				return VapiEmitter.map_type_name (type_ref.Name);
+				if (type_ref.TargetKind == "FunctionPointer") {
+					return VapiEmitter.qualified_api_type (type_ref, shard_basename);
+				}
+				return VapiEmitter.qualified_api_type (type_ref, shard_basename);
 			}
 
 			if (type_ref.Name != "") {

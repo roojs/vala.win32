@@ -200,5 +200,13 @@ namespace Generate {
 			}
 			return true;
 		}
+
+		/** Skip explicit Ansi struct/version names (e.g. PROPSHEETPAGEA_V1). */
+		public static bool skip_ansi_variant_name (string c_name) {
+			if (NameMapper.skip_ansi_name (c_name)) {
+				return true;
+			}
+			return c_name.index_of ("A_V") >= 0;
+		}
 	}
 }
