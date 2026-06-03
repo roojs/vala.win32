@@ -389,7 +389,7 @@ namespace Generate {
 				if (type_ref.TargetKind == "FunctionPointer") {
 					return VapiEmitter.qualified_api_type (type_ref, shard_basename);
 				}
-				return VapiEmitter.qualified_api_type (type_ref, shard_basename);
+				return VapiEmitter.map_type_name (type_ref.Name);
 			}
 
 			if (type_ref.Name != "") {
