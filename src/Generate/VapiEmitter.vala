@@ -418,7 +418,26 @@ namespace Win32 {
 			if (name.length >= 2 && name[0] == 'H' && name == name.up () && name.index_of_char ('_') < 0) {
 				return "void*";
 			}
+			if (!VapiEmitter.prefer_vala_type_name (name)) {
+				return "void*";
+			}
 			return NameMapper.to_vala_type (name);
+		}
+
+		static bool prefer_vala_type_name (string name) {
+			if (name.index_of_char ('_') >= 0) {
+				return true;
+			}
+			string[] suffixes = {
+				"RESULT", "FLAGS", "STYLE", "STYLES", "DLG", "COLOR", "FONT",
+				"PAGE", "NOTIFY", "SETUP", "EX", "INFO", "MASK", "TYPE",
+			};
+			foreach (var suffix in suffixes) {
+				if (name.has_suffix (suffix)) {
+					return true;
+				}
+			}
+			return false;
 		}
 
 		static string qualified_api_type (Parse.TypeRef type_ref, string shard_basename) {
@@ -434,6 +453,12 @@ namespace Win32 {
 			var ref_basename = type_ref.Api + ".json";
 			if (ref_basename == shard_basename) {
 				return type_name;
+			}
+			if (type_name == "void*") {
+				return "void*";
+			}
+			if (type_ref.Api == "System.Power") {
+				return "uint";
 			}
 			var ns = NameMapper.vala_namespace_from_basename (ref_basename);
 			return ns + "." + type_name;

@@ -20,6 +20,7 @@ example_pkgs = [
   'win32-ui-windowsandmessaging',
   'win32-system-stub',
   'win32-foundation-stub',
+  'win32-graphics-gdi',
 ]
 
 generated_root = project_root / 'generated'
