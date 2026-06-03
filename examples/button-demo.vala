@@ -1,5 +1,6 @@
 /* Phase 3 Track A: common controls demo (Button through ProgressBar). */
 
+using Win32.Ui;
 using Win32.Ui.Controls;
 using Win32.Ui.WindowsAndMessaging;
 using Win32.System;
@@ -15,69 +16,6 @@ const uint PBM_SETPOS = 0x0402;
 const uint PBM_SETRANGE32 = 0x0406;
 const uint PBS_SMOOTH = 0x0001;
 
-[CCode (array_length = false, array_null_terminated = true)]
-const uint16[] CLASS_NAME = {
-	'V', 'a', 'l', 'a', 'C', 'o', 'n', 't', 'r', 'o', 'l', 's', 'D', 'e', 'm', 'o', 0
-};
-
-[CCode (array_length = false, array_null_terminated = true)]
-const uint16[] WINDOW_TITLE = {
-	'v', 'a', 'l', 'a', '.', 'w', 'i', 'n', '3', '2', ' ', 'c', 'o', 'n', 't', 'r', 'o', 'l', 's', 0
-};
-
-[CCode (array_length = false, array_null_terminated = true)]
-const uint16[] BUTTON_LABEL = {
-	'C', 'l', 'i', 'c', 'k', ' ', 'm', 'e', 0
-};
-
-[CCode (array_length = false, array_null_terminated = true)]
-const uint16[] LABEL_NAME = {
-	'N', 'a', 'm', 'e', ':', 0
-};
-
-[CCode (array_length = false, array_null_terminated = true)]
-const uint16[] LABEL_LIST = {
-	'L', 'i', 's', 't', ':', 0
-};
-
-[CCode (array_length = false, array_null_terminated = true)]
-const uint16[] LABEL_PICK = {
-	'P', 'i', 'c', 'k', ':', 0
-};
-
-[CCode (array_length = false, array_null_terminated = true)]
-const uint16[] LABEL_SCROLL = {
-	'S', 'c', 'r', 'o', 'l', 'l', ':', 0
-};
-
-[CCode (array_length = false, array_null_terminated = true)]
-const uint16[] LABEL_PROGRESS = {
-	'P', 'r', 'o', 'g', 'r', 'e', 's', 's', ':', 0
-};
-
-[CCode (array_length = false, array_null_terminated = true)]
-const uint16[] EDIT_INITIAL = {
-	'H', 'e', 'l', 'l', 'o', ',', ' ', 'E', 'd', 'i', 't', 0
-};
-
-[CCode (array_length = false, array_null_terminated = true)]
-const uint16[] LIST_RED = { 'R', 'e', 'd', 0 };
-
-[CCode (array_length = false, array_null_terminated = true)]
-const uint16[] LIST_GREEN = { 'G', 'r', 'e', 'e', 'n', 0 };
-
-[CCode (array_length = false, array_null_terminated = true)]
-const uint16[] LIST_BLUE = { 'B', 'l', 'u', 'e', 0 };
-
-[CCode (array_length = false, array_null_terminated = true)]
-const uint16[] COMBO_SMALL = { 'S', 'm', 'a', 'l', 'l', 0 };
-
-[CCode (array_length = false, array_null_terminated = true)]
-const uint16[] COMBO_MEDIUM = { 'M', 'e', 'd', 'i', 'u', 'm', 0 };
-
-[CCode (array_length = false, array_null_terminated = true)]
-const uint16[] COMBO_LARGE = { 'L', 'a', 'r', 'g', 'e', 0 };
-
 private void* edit_hwnd = null;
 private void* list_hwnd = null;
 private void* combo_hwnd = null;
@@ -88,12 +26,14 @@ private int64 makelparam (uint lo, uint hi) {
 	return (int64) (lo | (hi << 16));
 }
 
-private void list_add (void* hwnd, uint16[] text) {
-	send_message (hwnd, LB_ADDSTRING, 0, (int64) text);
+private void list_add (void* hwnd, string text) {
+	var wide = WideString (text);
+	send_message (hwnd, LB_ADDSTRING, 0, (int64) wide.ptr);
 }
 
-private void combo_add (void* hwnd, uint16[] text) {
-	send_message (hwnd, CB_ADDSTRING, 0, (int64) text);
+private void combo_add (void* hwnd, string text) {
+	var wide = WideString (text);
+	send_message (hwnd, CB_ADDSTRING, 0, (int64) wide.ptr);
 }
 
 private void set_title_from_list (void* frame) {
@@ -106,7 +46,7 @@ private void set_title_from_list (void* frame) {
 	}
 	var text = new uint16[TEXT_MAX];
 	send_message (list_hwnd, LB_GETTEXT, (ulong) index, (int64) text);
-	set_window_text (frame, text);
+	window_text_set (frame, (string) text);
 }
 
 private void set_title_from_combo (void* frame) {
@@ -119,7 +59,7 @@ private void set_title_from_combo (void* frame) {
 	}
 	var text = new uint16[TEXT_MAX];
 	send_message (combo_hwnd, CB_GETLBTEXT, (ulong) index, (int64) text);
-	set_window_text (frame, text);
+	window_text_set (frame, (string) text);
 }
 
 private void sync_progress_from_scroll () {
@@ -141,9 +81,7 @@ private int64 window_proc (
 		var code = hiword (w_param);
 		if (id == ID_CLICK_ME && code == BN_CLICKED) {
 			if (edit_hwnd != null) {
-				var text = new uint16[TEXT_MAX];
-				get_window_text (edit_hwnd, text, TEXT_MAX);
-				set_window_text (h_wnd, text);
+				window_text_set (h_wnd, window_text_get (edit_hwnd, TEXT_MAX));
 			}
 			return 0;
 		}
@@ -171,12 +109,15 @@ private int64 window_proc (
 public static int main (string[] args) {
 	void* inst = get_module_handle (null);
 
+	var class_name = WideString ("ValaControlsDemo");
+	var window_title = WideString ("vala.win32 controls");
+
 	var wc = WndClassEx ();
 	wc.cbSize = (uint) sizeof (WndClassEx);
 	wc.lpfnWndProc = window_proc;
 	wc.hInstance = inst;
 	wc.hbrBackground = (void*) (SysColorIndex.COLOR_WINDOW + 1);
-	wc.lpszClassName = CLASS_NAME;
+	wc.lpszClassName = class_name.ptr;
 
 	if (register_class_ex (ref wc) == 0) {
 		stderr.printf ("RegisterClassExW failed\n");
@@ -185,8 +126,8 @@ public static int main (string[] args) {
 
 	void* hwnd = create_window_ex (
 		0,
-		CLASS_NAME,
-		WINDOW_TITLE,
+		class_name.ptr,
+		window_title.ptr,
 		WindowStyle.WS_OVERLAPPEDWINDOW | WindowStyle.WS_VISIBLE,
 		CW_USEDEFAULT,
 		CW_USEDEFAULT,
@@ -207,7 +148,7 @@ public static int main (string[] args) {
 	void* name_label = create_window_ex (
 		0,
 		WC_STATIC,
-		LABEL_NAME,
+		WideString ("Name:").ptr,
 		static_style,
 		20,
 		16,
@@ -249,7 +190,7 @@ public static int main (string[] args) {
 		stderr.printf ("CreateWindowExW (edit) failed\n");
 		return 1;
 	}
-	set_window_text (edit_hwnd, EDIT_INITIAL);
+	window_text_set (edit_hwnd, "Hello, Edit");
 
 	uint btn_style = (uint) (
 		WindowStyle.WS_CHILD |
@@ -261,7 +202,7 @@ public static int main (string[] args) {
 	void* btn = create_window_ex (
 		0,
 		WC_BUTTON,
-		BUTTON_LABEL,
+		WideString ("Click me").ptr,
 		btn_style,
 		20,
 		44,
@@ -280,7 +221,7 @@ public static int main (string[] args) {
 	void* list_label = create_window_ex (
 		0,
 		WC_STATIC,
-		LABEL_LIST,
+		WideString ("List:").ptr,
 		static_style,
 		20,
 		84,
@@ -323,15 +264,15 @@ public static int main (string[] args) {
 		stderr.printf ("CreateWindowExW (listbox) failed\n");
 		return 1;
 	}
-	list_add (list_hwnd, LIST_RED);
-	list_add (list_hwnd, LIST_GREEN);
-	list_add (list_hwnd, LIST_BLUE);
+	list_add (list_hwnd, "Red");
+	list_add (list_hwnd, "Green");
+	list_add (list_hwnd, "Blue");
 	send_message (list_hwnd, LB_SETCURSEL, 0, 0);
 
 	void* pick_label = create_window_ex (
 		0,
 		WC_STATIC,
-		LABEL_PICK,
+		WideString ("Pick:").ptr,
 		static_style,
 		20,
 		192,
@@ -373,15 +314,15 @@ public static int main (string[] args) {
 		stderr.printf ("CreateWindowExW (combobox) failed\n");
 		return 1;
 	}
-	combo_add (combo_hwnd, COMBO_SMALL);
-	combo_add (combo_hwnd, COMBO_MEDIUM);
-	combo_add (combo_hwnd, COMBO_LARGE);
+	combo_add (combo_hwnd, "Small");
+	combo_add (combo_hwnd, "Medium");
+	combo_add (combo_hwnd, "Large");
 	send_message (combo_hwnd, CB_SETCURSEL, 0, 0);
 
 	void* scroll_label = create_window_ex (
 		0,
 		WC_STATIC,
-		LABEL_SCROLL,
+		WideString ("Scroll:").ptr,
 		static_style,
 		20,
 		320,
@@ -433,7 +374,7 @@ public static int main (string[] args) {
 	void* progress_label = create_window_ex (
 		0,
 		WC_STATIC,
-		LABEL_PROGRESS,
+		WideString ("Progress:").ptr,
 		static_style,
 		20,
 		376,

@@ -79,9 +79,9 @@ Spike today: `--pkg win32-ui` + `--pkg win32-ui-native`, plus **local `const`** 
 
 - `WM_DESTROY`, `WS_OVERLAPPEDWINDOW`, `WS_VISIBLE`, `CW_USEDEFAULT`, `COLOR_WINDOW`
 
-**App-only (unchanged)**
+**App-only (superseded by Phase 3 Step 4)**
 
-- UTF-16 `CLASS_NAME` / `WINDOW_TITLE` arrays with `[CCode (array_null_terminated = true)]`
+- ~~UTF-16 `CLASS_NAME` / `WINDOW_TITLE` arrays~~ → **`Win32.Ui.WideString ("…")`** + **`window_text_get` / `window_text_set`** in **`generated/win32-wide-strings.vala`**
 
 ---
 
@@ -116,7 +116,8 @@ Spike today: `--pkg win32-ui` + `--pkg win32-ui-native`, plus **local `const`** 
   - Generated `public const` remain declaration-only (no numeric values in vapi).
 
 - **String fields — ✅ acceptable**
-  - Generated: `uint16*` (works with string literals).
+  - Generated: `uint16*` (works with string literals at the vapi layer).
+  - **✅ Phase 3 Step 4:** apps use plain **`string`** via **`generated/win32-wide-strings.vala`** (`WideString`, `window_text_*`) — no hand **`uint16[]`** arrays in examples.
 
 - **Noise / hazard — ✅ fixed**
   - Ansi `*A` siblings skipped in emitter (`NameMapper.skip_ansi_name`).

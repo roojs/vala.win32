@@ -23,14 +23,22 @@ example_pkgs = [
 
 generated_root = project_root / 'generated'
 control_strings_vala = generated_root / 'win32-ui-control-strings.vala'
+wide_strings_vala = generated_root / 'win32-wide-strings.vala'
+widgets_vala = generated_root / 'win32-widgets.vala'
 
 example_apps = [
-  ['hello-window', 'examples/hello-window.vala', example_pkgs, []],
+  ['hello-window', 'examples/hello-window.vala', example_pkgs, [wide_strings_vala]],
   [
     'button-demo',
     'examples/button-demo.vala',
     example_pkgs,
-    [control_strings_vala],
+    [control_strings_vala, wide_strings_vala],
+  ],
+  [
+    'ergonomic-button-demo',
+    'examples/ergonomic-button-demo.vala',
+    example_pkgs,
+    [control_strings_vala, wide_strings_vala, widgets_vala],
   ],
 ]
 

@@ -3,21 +3,6 @@
 const int ID_CLICK_ME = 100;
 const int ID_EDIT = 101;
 
-[CCode (array_length = false, array_null_terminated = true)]
-const uint16[] CLASS_NAME = {
-	'V', 'a', 'l', 'a', 'W', 'i', 'n', '3', '2', 'E', 'r', 'g', 'o', 0
-};
-
-[CCode (array_length = false, array_null_terminated = true)]
-const uint16[] WINDOW_TITLE = {
-	'v', 'a', 'l', 'a', '.', 'w', 'i', 'n', '3', '2', ' ', 'e', 'r', 'g', 'o', 0
-};
-
-[CCode (array_length = false, array_null_terminated = true)]
-const uint16[] BUTTON_LABEL = {
-	'C', 'l', 'i', 'c', 'k', ' ', 'm', 'e', 0
-};
-
 private Win32.Window frame;
 private Win32.Button click_btn;
 private Win32.Edit name_edit;
@@ -45,17 +30,25 @@ public static int main (string[] args) {
 
 	frame = Win32.Window (
 		inst,
-		CLASS_NAME,
-		WINDOW_TITLE,
+		"ValaWin32Ergo",
+		"vala.win32 ergo",
 		window_proc,
-		360,
-		120
+		360, // width
+		120  // height
 	);
 	if (frame.handle == null) {
 		return 1;
 	}
 
-	name_edit = Win32.Edit (frame, inst, 72, 12, 260, 24, ID_EDIT);
+	name_edit = Win32.Edit (
+		frame,
+		inst,
+		72,      // x
+		12,      // y
+		260,     // width
+		24,      // height
+		ID_EDIT  // control id (WM_COMMAND)
+	);
 	name_edit.set_text ("Hello, Edit");
 	if (name_edit.handle == null) {
 		return 1;
@@ -64,12 +57,12 @@ public static int main (string[] args) {
 	click_btn = Win32.Button (
 		frame,
 		inst,
-		20,
-		44,
-		120,
-		32,
-		ID_CLICK_ME,
-		BUTTON_LABEL
+		20,          // x
+		44,          // y
+		120,         // width
+		32,          // height
+		ID_CLICK_ME, // control id (WM_COMMAND)
+		"Click me"   // label
 	);
 	if (click_btn.handle == null) {
 		return 1;

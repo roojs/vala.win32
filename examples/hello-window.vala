@@ -1,17 +1,8 @@
 /* Phase 2: native Win32 message loop via generated vapi shards. */
 
+using Win32.Ui;
 using Win32.Ui.WindowsAndMessaging;
 using Win32.System;
-
-[CCode (array_length = false, array_null_terminated = true)]
-const uint16[] CLASS_NAME = {
-	'V', 'a', 'l', 'a', 'W', 'i', 'n', '3', '2', '.', 'H', 'e', 'l', 'l', 'o', 0
-};
-
-[CCode (array_length = false, array_null_terminated = true)]
-const uint16[] WINDOW_TITLE = {
-	'v', 'a', 'l', 'a', '.', 'w', 'i', 'n', '3', '2', ' ', 'P', 'h', 'a', 's', 'e', ' ', '2', 0
-};
 
 private int64 window_proc (
 	[CCode (type_id = "HWND")] void* h_wnd,
@@ -29,12 +20,15 @@ private int64 window_proc (
 public static int main (string[] args) {
 	void* inst = get_module_handle (null);
 
+	var class_name = WideString ("ValaWin32Hello");
+	var window_title = WideString ("vala.win32 Phase 2");
+
 	var wc = WndClassEx ();
 	wc.cbSize = (uint) sizeof (WndClassEx);
 	wc.lpfnWndProc = window_proc;
 	wc.hInstance = inst;
 	wc.hbrBackground = (void*) (SysColorIndex.COLOR_WINDOW + 1);
-	wc.lpszClassName = CLASS_NAME;
+	wc.lpszClassName = class_name.ptr;
 
 	if (register_class_ex (ref wc) == 0) {
 		stderr.printf ("RegisterClassExW failed\n");
@@ -43,8 +37,8 @@ public static int main (string[] args) {
 
 	void* hwnd = create_window_ex (
 		0,
-		CLASS_NAME,
-		WINDOW_TITLE,
+		class_name.ptr,
+		window_title.ptr,
 		WindowStyle.WS_OVERLAPPEDWINDOW | WindowStyle.WS_VISIBLE,
 		CW_USEDEFAULT,
 		CW_USEDEFAULT,
