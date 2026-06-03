@@ -1,27 +1,31 @@
 /*
- * win32json → vapi/win32-ui.vapi
+ * win32json → vapi shards (Phase 2) or monolith (Phase 1 --monolith).
  */
 
 int main (string[] args) {
 	var opt_metadata = "metadata/win32json";
 	var opt_filter = "metadata/filters/gui.filter";
+	var opt_api_list = "metadata/win32json-api.files";
 	var opt_out = "vapi";
 	var opt_basename = "win32-ui.generated.vapi";
+	var opt_monolith = false;
 	var opt_debug = false;
 	var opt_debug_critical = false;
 
-	var options = new OptionEntry[7];
+	var options = new OptionEntry[9];
 	options[0] = { "metadata", 'm', 0, OptionArg.STRING, ref opt_metadata, "Vendored win32json root (api/ subdir)", "DIR" };
 	options[1] = { "filter", 'f', 0, OptionArg.STRING, ref opt_filter, "Symbol filter file", "FILE" };
-	options[2] = { "out", 'o', 0, OptionArg.STRING, ref opt_out, "Output directory", "DIR" };
-	options[3] = { "basename", 'b', 0, OptionArg.STRING, ref opt_basename, "Output vapi filename", "FILE" };
-	options[4] = { "debug", 'd', 0, OptionArg.NONE, ref opt_debug, "Enable debug output", null };
-	options[5] = { "debug-critical", 0, 0, OptionArg.NONE, ref opt_debug_critical,
+	options[2] = { "api-list", 'l', 0, OptionArg.STRING, ref opt_api_list, "JSON basename list (win32json-api.files)", "FILE" };
+	options[3] = { "out", 'o', 0, OptionArg.STRING, ref opt_out, "Output directory", "DIR" };
+	options[4] = { "basename", 'b', 0, OptionArg.STRING, ref opt_basename, "Monolith output filename (--monolith)", "FILE" };
+	options[5] = { "monolith", 0, 0, OptionArg.NONE, ref opt_monolith, "Emit single monolith vapi (Phase 1)", null };
+	options[6] = { "debug", 'd', 0, OptionArg.NONE, ref opt_debug, "Enable debug output", null };
+	options[7] = { "debug-critical", 0, 0, OptionArg.NONE, ref opt_debug_critical,
 		"Treat critical warnings as errors", null };
-	options[6] = { null };
+	options[8] = { null };
 
 	try {
-		var ctx = new OptionContext ("Generate win32-ui.vapi from vendored win32json");
+		var ctx = new OptionContext ("Generate Win32 vapi from vendored win32json");
 		ctx.set_help_enabled (true);
 		ctx.add_main_entries (options, null);
 		ctx.parse (ref args);
@@ -51,40 +55,64 @@ int main (string[] args) {
 		return 1;
 	}
 
-	var files = new Gee.ArrayList<Generate.Parse.ApiFileEntry> ();
+	Generate.Parse.ApiFileEntry[] files;
 	try {
-		var dir = GLib.Dir.open (api_dir, 0);
-		string? name;
-		while ((name = dir.read_name ()) != null) {
-			if (!name.has_suffix (".json")) {
-				continue;
-			}
-			var path = GLib.Path.build_filename (api_dir, name);
-			var doc = Generate.Parse.ApiFile.load_from_file (path);
-			files.add (new Generate.Parse.ApiFileEntry (name, doc));
-		}
+		var loaded = Generate.ApiFileList.load_entries (api_dir, opt_api_list);
+		files = loaded.to_array ();
 	} catch (GLib.Error e) {
 		stderr.printf ("load: %s\n", e.message);
 		return 1;
 	}
 
-	if (files.size == 0) {
-		stderr.printf ("no JSON in %s\n", api_dir);
+	if (files.length == 0) {
+		stderr.printf ("no entries in %s\n", opt_api_list);
 		return 1;
 	}
-
-	var emitter = new Generate.VapiEmitter (filter);
-	var vapi_text = emitter.emit_all (files);
 
 	GLib.DirUtils.create_with_parents (opt_out, 0755);
-	var out_path = GLib.Path.build_filename (opt_out, opt_basename);
-	try {
-		GLib.FileUtils.set_contents (out_path, vapi_text);
-	} catch (GLib.Error e) {
-		stderr.printf ("write %s: %s\n", out_path, e.message);
-		return 1;
+	var emitter = new Generate.VapiEmitter (filter);
+
+	if (opt_monolith) {
+		var vapi_text = emitter.emit_all (files);
+		var out_path = GLib.Path.build_filename (opt_out, opt_basename);
+		try {
+			GLib.FileUtils.set_contents (out_path, vapi_text);
+		} catch (GLib.Error e) {
+			stderr.printf ("write %s: %s\n", out_path, e.message);
+			return 1;
+		}
+		print ("wrote %s (%u bytes)\n", out_path, vapi_text.length);
+		return 0;
 	}
 
-	print ("wrote %s (%u bytes)\n", out_path, vapi_text.length);
+	var shards = emitter.emit_all_shards (files);
+	foreach (var entry in shards) {
+		var pkg_id = entry.key;
+		var text = entry.value;
+		var out_path = GLib.Path.build_filename (opt_out, pkg_id + ".vapi");
+		try {
+			GLib.FileUtils.set_contents (out_path, text);
+		} catch (GLib.Error e) {
+			stderr.printf ("write %s: %s\n", out_path, e.message);
+			return 1;
+		}
+		print ("wrote %s (%u bytes)\n", out_path, text.length);
+	}
+
+	foreach (var file_entry in files) {
+		if (file_entry.basename != "UI.Controls.json") {
+			continue;
+		}
+		var literals = emitter.emit_control_class_strings (file_entry);
+		var literals_path = GLib.Path.build_filename (opt_out, "win32-ui-control-strings.vapi");
+		try {
+			GLib.FileUtils.set_contents (literals_path, literals);
+		} catch (GLib.Error e) {
+			stderr.printf ("write %s: %s\n", out_path, e.message);
+			return 1;
+		}
+		print ("wrote %s (%u bytes)\n", literals_path, literals.length);
+		break;
+	}
 	return 0;
 }

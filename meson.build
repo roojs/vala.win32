@@ -26,7 +26,7 @@ example_apps = [
   [
     'button-demo',
     'examples/button-demo.vala',
-    example_pkgs + ['win32-ui-controls'],
+    example_pkgs + ['win32-ui-control-strings'],
   ],
 ]
 
