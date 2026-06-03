@@ -21,13 +21,16 @@ example_pkgs = [
   'win32-system-stub',
 ]
 
+generated_root = project_root / 'generated'
+control_strings_vala = generated_root / 'win32-ui-control-strings.vala'
+
 example_apps = [
   ['hello-window', 'examples/hello-window.vala', example_pkgs, []],
   [
     'button-demo',
     'examples/button-demo.vala',
     example_pkgs,
-    [project_root / 'generated' / 'win32-ui-control-strings.vala'],
+    [control_strings_vala],
   ],
 ]
 
@@ -100,8 +103,12 @@ foreach app : example_apps
     )
   elif mingw_cc.found()
     companion_c_files = []
-    foreach src : app_extra_sources
+    foreach src : app_companion_sources
       companion_c_files += '@OUTDIR@/' + src.name_base() + '.c'
+    endforeach
+    companion_vala_cmd = []
+    foreach src : app_companion_sources
+      companion_vala_cmd += src
     endforeach
     custom_target(
       app_name,
@@ -113,6 +120,7 @@ foreach app : example_apps
         '-C',
         '-d', '@OUTDIR@',
         '@INPUT@',
+        companion_vala_cmd,
         '&&',
         mingw_cc,
         '-mwindows',
