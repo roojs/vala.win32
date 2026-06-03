@@ -1,10 +1,24 @@
 # 05 — Phase 3: Common controls
 
-**Status:** **⏳** Track A step 0 done — gap pass next
+**Status:** <span style="color:green">**✅** Step 0 done</span> · **⏳** Step 1 gap pass next
 
 **Layout:** `~/gitlive/OLLMchat/docs/guide-to-writing-plans.md`
 
 **Parent:** [01-DONE - project overview.md](01-DONE%20-%20project%20overview.md) · **Depends on:** [04 - phase 2 ergonomic vapi.md](04%20-%20phase%202%20ergonomic%20vapi.md) (hello-window on generated vapi)
+
+---
+
+## Progress at a glance
+
+| Step / area | Status | Notes |
+|-------------|--------|-------|
+| Step 0 — Button spike | <span style="color:green">**✅**</span> | `examples/button-demo.vala`, `build/button-demo.exe` |
+| Step 1 — Gap pass (generator) | **⏳** | `WC_*` strings, `LOWORD`/`HIWORD`, … |
+| Step 2 — Edit spike | **⏳** | not started |
+| Step 3 — Static / ListBox / ComboBox | **⏳** | after Edit |
+| Track B — ergonomic wrappers | **⏳** | optional, after Track A |
+
+**Legend:** <span style="color:green">**✅** done</span> · **⏳** open / partial · **❌** blocked
 
 ---
 
@@ -20,10 +34,10 @@ Prove that **generated vapi** is enough to build real child controls — not jus
 
 ## Two tracks (same idea as Phase 2)
 
-| Track | Goal | Phase 3 required? |
-|-------|------|-------------------|
-| **A — raw Win32 controls** | `examples/button-demo.vala`: `CreateWindowEx` child `"Button"`, `WM_COMMAND` / `BN_CLICKED`, optional Edit | **Yes** |
-| **B — ergonomic wrappers** | `[Compact]` `Button` type, Vala `signal clicked` from generator | **No** — after Track A works |
+| Track | Goal | Phase 3 required? | Status |
+|-------|------|-------------------|--------|
+| **A — raw Win32 controls** | `examples/button-demo.vala`: `CreateWindowEx` child `"Button"`, `WM_COMMAND` / `BN_CLICKED`, optional Edit | **Yes** | <span style="color:green">**✅** Step 0</span> · **⏳** Steps 1–3 |
+| **B — ergonomic wrappers** | `[Compact]` `Button` type, Vala `signal clicked` from generator | **No** — after Track A works | **⏳** |
 
 Track A is “use the vapi we already generate.” Track B is Gtk-*like* sugar on top — only after we know the raw surface is right.
 
@@ -33,94 +47,94 @@ Track A is “use the vapi we already generate.” Track B is Gtk-*like* sugar o
 
 | Item | Status |
 |------|--------|
-| `UI.Controls.json` vendored | **✅** in `win32json-api.files` → `win32-ui-controls.vapi` |
-| `UI.WindowsAndMessaging.json` | **✅** → `create_window_ex`, message loop, `WM_COMMAND`, `BN_CLICKED` (declaration-only const) |
-| Enum emit (`WindowStyle`, …) | **✅** Phase 2 |
+| `UI.Controls.json` vendored | <span style="color:green">**✅**</span> in `win32json-api.files` → `win32-ui-controls.vapi` |
+| `UI.WindowsAndMessaging.json` | <span style="color:green">**✅**</span> → `create_window_ex`, message loop, `WM_COMMAND`, `BN_CLICKED` (declaration-only const) |
+| Enum emit (`WindowStyle`, …) | <span style="color:green">**✅**</span> Phase 2 |
 | Control class strings (`WC_BUTTON`, `WC_EDIT`, …) | **⏳** in metadata as string constants — **not emitted yet** (emitter skips string `#define`s) |
 | `BN_*` as enums | **⏳** metadata has them as constants; may want a small **notification enum** for readable `WM_COMMAND` handling |
-| `LOWORD` / `HIWORD` helpers | **❌** not in vapi — demo may use shifts inline or we add tiny helpers |
+| `LOWORD` / `HIWORD` helpers | **❌** not in vapi — demo uses shifts inline or we add tiny helpers |
 
 So Phase 3 is **not** “vendor more JSON first.” It is mostly **make a demo, list gaps, extend the generator**, repeat.
 
 ---
 
-## Step 0 — Button spike (Track A entry point)
+## Step 0 — Button spike (Track A entry point) <span style="color:green">**✅ Done**</span>
 
-**Deliverable:** `examples/button-demo.vala` + builds with `meson compile -C build` (same as hello).
+**Deliverable:** <span style="color:green">**✅**</span> `examples/button-demo.vala` + builds with `meson compile -C build` (same as hello).
 
 **Behaviour:**
 
-1. Top-level window (copy pattern from `hello-window.vala`).
-2. Child button: `create_window_ex` with class **`"Button"`** (wide string literal until `WC_BUTTON` is emitted).
-3. In `WndProc`, on **`WM_COMMAND`**: if notification is **`BN_CLICKED`**, print or update title (prove click works).
-4. Close window → clean exit (`WM_DESTROY`).
+1. <span style="color:green">**✅**</span> Top-level window (copy pattern from `hello-window.vala`).
+2. <span style="color:green">**✅**</span> Child button: `create_window_ex` with class **`"Button"`** (wide string literal until `WC_BUTTON` is emitted).
+3. <span style="color:green">**✅**</span> In `WndProc`, on **`WM_COMMAND`**: if notification is **`BN_CLICKED`**, update title to `"Clicked!"` (prove click works).
+4. <span style="color:green">**✅**</span> Close window → clean exit (`WM_DESTROY`).
 
 **Packages (expected):**
 
-- `win32-ui-windowsandmessaging` — window, messages, `BN_CLICKED`, `WM_COMMAND`
-- `win32-system-stub` — `get_module_handle`
-- `win32-ui-controls` — only if we need symbols that live only in Controls JSON
+- <span style="color:green">**✅**</span> `win32-ui-windowsandmessaging` — window, messages, `BN_CLICKED`, `WM_COMMAND`
+- <span style="color:green">**✅**</span> `win32-system-stub` — `get_module_handle`
+- <span style="color:green">**✅**</span> `win32-ui-controls` — not needed for Step 0 (symbols came from WindowsAndMessaging + `windows.h`)
 
 **WM_COMMAND unpacking (raw C style in Vala):**
 
-- `LOWORD (w_param)` → notification code (compare to `BN_CLICKED`)
-- `HIWORD (w_param)` → control ID
-- `l_param` → child `HWND`
+- <span style="color:green">**✅**</span> `LOWORD (w_param)` → notification code — demo uses `wm_command_notify()` (inline shifts)
+- <span style="color:green">**✅**</span> `HIWORD (w_param)` → control ID — demo uses `wm_command_id()`
+- <span style="color:green">**✅**</span> `l_param` → child `HWND` — not needed for this demo
 
 Document in the example or a one-line comment; add generator helpers later if we want.
 
 ---
 
-## Step 1 — Gap list from Button spike
+## Step 1 — Gap list from Button spike **⏳ Next**
 
-**Step 0 done:** `build/button-demo.exe` links. Click handler uses `WM_COMMAND` + `BN_CLICKED`; window title becomes `"Clicked!"`.
+Recorded after Step 0 compile. Fix generator gaps here before Edit spike.
 
 | Gap | Status |
 |-----|--------|
 | `WC_BUTTON` string constant | **⏳** — demo uses UTF-16 `"Button"` literal; emitter skips string consts |
 | `LOWORD` / `HIWORD` | **⏳** — demo uses inline `wm_command_*` helpers |
-| `BN_CLICKED` / `BS_*` | **✅** works — declaration-only const from `windows.h` |
-| WndProc assign warning | **✅** same as hello — not a functional blocker |
-| Ergonomic `signal clicked` | Track B — later |
+| `BN_CLICKED` / `BS_*` | <span style="color:green">**✅**</span> works — declaration-only const from `windows.h` |
+| WndProc assign warning | <span style="color:green">**✅**</span> same as hello — not a functional blocker |
+| Ergonomic `signal clicked` | **⏳** Track B — later |
 
-Fix generator gaps in Step 1 before Edit spike.
+Fix gaps in **`VapiEmitter` / `NameMapper`** only — no hand-editing generated `.vapi`.
 
 ---
 
-## Step 2 — Edit spike
+## Step 2 — Edit spike **⏳**
 
 **Deliverable:** extend demo or `examples/edit-demo.vala`.
 
-- Child **`"Edit"`** control
-- **`set_window_text` / `get_window_text`** (or `SendMessage` with `WM_SETTEXT` / `WM_GETTEXT` if that is what metadata exposes cleanly)
-- Optional: read text on button click
+- **⏳** Child **`"Edit"`** control
+- **⏳** **`set_window_text` / `get_window_text`** (or `SendMessage` with `WM_SETTEXT` / `WM_GETTEXT` if that is what metadata exposes cleanly)
+- **⏳** Optional: read text on button click
 
 Same loop: run → gap list → generator fix.
 
 ---
 
-## Step 3 — Widen controls (priority order)
+## Step 3 — Widen controls (priority order) **⏳**
 
 Only after Button + Edit demos work:
 
-| Control | Priority | Why |
-|---------|----------|-----|
-| **Static** | P1 | labels next to inputs |
-| **ListBox** | P1 | selection model |
-| **ComboBox** | P1 | common in dialogs |
-| **ScrollBar** | P2 | less common in minimal apps |
-| **ProgressBar** | P2 | nice for later polish |
+| Control | Priority | Why | Status |
+|---------|----------|-----|--------|
+| **Static** | P1 | labels next to inputs | **⏳** |
+| **ListBox** | P1 | selection model | **⏳** |
+| **ComboBox** | P1 | common in dialogs | **⏳** |
+| **ScrollBar** | P2 | less common in minimal apps | **⏳** |
+| **ProgressBar** | P2 | nice for later polish | **⏳** |
 
 Each control: **one small example addition** → evaluate gaps → generator/metadata fix. Do not bulk-implement all six upfront.
 
 ---
 
-## Track B — ergonomic layer (optional in Phase 3)
+## Track B — ergonomic layer (optional in Phase 3) **⏳**
 
 From Phase 2 plan / overview PDF:
 
-- Generator emits **`[Compact] public class Button`** wrapping `HWND` + `create_window_ex` / `SendMessage`
-- Vala **`signal clicked`** — wired from app `WndProc` forwarding `WM_COMMAND`, or plumbing C if delegate lifetime is unsafe
+- **⏳** Generator emits **`[Compact] public class Button`** wrapping `HWND` + `create_window_ex` / `SendMessage`
+- **⏳** Vala **`signal clicked`** — wired from app `WndProc` forwarding `WM_COMMAND`, or plumbing C if delegate lifetime is unsafe
 
 **Start Track B only when Track A Button demo is stable.** Otherwise we duplicate hello-window’s Phase 2 mistake (ergonomic layer before raw bindings work).
 
@@ -128,7 +142,7 @@ From Phase 2 plan / overview PDF:
 
 ## Metadata / vendor scope
 
-**Default:** keep current `win32json-api.files` — **`UI.Controls.json` is already included.**
+**Default:** keep current `win32json-api.files` — <span style="color:green">**✅**</span> **`UI.Controls.json` is already included.**
 
 Widen the list only when a gap trace shows a symbol lives in a **different** JSON blob (e.g. something only in `UI.Controls.Dialogs.json`). Do not add blobs speculatively.
 
@@ -138,15 +152,15 @@ Widen the list only when a gap trace shows a symbol lives in a **different** JSO
 
 ## Intended files
 
-| File | Action |
-|------|--------|
-| `examples/button-demo.vala` | create — Track A first demo |
-| `examples/edit-demo.vala` | create — optional split from button demo |
-| `meson.build` | extend — build demos (same pattern as `hello-window.exe`) |
-| `src/Generate/VapiEmitter.vala` | extend — string constants, control enums, any new gaps |
-| `src/Generate/NameMapper.vala` | extend — control class names if needed |
-| `metadata/win32json-api.files` | extend — **only when** gap analysis requires new JSON |
-| `docs/plans/05 - phase 3 common controls.md` | this plan |
+| File | Action | Status |
+|------|--------|--------|
+| `examples/button-demo.vala` | create — Track A first demo | <span style="color:green">**✅**</span> |
+| `examples/edit-demo.vala` | create — optional split from button demo | **⏳** |
+| `meson.build` | extend — build demos (same pattern as `hello-window.exe`) | <span style="color:green">**✅**</span> `button-demo.exe` |
+| `src/Generate/VapiEmitter.vala` | extend — string constants, control enums, any new gaps | **⏳** Step 1 |
+| `src/Generate/NameMapper.vala` | extend — control class names if needed | **⏳** Step 1 |
+| `metadata/win32json-api.files` | extend — **only when** gap analysis requires new JSON | <span style="color:green">**✅**</span> no change needed yet |
+| `docs/plans/05 - phase 3 common controls.md` | this plan | **⏳** living doc |
 
 **Not:** regenerate a monolith `win32-ui.vapi` — apps use **`win32-ui-controls`**, **`win32-ui-windowsandmessaging`**, etc.
 
@@ -162,15 +176,17 @@ meson compile -C build
 wine build/button-demo.exe
 ```
 
+<span style="color:green">**✅**</span> `meson compile -C build` produces `build/button-demo.exe`.
+
 **Phase 3 Track A done when:**
 
-- Button demo opens, click fires handler, window closes cleanly
-- Edit demo (or combined demo) gets/sets text
-- Gaps found in Step 1 are either **fixed in generator** or **documented** with a conscious workaround
+- <span style="color:green">**✅**</span> Button demo opens, click fires handler, window closes cleanly
+- **⏳** Edit demo (or combined demo) gets/sets text
+- **⏳** Gaps found in Step 1 are either **fixed in generator** or **documented** with a conscious workaround
 
 **Phase 3 Track B done when (optional):**
 
-- App code can use a generated `Button` (or similar) with `clicked` instead of manual `WM_COMMAND` parsing
+- **⏳** App code can use a generated `Button` (or similar) with `clicked` instead of manual `WM_COMMAND` parsing
 
 ---
 
@@ -178,7 +194,7 @@ wine build/button-demo.exe
 
 ### Track A — raw controls (required)
 
-- [x] **🔷** **✅** `button-demo.vala` — child Button + `WM_COMMAND` / `BN_CLICKED`
+- [x] <span style="color:green">**✅**</span> **🔷** `button-demo.vala` — child Button + `WM_COMMAND` / `BN_CLICKED`
 - [ ] **🔷** **⏳** Gap pass after Button — document + fix emitter (string `WC_*`, styles, …)
 - [ ] **🔷** **⏳** Edit demo — text get/set
 - [ ] **🔷** **⏳** Gap pass after Edit
