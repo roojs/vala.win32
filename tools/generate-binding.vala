@@ -108,7 +108,7 @@ int main (string[] args) {
 		try {
 			GLib.FileUtils.set_contents (literals_path, literals);
 		} catch (GLib.Error e) {
-			stderr.printf ("write %s: %s\n", out_path, e.message);
+			stderr.printf ("write %s: %s\n", literals_path, e.message);
 			return 1;
 		}
 		print ("wrote %s (%u bytes)\n", literals_path, literals.length);
