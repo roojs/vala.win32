@@ -103,10 +103,12 @@ int main (string[] args) {
 	var generated_dir = GLib.Path.build_filename (project_root, "generated");
 	GLib.DirUtils.create_with_parents (generated_dir, 0755);
 
+	Generate.Parse.ApiFileEntry? controls_entry = null;
 	foreach (var file_entry in files) {
 		if (file_entry.basename != "UI.Controls.json") {
 			continue;
 		}
+		controls_entry = file_entry;
 		var literals = emitter.emit_control_class_strings (file_entry);
 		var literals_path = GLib.Path.build_filename (generated_dir, "win32-ui-control-strings.vala");
 		try {
@@ -119,15 +121,55 @@ int main (string[] args) {
 		break;
 	}
 
+	var conventions_path = GLib.Path.build_filename (project_root, "metadata", "widget-conventions.json");
+	Generate.Parse.WidgetConventionsFile conventions;
+	Generate.WidgetCodegen widget_codegen;
+	try {
+		conventions = Generate.Parse.WidgetConventionsFile.load_from_file (conventions_path);
+		widget_codegen = new Generate.WidgetCodegen (filter, conventions);
+	} catch (GLib.Error e) {
+		stderr.printf ("widget conventions: %s\n", e.message);
+		return 1;
+	}
+	if (controls_entry != null) {
+		widget_codegen.load_catalog (controls_entry);
+		print (
+			"widget catalog: %u WC_* classes, %u Track B profiles (%s)\n",
+			widget_codegen.catalog_size (),
+			widget_codegen.profiled_size (),
+			conventions_path
+		);
+	}
+
+	var wide_strings_template = GLib.Path.build_filename (
+		project_root, "src", "Generate", "templates", "win32-wide-strings.vala"
+	);
+	var wide_strings_emitter = new Generate.WideStringsEmitter ();
+	try {
+		var wide_text = wide_strings_emitter.emit_from_template (wide_strings_template);
+		var wide_path = GLib.Path.build_filename (generated_dir, "win32-wide-strings.vala");
+		GLib.FileUtils.set_contents (wide_path, wide_text);
+		print ("wrote %s (%u bytes)\n", wide_path, wide_text.length);
+	} catch (GLib.Error e) {
+		stderr.printf ("wide-strings emit: %s\n", e.message);
+		return 1;
+	}
+
 	var widget_emitter = new Generate.WidgetEmitter ();
 	var widgets_template = GLib.Path.build_filename (
 		project_root, "src", "Generate", "templates", "win32-widgets.vala"
 	);
+
 	try {
-		var widgets = widget_emitter.emit_from_template (widgets_template);
+		var widgets = widget_emitter.emit (widget_codegen, widgets_template);
 		var widgets_path = GLib.Path.build_filename (generated_dir, "win32-widgets.vala");
 		GLib.FileUtils.set_contents (widgets_path, widgets);
-		print ("wrote %s (%u bytes)\n", widgets_path, widgets.length);
+		print (
+			"wrote %s (%u bytes, %u widget classes)\n",
+			widgets_path,
+			widgets.length,
+			widget_codegen.catalog_size ()
+		);
 	} catch (GLib.Error e) {
 		stderr.printf ("widgets emit: %s\n", e.message);
 		return 1;

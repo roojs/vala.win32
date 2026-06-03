@@ -1,6 +1,6 @@
 # 01 — Vala Win32 UI binding (overview)
 
-**Status:** **⏳** Active — Phases 0–6 **✅** done; **07–08** open (see index)
+**Status:** **⏳** Active — Phases 0–5 **✅** done; **06–07** open (see index)
 
 **Layout:** `~/gitlive/OLLMchat/docs/guide-to-writing-plans.md`
 
@@ -31,10 +31,12 @@
   - Common-controls demos; ergonomic widgets (template regen until Phase 5)
 - [06-DONE - phase 4 dialogs and resources.md](06-DONE%20-%20phase%204%20dialogs%20and%20resources.md) — **✅** Done
   - MessageBox, common dialogs, menus, `.rc` doc, `win32-errors.vala`
-- [07 - phase 5 widget emit.md](07%20-%20phase%205%20widget%20emit.md) — **⏳** Not started
-  - Convention table → emit `generated/win32-widgets.vala`
-- [08 - phase 6 polish and ci.md](08%20-%20phase%206%20polish%20and%20ci.md) — **⏳** Not started
-  - **Valadoc**, examples index, cross-compile CI
+- [07-DONE - phase 5 widget emit.md](07-DONE%20-%20phase%205%20widget%20emit.md) (WidgetCodegen) — **✅** Done
+  - Catalog + profiles → emit `generated/win32-widgets.vala`
+- [08 - phase 6 full api coverage.md](08%20-%20phase%206%20full%20api%20coverage.md) — **⏳** Not started
+  - Full API testing: filter expansion, profiles, demos, gap report
+- [09 - phase 7 polish and ci.md](09%20-%20phase%207%20polish%20and%20ci.md) — **⏳** Not started
+  - **Valadoc**, CI, README (after Phase 6)
 
 ---
 

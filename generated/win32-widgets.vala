@@ -10,11 +10,43 @@ using Win32.Ui.WindowsAndMessaging;
 namespace Win32 {
 
 const int ITEM_TEXT_MAX = 256;
-const int LBS_NOTIFY = 0x0001;
-const uint PBM_SETPOS = 0x0402;
-const uint PBM_GETPOS = 0x0408;
-const uint PBM_SETRANGE32 = 0x0406;
-const uint PBS_SMOOTH = 0x0001;
+
+private int window_registry_count = 0;
+private void*[]? window_registry_handles = null;
+private Window?[]? window_registry_windows = null;
+
+private void window_registry_ensure () {
+	if (window_registry_handles == null) {
+		window_registry_handles = new void*[16];
+		window_registry_windows = new Window[16];
+	}
+}
+
+private void window_registry_add (Window window) {
+	if (window.handle == null) {
+		return;
+	}
+	window_registry_ensure ();
+	for (int i = 0; i < window_registry_count; i++) {
+		if (window_registry_handles[i] == window.handle) {
+			window_registry_windows[i] = window;
+			return;
+		}
+	}
+	window_registry_handles[window_registry_count] = window.handle;
+	window_registry_windows[window_registry_count] = window;
+	window_registry_count++;
+}
+
+private bool window_destroy_dispatch (void* hwnd) {
+	for (int i = 0; i < window_registry_count; i++) {
+		if (window_registry_handles[i] == hwnd) {
+			window_registry_windows[i].destroyed ();
+			return true;
+		}
+	}
+	return false;
+}
 
 private int64 makelparam_uint (uint lo, uint hi) {
 	return (int64) (lo | (hi << 16));
@@ -51,6 +83,7 @@ private int64 widget_window_proc (
 		return scroll_result;
 	}
 	if (msg == WM_DESTROY) {
+		window_destroy_dispatch (h_wnd);
 		post_quit_message (0);
 		return 0;
 	}
@@ -308,6 +341,8 @@ private bool wm_command_dispatch (ulong w_param) {
 }
 
 public class Window {
+	/** Fired when this window receives WM_DESTROY (before the demo message loop exits). */
+	public signal void destroyed ();
 	public void* handle { get; private set; }
 	public void* instance { get; private set; }
 	WideString _class_name;
@@ -350,6 +385,7 @@ public class Window {
 		if (widget_debug_enabled ()) {
 			stderr.printf ("Window handle=%p class=%s\n", handle, class_name);
 		}
+		window_registry_add (this);
 	}
 
 	public int run () {
@@ -487,6 +523,11 @@ public class MenuPopup {
 	}
 }
 
+
+/**
+ * Track B wrapper for `WC_BUTTON` (Button).
+ * Signal `clicked` when WM_COMMAND notify is BN_CLICKED.
+ */
 public class Button {
 	public signal void clicked ();
 	public void* handle { get; private set; }
@@ -494,17 +535,13 @@ public class Button {
 
 	public Button (
 		Window parent,
-		int x,
-		int y,
-		int width,
-		int height,
+		int x, int y, int width, int height,
 		int control_id,
 		string label
 	) {
 		this.control_id = control_id;
 		uint style = (uint) (
-			WindowStyle.WS_CHILD | WindowStyle.WS_VISIBLE |
-			WindowStyle.WS_TABSTOP | BS_DEFPUSHBUTTON
+			WindowStyle.WS_CHILD | WindowStyle.WS_VISIBLE | WindowStyle.WS_TABSTOP | Win32.Ui.WindowsAndMessaging.BS_DEFPUSHBUTTON
 		);
 		handle = create_window_ex (
 			0, WC_BUTTON, null, style,
@@ -518,91 +555,10 @@ public class Button {
 	}
 }
 
-public class Label {
-	public void* handle { get; private set; }
-
-	public Label (
-		Window parent,
-		int x, int y, int width, int height, string text
-	) {
-		uint style = (uint) (WindowStyle.WS_CHILD | WindowStyle.WS_VISIBLE);
-		handle = create_window_ex (
-			0, WC_STATIC, null, style,
-			x, y, width, height,
-			parent.handle, null, parent.instance, null
-		);
-		if (handle != null) {
-			window_text_set (handle, text);
-		}
-	}
-}
-
-public class Edit {
-	public signal void changed ();
-	public void* handle { get; private set; }
-	public int control_id { get; private set; }
-
-	public Edit (
-		Window parent,
-		int x, int y, int width, int height, int control_id
-	) {
-		this.control_id = control_id;
-		uint style = (uint) (
-			WindowStyle.WS_CHILD | WindowStyle.WS_VISIBLE |
-			WindowStyle.WS_BORDER | WindowStyle.WS_TABSTOP | 0x0080
-		);
-		handle = create_window_ex (
-			0, WC_EDIT, null, style,
-			x, y, width, height,
-			parent.handle, (void*) (intptr) control_id, parent.instance, null
-		);
-		wm_command_register_edit (this);
-	}
-
-	public string text {
-		owned get { return window_text_get (handle); }
-		set { window_text_set (handle, value); }
-	}
-}
-
-public class ListBox {
-	public signal void selection_changed ();
-	public void* handle { get; private set; }
-	public int control_id { get; private set; }
-
-	public ListBox (
-		Window parent,
-		int x, int y, int width, int height, int control_id
-	) {
-		this.control_id = control_id;
-		uint style = (uint) (
-			WindowStyle.WS_CHILD | WindowStyle.WS_VISIBLE |
-			WindowStyle.WS_BORDER | WindowStyle.WS_VSCROLL |
-			WindowStyle.WS_TABSTOP | LBS_NOTIFY
-		);
-		handle = create_window_ex (
-			0, WC_LISTBOX, null, style,
-			x, y, width, height,
-			parent.handle, (void*) (intptr) control_id, parent.instance, null
-		);
-		wm_command_register_list_box (this);
-	}
-
-	public void add_item (string text) {
-		var wide = WideString (text);
-		send_message (handle, LB_ADDSTRING, 0, (int64) wide.ptr);
-	}
-
-	public int selected_index {
-		get { return (int) send_message (handle, LB_GETCURSEL, 0, 0); }
-		set { send_message (handle, LB_SETCURSEL, (ulong) value, 0); }
-	}
-
-	public string selected_text {
-		owned get { return list_box_item_text (handle, selected_index); }
-	}
-}
-
+/**
+ * Track B wrapper for `WC_COMBOBOX` (ComboBox).
+ * Signal `selection_changed` when WM_COMMAND notify is CBN_SELCHANGE.
+ */
 public class ComboBox {
 	public signal void selection_changed ();
 	public void* handle { get; private set; }
@@ -610,13 +566,12 @@ public class ComboBox {
 
 	public ComboBox (
 		Window parent,
-		int x, int y, int width, int height, int control_id
+		int x, int y, int width, int height,
+		int control_id
 	) {
 		this.control_id = control_id;
 		uint style = (uint) (
-			WindowStyle.WS_CHILD | WindowStyle.WS_VISIBLE |
-			WindowStyle.WS_VSCROLL | WindowStyle.WS_TABSTOP |
-			CBS_DROPDOWNLIST
+			WindowStyle.WS_CHILD | WindowStyle.WS_VISIBLE | WindowStyle.WS_TABSTOP | WindowStyle.WS_VSCROLL | Win32.Ui.WindowsAndMessaging.CBS_DROPDOWNLIST
 		);
 		handle = create_window_ex (
 			0, WC_COMBOBOX, null, style,
@@ -625,6 +580,7 @@ public class ComboBox {
 		);
 		wm_command_register_combo_box (this);
 	}
+
 
 	public void add_item (string text) {
 		var wide = WideString (text);
@@ -641,6 +597,203 @@ public class ComboBox {
 	}
 }
 
+/**
+ * Catalog wrapper for `WC_COMBOBOXEX` (ComboBoxEx32).
+ * Minimal `create_window_ex` — add a profile in metadata/widget-conventions.json for signals/dispatch.
+ */
+public class ComboBoxEx32 {
+	public void* handle { get; private set; }
+
+	public ComboBoxEx32 (
+		Window parent,
+		int x, int y, int width, int height,
+		int control_id = 0,
+		string? caption = null
+	) {
+		uint style = (uint) (WindowStyle.WS_CHILD | WindowStyle.WS_VISIBLE);
+		handle = create_window_ex (
+			0, WC_COMBOBOXEX, null, style,
+			x, y, width, height,
+			parent.handle,
+			control_id != 0 ? (void*) (intptr) control_id : null,
+			parent.instance, null
+		);
+		if (caption != null && handle != null) {
+			window_text_set (handle, caption);
+		}
+	}
+}
+
+/**
+ * Track B wrapper for `WC_EDIT` (Edit).
+ * Signal `changed` when WM_COMMAND notify is EN_CHANGE.
+ */
+public class Edit {
+	public signal void changed ();
+	public void* handle { get; private set; }
+	public int control_id { get; private set; }
+
+	public Edit (
+		Window parent,
+		int x, int y, int width, int height,
+		int control_id
+	) {
+		this.control_id = control_id;
+		uint style = (uint) (
+			WindowStyle.WS_CHILD | WindowStyle.WS_VISIBLE | WindowStyle.WS_TABSTOP | WindowStyle.WS_BORDER | Win32.Ui.WindowsAndMessaging.ES_AUTOHSCROLL
+		);
+		handle = create_window_ex (
+			0, WC_EDIT, null, style,
+			x, y, width, height,
+			parent.handle, (void*) (intptr) control_id, parent.instance, null
+		);
+		wm_command_register_edit (this);
+	}
+
+
+	public string text {
+		owned get { return window_text_get (handle); }
+		set { window_text_set (handle, value); }
+	}
+}
+
+/**
+ * Track B wrapper for `WC_STATIC` (Static).
+ * No WM_COMMAND / WM_SCROLL dispatch registration.
+ */
+public class Label {
+	public void* handle { get; private set; }
+
+	public Label (
+		Window parent,
+		int x, int y, int width, int height,
+		string text
+	) {
+		uint style = (uint) (
+			WindowStyle.WS_CHILD | WindowStyle.WS_VISIBLE
+		);
+		handle = create_window_ex (
+			0, WC_STATIC, null, style,
+			x, y, width, height,
+			parent.handle, null, parent.instance, null
+		);
+		if (handle != null) {
+			window_text_set (handle, text);
+		}
+	}
+}
+
+/**
+ * Track B wrapper for `WC_LISTBOX` (ListBox).
+ * Signal `selection_changed` when WM_COMMAND notify is LBN_SELCHANGE.
+ */
+public class ListBox {
+	public signal void selection_changed ();
+	public void* handle { get; private set; }
+	public int control_id { get; private set; }
+
+	public ListBox (
+		Window parent,
+		int x, int y, int width, int height,
+		int control_id
+	) {
+		this.control_id = control_id;
+		uint style = (uint) (
+			WindowStyle.WS_CHILD | WindowStyle.WS_VISIBLE | WindowStyle.WS_TABSTOP | WindowStyle.WS_BORDER | WindowStyle.WS_VSCROLL | Win32.Ui.WindowsAndMessaging.LBS_NOTIFY
+		);
+		handle = create_window_ex (
+			0, WC_LISTBOX, null, style,
+			x, y, width, height,
+			parent.handle, (void*) (intptr) control_id, parent.instance, null
+		);
+		wm_command_register_list_box (this);
+	}
+
+
+	public void add_item (string text) {
+		var wide = WideString (text);
+		send_message (handle, LB_ADDSTRING, 0, (int64) wide.ptr);
+	}
+
+	public int selected_index {
+		get { return (int) send_message (handle, LB_GETCURSEL, 0, 0); }
+		set { send_message (handle, LB_SETCURSEL, (ulong) value, 0); }
+	}
+
+	public string selected_text {
+		owned get { return list_box_item_text (handle, selected_index); }
+	}
+}
+
+/**
+ * Catalog wrapper for `WC_NATIVEFONTCTL` (NativeFontCtl).
+ * Minimal `create_window_ex` — add a profile in metadata/widget-conventions.json for signals/dispatch.
+ */
+public class NativeFontCtl {
+	public void* handle { get; private set; }
+
+	public NativeFontCtl (
+		Window parent,
+		int x, int y, int width, int height,
+		int control_id = 0,
+		string? caption = null
+	) {
+		uint style = (uint) (WindowStyle.WS_CHILD | WindowStyle.WS_VISIBLE);
+		handle = create_window_ex (
+			0, WC_NATIVEFONTCTL, null, style,
+			x, y, width, height,
+			parent.handle,
+			control_id != 0 ? (void*) (intptr) control_id : null,
+			parent.instance, null
+		);
+		if (caption != null && handle != null) {
+			window_text_set (handle, caption);
+		}
+	}
+}
+
+/**
+ * Track B wrapper for `PROGRESS_CLASS` (msctls_progress32).
+ * No WM_COMMAND / WM_SCROLL dispatch registration.
+ */
+public class ProgressBar {
+	public void* handle { get; private set; }
+
+	public ProgressBar (
+		Window parent,
+		int x, int y, int width, int height,
+		int range_max = 100
+	) {
+		uint style = (uint) (
+			WindowStyle.WS_CHILD | WindowStyle.WS_VISIBLE | 0x0001u
+		);
+		handle = create_window_ex (
+			0, PROGRESS_CLASS, null, style,
+			x, y, width, height,
+			parent.handle, null, parent.instance, null
+		);
+		if (handle != null) {
+			send_message (handle, 0x0406u, 0, (int64) range_max);
+		}
+	}
+
+
+	public int value {
+		get { return (int) send_message (handle, 0x0408u, 0, 0); }
+		set { send_message (handle, 0x0402u, (ulong) value, 0); }
+	}
+
+	public int range_max {
+		set {
+			send_message (handle, 0x0406u, 0, (int64) value);
+		}
+	}
+}
+
+/**
+ * Track B wrapper for `WC_SCROLLBAR` (ScrollBar).
+ * Signal `value_changed` after WM_HSCROLL / WM_VSCROLL (parent def_window_proc).
+ */
 public class ScrollBar {
 	public signal void value_changed ();
 	public void* handle { get; private set; }
@@ -648,10 +801,7 @@ public class ScrollBar {
 
 	public ScrollBar (
 		Window parent,
-		int x,
-		int y,
-		int width,
-		int height,
+		int x, int y, int width, int height,
 		int control_id,
 		int range_min = 0,
 		int range_max = 100,
@@ -659,8 +809,7 @@ public class ScrollBar {
 	) {
 		this.control_id = control_id;
 		uint style = (uint) (
-			WindowStyle.WS_CHILD | WindowStyle.WS_VISIBLE |
-			WindowStyle.WS_TABSTOP | SBS_HORZ
+			WindowStyle.WS_CHILD | WindowStyle.WS_VISIBLE | WindowStyle.WS_TABSTOP | Win32.Ui.WindowsAndMessaging.SBS_HORZ
 		);
 		handle = create_window_ex (
 			0, WC_SCROLLBAR, null, style,
@@ -677,46 +826,202 @@ public class ScrollBar {
 		wm_scroll_register (this);
 	}
 
+
 	public int value {
 		get { return (int) send_message (handle, SBM_GETPOS, 0, 0); }
 		set { send_message (handle, SBM_SETPOS, 1, (ulong) value); }
 	}
 }
 
-public class ProgressBar {
+/**
+ * Catalog wrapper for `WC_HEADER` (SysHeader32).
+ * Minimal `create_window_ex` — add a profile in metadata/widget-conventions.json for signals/dispatch.
+ */
+public class SysHeader32 {
 	public void* handle { get; private set; }
 
-	public ProgressBar (
+	public SysHeader32 (
 		Window parent,
-		int x,
-		int y,
-		int width,
-		int height,
-		int range_max = 100
+		int x, int y, int width, int height,
+		int control_id = 0,
+		string? caption = null
 	) {
-		uint style = (uint) (
-			WindowStyle.WS_CHILD | WindowStyle.WS_VISIBLE | PBS_SMOOTH
-		);
+		uint style = (uint) (WindowStyle.WS_CHILD | WindowStyle.WS_VISIBLE);
 		handle = create_window_ex (
-			0, PROGRESS_CLASS, null, style,
+			0, WC_HEADER, null, style,
 			x, y, width, height,
-			parent.handle, null, parent.instance, null
+			parent.handle,
+			control_id != 0 ? (void*) (intptr) control_id : null,
+			parent.instance, null
 		);
-		if (handle != null) {
-			send_message (handle, PBM_SETRANGE32, 0, (int64) range_max);
-		}
-	}
-
-	public int value {
-		get { return (int) send_message (handle, PBM_GETPOS, 0, 0); }
-		set { send_message (handle, PBM_SETPOS, (ulong) value, 0); }
-	}
-
-	public int range_max {
-		set {
-			send_message (handle, PBM_SETRANGE32, 0, (int64) value);
+		if (caption != null && handle != null) {
+			window_text_set (handle, caption);
 		}
 	}
 }
+
+/**
+ * Catalog wrapper for `WC_IPADDRESS` (SysIPAddress32).
+ * Minimal `create_window_ex` — add a profile in metadata/widget-conventions.json for signals/dispatch.
+ */
+public class SysIPAddress32 {
+	public void* handle { get; private set; }
+
+	public SysIPAddress32 (
+		Window parent,
+		int x, int y, int width, int height,
+		int control_id = 0,
+		string? caption = null
+	) {
+		uint style = (uint) (WindowStyle.WS_CHILD | WindowStyle.WS_VISIBLE);
+		handle = create_window_ex (
+			0, WC_IPADDRESS, null, style,
+			x, y, width, height,
+			parent.handle,
+			control_id != 0 ? (void*) (intptr) control_id : null,
+			parent.instance, null
+		);
+		if (caption != null && handle != null) {
+			window_text_set (handle, caption);
+		}
+	}
+}
+
+/**
+ * Catalog wrapper for `WC_LINK` (SysLink).
+ * Minimal `create_window_ex` — add a profile in metadata/widget-conventions.json for signals/dispatch.
+ */
+public class SysLink {
+	public void* handle { get; private set; }
+
+	public SysLink (
+		Window parent,
+		int x, int y, int width, int height,
+		int control_id = 0,
+		string? caption = null
+	) {
+		uint style = (uint) (WindowStyle.WS_CHILD | WindowStyle.WS_VISIBLE);
+		handle = create_window_ex (
+			0, WC_LINK, null, style,
+			x, y, width, height,
+			parent.handle,
+			control_id != 0 ? (void*) (intptr) control_id : null,
+			parent.instance, null
+		);
+		if (caption != null && handle != null) {
+			window_text_set (handle, caption);
+		}
+	}
+}
+
+/**
+ * Catalog wrapper for `WC_LISTVIEW` (SysListView32).
+ * Minimal `create_window_ex` — add a profile in metadata/widget-conventions.json for signals/dispatch.
+ */
+public class SysListView32 {
+	public void* handle { get; private set; }
+
+	public SysListView32 (
+		Window parent,
+		int x, int y, int width, int height,
+		int control_id = 0,
+		string? caption = null
+	) {
+		uint style = (uint) (WindowStyle.WS_CHILD | WindowStyle.WS_VISIBLE);
+		handle = create_window_ex (
+			0, WC_LISTVIEW, null, style,
+			x, y, width, height,
+			parent.handle,
+			control_id != 0 ? (void*) (intptr) control_id : null,
+			parent.instance, null
+		);
+		if (caption != null && handle != null) {
+			window_text_set (handle, caption);
+		}
+	}
+}
+
+/**
+ * Catalog wrapper for `WC_PAGESCROLLER` (SysPager).
+ * Minimal `create_window_ex` — add a profile in metadata/widget-conventions.json for signals/dispatch.
+ */
+public class SysPager {
+	public void* handle { get; private set; }
+
+	public SysPager (
+		Window parent,
+		int x, int y, int width, int height,
+		int control_id = 0,
+		string? caption = null
+	) {
+		uint style = (uint) (WindowStyle.WS_CHILD | WindowStyle.WS_VISIBLE);
+		handle = create_window_ex (
+			0, WC_PAGESCROLLER, null, style,
+			x, y, width, height,
+			parent.handle,
+			control_id != 0 ? (void*) (intptr) control_id : null,
+			parent.instance, null
+		);
+		if (caption != null && handle != null) {
+			window_text_set (handle, caption);
+		}
+	}
+}
+
+/**
+ * Catalog wrapper for `WC_TABCONTROL` (SysTabControl32).
+ * Minimal `create_window_ex` — add a profile in metadata/widget-conventions.json for signals/dispatch.
+ */
+public class SysTabControl32 {
+	public void* handle { get; private set; }
+
+	public SysTabControl32 (
+		Window parent,
+		int x, int y, int width, int height,
+		int control_id = 0,
+		string? caption = null
+	) {
+		uint style = (uint) (WindowStyle.WS_CHILD | WindowStyle.WS_VISIBLE);
+		handle = create_window_ex (
+			0, WC_TABCONTROL, null, style,
+			x, y, width, height,
+			parent.handle,
+			control_id != 0 ? (void*) (intptr) control_id : null,
+			parent.instance, null
+		);
+		if (caption != null && handle != null) {
+			window_text_set (handle, caption);
+		}
+	}
+}
+
+/**
+ * Catalog wrapper for `WC_TREEVIEW` (SysTreeView32).
+ * Minimal `create_window_ex` — add a profile in metadata/widget-conventions.json for signals/dispatch.
+ */
+public class SysTreeView32 {
+	public void* handle { get; private set; }
+
+	public SysTreeView32 (
+		Window parent,
+		int x, int y, int width, int height,
+		int control_id = 0,
+		string? caption = null
+	) {
+		uint style = (uint) (WindowStyle.WS_CHILD | WindowStyle.WS_VISIBLE);
+		handle = create_window_ex (
+			0, WC_TREEVIEW, null, style,
+			x, y, width, height,
+			parent.handle,
+			control_id != 0 ? (void*) (intptr) control_id : null,
+			parent.instance, null
+		);
+		if (caption != null && handle != null) {
+			window_text_set (handle, caption);
+		}
+	}
+}
+
+
 
 }

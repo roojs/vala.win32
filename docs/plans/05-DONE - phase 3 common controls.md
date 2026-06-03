@@ -799,5 +799,6 @@ wine build/button-demo.exe
 | Phase | Plan |
 |-------|------|
 | **4** | [06-DONE - phase 4 dialogs and resources.md](06-DONE%20-%20phase%204%20dialogs%20and%20resources.md) — **✅** done |
-| **5** | [07 - phase 5 widget emit.md](07%20-%20phase%205%20widget%20emit.md) — convention table + emit `Win32.*` classes |
-| **6** | [08 - phase 6 polish and ci.md](08%20-%20phase%206%20polish%20and%20ci.md) — Valadoc, CI, README |
+| **5** | [07-DONE - phase 5 widget emit.md](07-DONE%20-%20phase%205%20widget%20emit.md) — **✅** WidgetCodegen + catalog emit |
+| **6** | [08 - phase 6 full api coverage.md](08%20-%20phase%206%20full%20api%20coverage.md) — API coverage / testing |
+| **7** | [09 - phase 7 polish and ci.md](09%20-%20phase%207%20polish%20and%20ci.md) — Valadoc, CI, README |

@@ -1,0 +1,102 @@
+{
+  "class_name_overrides": {
+    "WC_STATIC": "Label",
+    "PROGRESS_CLASS": "ProgressBar"
+  },
+  "profiles": {
+    "WC_BUTTON": {
+      "dispatch_route": "WM_COMMAND",
+      "signal_name": "clicked",
+      "wm_notify_const": "BN_CLICKED",
+      "uses_control_id": true,
+      "window_style_tokens": [
+        "WindowStyle.WS_CHILD",
+        "WindowStyle.WS_VISIBLE",
+        "WindowStyle.WS_TABSTOP"
+      ],
+      "control_style_tokens": ["BS_DEFPUSHBUTTON"],
+      "style_literal_exprs": []
+    },
+    "WC_EDIT": {
+      "dispatch_route": "WM_COMMAND",
+      "signal_name": "changed",
+      "wm_notify_const": "EN_CHANGE",
+      "uses_control_id": true,
+      "window_style_tokens": [
+        "WindowStyle.WS_CHILD",
+        "WindowStyle.WS_VISIBLE",
+        "WindowStyle.WS_TABSTOP",
+        "WindowStyle.WS_BORDER"
+      ],
+      "control_style_tokens": [],
+      "style_literal_exprs": ["ES_AUTOHSCROLL"],
+      "text_property": true
+    },
+    "WC_STATIC": {
+      "dispatch_route": "NONE",
+      "uses_control_id": false,
+      "window_style_tokens": [
+        "WindowStyle.WS_CHILD",
+        "WindowStyle.WS_VISIBLE"
+      ],
+      "control_style_tokens": [],
+      "style_literal_exprs": [],
+      "text_property": true
+    },
+    "WC_LISTBOX": {
+      "dispatch_route": "WM_COMMAND",
+      "signal_name": "selection_changed",
+      "wm_notify_const": "LBN_SELCHANGE",
+      "uses_control_id": true,
+      "window_style_tokens": [
+        "WindowStyle.WS_CHILD",
+        "WindowStyle.WS_VISIBLE",
+        "WindowStyle.WS_TABSTOP",
+        "WindowStyle.WS_BORDER",
+        "WindowStyle.WS_VSCROLL"
+      ],
+      "control_style_tokens": [],
+      "style_literal_exprs": ["LBS_NOTIFY"],
+      "selection_helpers": true
+    },
+    "WC_COMBOBOX": {
+      "dispatch_route": "WM_COMMAND",
+      "signal_name": "selection_changed",
+      "wm_notify_const": "CBN_SELCHANGE",
+      "uses_control_id": true,
+      "window_style_tokens": [
+        "WindowStyle.WS_CHILD",
+        "WindowStyle.WS_VISIBLE",
+        "WindowStyle.WS_TABSTOP",
+        "WindowStyle.WS_VSCROLL"
+      ],
+      "control_style_tokens": ["CBS_DROPDOWNLIST"],
+      "style_literal_exprs": [],
+      "selection_helpers": true
+    },
+    "WC_SCROLLBAR": {
+      "dispatch_route": "WM_SCROLL",
+      "signal_name": "value_changed",
+      "uses_control_id": true,
+      "window_style_tokens": [
+        "WindowStyle.WS_CHILD",
+        "WindowStyle.WS_VISIBLE",
+        "WindowStyle.WS_TABSTOP"
+      ],
+      "control_style_tokens": ["SBS_HORZ"],
+      "style_literal_exprs": [],
+      "scroll_value_property": true
+    },
+    "PROGRESS_CLASS": {
+      "dispatch_route": "NONE",
+      "uses_control_id": false,
+      "window_style_tokens": [
+        "WindowStyle.WS_CHILD",
+        "WindowStyle.WS_VISIBLE"
+      ],
+      "control_style_tokens": [],
+      "style_literal_exprs": ["PBS_SMOOTH"],
+      "progress_value_property": true
+    }
+  }
+}

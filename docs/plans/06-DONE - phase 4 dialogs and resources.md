@@ -110,5 +110,5 @@ Phase 4 is **binding + demos** for dialogs, menus, resources, and generator erro
 
 ## Hand-off
 
-- **Next:** [07 - phase 5 widget emit.md](07%20-%20phase%205%20widget%20emit.md) — convention table + emit `Win32.*` classes.
-- **Then:** [08 - phase 6 polish and ci.md](08%20-%20phase%206%20polish%20and%20ci.md) — Valadoc, CI, README.
+- **Next:** [07-DONE - phase 5 widget emit.md](07-DONE%20-%20phase%205%20widget%20emit.md) — **✅** done.
+- **Then:** [08 - phase 6 full api coverage.md](08%20-%20phase%206%20full%20api%20coverage.md) → [09 - phase 7 polish and ci.md](09%20-%20phase%207%20polish%20and%20ci.md).

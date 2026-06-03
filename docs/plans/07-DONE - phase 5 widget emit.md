@@ -1,0 +1,98 @@
+# 07 — Phase 5: WidgetCodegen
+
+**Status:** **✅** Done — G1–G4 + full catalog emit
+
+**Layout:** `~/gitlive/OLLMchat/docs/guide-to-writing-plans.md`
+
+**Parent:** [01-DONE - project overview.md](01-DONE%20-%20project%20overview.md) · **After:** [06-DONE - phase 4 dialogs and resources.md](06-DONE%20-%20phase%204%20dialogs%20and%20resources.md) (**✅**) · **Prerequisite:** [05-DONE - phase 3 common controls.md](05-DONE%20-%20phase%203%20common%20controls.md) Track B (**✅** template + `WidgetEmitter` regen)
+
+---
+
+## Purpose
+
+Replace hand-maintained control class bodies in `src/Generate/templates/win32-widgets.vala` with **generator output** driven by a **metadata catalog** + **per–`wc_symbol` behavior profiles**.
+
+**Not in this phase:** new Win32 vapi surface (Phase 4), ergonomic wrappers for dialogs/menus, full API coverage testing (Phase 6), Valadoc/CI (Phase 7).
+
+| In scope **✅** | Out of scope **💩** |
+|----------------|---------------------|
+| **G1** — `WidgetCodegen.load_catalog()` from `UI.Controls.json` (same filter as control-strings) | Ergonomic **`Win32.MessageBox`** / menu widgets |
+| **G1** — `metadata/widget-conventions.json` (class overrides + profiles by `wc_symbol`) | Monolith vapi |
+| **G2** — emit `generated/win32-widgets.vala` from catalog + dispatch shell | Full win32json signal metadata (later) |
+| **`/** … */`** composed at emit from convention fields | Full API coverage matrix (Phase 6) |
+
+**Catalog vs profiles:** Regen emits **all** filtered `WC_*` / `PROGRESS_CLASS` as `Win32.*` classes (16 today after duplicate class-name dedup). **Profiles** (7) add signals, dispatch, and helpers on top of the catalog shell.
+
+**Hand baseline (Phase 4 ergonomic — compare after G2 emit):**
+
+| Hand type / API | Template region | Track B demo |
+|-----------------|-----------------|--------------|
+| `Button`, `Edit`, … (controls) | `src/Generate/templates/win32-widgets.vala` | `ergonomic-button-demo` |
+| `Window.show_message`, `NativeDialogs` | same template, `NativeDialogs` class | `ergonomic-dialog-demo`, `ergonomic-common-dialog-demo` |
+| `MenuBar`, `MenuPopup` | same template | `ergonomic-menu-demo` |
+| `win32_bool_ok` (not widgets) | `generated/win32-errors.vala` | `ergonomic-error-demo` |
+
+---
+
+## Phased steps
+
+| Step | Deliverable |
+|------|-------------|
+| **5a — G1 convention table** | **✅** Metadata catalog + `WidgetBehaviorProfile` map by `wc_symbol` |
+| **5b — G2 emit classes** | Generated widget ctors/signals/properties; `/** … */` at emit; dispatch shell in template until merged |
+| **5c — G3 optional** | `win32-wide-strings.vala` regen; drop `0x0080` / `PBM_*` literals where vapi has symbols |
+| **5d — optional G4 / B5** | `Window.destroyed`, app-owned WndProc — only if still wanted |
+
+**Phase 5 done when:** **✅** `meson compile -C build regen` emits full catalog + profiled classes; **`ergonomic-button-demo`** compiles; template is dispatch/dialog/menu shell only.
+
+---
+
+## Intended files
+
+- `metadata/widget-conventions.json` — **✅** mapping data (profiles, class_name_overrides)
+- `src/Generate/Parser/WidgetConventionsFile.vala` — **✅** `Json.Serializable` root
+- `src/Generate/WidgetCodegen.vala` — **✅** metadata catalog + `WidgetConventionsFile`
+- `src/Generate/WidgetEmitter.vala` — **✅** G2 emit (full catalog + template shell)
+- `src/Generate/WideStringsEmitter.vala` — **✅** G3 wide-strings regen
+- `src/Generate/VapiEmitter.vala` — shared `is_control_class_string` / `is_string_constant`
+- `generated/win32-widgets.vala` — **fully emitted** body (header + profile-driven classes)
+- `tools/generate-binding.vala` — wire catalog load on regen
+
+---
+
+## Tasks
+
+- [x] **🔷** **5a / G1** — Metadata catalog + profile map (not hardcoded `WidgetControlKind` enum)
+- [x] **🔷** **5b / G2** — Emit widget classes; hand class bodies removed from template (`/* @TRACK_B_WIDGETS@ */`)
+- [x] **🔷** **5b** — `/** … */` on emitted types/signals (WidgetEmitter from convention fields)
+- [x] **🔷** **5c / G3** — `WideStringsEmitter` + template; `ES_AUTOHSCROLL` / `PBM_*` from metadata/vapi (no shell literals)
+- [x] **🔷** **5d / G4** — `Window.destroyed` + registry in template shell
+- [x] **🔷** **5e** — Full catalog emit (all `WC_*` classes; profiled = Track B, rest = catalog shell)
+
+### Changes — G1 (metadata catalog) **✅**
+
+- **Data:** `metadata/widget-conventions.json` — profiles + class_name_overrides by `wc_symbol`
+- **Generator:** `WidgetCodegen` — `load_catalog(UI.Controls)` merges metadata catalog with JSON conventions
+- **Regen:** `widget catalog: N WC_* classes, M Track B profiles`
+- **Emit output:** shell template + generated Track B classes (7 profiled controls)
+
+### Changes — G2 (emit classes) **✅**
+
+- **Template:** `src/Generate/templates/win32-widgets.vala` — dispatch, `Window`, dialogs, menus only; `/* @TRACK_B_WIDGETS@ */` marker
+- **Emitter:** `WidgetEmitter.emit(WidgetCodegen, template)` — styles/signals/properties/ctors from `widget-conventions.json` profiles
+- **Regen:** `generated/win32-widgets.vala` — same API as hand baseline (`ergonomic-button-demo`)
+
+### Changes — G3/G4 + full catalog **✅**
+
+- **G3:** `src/Generate/templates/win32-wide-strings.vala` + `WideStringsEmitter` → `generated/win32-wide-strings.vala`
+- **G3:** Removed duplicate `PBM_*` / `LBS_NOTIFY` shell consts; commctrl uints from `UI.Controls.json` at emit; `ES_AUTOHSCROLL` via vapi
+- **G4:** `Window.destroyed` on `WM_DESTROY` (window handle registry in shell)
+- **Catalog:** `WidgetEmitter` emits every catalog class (16); 7 profiled Track B + 9 minimal shell wrappers (`SysListView32`, …)
+- **Dedup:** Skip duplicate metadata typos (`WC_LISTVIE`, `WC_TREEVIE`) when class name already claimed
+
+---
+
+## Hand-off
+
+- **Next:** [08 - phase 6 full api coverage.md](08%20-%20phase%206%20full%20api%20coverage.md) — how much of the GUI API we can actually build and test.
+- **Then:** [09 - phase 7 polish and ci.md](09%20-%20phase%207%20polish%20and%20ci.md) — Valadoc, CI, README (after API truth from Phase 6).

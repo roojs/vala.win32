@@ -1,10 +1,12 @@
-# 08 — Phase 6: Polish and CI
+# 09 — Phase 7: Polish and CI
 
 **Status:** **⏳** Not started
 
 **Layout:** `~/gitlive/OLLMchat/docs/guide-to-writing-plans.md`
 
-**Parent:** [01-DONE - project overview.md](01-DONE%20-%20project%20overview.md) · **Depends on:** Phases 1–5 materially complete · **Win32.*** widget layer ([05-DONE - phase 3 common controls.md](05-DONE%20-%20phase%203%20common%20controls.md) Track B; [07 - phase 5 widget emit.md](07%20-%20phase%205%20widget%20emit.md) for emitted docs)
+**Parent:** [01-DONE - project overview.md](01-DONE%20-%20project%20overview.md) · **Depends on:** [08 - phase 6 full api coverage.md](08%20-%20phase%206%20full%20api%20coverage.md) (know what API we actually ship) · **Win32.*** widget layer ([07-DONE - phase 5 widget emit.md](07-DONE%20-%20phase%205%20widget%20emit.md) **✅**)
+
+**ℹ️** Polish and Valadoc are **deferred to Phase 7** on purpose: Phase 6 establishes how much of the full GUI API is real before we document and CI-freeze it.
 
 ---
 
@@ -15,7 +17,7 @@
 - **🔷** **CI** on Linux: `vendor-win32json.sh` + `meson compile -C build check-regen` + `compile-check` + cross `hello-window`.
 - **🔷** Policy in README: never hand-edit `vapi/`; how to bump `win32json-ref.txt`.
 
-**ℹ️** Valadoc work lives **here**, not in Phase 3/5 — Phase 5 emits **`/** … */`** on widgets; **building and publishing** HTML is Phase 6.
+**ℹ️** Valadoc work lives **here**, not in Phase 3/5 — Phase 5 emits **`/** … */`** on widgets; **building and publishing** HTML is Phase 7.
 
 ---
 
@@ -36,8 +38,8 @@
 
 ### Doc comments (upstream of Valadoc)
 
-- **Phase 5:** **`/** … */`** on emitted public compact types, signals, and **`WidgetDispatch`** — Phase 6 only builds HTML.
-- **Raw vapi:** win32json rarely carries user-facing blurbs; Phase 6 may add **minimal** hand **`/** … */`** only on high-traffic relay symbols (hello + button-demo surface) or defer raw vapi docs to Microsoft + shard name.
+- **Phase 5:** **`/** … */`** on emitted public compact types, signals, and **`WidgetDispatch`** — Phase 7 only builds HTML.
+- **Raw vapi:** win32json rarely carries user-facing blurbs; Phase 7 may add **minimal** hand **`/** … */`** only on high-traffic relay symbols (hello + button-demo surface) or defer raw vapi docs to Microsoft + shard name.
 
 ### Build and layout (intended)
 
@@ -55,7 +57,7 @@ meson compile -C build valadoc
 # open build/docs/valadoc/index.htm — Win32.Button, signals, WidgetDispatch visible
 ```
 
-**Phase 6 Valadoc done when:**
+**Phase 7 Valadoc done when:**
 
 - **⏳** `meson compile -C build valadoc` succeeds on Linux
 - **⏳** **`Win32.Button`** (and at least one signal) has generated HTML from Phase 5 **`/** … */`**

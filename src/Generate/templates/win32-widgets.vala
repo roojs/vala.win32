@@ -1,4 +1,4 @@
-/* Track B widget template — edited here; regen writes generated/win32-widgets.vala */
+/* Track B widget shell — dispatch, Window, dialogs, menus; control classes emitted at @TRACK_B_WIDGETS@ */
 
 using GLib;
 using Win32.System;
@@ -10,11 +10,43 @@ using Win32.Ui.WindowsAndMessaging;
 namespace Win32 {
 
 const int ITEM_TEXT_MAX = 256;
-const int LBS_NOTIFY = 0x0001;
-const uint PBM_SETPOS = 0x0402;
-const uint PBM_GETPOS = 0x0408;
-const uint PBM_SETRANGE32 = 0x0406;
-const uint PBS_SMOOTH = 0x0001;
+
+private int window_registry_count = 0;
+private void*[]? window_registry_handles = null;
+private Window?[]? window_registry_windows = null;
+
+private void window_registry_ensure () {
+	if (window_registry_handles == null) {
+		window_registry_handles = new void*[16];
+		window_registry_windows = new Window[16];
+	}
+}
+
+private void window_registry_add (Window window) {
+	if (window.handle == null) {
+		return;
+	}
+	window_registry_ensure ();
+	for (int i = 0; i < window_registry_count; i++) {
+		if (window_registry_handles[i] == window.handle) {
+			window_registry_windows[i] = window;
+			return;
+		}
+	}
+	window_registry_handles[window_registry_count] = window.handle;
+	window_registry_windows[window_registry_count] = window;
+	window_registry_count++;
+}
+
+private bool window_destroy_dispatch (void* hwnd) {
+	for (int i = 0; i < window_registry_count; i++) {
+		if (window_registry_handles[i] == hwnd) {
+			window_registry_windows[i].destroyed ();
+			return true;
+		}
+	}
+	return false;
+}
 
 private int64 makelparam_uint (uint lo, uint hi) {
 	return (int64) (lo | (hi << 16));
@@ -51,6 +83,7 @@ private int64 widget_window_proc (
 		return scroll_result;
 	}
 	if (msg == WM_DESTROY) {
+		window_destroy_dispatch (h_wnd);
 		post_quit_message (0);
 		return 0;
 	}
@@ -308,6 +341,8 @@ private bool wm_command_dispatch (ulong w_param) {
 }
 
 public class Window {
+	/** Fired when this window receives WM_DESTROY (before the demo message loop exits). */
+	public signal void destroyed ();
 	public void* handle { get; private set; }
 	public void* instance { get; private set; }
 	WideString _class_name;
@@ -350,6 +385,7 @@ public class Window {
 		if (widget_debug_enabled ()) {
 			stderr.printf ("Window handle=%p class=%s\n", handle, class_name);
 		}
+		window_registry_add (this);
 	}
 
 	public int run () {
@@ -487,236 +523,6 @@ public class MenuPopup {
 	}
 }
 
-public class Button {
-	public signal void clicked ();
-	public void* handle { get; private set; }
-	public int control_id { get; private set; }
-
-	public Button (
-		Window parent,
-		int x,
-		int y,
-		int width,
-		int height,
-		int control_id,
-		string label
-	) {
-		this.control_id = control_id;
-		uint style = (uint) (
-			WindowStyle.WS_CHILD | WindowStyle.WS_VISIBLE |
-			WindowStyle.WS_TABSTOP | BS_DEFPUSHBUTTON
-		);
-		handle = create_window_ex (
-			0, WC_BUTTON, null, style,
-			x, y, width, height,
-			parent.handle, (void*) (intptr) control_id, parent.instance, null
-		);
-		if (handle != null) {
-			window_text_set (handle, label);
-		}
-		wm_command_register_button (this);
-	}
-}
-
-public class Label {
-	public void* handle { get; private set; }
-
-	public Label (
-		Window parent,
-		int x, int y, int width, int height, string text
-	) {
-		uint style = (uint) (WindowStyle.WS_CHILD | WindowStyle.WS_VISIBLE);
-		handle = create_window_ex (
-			0, WC_STATIC, null, style,
-			x, y, width, height,
-			parent.handle, null, parent.instance, null
-		);
-		if (handle != null) {
-			window_text_set (handle, text);
-		}
-	}
-}
-
-public class Edit {
-	public signal void changed ();
-	public void* handle { get; private set; }
-	public int control_id { get; private set; }
-
-	public Edit (
-		Window parent,
-		int x, int y, int width, int height, int control_id
-	) {
-		this.control_id = control_id;
-		uint style = (uint) (
-			WindowStyle.WS_CHILD | WindowStyle.WS_VISIBLE |
-			WindowStyle.WS_BORDER | WindowStyle.WS_TABSTOP | 0x0080
-		);
-		handle = create_window_ex (
-			0, WC_EDIT, null, style,
-			x, y, width, height,
-			parent.handle, (void*) (intptr) control_id, parent.instance, null
-		);
-		wm_command_register_edit (this);
-	}
-
-	public string text {
-		owned get { return window_text_get (handle); }
-		set { window_text_set (handle, value); }
-	}
-}
-
-public class ListBox {
-	public signal void selection_changed ();
-	public void* handle { get; private set; }
-	public int control_id { get; private set; }
-
-	public ListBox (
-		Window parent,
-		int x, int y, int width, int height, int control_id
-	) {
-		this.control_id = control_id;
-		uint style = (uint) (
-			WindowStyle.WS_CHILD | WindowStyle.WS_VISIBLE |
-			WindowStyle.WS_BORDER | WindowStyle.WS_VSCROLL |
-			WindowStyle.WS_TABSTOP | LBS_NOTIFY
-		);
-		handle = create_window_ex (
-			0, WC_LISTBOX, null, style,
-			x, y, width, height,
-			parent.handle, (void*) (intptr) control_id, parent.instance, null
-		);
-		wm_command_register_list_box (this);
-	}
-
-	public void add_item (string text) {
-		var wide = WideString (text);
-		send_message (handle, LB_ADDSTRING, 0, (int64) wide.ptr);
-	}
-
-	public int selected_index {
-		get { return (int) send_message (handle, LB_GETCURSEL, 0, 0); }
-		set { send_message (handle, LB_SETCURSEL, (ulong) value, 0); }
-	}
-
-	public string selected_text {
-		owned get { return list_box_item_text (handle, selected_index); }
-	}
-}
-
-public class ComboBox {
-	public signal void selection_changed ();
-	public void* handle { get; private set; }
-	public int control_id { get; private set; }
-
-	public ComboBox (
-		Window parent,
-		int x, int y, int width, int height, int control_id
-	) {
-		this.control_id = control_id;
-		uint style = (uint) (
-			WindowStyle.WS_CHILD | WindowStyle.WS_VISIBLE |
-			WindowStyle.WS_VSCROLL | WindowStyle.WS_TABSTOP |
-			CBS_DROPDOWNLIST
-		);
-		handle = create_window_ex (
-			0, WC_COMBOBOX, null, style,
-			x, y, width, height,
-			parent.handle, (void*) (intptr) control_id, parent.instance, null
-		);
-		wm_command_register_combo_box (this);
-	}
-
-	public void add_item (string text) {
-		var wide = WideString (text);
-		send_message (handle, CB_ADDSTRING, 0, (int64) wide.ptr);
-	}
-
-	public int selected_index {
-		get { return (int) send_message (handle, CB_GETCURSEL, 0, 0); }
-		set { send_message (handle, CB_SETCURSEL, (ulong) value, 0); }
-	}
-
-	public string selected_text {
-		owned get { return combo_box_item_text (handle, selected_index); }
-	}
-}
-
-public class ScrollBar {
-	public signal void value_changed ();
-	public void* handle { get; private set; }
-	public int control_id { get; private set; }
-
-	public ScrollBar (
-		Window parent,
-		int x,
-		int y,
-		int width,
-		int height,
-		int control_id,
-		int range_min = 0,
-		int range_max = 100,
-		int initial_value = 0
-	) {
-		this.control_id = control_id;
-		uint style = (uint) (
-			WindowStyle.WS_CHILD | WindowStyle.WS_VISIBLE |
-			WindowStyle.WS_TABSTOP | SBS_HORZ
-		);
-		handle = create_window_ex (
-			0, WC_SCROLLBAR, null, style,
-			x, y, width, height,
-			parent.handle, (void*) (intptr) control_id, parent.instance, null
-		);
-		if (handle != null) {
-			send_message (
-				handle, SBM_SETRANGE, 0,
-				makelparam_uint ((uint) range_min, (uint) range_max)
-			);
-			send_message (handle, SBM_SETPOS, 1, (ulong) initial_value);
-		}
-		wm_scroll_register (this);
-	}
-
-	public int value {
-		get { return (int) send_message (handle, SBM_GETPOS, 0, 0); }
-		set { send_message (handle, SBM_SETPOS, 1, (ulong) value); }
-	}
-}
-
-public class ProgressBar {
-	public void* handle { get; private set; }
-
-	public ProgressBar (
-		Window parent,
-		int x,
-		int y,
-		int width,
-		int height,
-		int range_max = 100
-	) {
-		uint style = (uint) (
-			WindowStyle.WS_CHILD | WindowStyle.WS_VISIBLE | PBS_SMOOTH
-		);
-		handle = create_window_ex (
-			0, PROGRESS_CLASS, null, style,
-			x, y, width, height,
-			parent.handle, null, parent.instance, null
-		);
-		if (handle != null) {
-			send_message (handle, PBM_SETRANGE32, 0, (int64) range_max);
-		}
-	}
-
-	public int value {
-		get { return (int) send_message (handle, PBM_GETPOS, 0, 0); }
-		set { send_message (handle, PBM_SETPOS, (ulong) value, 0); }
-	}
-
-	public int range_max {
-		set {
-			send_message (handle, PBM_SETRANGE32, 0, (int64) value);
-		}
-	}
-}
+/* @TRACK_B_WIDGETS@ */
 
 }

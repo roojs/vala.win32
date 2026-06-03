@@ -64,9 +64,9 @@ vapi/
   archive/win32-ui-native.vapi          # Phase 0 spike (reference only)
 generated/
   win32-ui-control-strings.vala         # WC_* (regen)
-  win32-wide-strings.vala               # UTF-8 → UTF-16 helpers
+  win32-wide-strings.vala               # UTF-8 ↔ UTF-16 (regen from template)
+  win32-widgets.vala                    # Win32.* widgets (full WC_* catalog + profiles)
   win32-errors.vala                     # GetLastError helpers (regen)
-  win32-widgets.vala                    # Track B widgets (regen from src/Generate/templates/)
 examples/             # Consumer apps only
 metadata/             # win32json-api.files, gui.filter; win32json/ from vendor script
 tools/                # generate-binding (Phase 1+)
