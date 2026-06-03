@@ -1,6 +1,6 @@
 # 05 — Phase 3: Common controls
 
-**Status:** **✅** Step 1 done · **⏳** Step 2 Edit spike next
+**Status:** **✅** Step 2 done · **⏳** Step 3 Static / ListBox / ComboBox next
 
 **Layout:** `~/gitlive/OLLMchat/docs/guide-to-writing-plans.md`
 
@@ -14,8 +14,8 @@
 |-------------|--------|-------|
 | Step 0 — Button spike | **✅** | app + build only |
 | Step 1 — Gap pass (generator) | **✅** | `WC_*` → generated `.vala`; `loword`/`hiword` in vapi |
-| Step 2 — Edit spike | **⏳** | not started |
-| Step 3 — Static / ListBox / ComboBox | **⏳** | after Edit |
+| Step 2 — Edit spike | **✅** | `WC_EDIT`, `set_window_text` / `get_window_text` in button-demo |
+| Step 3 — Static / ListBox / ComboBox | **⏳** | next |
 | Track B — ergonomic wrappers | **⏳** | optional, after Track A |
 
 **Legend:** **✅** done · **⏳** open / partial · **❌** blocked
@@ -54,7 +54,7 @@ Prove that **generated vapi** is enough to build real child controls — not jus
 
 | Track | Goal | Phase 3 required? | Status |
 |-------|------|-------------------|--------|
-| **A — raw Win32 controls** | `examples/button-demo.vala`: `CreateWindowEx` child `"Button"`, `WM_COMMAND` / `BN_CLICKED`, optional Edit | **Yes** | **✅** Steps 0–1 · **⏳** Steps 2–3 |
+| **A — raw Win32 controls** | `examples/button-demo.vala`: Button + Edit, `WM_COMMAND`, get/set text | **Yes** | **✅** Steps 0–2 · **⏳** Step 3 |
 | **B — ergonomic wrappers** | `[Compact]` `Button` type, Vala `signal clicked` from generator | **No** — after Track A works | **⏳** |
 
 Track A is “use the vapi we already generate.” Track B is Gtk-*like* sugar on top — only after we know the raw surface is right.
@@ -170,14 +170,40 @@ Document in the example or a one-line comment; add generator helpers later if we
 
 ---
 
-## Step 2 — Edit spike **⏳**
+## Step 2 — Edit spike **✅ Done**
 
-**Deliverable:** extend demo or `examples/edit-demo.vala`.
+### Changes
 
-- **⏳** Child **`"Edit"`** control (may need **`WC_EDIT`** from generated `.vala` — same pattern as Button)
-- **⏳** **`set_window_text` / `get_window_text`** (or `SendMessage` with `WM_SETTEXT` / `WM_GETTEXT` if that is what metadata exposes cleanly)
-- **⏳** Optional: read text on button click
-  - Same gap loop as Step 1: run → list → generator fix if vapi is missing something
+- **Generator:** **No** — existing `WC_EDIT` in `generated/win32-ui-control-strings.vala`; `set_window_text` / `get_window_text` / `get_window_text_length` already in `win32-ui-windowsandmessaging.vapi`.
+- **Generated vapi:** **No** — no regen diff.
+- **Generated vala:** **No**.
+- **Hand vapi / stubs:** **No**.
+- **Header relay:** **No new**.
+- **Metadata / vendor:** **No**.
+
+**Files changed:**
+
+- `examples/button-demo.vala` — child Edit (`WC_EDIT`), initial text via `set_window_text`, button click reads edit via `get_window_text` and copies to frame title; fixed `WM_COMMAND` unpack (`LOWORD` = control ID, `HIWORD` = notification)
+- `README.md` — button-demo run line
+- `docs/plans/05 - phase 3 common controls.md` — this plan
+
+**App workarounds:**
+
+- **`ES_AUTOHSCROLL`** — local `0x0080` literal (not in filtered vapi yet; standard Win32 value)
+
+**Binding surface used:**
+
+- `WC_EDIT` — `generated/win32-ui-control-strings.vala`
+- `set_window_text`, `get_window_text` — `win32-ui-windowsandmessaging.vapi`
+- `WindowStyle.WS_BORDER`, `WS_TABSTOP`, … — generated enum
+
+**Deliverable:** **✅** extend `examples/button-demo.vala` (Button + Edit in one demo).
+
+**Behaviour:**
+
+1. **✅** Child **Edit** (`WC_EDIT`) below the button.
+2. **✅** **`set_window_text`** sets initial `"Hello, Edit"`.
+3. **✅** Button click **`get_window_text`** from edit → **`set_window_text`** on top-level window (title shows edit contents).
 
 ---
 
@@ -252,9 +278,9 @@ wine build/button-demo.exe
 
 **Phase 3 Track A done when:**
 
-- **✅** Button demo opens, click fires handler, window closes cleanly
-- **⏳** Edit demo (or combined demo) gets/sets text
-- **⏳** Gaps found in Step 1 are either **fixed in generator** or **documented** with a conscious workaround
+- **✅** Button demo opens, click copies edit text to title, window closes cleanly
+- **✅** Edit demo (combined with button demo) gets/sets text
+- **✅** Gaps found in Step 1 are either **fixed in generator** or **documented** with a conscious workaround
 
 **Phase 3 Track B done when (optional):**
 
@@ -268,8 +294,8 @@ wine build/button-demo.exe
 
 - [x] **✅** **🔷** `button-demo.vala` — child Button + `WM_COMMAND` / `BN_CLICKED`
 - [x] **✅** **🔷** Gap pass after Button — `WC_*` generated `.vala`, `loword`/`hiword` in vapi
-- [ ] **🔷** **⏳** Edit demo — text get/set
-- [ ] **🔷** **⏳** Gap pass after Edit
+- [x] **✅** **🔷** Edit spike — `WC_EDIT`, get/set text in `button-demo.vala`
+- [ ] **🔷** **⏳** Gap pass after Edit (only if Step 2 surfaces generator gaps)
 - [ ] **🔷** **⏳** Static, ListBox, ComboBox (P1) — one at a time
 - [ ] **🔷** **⏳** ScrollBar, ProgressBar (P2) — if needed
 

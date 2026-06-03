@@ -7,7 +7,6 @@ using Win32.System;
 const int ID_CLICK_ME = 100;
 const int ID_EDIT = 101;
 const int EDIT_TEXT_MAX = 256;
-const uint ES_AUTOHSCROLL = 0x0080;
 
 [CCode (array_length = false, array_null_terminated = true)]
 const uint16[] CLASS_NAME = {
@@ -119,13 +118,13 @@ public static int main (string[] args) {
 		WindowStyle.WS_VISIBLE |
 		WindowStyle.WS_BORDER |
 		WindowStyle.WS_TABSTOP |
-		ES_AUTOHSCROLL
+		0x0080
 	);
 
 	edit_hwnd = create_window_ex (
 		0,
 		WC_EDIT,
-		"",
+		null,
 		edit_style,
 		20,
 		64,
