@@ -407,6 +407,9 @@ namespace Win32 {
 		}
 
 		static string api_ref_vala_name (string name) {
+			if (name.has_prefix ("Anonymous")) {
+				return "void*";
+			}
 			if (NameMapper.skip_ansi_name (name)) {
 				return "void*";
 			}
