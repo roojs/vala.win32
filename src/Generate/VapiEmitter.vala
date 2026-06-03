@@ -45,12 +45,12 @@ namespace Generate {
 
 		void append_namespace_open (string ns, bool with_ccode) {
 			if (with_ccode) {
-				this.buffer.append (@"""$(GENERATED_HEADER)[CCode (cprefix = "", cheader_filename = "windows.h")]
+				this.buffer.append (@"$(GENERATED_HEADER)[CCode (cprefix = "", cheader_filename = ""windows.h"")]
 namespace $(ns) {
-""");
+");
 			} else {
-				this.buffer.append (@"""$(GENERATED_HEADER)namespace $(ns) {
-""");
+				this.buffer.append (@"$(GENERATED_HEADER)namespace $(ns) {
+");
 			}
 		}
 
@@ -106,9 +106,9 @@ namespace $(ns) {
 		/** Phase 1 monolith (deprecated for apps). */
 		public string emit_all (Generate.Parse.ApiFileEntry[] files) {
 			this.reset_shard ();
-			this.buffer.append (@"""$(GENERATED_HEADER)[CCode (cprefix = "", cheader_filename = "windows.h")]
+			this.buffer.append (@"$(GENERATED_HEADER)[CCode (cprefix = "", cheader_filename = ""windows.h"")]
 namespace Win32 {
-""");
+");
 			foreach (var entry in files) {
 				this.emit_shard_body (entry);
 			}
@@ -204,7 +204,8 @@ namespace Win32 {
 			if (!VapiEmitter.is_valid_const_vala_type (vala_type)) {
 				return;
 			}
-			this.buffer.append (@"	[CCode (cname = "$(c.Name)")]
+			this.buffer.append (@"
+	[CCode (cname = ""$(c.Name)"")]
 	public const $(vala_type) $(vala_name);
 
 ");
@@ -216,9 +217,11 @@ namespace Win32 {
 			}
 			string chars = "";
 			for (int i = 0; i < c.ValueText.length; i++) {
-				chars += @"		'$(c.ValueText[i])', ";
+				chars += @"
+		'$(c.ValueText[i])', ";
 			}
-			this.buffer.append (@"	[CCode (array_length = false, array_null_terminated = true)]
+			this.buffer.append (@"
+	[CCode (array_length = false, array_null_terminated = true)]
 	public const uint16[] $(vala_name) = {
 $(chars)0
 	};
@@ -249,7 +252,7 @@ $(chars)0
 				return;
 			}
 			var flags = t.Flags ? "\t[Flags]\n" : "";
-			this.buffer.append (@"$(flags)	[CCode (cname = "$(VapiEmitter.enum_c_type_id (t.IntegerBase))", has_type_id = false)]
+			this.buffer.append (@"$(flags)	[CCode (cname = ""$(VapiEmitter.enum_c_type_id (t.IntegerBase))"", has_type_id = false)]
 	public enum $(vala_name) {
 ");
 			var members = new Gee.HashSet<string> ();
@@ -261,7 +264,8 @@ $(chars)0
 					continue;
 				}
 				members.add (v.Name);
-				this.buffer.append (@"		[CCode (cname = "$(v.Name)")]
+				this.buffer.append (@"
+		[CCode (cname = ""$(v.Name)"")]
 		$(v.Name) = $(VapiEmitter.format_enum_value (v.Value)),
 ");
 			}
@@ -302,7 +306,8 @@ $(chars)0
 			if (!this.claim_vala_name (vala_name)) {
 				return;
 			}
-			this.buffer.append (@"	[CCode (cname = "$(t.Name)")]
+			this.buffer.append (@"
+	[CCode (cname = ""$(t.Name)"")]
 	public struct $(vala_name) {
 ");
 			foreach (var field in t.Fields) {
@@ -314,7 +319,8 @@ $(chars)0
 					continue;
 				}
 				var ftype = VapiEmitter.vala_type_for_field (field.Type, this.shard_basename);
-				this.buffer.append (@"		public $(ftype) $(field.Name);
+				this.buffer.append (@"
+		public $(ftype) $(field.Name);
 ");
 			}
 			this.buffer.append ("""
@@ -329,7 +335,8 @@ $(chars)0
 				return;
 			}
 			var ret_type = VapiEmitter.vala_type_for (t.ReturnType, "");
-			this.buffer.append (@"	[CCode (cname = "$(t.Name)", has_target = false)]
+			this.buffer.append (@"
+	[CCode (cname = ""$(t.Name)"", has_target = false)]
 	public delegate $(ret_type) $(vala_name) (
 ");
 			var n = t.Params.size;
@@ -337,7 +344,8 @@ $(chars)0
 				var p = t.Params.get (i);
 				var ptype = VapiEmitter.vala_param_type (p);
 				var comma = i < n - 1 ? "," : "";
-				this.buffer.append (@"		$(ptype) $(NameMapper.delegate_param_name (t.Name, p.Name, i))$(comma)
+				this.buffer.append (@"
+		$(ptype) $(NameMapper.delegate_param_name (t.Name, p.Name, i))$(comma)
 ");
 			}
 			this.buffer.append ("""
@@ -352,7 +360,8 @@ $(chars)0
 				return;
 			}
 			var ret = VapiEmitter.vala_type_for (f.ReturnType, "");
-			this.buffer.append (@"	[CCode (cname = "$(f.Name)")]
+			this.buffer.append (@"
+	[CCode (cname = ""$(f.Name)"")]
 	public extern $(ret) $(vala_name) (
 ");
 			var n = f.Params.size;
@@ -361,7 +370,8 @@ $(chars)0
 				var ptype = VapiEmitter.vala_param_type (p);
 				var pname = VapiEmitter.param_vala_name (f.Name, p);
 				var comma = i < n - 1 ? "," : "";
-				this.buffer.append (@"		$(ptype) $(pname)$(comma)
+				this.buffer.append (@"
+		$(ptype) $(pname)$(comma)
 ");
 			}
 			this.buffer.append ("""
