@@ -140,38 +140,12 @@ Spike today: `--pkg win32-ui` + `--pkg win32-ui-native`, plus **local `const`** 
 
 **P1 — should have for faithful hello**
   
-- **⏳** Emit **enum** types for `WS_*`, `COLOR_*` — metadata has them; emitter skips `Kind == "Enum"` today.
-- **❌** Emit **numeric values on `public const`** — Vala rejects `= 2` on extern constants in a `[CCode]` namespace; declaration-only (`WM_DESTROY;`) already works via `windows.h`.
-- **⏳** **Delegate param names** — JSON has `param0`…`param3` on `WNDPROC`; map to `h_wnd`, `msg`, `w_param`, `l_param`.
-- **⏳** `unowned` on `In` wide-string params — cosmetic; spike had it on struct fields too.
+- **✅** Emit **enum** types for `WS_*`, `COLOR_*` (`WindowStyle`, `SysColorIndex`, …).
+- **❌** Emit **numeric values on `public const`** — Vala forbids `= 2` on relay constants; `WM_DESTROY` / `CW_USEDEFAULT` use declaration-only + `windows.h`.
+- **✅** **Delegate param names** — `WndProc` → `h_wnd`, `msg`, `w_param`, `l_param`.
+- **⏳** `unowned` on `In` wide-string params — optional polish.
 
-### P1 detail (hello literals today)
-
-| Hello uses | In metadata | Generated today | Fix |
-|------------|-------------|-----------------|-----|
-| `WM_DESTROY`, `CW_USEDEFAULT` | `Constants[]` with `Value` | `public const …;` (no value) | **OK** — app compiles; C gets `#define` from `windows.h`. Remove local copies in hello. |
-| `WS_OVERLAPPEDWINDOW`, `WS_VISIBLE` | `WINDOW_STYLE` enum (`Kind: Enum`, `Flags: true`) | not emitted | **Emit enum** `[Flags] public enum WindowStyle { WS_VISIBLE = …; … }` |
-| `COLOR_WINDOW` | `SYS_COLOR_INDEX` enum | not emitted | **Emit enum** `SysColorIndex { COLOR_WINDOW = 5; … }` |
-
-**Enum emit sketch** (verified with valac):
-
-```vala
-[Flags]
-[CCode (cname = "UINT", has_type_id = false)]
-public enum WindowStyle {
-    [CCode (cname = "WS_VISIBLE")]
-    WS_VISIBLE = 0x10000000,
-    …
-}
-```
-
-App: `WindowStyle.WS_OVERLAPPEDWINDOW | WindowStyle.WS_VISIBLE` — no local literals.
-
-**Const values:** do not emit `public const uint WM_DESTROY = 2` in the relay namespace — valac error: *External constants cannot use values*. Enums with values are fine; `#define`-style consts must stay declaration-only or live outside the `[CCode]` namespace.
-
-**Delegate names:** `WNDPROC` params in JSON are literally `param0`…`param3` (metadata quirk). Add a small override table in `NameMapper` for known delegates, not generic metadata names.
-
-**unowned:** add to `vala_param_type` when param type is `LPCWSTR`/`PWSTR` and `Attrs` contains `In`.
+Hello now uses `WindowStyle.WS_*`, `SysColorIndex.COLOR_WINDOW`, `WM_DESTROY`, `CW_USEDEFAULT` from generated vapi — no numeric literals at the top of the file.
 
 **P2 — later / Track B**
 
@@ -325,6 +299,7 @@ wine build/hello-window.exe
 - **✅** Archive spike `vapi/archive/win32-ui-native.vapi`
 - **✅** Default `meson compile -C build` (regen + exe)
 - **⏳** Run `.exe` on Windows / Wine (manual)
+- **✅** P1 enums + delegate names; hello has no Win32 numeric literals
 - **⏳** P1: `unowned` wide strings (optional)
 
 ### Track B — ergonomic (stretch)
