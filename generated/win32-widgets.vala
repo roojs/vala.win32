@@ -25,6 +25,16 @@ private struct WmCommandRegistration {
 	public EditChangedCallback changed;
 }
 
+private int wm_command_count = 0;
+private WmCommandRegistration[]? wm_command_registry = null;
+
+private WmCommandRegistration[] wm_command_registry_get () {
+	if (wm_command_registry == null) {
+		wm_command_registry = new WmCommandRegistration[WM_COMMAND_REGISTRY_MAX];
+	}
+	return wm_command_registry;
+}
+
 private void control_text_set (void* handle, string value) {
 	if (handle == null) {
 		return;
@@ -40,14 +50,12 @@ private void control_text_read_into (void* handle, uint16[] buffer, int max_coun
 	get_window_text (handle, buffer, max_count);
 }
 
-private int wm_command_count = 0;
-private WmCommandRegistration[] wm_command_registry = new WmCommandRegistration[WM_COMMAND_REGISTRY_MAX];
-
 private void wm_command_register_button (int control_id, owned ButtonClickedCallback callback) {
+	var registry = wm_command_registry_get ();
 	for (int i = 0; i < wm_command_count; i++) {
-		if (wm_command_registry[i].control_id == control_id) {
-			wm_command_registry[i].kind = WmCommandKind.BUTTON;
-			wm_command_registry[i].clicked = (owned) callback;
+		if (registry[i].control_id == control_id) {
+			registry[i].kind = WmCommandKind.BUTTON;
+			registry[i].clicked = (owned) callback;
 			return;
 		}
 	}
@@ -55,17 +63,18 @@ private void wm_command_register_button (int control_id, owned ButtonClickedCall
 		stderr.printf ("WidgetDispatch registry full\n");
 		return;
 	}
-	wm_command_registry[wm_command_count].control_id = control_id;
-	wm_command_registry[wm_command_count].kind = WmCommandKind.BUTTON;
-	wm_command_registry[wm_command_count].clicked = (owned) callback;
+	registry[wm_command_count].control_id = control_id;
+	registry[wm_command_count].kind = WmCommandKind.BUTTON;
+	registry[wm_command_count].clicked = (owned) callback;
 	wm_command_count++;
 }
 
 private void wm_command_register_edit (int control_id, owned EditChangedCallback callback) {
+	var registry = wm_command_registry_get ();
 	for (int i = 0; i < wm_command_count; i++) {
-		if (wm_command_registry[i].control_id == control_id) {
-			wm_command_registry[i].kind = WmCommandKind.EDIT;
-			wm_command_registry[i].changed = (owned) callback;
+		if (registry[i].control_id == control_id) {
+			registry[i].kind = WmCommandKind.EDIT;
+			registry[i].changed = (owned) callback;
 			return;
 		}
 	}
@@ -73,37 +82,44 @@ private void wm_command_register_edit (int control_id, owned EditChangedCallback
 		stderr.printf ("WidgetDispatch registry full\n");
 		return;
 	}
-	wm_command_registry[wm_command_count].control_id = control_id;
-	wm_command_registry[wm_command_count].kind = WmCommandKind.EDIT;
-	wm_command_registry[wm_command_count].changed = (owned) callback;
+	registry[wm_command_count].control_id = control_id;
+	registry[wm_command_count].kind = WmCommandKind.EDIT;
+	registry[wm_command_count].changed = (owned) callback;
 	wm_command_count++;
 }
 
-public struct WidgetDispatch {
-	public static bool try_wm_command (ulong w_param) {
-		var control_id = (int) loword (w_param);
-		var notify = hiword (w_param);
-		for (int i = 0; i < wm_command_count; i++) {
-			if (wm_command_registry[i].control_id != control_id) {
-				continue;
+private bool wm_command_dispatch (ulong w_param) {
+	var control_id = (int) loword (w_param);
+	var notify = hiword (w_param);
+	var registry = wm_command_registry_get ();
+	for (int i = 0; i < wm_command_count; i++) {
+		if (registry[i].control_id != control_id) {
+			continue;
+		}
+		switch (registry[i].kind) {
+		case WmCommandKind.BUTTON:
+			if (notify == BN_CLICKED) {
+				registry[i].clicked ();
+				return true;
 			}
-			switch (wm_command_registry[i].kind) {
-			case WmCommandKind.BUTTON:
-				if (notify == BN_CLICKED) {
-					wm_command_registry[i].clicked ();
-					return true;
-				}
-				break;
-			case WmCommandKind.EDIT:
-				if (notify == EN_CHANGE) {
-					wm_command_registry[i].changed ();
-					return true;
-				}
-				break;
+			break;
+		case WmCommandKind.EDIT:
+			if (notify == EN_CHANGE) {
+				registry[i].changed ();
+				return true;
 			}
-			return false;
+			break;
 		}
 		return false;
+	}
+	return false;
+}
+
+public struct WidgetDispatch {
+	public int _reserved;
+
+	public static bool try_wm_command (ulong w_param) {
+		return wm_command_dispatch (w_param);
 	}
 }
 
