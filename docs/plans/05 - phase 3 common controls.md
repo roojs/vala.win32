@@ -34,7 +34,9 @@ Each finished step gets a **`### Changes`** subsection **before** behaviour note
 8. **App workarounds** — symbols or logic living **only** in example source because vapi is not ready yet (empty if none)
 9. **Binding surface used** — what the demo imports from generated/hand vapi (unchanged counts if prior phase)
 
-**⏳** steps omit **`### Changes`** until done; list intended touch points in Step 1 gap table instead.
+Optional follow-ups (polish, not step blockers) go **outside** a step’s **`### Changes`** — use a parent bullet plus one nested **suggested** bullet (see **`BN_*`** under “What we already have”).
+
+**⏳** steps omit **`### Changes`** until done; list intended touch points in the step body instead.
 
 ---
 
@@ -67,10 +69,15 @@ Track A is “use the vapi we already generate.” Track B is Gtk-*like* sugar o
 | `UI.WindowsAndMessaging.json` | **✅** → `create_window_ex`, message loop, `WM_COMMAND`, `BN_CLICKED` (declaration-only const) |
 | Enum emit (`WindowStyle`, …) | **✅** Phase 2 |
 | Control class strings (`WC_BUTTON`, `WC_EDIT`, …) | **✅** — `generated/win32-ui-control-strings.vala` from `UI.Controls.json` (`WC_*` only; Vala vapi cannot hold string const values) |
-| `BN_*` as enums | **⏳** metadata has them as constants; optional notification enum later |
+| `BN_*` as enums | **⏳** metadata has them as constants (not blocking Track A demos) |
 | `LOWORD` / `HIWORD` helpers | **✅** — `loword` / `hiword` in `win32-ui-windowsandmessaging.vapi` (inline; not in win32metadata) |
 
 So Phase 3 is **not** “vendor more JSON first.” It is mostly **make a demo, list gaps, extend the generator**, repeat.
+
+**Optional later (not blocking any Track A step):**
+
+- **`BN_*` notification enum** — metadata exposes these as declaration-only constants today; demos use `BN_CLICKED` directly.
+  - Emit a small notification enum in the generator if we want nicer `WM_COMMAND` unpacking (readability only; defer).
 
 ---
 
@@ -153,12 +160,6 @@ Document in the example or a one-line comment; add generator helpers later if we
 - UTF-16 `"Button"` literal → **`WC_BUTTON`** from generated `.vala`
 - `wm_command_notify` / `wm_command_id` → **`loword` / `hiword`** from vapi
 
-**Still open (not Step 1):**
-
-- `BN_*` notification enum — optional readability polish
-- WndProc assign warning — cosmetic (same as hello)
-- Full `win32-ui-controls` pkg for apps — blocked until more cross-shard / struct emit gaps fixed; button demo does **not** link it yet
-
 | Gap | Status |
 |-----|--------|
 | `WC_BUTTON` string constant | **✅** — `generated/win32-ui-control-strings.vala` |
@@ -173,11 +174,10 @@ Document in the example or a one-line comment; add generator helpers later if we
 
 **Deliverable:** extend demo or `examples/edit-demo.vala`.
 
-- **⏳** Child **`"Edit"`** control
+- **⏳** Child **`"Edit"`** control (may need **`WC_EDIT`** from generated `.vala` — same pattern as Button)
 - **⏳** **`set_window_text` / `get_window_text`** (or `SendMessage` with `WM_SETTEXT` / `WM_GETTEXT` if that is what metadata exposes cleanly)
 - **⏳** Optional: read text on button click
-
-Same loop: run → gap list → generator fix.
+  - Same gap loop as Step 1: run → list → generator fix if vapi is missing something
 
 ---
 
@@ -224,12 +224,13 @@ Rolling checklist — each **✅** step’s **`### Changes`** block is the autho
 
 | File | Typical role | Step 0 | Step 1+ |
 |------|--------------|--------|---------|
-| `examples/button-demo.vala` | Track A demo | **✅** new | **⏳** drop workarounds |
+| `examples/button-demo.vala` | Track A demo | **✅** new | **✅** drop workarounds |
 | `examples/edit-demo.vala` | Edit spike | — | **⏳** |
-| `meson.build` | example exes | **✅** | — |
-| `src/Generate/VapiEmitter.vala` | emit fixes | — | **⏳** |
-| `src/Generate/NameMapper.vala` | naming / skip rules | — | **⏳** if needed |
-| `vapi/win32-*.vapi` | generated shards | — unchanged | **⏳** regen |
+| `meson.build` | example exes | **✅** | **✅** per-app pkgs |
+| `src/Generate/VapiEmitter.vala` | emit fixes | — | **✅** |
+| `src/Generate/NameMapper.vala` | naming / skip rules | — | **✅** |
+| `vapi/win32-*.vapi` | generated shards | — unchanged | **✅** regen |
+| `generated/win32-ui-control-strings.vala` | `WC_*` literals | — | **✅** regen |
 | `metadata/win32json-api.files` | vendor list | — unchanged | **⏳** only if gap trace requires |
 | Hand stubs (`vapi/win32-system-stub.vapi`, …) | missing JSON symbols | — unchanged | **⏳** only if gap trace requires |
 
