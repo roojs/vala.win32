@@ -143,7 +143,7 @@ Spike today: `--pkg win32-ui` + `--pkg win32-ui-native`, plus **local `const`** 
 - **✅** Emit **enum** types for `WS_*`, `COLOR_*` (`WindowStyle`, `SysColorIndex`, …).
 - **❌** Emit **numeric values on `public const`** — Vala forbids `= 2` on relay constants; `WM_DESTROY` / `CW_USEDEFAULT` use declaration-only + `windows.h`.
 - **✅** **Delegate param names** — `WndProc` → `h_wnd`, `msg`, `w_param`, `l_param`.
-- **⏳** `unowned` on `In` wide-string params — optional polish.
+- **✅** `unowned` on wide-string **struct fields** (`lpszClassName`, …). Not on function params — Vala already defaults to that and warns if duplicated.
 
 Hello now uses `WindowStyle.WS_*`, `SysColorIndex.COLOR_WINDOW`, `WM_DESTROY`, `CW_USEDEFAULT` from generated vapi — no numeric literals at the top of the file.
 
