@@ -1,6 +1,6 @@
 # 08 — Phase 6: Full API coverage and testing
 
-**Status:** **⏳** Not started
+**Status:** **🔷** In progress (6a done)
 
 **Layout:** `~/gitlive/OLLMchat/docs/guide-to-writing-plans.md`
 
@@ -39,7 +39,7 @@ This is **exploration and testing**, not polish. Do not treat “7 profiled widg
 
 | Step | Deliverable |
 |------|-------------|
-| **6a — Inventory** | Coverage spreadsheet: metadata symbol → vapi? → widget class? → demo? → Wine OK? |
+| **6a — Inventory** | Coverage spreadsheet: metadata symbol → vapi? → widget class? → demo? → Wine OK? → **[6a-coverage-matrix.md](../coverage/6a-coverage-matrix.md)** (regen: `./scripts/coverage-inventory.py -o …`) |
 | **6b — Filter / shard trials** | Incremental `gui.filter` / api-list changes; regen + `compile-check` after each bump |
 | **6c — Widget profiles** | Add conventions + emit for controls beyond button-demo parity (e.g. `ListView`, `TreeView`, `TabControl`) |
 | **6d — Track A reference apps** | Minimal `.vala` per family using raw vapi (baseline before Track B) |
@@ -62,7 +62,7 @@ This is **exploration and testing**, not polish. Do not treat “7 profiled widg
 
 ## Tasks
 
-- [ ] **🔷** **6a** — Build coverage matrix (vapi / widget / demo / runtime)
+- [x] **✅** **6a** — Build coverage matrix (vapi / widget / demo / runtime) — [docs/coverage/6a-coverage-matrix.md](../coverage/6a-coverage-matrix.md)
 - [ ] **🔷** **6b** — Trial filter expansion; record shard size and compile time
 - [ ] **🔷** **6c** — Profile + emit next N high-value `WC_*` (not hand class bodies)
 - [ ] **🔷** **6d** — Track A demo per major missing family
