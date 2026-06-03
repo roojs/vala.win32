@@ -59,9 +59,7 @@ namespace $(ns) {
 		}
 
 		void append_namespace_close () {
-			this.buffer.append ("""
-}
-""");
+			this.buffer.append ("}\n");
 		}
 
 		/** WC_* wide class strings — emitted as .vala (Vala vapi cannot hold const values). */
@@ -208,8 +206,7 @@ namespace Win32 {
 			if (!VapiEmitter.is_valid_const_vala_type (vala_type)) {
 				return;
 			}
-			this.buffer.append (@"
-	[CCode (cname = $(VapiEmitter.quoted_c_string (c.Name)))]
+			this.buffer.append (@"	[CCode (cname = $(VapiEmitter.quoted_c_string (c.Name)))]
 	public const $(vala_type) $(vala_name);
 
 ");
@@ -221,11 +218,9 @@ namespace Win32 {
 			}
 			string chars = "";
 			for (int i = 0; i < c.ValueText.length; i++) {
-				chars += @"
-		'$(c.ValueText[i])', ";
+				chars += @"		'$(c.ValueText[i])', ";
 			}
-			this.buffer.append (@"
-	[CCode (array_length = false, array_null_terminated = true)]
+			this.buffer.append (@"	[CCode (array_length = false, array_null_terminated = true)]
 	public const uint16[] $(vala_name) = {
 $(chars)0
 	};
@@ -269,15 +264,11 @@ $(chars)0
 					continue;
 				}
 				members.add (v.Name);
-				this.buffer.append (@"
-		[CCode (cname = $(VapiEmitter.quoted_c_string (v.Name)))]
+				this.buffer.append (@"		[CCode (cname = $(VapiEmitter.quoted_c_string (v.Name)))]
 		$(v.Name) = $(VapiEmitter.format_enum_value (v.Value)),
 ");
 			}
-			this.buffer.append ("""
-	}
-
-""");
+			this.buffer.append ("\t}\n\n");
 		}
 
 		static string enum_c_type_id (string integer_base) {
@@ -311,27 +302,21 @@ $(chars)0
 			if (!this.claim_vala_name (vala_name)) {
 				return;
 			}
-			this.buffer.append (@"
-	[CCode (cname = $(VapiEmitter.quoted_c_string (t.Name)))]
+			this.buffer.append (@"	[CCode (cname = $(VapiEmitter.quoted_c_string (t.Name)))]
 	public struct $(vala_name) {
 ");
 			foreach (var field in t.Fields) {
 				if (t.Name == "MSG" && field.Name == "pt") {
-					this.buffer.append ("""
-		public int pt_x;
+					this.buffer.append (@"		public int pt_x;
 		public int pt_y;
-""");
+");
 					continue;
 				}
 				var ftype = VapiEmitter.vala_type_for_field (field.Type, this.shard_basename);
-				this.buffer.append (@"
-		public $(ftype) $(field.Name);
+				this.buffer.append (@"		public $(ftype) $(field.Name);
 ");
 			}
-			this.buffer.append ("""
-	}
-
-""");
+			this.buffer.append ("\t}\n\n");
 		}
 
 		void emit_delegate (Parse.MetadataType t) {
@@ -340,8 +325,7 @@ $(chars)0
 				return;
 			}
 			var ret_type = VapiEmitter.vala_type_for (t.ReturnType, "");
-			this.buffer.append (@"
-	[CCode (cname = $(VapiEmitter.quoted_c_string (t.Name)), has_target = false)]
+			this.buffer.append (@"	[CCode (cname = $(VapiEmitter.quoted_c_string (t.Name)), has_target = false)]
 	public delegate $(ret_type) $(vala_name) (
 ");
 			var n = t.Params.size;
@@ -349,14 +333,10 @@ $(chars)0
 				var p = t.Params.get (i);
 				var ptype = VapiEmitter.vala_param_type (p);
 				var comma = i < n - 1 ? "," : "";
-				this.buffer.append (@"
-		$(ptype) $(NameMapper.delegate_param_name (t.Name, p.Name, i))$(comma)
+				this.buffer.append (@"		$(ptype) $(NameMapper.delegate_param_name (t.Name, p.Name, i))$(comma)
 ");
 			}
-			this.buffer.append ("""
-	);
-
-""");
+			this.buffer.append ("\t);\n\n");
 		}
 
 		void emit_function (Parse.Function f) {
@@ -365,8 +345,7 @@ $(chars)0
 				return;
 			}
 			var ret = VapiEmitter.vala_type_for (f.ReturnType, "");
-			this.buffer.append (@"
-	[CCode (cname = $(VapiEmitter.quoted_c_string (f.Name)))]
+			this.buffer.append (@"	[CCode (cname = $(VapiEmitter.quoted_c_string (f.Name)))]
 	public extern $(ret) $(vala_name) (
 ");
 			var n = f.Params.size;
@@ -375,14 +354,10 @@ $(chars)0
 				var ptype = VapiEmitter.vala_param_type (p);
 				var pname = VapiEmitter.param_vala_name (f.Name, p);
 				var comma = i < n - 1 ? "," : "";
-				this.buffer.append (@"
-		$(ptype) $(pname)$(comma)
+				this.buffer.append (@"		$(ptype) $(pname)$(comma)
 ");
 			}
-			this.buffer.append ("""
-	);
-
-""");
+			this.buffer.append ("\t);\n\n");
 		}
 
 		static string param_vala_name (string function_c_name, Parse.Parameter p) {
