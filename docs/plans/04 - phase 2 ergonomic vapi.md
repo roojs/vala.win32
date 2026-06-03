@@ -1,10 +1,29 @@
 # 04 — Phase 2: Generated vapi + hello-window
 
-**Status:** **⏳** Not started
+**Status:** **✅** Track A mostly done — see progress table below
 
 **Layout:** `~/gitlive/OLLMchat/docs/guide-to-writing-plans.md`
 
 **Parent:** [01 - project overview.md](01%20-%20project%20overview.md) · **Depends on:** [03 - phase 1 metadata and generator.md](03%20-%20phase%201%20metadata%20and%20generator.md)
+
+---
+
+## Progress at a glance
+
+| Area | Status | Notes |
+|------|--------|-------|
+| Per-json vapi shards + pkg ids | **✅** | `win32-ui-windowsandmessaging.vapi`, … |
+| P0 emitter (WndProc, Msg out/ref, uint scalars) | **✅** | hello compiles |
+| `GetModuleHandleW` stub | **✅** | `vapi/win32-system-stub.vapi` |
+| Unicode-only (skip `*A`) | **✅** | `NameMapper.skip_ansi_name` |
+| `hello-window.vala` + `meson.build` migrated | **✅** | generated pkgs, not spike |
+| Spike archived | **✅** | `vapi/archive/win32-ui-native.vapi` |
+| Default build | **✅** | `meson compile -C build` → regen + `build/hello-window.exe` |
+| Run under Wine | **⏳** | `wine build/hello-window.exe` |
+| P1 const values / `WS_*` enums | **⏳** | hello still uses local `const` literals |
+| Track B ergonomic layer | **⏳** | Phase 3+ stretch |
+
+**Legend:** **✅** done · **⏳** open / partial · **❌** blocked
 
 ---
 
@@ -26,14 +45,13 @@
 
 ---
 
-## Generated file today (after Phase 1)
+## Generated file today (Phase 2)
 
-- **File (Phase 1 monolith):** `vapi/win32-ui.generated.vapi` — all shards merged; **Phase 2 moves to per-json files under `vapi/generated/`**
-- **Namespace (monolith today):** `Win32 { … }` — Phase 2: **one Vala namespace per JSON basename** (spike uses `Win32Ui.Native` until migrated)
-- **Rough counts:** ~6.4k `public const`, ~2.2k `extern`, ~734 `struct`, ~87 `delegate`; ~7.5k `void*` type slots.
-- **Emitted kinds:** `Struct`, `FunctionPointer` (delegate), top-level `Function`, `Constant` only.
-- **Not emitted:** `Enum`, `NativeTypedef`, `Union`, `Com` — enums like `WS_*` flags often live there or as `#define` constants.
-- **Known emit quirks:** duplicate/overlapping structs (`WNDCLASSEXW` + `WndClassEx`); Ansi/`A` siblings beside `W`; generic delegate param names (`param0`); dedupe can truncate Vala names (e.g. `CCM_SETNOTIFYWINDO`).
+- **App shards:** `vapi/win32-ui-windowsandmessaging.vapi`, … — one file per line in `metadata/win32json-api.files`
+- **Vala namespace:** `Win32.Ui.WindowsAndMessaging { … }` (not flat `Win32 { … }`, not spike `Win32Ui.Native`)
+- **Hand stub:** `vapi/win32-system-stub.vapi` — `GetModuleHandleW` until loader JSON vendored
+- **Monolith (Phase 1 only):** `vapi/win32-ui.generated.vapi` — `meson compile -C build regen-monolith`; not used by hello
+- **Not emitted yet:** `Enum`, numeric const values, full `TypeRef` coverage
 
 ---
 
@@ -71,9 +89,8 @@ Spike today: `--pkg win32-ui` + `--pkg win32-ui-native`, plus **local `const`** 
 
 ### Package and naming
 
-- Spike: `Win32Ui.Native`, hand-tuned names (`h_wnd`, `lp_msg`).
-- Generated: `Win32`, snake_case from metadata; message APIs use `void*` for struct pointers.
-- **Work:** pick one namespace for apps (`Win32Ui.Native` re-export vs migrate hello to `Win32`) and document `--pkg` layout.
+- Spike: `Win32Ui.Native` + `--pkg win32-ui-native` (archived).
+- **✅ Phase 2:** per-json **`--pkg win32-ui-windowsandmessaging`**, Vala **`Win32.Ui.WindowsAndMessaging`**, metadata filter still uses internal `Windows.Win32.*` strings only inside the generator.
 
 ### Symbols present in generated vapi (close)
 
@@ -82,41 +99,27 @@ Spike today: `--pkg win32-ui` + `--pkg win32-ui-native`, plus **local `const`** 
 
 ### Symbols missing or wrong for hello
 
-- **`get_module_handle` — missing**
-  - Not in current vendored JSON set (`metadata/win32json-api.files` has no `System.*` / loader namespace).
-  - **Work:** add win32json file that defines `GetModuleHandleW` **or** keep one extern in a tiny hand stub until metadata includes it.
+- **`get_module_handle` — ✅ fixed (stub)**
+  - Hand shard `vapi/win32-system-stub.vapi` until loader JSON is vendored.
 
-- **`WndClassEx.lpfnWndProc` — wrong type**
-  - Spike: `WndProc`
-  - Generated: `void*` (function-pointer fields not resolved via `TypeRef`)
-  - **Work:** when field/param type is `FunctionPointer` / delegate name, emit delegate type not `void*`.
+- **`WndClassEx.lpfnWndProc` — ✅ fixed**
+  - Generated: `WndProc` (was `void*`).
 
-- **`WndClassEx.style` (and similar) — wrong type**
-  - Spike: `uint`
-  - Generated: `void*`
-  - **Work:** map `UInt32` / flags enums; emit enums from metadata `Enum` where needed.
+- **`WndClassEx.style` (and similar) — ✅ fixed**
+  - Generated: `uint` (was `void*`).
 
-- **Message loop — wrong pointer style**
-  - Spike: `get_message (out Msg …)`, `translate_message (ref Msg)`, `dispatch_message (ref Msg)`
-  - Generated: `void* lp_msg` everywhere
-  - **Work:** honor parameter attrs (`Out`, `In`, `Ref`) and struct types → `out` / `ref` / typed pointer; map `MSG` to generated `Msg`.
+- **Message loop — ✅ fixed**
+  - `get_message (out Msg …)`, `translate_message (ref Msg)`, `dispatch_message (ref Msg)`.
 
-- **Constants hello uses**
-  - `WS_OVERLAPPEDWINDOW`, `WS_VISIBLE`, `COLOR_WINDOW` — **not found** in current generated output (may be enum-only in JSON or filtered).
-  - All generated `public const` are **declaration-only** — app cannot rely on `Win32.WM_DESTROY` as a numeric literal without C values or local consts.
-  - **Work (pick one strategy):**
-    - Emit `#define` values from JSON `Value` / `ValueText` where Vala allows; or
-    - Document continued local consts in app for Phase 2; or
-    - Split “literal” constants into a small hand vapi shard.
+- **Constants hello uses — ⏳ partial**
+  - `WS_OVERLAPPEDWINDOW`, `WS_VISIBLE`, `COLOR_WINDOW` — still **local const** in `hello-window.vala` (P1).
+  - Generated `public const` remain declaration-only (no numeric values in vapi).
 
-- **String fields**
-  - Spike: `unowned uint16*` for class/menu names
-  - Generated: `uint16*` (often OK with string literals)
-  - **Work:** optional `unowned` for `In` UTF-16 params (nice-to-have).
+- **String fields — ✅ acceptable**
+  - Generated: `uint16*` (works with string literals).
 
-- **Noise / hazard**
-  - Duplicate `create_window_ex_a`, `get_message_a`, extra struct variants — pollute search and risk wrong overload.
-  - **Work:** tighten `gui.filter` (drop `*A` / `*Ansi*`) or emit Unicode-only policy in `NameMapper` / filter.
+- **Noise / hazard — ✅ fixed**
+  - Ansi `*A` siblings skipped in emitter (`NameMapper.skip_ansi_name`).
 
 ### Vala / vapi rules (unchanged from Phase 0)
 
@@ -128,27 +131,54 @@ Spike today: `--pkg win32-ui` + `--pkg win32-ui-native`, plus **local `const`** 
 
 **P0 — must have**
 
-- [ ] Resolve **function pointer fields** (`lpfnWndProc` → `WndProc`).
-- [ ] **Struct parameters:** `MSG` / `Msg` as `out` / `ref`, not `void*`.
-- [ ] **Scalar types:** `uint` for `style`, `dw_ex_style`, etc.; reduce wrong `void*`.
-- [ ] **Vendor or stub** `GetModuleHandleW`.
-- [ ] **Package decision** + switch `hello-window` + `meson.build` `compile-check` to generated (or generated + minimal stub).
-- [ ] **Unicode-only** emit or filter so hello does not need `_a` symbols.
+- **✅** Resolve **function pointer fields** (`lpfnWndProc` → `WndProc`).
+- **✅** **Struct parameters:** `MSG` / `Msg` as `out` / `ref`, not `void*`.
+- **✅** **Scalar types:** `uint` for `style`, `dw_ex_style`, etc.; reduce wrong `void*`.
+- **✅** **Vendor or stub** `GetModuleHandleW`.
+- **✅** **Package decision** + switch `hello-window` + `meson.build` `compile-check` to generated (or generated + minimal stub).
+- **✅** **Unicode-only** emit or filter so hello does not need `_a` symbols.
 
 **P1 — should have for faithful hello**
   
-- [ ] Emit **enum** types (or const values) for `WS_OVERLAPPEDWINDOW`, `WS_VISIBLE`, `COLOR_WINDOW` if present in metadata.
-- [ ] Emit **numeric const values** from JSON where Vala permits; document exceptions.
-- [ ] Parameter **names** from metadata (`h_wnd` not `param0`) for delegates used by app code.
-- [ ] `unowned` on `In` wide-string parameters (match spike).
+- **⏳** Emit **enum** types for `WS_*`, `COLOR_*` — metadata has them; emitter skips `Kind == "Enum"` today.
+- **❌** Emit **numeric values on `public const`** — Vala rejects `= 2` on extern constants in a `[CCode]` namespace; declaration-only (`WM_DESTROY;`) already works via `windows.h`.
+- **⏳** **Delegate param names** — JSON has `param0`…`param3` on `WNDPROC`; map to `h_wnd`, `msg`, `w_param`, `l_param`.
+- **⏳** `unowned` on `In` wide-string params — cosmetic; spike had it on struct fields too.
+
+### P1 detail (hello literals today)
+
+| Hello uses | In metadata | Generated today | Fix |
+|------------|-------------|-----------------|-----|
+| `WM_DESTROY`, `CW_USEDEFAULT` | `Constants[]` with `Value` | `public const …;` (no value) | **OK** — app compiles; C gets `#define` from `windows.h`. Remove local copies in hello. |
+| `WS_OVERLAPPEDWINDOW`, `WS_VISIBLE` | `WINDOW_STYLE` enum (`Kind: Enum`, `Flags: true`) | not emitted | **Emit enum** `[Flags] public enum WindowStyle { WS_VISIBLE = …; … }` |
+| `COLOR_WINDOW` | `SYS_COLOR_INDEX` enum | not emitted | **Emit enum** `SysColorIndex { COLOR_WINDOW = 5; … }` |
+
+**Enum emit sketch** (verified with valac):
+
+```vala
+[Flags]
+[CCode (cname = "UINT", has_type_id = false)]
+public enum WindowStyle {
+    [CCode (cname = "WS_VISIBLE")]
+    WS_VISIBLE = 0x10000000,
+    …
+}
+```
+
+App: `WindowStyle.WS_OVERLAPPEDWINDOW | WindowStyle.WS_VISIBLE` — no local literals.
+
+**Const values:** do not emit `public const uint WM_DESTROY = 2` in the relay namespace — valac error: *External constants cannot use values*. Enums with values are fine; `#define`-style consts must stay declaration-only or live outside the `[CCode]` namespace.
+
+**Delegate names:** `WNDPROC` params in JSON are literally `param0`…`param3` (metadata quirk). Add a small override table in `NameMapper` for known delegates, not generic metadata names.
+
+**unowned:** add to `vala_param_type` when param type is `LPCWSTR`/`PWSTR` and `Attrs` contains `In`.
 
 **P2 — later / Track B**
 
-- [ ] `[Compact]` ergonomic wrappers + signals in generator.
-- [ ] `win32-plumbing.c` if delegate marshalling still unsafe.
-- [ ] Broader `TypeRef` (`ApiRef`, pointers, `MemorySize` attrs).
-- [ ] Broader `TypeRef` (`ApiRef`, pointers, `MemorySize` attrs).
-- [ ] **Per-json vapi emit** (see package layout — replaces monolithic `win32-ui.generated.vapi` for apps).
+- **⏳** `[Compact]` ergonomic wrappers + signals in generator.
+- **⏳** `win32-plumbing.c` if delegate marshalling still unsafe.
+- **⏳** Broader `TypeRef` (`ApiRef`, pointers, `MemorySize` attrs).
+- **✅** **Per-json vapi emit** (see package layout — replaces monolithic `win32-ui.generated.vapi` for apps).
 
 ---
 
@@ -158,35 +188,64 @@ win32json is already split into **distinct namespace JSON files** (`UI.WindowsAn
 
 **Current (Phase 1):** all vendored JSON → single `vapi/win32-ui.generated.vapi`, one flat `namespace Win32 { … }`. Fine for pipeline proof; wrong shape for apps.
 
-**Target (Phase 2):** **one input JSON → one output `.vapi`** (plus optional umbrella pkg).
+**Target (Phase 2):** **one input JSON → one output `.vapi`** (plus optional umbrella pkg). **Vapi / `--pkg` names follow normal lowercase hyphenated ids**, derived from the JSON basename.
+
+**Naming rule (vapi file + `--pkg` + `.pc`):**
+
+- Start from JSON basename without `.json` (e.g. `UI.WindowsAndMessaging`, `Graphics.Gdi`)
+- Replace each `.` with `-`
+- Lowercase the whole id
+- Prefix `win32-`
+
+Examples:
+
+- `UI.WindowsAndMessaging.json` → **`win32-ui-windowsandmessaging`** (`win32-ui-windowsandmessaging.vapi`, `--pkg win32-ui-windowsandmessaging`)
+- `Graphics.Gdi.json` → **`win32-graphics-gdi`**
+- `UI.Controls.json` → **`win32-ui-controls`**
+- `UI.Controls.Dialogs.json` → **`win32-ui-controls-dialogs`**
+
+Implement in **`NameMapper.json_basename_to_pkg_id()`** (or similar) — single function for vapi filename, pkg-config name, and `check-regen` paths.
 
 Example layout:
 
 ```
-vapi/generated/
-  UI.WindowsAndMessaging.vapi   # message loop, WNDCLASS, CreateWindowExW, …
-  Graphics.Gdi.vapi             # GDI types/constants hello may need
-  UI.Controls.vapi              # Phase 3 — only if listed in win32json-api.files
+vapi/
+  win32-ui-windowsandmessaging.vapi   # was UI.WindowsAndMessaging.json
+  win32-graphics-gdi.vapi             # was Graphics.Gdi.json
+  win32-ui-controls.vapi              # Phase 3 — if in win32json-api.files
   …
+  win32-ui.vapi                       # optional umbrella / placeholder
 ```
 
-**Mapping (already in parser):**
+**Three names for the same shard (do not conflate them):**
 
-- `UI.WindowsAndMessaging.json` → filter symbols as `Windows.Win32.UI.WindowsAndMessaging.*`
-- Vala namespace per file — e.g. nested `Win32.Ui.WindowsAndMessaging { … }` (exact spelling TBD; align with `ApiFile.namespace_from_basename`)
-- `--pkg` name derived from basename — e.g. `win32-ui-UI.WindowsAndMessaging` or a shortened pkg id + `.pc` per shard
+- **1. win32json metadata (generator + filter only)** — upstream uses a long prefix: `Windows.Win32.UI.WindowsAndMessaging.CreateWindowExW`. That string exists because win32json mirrors Microsoft’s .NET / metadata layout. **Apps never see it.** We keep `ApiFile.namespace_from_basename()` and `gui.filter` lines that match `Windows.Win32.*` only so the generator can find symbols in JSON — internal plumbing, not vapi design.
+
+- **2. Vala namespace (what app code uses)** — drop the redundant `Windows.` layer. One shard vapi exposes e.g. **`Win32.Ui.WindowsAndMessaging { … }`**, derived from the JSON basename (`UI.WindowsAndMessaging.json` → `Ui` + `WindowsAndMessaging`). Same idea as today’s spike (`Win32Ui.Native`) but split per metadata file. **No `Windows.Win32` in Vala source.**
+
+- **3. `--pkg` / vapi filename (hyphen id)** — `win32-ui-windowsandmessaging` (see naming rule above). Unrelated to Vala dotted namespaces; this is pkg-config / `--pkg` convention only.
+
+```
+  UI.WindowsAndMessaging.json          (vendor file)
+           │
+           ├─► filter: Windows.Win32.UI.WindowsAndMessaging.*   (internal)
+           ├─► vapi:   namespace Win32.Ui.WindowsAndMessaging  (app API)
+           └─► pkg:    win32-ui-windowsandmessaging            (--pkg)
+```
 
 **What hello-window needs (minimal pkgs):**
 
-- `UI.WindowsAndMessaging.vapi` — core loop APIs
-- `Graphics.Gdi.vapi` — if `COLOR_WINDOW` / brush constants live there
-- Add JSON for loader APIs when vendored (e.g. `System.*` for `GetModuleHandleW`) — **same per-file rule**, not a special-case monolith
+- `win32-ui-windowsandmessaging` — core loop APIs
+- `win32-graphics-gdi` — if `COLOR_WINDOW` / brush constants live there
+- Add JSON for loader APIs when vendored (e.g. `System.*` → `win32-system-…`) — **same rule**, not a monolith
 
 Apps then:
 
 ```vala
-// using Win32.Ui.WindowsAndMessaging;  // after namespace decision
-// valac --pkg win32-ui --pkg win32-ui-UI.WindowsAndMessaging …
+using Win32.Ui.WindowsAndMessaging;
+
+// valac --pkg win32-ui-windowsandmessaging --pkg win32-graphics-gdi …
+// create_window_ex (…);  — inside Win32.Ui.WindowsAndMessaging, not Windows.Win32.*
 ```
 
 **Benefits**
@@ -198,10 +257,11 @@ Apps then:
 
 **Emitter changes for split output**
 
-- [ ] `VapiEmitter.emit_file` → write `vapi/generated/<basename>.vapi` (one namespace block per file)
-- [ ] `generate-binding` reads **`win32json-api.files`** (or api dir filtered by that list) — not “every `.json` in api/”
-- [ ] Dedupe policy: **within a shard only**; cross-file duplicates become explicit (rare; handle if they appear)
-- [ ] Optional thin `win32-ui.vapi` umbrella that `using`-aggregates common pkgs for convenience — not required for hello
+- **✅** `VapiEmitter.emit_shard` → write `vapi/<pkg-id>.vapi` where `pkg-id` = `win32-` + basename with `.` → `-`, lowercased
+- **✅** `NameMapper` — **`json_basename_to_pkg_id()`** shared by emitter, meson, `check-regen`
+- **✅** `generate-binding` reads **`win32json-api.files`** — not “every `.json` in api/”
+- **✅** Dedupe policy: **within a shard only**
+- **⏳** Optional thin `win32-ui.vapi` umbrella — not required for hello
 
 **Still allowed: tiny hand shard**
 
@@ -226,11 +286,12 @@ Apps then:
 ## Intended files
 
 - `src/Generate/VapiEmitter.vala` — extend — `TypeRef`, attrs, const values, enum emit
-- `src/Generate/NameMapper.vala` — extend — Unicode-only policy, param names
+- `src/Generate/NameMapper.vala` — extend — **`json_basename_to_pkg_id()`**, Unicode-only policy, param names
 - `metadata/filters/gui.filter` — extend — drop Ansi duplicates if not already
 - `metadata/win32json-api.files` — extend — add namespace JSON for `GetModuleHandleW` (if exists in win32json)
-- `tools/generate-binding.vala` — extend — read `win32json-api.files`; emit **one `.vapi` per JSON basename**
-- `vapi/generated/*.vapi` — regen — per-shard artifacts (replace monolith for apps)
+- `tools/generate-binding.vala` — extend — read `win32json-api.files`; emit **`vapi/win32-<shard>.vapi`** per JSON basename
+- `vapi/win32-*.vapi` — regen — one file per vendored JSON (replace monolith for apps)
+- `win32-*.pc` — create — one pkg-config per shard (or documented aggregate)
 - `vapi/win32-ui.generated.vapi` — optional — Phase 1 monolith; retire or concat-only for CI
 - `vapi/win32-ui-native.vapi` — remove or replace — after hello migrates
 - `examples/hello-window.vala` — update — `using` / packages; fewer local consts as emit improves
@@ -242,26 +303,13 @@ Apps then:
 
 ## Verification
 
-**Generated syntax (regression from Phase 1)**
-
 ```bash
-meson compile -C build regen
-echo 'void main () { uint m = Win32.WM_DESTROY; }' > /tmp/gen-smoke.vala
-valac vapi/win32-ui.generated.vapi /tmp/gen-smoke.vala -C -d /tmp
+meson setup build
+meson compile -C build
+wine build/hello-window.exe
 ```
 
-**Phase 2 done when (Track A)**
-
-```bash
-meson compile -C build compile-check    # uses generated (or slice), not spike
-meson setup build-win --cross-file cross/mingw-w64.ini
-meson compile -C build-win hello-window # runs on Windows / Wine
-```
-
-- `hello-window.vala` has **no** `using Win32Ui.Native` / `--pkg win32-ui-native` dependency on hand spike.
-- Behaviour unchanged: window opens, `WM_DESTROY` quits loop.
-
-**Track B** — optional; document in plan when started.
+**Pass:** `meson compile` succeeds and `build/hello-window.exe` exists.
 
 ---
 
@@ -269,19 +317,21 @@ meson compile -C build-win hello-window # runs on Windows / Wine
 
 ### Track A — hello-window
 
-- [ ] **🔷** **⏳** Per-json vapi emit + pkg names; hello uses `UI.WindowsAndMessaging` (+ `Graphics.Gdi`, loader JSON when added)
-- [ ] **🔷** **⏳** P0 emitter: delegate fields, `out`/`ref` Msg, scalar types
-- [ ] **🔷** **⏳** Metadata/vendor: `GetModuleHandleW`
-- [ ] **🔷** **⏳** Filter: Unicode-first API surface for hello path
-- [ ] **🔷** **⏳** Migrate `hello-window.vala` + `meson.build`
-- [ ] **🔷** **⏳** Remove or archive spike `win32-ui-native.vapi` once redundant
-- [ ] **💩** **⏳** P1: const values / `WS_*` / `COLOR_WINDOW` where possible
+- **✅** Per-json vapi emit + `win32-…` pkg ids; hello uses `win32-ui-windowsandmessaging` + `win32-system-stub`
+- **✅** P0 emitter: delegate fields, `out`/`ref` Msg, scalar types
+- **✅** Metadata/vendor: `GetModuleHandleW` (hand stub until loader JSON)
+- **✅** Filter: Unicode-first API surface (`NameMapper.skip_ansi_name`)
+- **✅** Migrate `hello-window.vala` + `meson.build`
+- **✅** Archive spike `vapi/archive/win32-ui-native.vapi`
+- **✅** Default `meson compile -C build` (regen + exe)
+- **⏳** Run `.exe` on Windows / Wine (manual)
+- **⏳** P1: const values / `WS_*` / `COLOR_WINDOW` where possible
 
 ### Track B — ergonomic (stretch)
 
-- [ ] **🔷** **⏳** Measure vapi size; confirm split strategy
-- [ ] **🔷** **⏳** Ergonomic emit for `Window` + `Button`
-- [ ] **🔷** **⏳** Plumbing C only if proven necessary
+- **⏳** Measure vapi size; confirm split strategy
+- **⏳** Ergonomic emit for `Window` + `Button`
+- **⏳** Plumbing C only if proven necessary
 
 ---
 
