@@ -319,6 +319,9 @@ namespace Win32 {
 					continue;
 				}
 				var ftype = VapiEmitter.vala_type_for_field (field.Type, this.shard_basename);
+				if (field.Type.Name.has_prefix ("Anonymous")) {
+					ftype = "void*";
+				}
 				this.buffer.append (@"		public $(ftype) $(field.Name);
 ");
 			}
