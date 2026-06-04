@@ -13,3 +13,4 @@ tools/generate-binding
 *.dll
 *.~*
 .DS_Store
+.specstory/
