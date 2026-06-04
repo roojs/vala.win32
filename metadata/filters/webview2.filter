@@ -1,0 +1,10 @@
+# Phase 7i — subset for host + navigation + script + capture (extend as needed).
++Microsoft.Web.WebView2.Win32.ICoreWebView2
++Microsoft.Web.WebView2.Win32.ICoreWebView2Controller
++Microsoft.Web.WebView2.Win32.ICoreWebView2Environment
++Microsoft.Web.WebView2.Win32.ICoreWebView2CreateCoreWebView2EnvironmentCompletedHandler
++Microsoft.Web.WebView2.Win32.ICoreWebView2CreateCoreWebView2ControllerCompletedHandler
++Microsoft.Web.WebView2.Win32.ICoreWebView2ExecuteScriptCompletedHandler
++Microsoft.Web.WebView2.Win32.ICoreWebView2CapturePreviewCompletedHandler
++Microsoft.Web.WebView2.Win32.ICoreWebView2NavigationCompletedEventHandler
++Microsoft.Web.WebView2.Win32.COREWEBVIEW2_CAPTURE_PREVIEW_IMAGE_FORMAT

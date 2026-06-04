@@ -1,4 +1,4 @@
-/* Phase 7b: minimal WebView2 host (COM callbacks in C, MinGW-friendly loader). */
+/* Phase 7b: minimal WebView2 host bootstrap (loader + env + controller). */
 
 #define COBJMACROS
 #define WIN32_LEAN_AND_MEAN
@@ -8,6 +8,7 @@
 #include <stdio.h>
 
 #include "webview2-plumbing.h"
+#include "webview2-capture-spike.h"
 #include "WebView2.h"
 
 typedef HRESULT (STDMETHODCALLTYPE *PFN_CreateCoreWebView2EnvironmentWithOptions)(
@@ -28,8 +29,6 @@ typedef struct WebView2HostState {
 static WebView2HostState g_state;
 static HMODULE g_loader_module;
 static PFN_CreateCoreWebView2EnvironmentWithOptions g_create_env_with_options;
-
-/* --- IUnknown helpers for async handlers --- */
 
 typedef struct EnvCompletedHandler {
 	ICoreWebView2CreateCoreWebView2EnvironmentCompletedHandler iface;
@@ -134,6 +133,7 @@ static HRESULT STDMETHODCALLTYPE controller_handler_invoke (
 
 	GetClientRect (g_state.parent, &bounds);
 	ICoreWebView2Controller_put_Bounds (g_state.controller, bounds);
+	vala_webview2_capture_spike_on_host_ready (g_state.webview, g_state.controller, g_state.parent);
 	ICoreWebView2_Navigate (g_state.webview, g_state.url);
 	g_state.ready = TRUE;
 	return S_OK;
@@ -259,6 +259,7 @@ void vala_webview2_host_on_size (HWND parent)
 
 void vala_webview2_host_destroy (void)
 {
+	vala_webview2_capture_spike_on_host_destroy ();
 	if (g_state.webview != NULL) {
 		ICoreWebView2_Release (g_state.webview);
 		g_state.webview = NULL;

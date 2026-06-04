@@ -53,6 +53,16 @@ Win32 JSON for regen: run `./scripts/vendor-win32json.sh` once if `metadata/win3
 
 ### WebView2 (Phase 7)
 
+**Regenerate API metadata JSON** (Linux or Windows — commit the result):
+
+```bash
+./scripts/vendor-webview2-sdk.sh   # if needed
+meson setup build
+./scripts/regen-webview2-json.sh   # → metadata/webview2/api/WebView2.json
+```
+
+Details: **[metadata/webview2/README.md](metadata/webview2/README.md)**
+
 **Linux cross-build** (`build/`):
 
 ```bash

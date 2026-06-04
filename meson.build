@@ -98,6 +98,13 @@ generate_binding = executable(
   install: false,
 )
 
+generate_webview2_json = executable(
+  'generate-webview2-json',
+  files('tools/generate-webview2-json.vala'),
+  dependencies: [json_glib],
+  install: false,
+)
+
 regen_base_cmd = [
   generate_binding,
   '--metadata', metadata_root / 'win32json',
@@ -372,6 +379,7 @@ webview2_loader_x64 = webview2_sdk / 'x64' / 'WebView2Loader.dll'
 have_webview2_sdk = run_command('test', '-f', webview2_header, check: false).returncode() == 0
 vendor_webview2 = find_program('scripts/vendor-webview2-sdk.sh')
 webview2_plumbing_c = project_root / 'src' / 'webview2-plumbing.c'
+webview2_capture_spike_c = project_root / 'src' / 'webview2-capture-spike.c'
 webview2_link_libs = ['-lole32', '-luuid', '-lshlwapi', '-lshell32', '-ladvapi32']
 
 if have_webview2_sdk
@@ -394,6 +402,7 @@ if have_webview2_sdk and host_machine.system() == 'windows'
     files('examples/webview2-host-demo.vala'),
     wide_strings_vala,
     webview2_plumbing_c,
+    webview2_capture_spike_c,
   ]
   if get_option('regen_on_build')
     webview2_sources += regen_vapi
@@ -428,6 +437,7 @@ elif have_webview2_sdk and mingw_cc.found()
     webview2_companion_c += webview2_build_dir + '/' + vala_name.substring(0, -5) + '.c'
   endforeach
   webview2_plumbing_o = webview2_build_dir + '/webview2-plumbing.o'
+  webview2_capture_spike_o = webview2_build_dir + '/webview2-capture-spike.o'
   custom_target(
     'webview2-host-demo',
     input: webview2_vala_inputs,
@@ -445,8 +455,17 @@ elif have_webview2_sdk and mingw_cc.found()
     ] + vala_win32_c_quiet + [
       '-c',
       '-I', webview2_sdk / 'include',
+      '-I', project_root / 'src',
       '-o', webview2_plumbing_o,
       webview2_plumbing_c,
+      '&&',
+      mingw_cc,
+    ] + vala_win32_c_quiet + [
+      '-c',
+      '-I', webview2_sdk / 'include',
+      '-I', project_root / 'src',
+      '-o', webview2_capture_spike_o,
+      webview2_capture_spike_c,
       '&&',
       mingw_cc,
     ] + vala_win32_c_quiet + [
@@ -456,6 +475,7 @@ elif have_webview2_sdk and mingw_cc.found()
       webview2_build_dir + '/webview2-host-demo.c',
       webview2_companion_c,
       webview2_plumbing_o,
+      webview2_capture_spike_o,
     ] + webview2_link_libs + [
       '&&',
       'cp', webview2_loader_x64, webview2_build_dir + '/',

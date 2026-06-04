@@ -15,4 +15,13 @@ public void host_destroy ();
 [CCode (cname = "vala_webview2_host_is_ready")]
 public bool host_is_ready ();
 
+[CCode (cheader_filename = "webview2-capture-spike.h", cname = "VALA_WEBVIEW2_WM_SPIKE_DONE")]
+public const uint SPIKE_DONE_MESSAGE;
+
+[CCode (cheader_filename = "webview2-capture-spike.h", cname = "vala_webview2_host_set_capture_spike")]
+public bool host_set_capture_spike (void* output_dir, bool use_wide_bounds);
+
+[CCode (cheader_filename = "webview2-capture-spike.h", cname = "vala_webview2_host_capture_spike_result")]
+public int host_capture_spike_result ();
+
 }
