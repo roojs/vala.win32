@@ -2,7 +2,7 @@
 
 **Status:** **✅** Done (trial 1 complete; trial 2 deferred)
 
-**Parent:** [08 - phase 6 full api coverage.md](../plans/08%20-%20phase%206%20full%20api%20coverage.md)
+**Parent:** [8. phase 6 full api coverage.md](../plans/8.%20phase%206%20full%20api%20coverage.md)
 
 `gui.filter` and `win32json-api.files` were **unchanged**. The measurable bump is **control-class catalog scope** (commctrl `*_CLASS` / `TOOLBARCLASSNAME` strings), which feeds `generated/win32-ui-control-strings.vala` and catalog shells in `generated/win32-widgets.vala`.
 

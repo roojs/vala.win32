@@ -4,7 +4,7 @@ Thin **Vala vapi** bindings for native Win32 GUI. Application code compiles to C
 
 **Prior art (credits only, unrelated codebase):** [emrevit/vala-win32](https://github.com/emrevit/vala-win32)
 
-Design and roadmap: [docs/plans/01-DONE - project overview.md](docs/plans/01-DONE%20-%20project%20overview.md) (plans `02-DONE`–`06-DONE` complete; `07`–`08` in `docs/plans/`)
+Design and roadmap: [docs/plans/1. project overview.md](docs/plans/1.%20project%20overview.md) (plans `2`–`7` done; **`9` WebView2** is the current focus; see `docs/plans/`)
 
 ## Phase 2 (apps) + Phase 1 (generator)
 
@@ -51,6 +51,25 @@ meson compile -C build coverage-report  # docs/coverage/6a-coverage-matrix.md (e
 
 Win32 JSON for regen: run `./scripts/vendor-win32json.sh` once if `metadata/win32json/api/` is empty.
 
+### WebView2 (Phase 7)
+
+**Linux cross-build** (`build/`):
+
+```bash
+./scripts/vendor-webview2-sdk.sh
+meson setup build --reconfigure
+meson compile -C build webview2-host-demo
+wine build/webview2-host-demo.exe https://example.com/   # optional; often blank under Wine
+```
+
+**Windows native** (`build-win/` on the Samba share — no `C:` mirror needed):
+
+See **[docs/windows-build.md](docs/windows-build.md)** — **Visual Studio Build Tools** (recommended long-term for WebView2) vs **MSYS2 MinGW** (what Meson uses today). They are not mixed in one link.
+
+On Windows: one PowerShell line runs `scripts/build-win.sh` via `msys2_shell.cmd -ucrt64` (after `setup-msys2-toolchain.sh` for the compiler tools) — [docs/windows-build.md](docs/windows-build.md). Run `build-win\webview2-host-demo.exe` at the desktop.
+
+Ship `WebView2Loader.dll` next to the exe (Meson copies it into the build dir). Runtime must be installed on the Windows machine.
+
 ### Win32 metadata (JSON)
 
 Filtered subset from [marlersoft/win32json](https://github.com/marlersoft/win32json) (community export of [win32metadata](https://github.com/microsoft/win32metadata)):
@@ -83,6 +102,7 @@ tools/                # generate-binding (Phase 1+)
 scripts/vendor-win32json.sh   # clone win32json → copy filtered api/*.json
 scripts/setup-mingw-libs.sh   # MSYS2 GLib tree for Track B cross-link
 docs/plans/           # Project plans
+docs/windows-build.md # Windows native build-win, SSH, WebView2 runtime
 ```
 
 Do not hand-edit generated shard vapi or `generated/win32-widgets.vala`; change `src/Generate/` (or `src/Generate/templates/win32-widgets.vala` for Track B widgets) and run `meson compile -C build regen`.

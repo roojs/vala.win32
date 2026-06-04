@@ -6,6 +6,22 @@ project(
   default_options: ['buildtype=debugoptimized'],
 )
 
+# Repetitive GCC noise from Vala-generated Win32 C (not actionable for app code).
+vala_win32_c_quiet = []
+if host_machine.system() == 'windows'
+  vala_win32_c_quiet = [
+    '-Wno-discarded-qualifiers',
+    '-Wno-incompatible-pointer-types',
+    '-Wno-implicit-function-declaration',
+  ]
+  add_project_arguments(vala_win32_c_quiet, language: 'c')
+endif
+
+vala_win32_quiet_x = []
+foreach flag : vala_win32_c_quiet
+  vala_win32_quiet_x += ['-X', flag]
+endforeach
+
 gee = dependency('gee-0.8')
 json_glib = dependency('json-glib-1.0')
 
@@ -95,8 +111,14 @@ regen_vapi = custom_target(
   'regen-vapi',
   output: 'regen.stamp',
   command: regen_base_cmd + ['&&', 'touch', '@OUTPUT@'],
-  build_by_default: true,
+  build_by_default: get_option('regen_on_build'),
 )
+
+# When regen_on_build is false, use committed vapi/ + generated/*.vala (build-win on Samba).
+regen_dep = regen_vapi
+if not get_option('regen_on_build')
+  regen_dep = []
+endif
 
 mingw_cc = find_program('x86_64-w64-mingw32-gcc', required: false)
 mingw_windres = find_program('x86_64-w64-mingw32-windres', required: false)
@@ -125,6 +147,7 @@ if have_mingw_glib
   ).stdout().strip().split()
 endif
 
+if get_option('build_posix_examples')
 foreach app : posix_example_apps
   app_name = app[0]
   app_source = app[1]
@@ -142,13 +165,16 @@ foreach app : posix_example_apps
   foreach lib : app_extra_libs
     app_link_libs += ['-l' + lib]
   endforeach
-  app_vala_link = ['-X', '-mwindows']
+  app_vala_link = ['-X', '-mwindows'] + vala_win32_quiet_x
   foreach lib : app_link_libs
     app_vala_link += ['-X', lib]
   endforeach
   app_companion_sources = app_extra_sources
   if host_machine.system() == 'windows'
     win_inputs = [files(app_source)]
+    if get_option('regen_on_build')
+      win_inputs += regen_vapi
+    endif
     foreach src : app_companion_sources
       win_inputs += src
     endforeach
@@ -157,7 +183,6 @@ foreach app : posix_example_apps
       win_inputs,
       vala_args: app_vala_args + app_vala_link,
       link_args: ['-mwindows'] + app_link_libs,
-      depends: regen_vapi,
       install: false,
     )
   elif mingw_cc.found()
@@ -184,18 +209,20 @@ foreach app : posix_example_apps
         '@INPUT@',
         '&&',
         mingw_cc,
+      ] + vala_win32_c_quiet + [
         '-mwindows',
         '-o', '@OUTPUT@',
         app_build_dir + '/' + app_name + '.c',
         companion_c_files,
       ] + app_link_libs,
-      depends: regen_vapi,
+      depends: regen_dep,
       build_by_default: true,
     )
   else
     warning(app_name + '.exe skipped: x86_64-w64-mingw32-gcc not found')
   endif
 endforeach
+endif
 
 # Track B — ergonomic widgets (--profile=gobject + MinGW GLib)
 # [name, source, extra companion .vala, extra --pkg, extra -l libs]
@@ -246,7 +273,7 @@ ergonomic_apps = [
   ],
 ]
 
-if mingw_cc.found() and have_mingw_glib
+if get_option('build_ergonomic_examples') and mingw_cc.found() and have_mingw_glib
   track_b_pkgs = example_pkgs + ['win32-ui-controls', example_pkg_dialogs]
   ergo_vala_args_base = ['--vapidir', vapidir, '--profile=gobject']
   foreach pkg : track_b_pkgs
@@ -286,6 +313,7 @@ if mingw_cc.found() and have_mingw_glib
     endif
     ergo_link_cmd = [
       mingw_cc,
+    ] + vala_win32_c_quiet + [
       '-mwindows',
     ] + ergo_cc_extra + glib_cflags + [
       '-o', '@OUTPUT@',
@@ -323,7 +351,7 @@ if mingw_cc.found() and have_mingw_glib
         '--',
         '.',
       ],
-      depends: regen_vapi,
+      depends: regen_dep,
       build_by_default: true,
     )
   endforeach
@@ -337,8 +365,114 @@ else
   endif
 endif
 
+# Phase 7 — WebView2 host (requires ./scripts/vendor-webview2-sdk.sh)
+webview2_sdk = project_root / 'build/vendor/webview2'
+webview2_header = webview2_sdk / 'include' / 'WebView2.h'
+webview2_loader_x64 = webview2_sdk / 'x64' / 'WebView2Loader.dll'
+have_webview2_sdk = run_command('test', '-f', webview2_header, check: false).returncode() == 0
+vendor_webview2 = find_program('scripts/vendor-webview2-sdk.sh')
+webview2_plumbing_c = project_root / 'src' / 'webview2-plumbing.c'
+webview2_link_libs = ['-lole32', '-luuid', '-lshlwapi', '-lshell32', '-ladvapi32']
+
+if have_webview2_sdk
+  webview2_vala_args = ['--vapidir', vapidir, '--profile=posix', '--pkg', 'webview2']
+  foreach pkg : example_pkgs
+    webview2_vala_args += ['--pkg', pkg]
+  endforeach
+  webview2_vala_link = ['-X', '-mwindows'] + vala_win32_quiet_x
+  foreach lib : webview2_link_libs
+    webview2_vala_link += ['-X', lib]
+  endforeach
+  webview2_inc = include_directories(
+    'build/vendor/webview2/include',
+    'src',
+  )
+endif
+
+if have_webview2_sdk and host_machine.system() == 'windows'
+  webview2_sources = [
+    files('examples/webview2-host-demo.vala'),
+    wide_strings_vala,
+    webview2_plumbing_c,
+  ]
+  if get_option('regen_on_build')
+    webview2_sources += regen_vapi
+  endif
+  webview2_host_exe = executable(
+    'webview2-host-demo',
+    webview2_sources,
+    vala_args: webview2_vala_args + webview2_vala_link,
+    include_directories: webview2_inc,
+    link_args: ['-mwindows'] + webview2_link_libs,
+    install: false,
+  )
+  custom_target(
+    'webview2-copy-loader',
+    output: 'webview2-loader.stamp',
+    command: [
+      'cp', webview2_loader_x64, meson.current_build_dir(),
+      '&&', 'touch', '@OUTPUT@',
+    ],
+    depends: webview2_host_exe,
+    build_by_default: true,
+  )
+elif have_webview2_sdk and mingw_cc.found()
+  webview2_build_dir = 'track-webview2-host-demo'
+  webview2_companion = [wide_strings_vala]
+  webview2_companion_c = []
+  webview2_vala_inputs = [files('examples/webview2-host-demo.vala')]
+  foreach src : webview2_companion
+    webview2_vala_inputs += src
+    parts = src.split('/')
+    vala_name = parts[-1]
+    webview2_companion_c += webview2_build_dir + '/' + vala_name.substring(0, -5) + '.c'
+  endforeach
+  webview2_plumbing_o = webview2_build_dir + '/webview2-plumbing.o'
+  custom_target(
+    'webview2-host-demo',
+    input: webview2_vala_inputs,
+    output: 'webview2-host-demo.exe',
+    command: [
+      'mkdir', '-p', webview2_build_dir,
+      '&&',
+      valac,
+      webview2_vala_args,
+      '-C',
+      '-d', webview2_build_dir,
+      '@INPUT@',
+      '&&',
+      mingw_cc,
+    ] + vala_win32_c_quiet + [
+      '-c',
+      '-I', webview2_sdk / 'include',
+      '-o', webview2_plumbing_o,
+      webview2_plumbing_c,
+      '&&',
+      mingw_cc,
+    ] + vala_win32_c_quiet + [
+      '-mwindows',
+      '-I', project_root / 'src',
+      '-o', '@OUTPUT@',
+      webview2_build_dir + '/webview2-host-demo.c',
+      webview2_companion_c,
+      webview2_plumbing_o,
+    ] + webview2_link_libs + [
+      '&&',
+      'cp', webview2_loader_x64, webview2_build_dir + '/',
+      '&&',
+      'cp', webview2_loader_x64, '.',
+    ],
+    depends: regen_dep,
+    build_by_default: true,
+  )
+elif mingw_cc.found() or host_machine.system() == 'windows'
+  warning('webview2-host-demo skipped: run ./scripts/vendor-webview2-sdk.sh')
+endif
+
 check_regen = find_program('scripts/check-regen.sh')
 compile_check = find_program('scripts/compile-check.sh')
+
+run_target('vendor-webview2', command: [vendor_webview2])
 
 run_target('regen', command: regen_base_cmd)
 
@@ -363,7 +497,7 @@ run_target(
 run_target(
   'compile-check',
   command: [compile_check],
-  depends: regen_vapi,
+  depends: regen_dep,
 )
 
 run_target(

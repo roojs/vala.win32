@@ -2,7 +2,7 @@
 
 Track B demos: `using GLib`, `Win32.Window`, widget classes, **signals/properties** — no `create_window_ex` / `send_message` in application code. Regenerate: `meson compile -C build coverage-report`. Details: [6e-gap-report.md](6e-gap-report.md).
 
-**Parent plan:** [08 - phase 6 full api coverage.md](../plans/08%20-%20phase%206%20full%20api%20coverage.md)
+**Parent plan:** [8. phase 6 full api coverage.md](../plans/8.%20phase%206%20full%20api%20coverage.md)
 
 ## Ergonomic examples (`examples/ergonomic-*.vala`)
 

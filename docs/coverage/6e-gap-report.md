@@ -1,6 +1,6 @@
 # Phase 6e — API gap report
 
-**Parent plan:** [08 - phase 6 full api coverage.md](../plans/08%20-%20phase%206%20full%20api%20coverage.md)  
+**Parent plan:** [8. phase 6 full api coverage.md](../plans/8.%20phase%206%20full%20api%20coverage.md)  
 **Evidence:** [6a-coverage-matrix.md](6a-coverage-matrix.md) · [6b-filter-trials.md](6b-filter-trials.md) · `ergonomic-widgets-demo` (Track B integration)
 
 **Status:** Published after **6a–6c**; **6d (Track A spikes) skipped** by decision below.
@@ -99,7 +99,7 @@ These compile as minimal `Win32.*` wrappers (**no** signals, **no** `WM_*` dispa
 | `WM_*` notify constants | Medium | Some profiles use `wm_notify_code_expr` hex literals when const not emitted |
 | PBM_/LVM_/TVM_ in app code | **Fixed** | Moved into widget helpers / `uint_constant_expr` in emitter |
 | comctl32 **v6 manifest** | Medium | Only `ergonomic-widgets-demo` embeds manifest; other exes use older themed behavior |
-| **WebView2** | Out of scope | Not in current metadata list; real Windows target post–Phase 6 |
+| **WebView2** | Phase 7 plan | Not in win32json; see [9. phase 7 webview2 research and integration.md](../plans/9.%20phase%207%20webview2%20research%20and%20integration.md) |
 
 ### 3. Vala / ergonomics limits
 
@@ -135,7 +135,7 @@ These compile as minimal `Win32.*` wrappers (**no** signals, **no** `WM_*` dispa
 **Hard blockers** (stop claiming “full API”):
 
 1. **Unprofiled catalog shells** — no ergonomic signal story.
-2. **WebView2 / modern host** — not in repo; separate phase.
+2. **WebView2 / modern host** — Phase 7 plan ([9. phase 7 webview2](../plans/9.%20phase%207%20webview2%20research%20and%20integration.md)); hand vapi + C plumbing, not win32json.
 3. **Full win32json** — 42k-line monolith explicitly out of scope.
 
 **Soft gaps** (incremental):
@@ -153,7 +153,7 @@ These compile as minimal `Win32.*` wrappers (**no** signals, **no** `WM_*` dispa
 1. **Profiles** for high-value shells: `Toolbar`, `MonthCalendar`, `DateTimePicker` (demo already lays them out).
 2. **6f** — Wine pass; record pass/fail in 6a matrix or a short `6f-wine-smoke.md`.
 3. **Phase 7** — Valadoc/README only for APIs evidenced here and in demos.
-4. **WebView2** — Windows-native build path when leaving pure HWND experiments.
+4. **WebView2** — Phase 7: MinGW cross-build + Windows validation; Wine best-effort only ([plan](../plans/9.%20phase%207%20webview2%20research%20and%20integration.md)).
 
 ---
 

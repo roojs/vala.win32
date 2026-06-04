@@ -39,7 +39,7 @@ namespace Generate {
 			sb.append ("no `create_window_ex` / `send_message` in application code. Regenerate: `");
 			sb.append (REGEN_CMD);
 			sb.append ("`. Details: [6e-gap-report.md](6e-gap-report.md).\n\n");
-			sb.append ("**Parent plan:** [08 - phase 6 full api coverage.md](../plans/08%20-%20phase%206%20full%20api%20coverage.md)\n\n");
+			sb.append ("**Parent plan:** [8. phase 6 full api coverage.md](../plans/8.%20phase%206%20full%20api%20coverage.md)\n\n");
 
 			append_ergo_examples (sb);
 			append_widget_by_ergo_demo (sb);
