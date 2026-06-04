@@ -1,4 +1,4 @@
-/* Phase 2: native Win32 message loop via generated vapi shards. */
+/* Phase 4a: MessageBox via generated vapi (Track A). */
 
 using Win32.Ui;
 using Win32.Ui.WindowsAndMessaging;
@@ -20,8 +20,8 @@ private int64 window_proc (
 public static int main (string[] args) {
 	void* inst = get_module_handle (null);
 
-	var class_name = WideString ("ValaWin32Hello");
-	var window_title = WideString ("vala.win32 Phase 2");
+	var class_name = WideString ("ValaDialogDemo");
+	var window_title = WideString ("vala.win32 dialog-demo");
 
 	var wc = WndClassEx ();
 	wc.cbSize = (uint) sizeof (WndClassEx);
@@ -42,8 +42,8 @@ public static int main (string[] args) {
 		WindowStyle.WS_OVERLAPPEDWINDOW | WindowStyle.WS_VISIBLE,
 		CW_USEDEFAULT,
 		CW_USEDEFAULT,
-		640,
 		480,
+		320,
 		null,
 		null,
 		inst,
@@ -53,6 +53,22 @@ public static int main (string[] args) {
 		stderr.printf ("CreateWindowExW failed\n");
 		return 1;
 	}
+
+	uint style = (uint) (
+		MESSAGEBOXSTYLE.MB_OK |
+		MESSAGEBOXSTYLE.MB_ICONINFORMATION
+	);
+	var result = message_box (
+		hwnd,
+		WideString ("MessageBoxW from generated vapi.").ptr,
+		WideString ("Phase 4a").ptr,
+		style
+	);
+	stderr.printf (
+		"MessageBox returned %d (IDOK=%d)\n",
+		(int) result,
+		(int) MESSAGEBOXRESULT.IDOK
+	);
 
 	Msg msg;
 	while (get_message (out msg, null, 0, 0) > 0) {

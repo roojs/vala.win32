@@ -1,0 +1,18 @@
+option(
+  'build_posix_examples',
+  type: 'boolean',
+  value: true,
+  description: 'Build Track A example executables (hello-window, button-demo, …)',
+)
+option(
+  'build_ergonomic_examples',
+  type: 'boolean',
+  value: true,
+  description: 'Build Track B GLib ergonomic demos (needs mingw-libs or native GLib)',
+)
+option(
+  'regen_on_build',
+  type: 'boolean',
+  value: true,
+  description: 'Run generate-binding before compile (slow on Samba; use false for build-win)',
+)

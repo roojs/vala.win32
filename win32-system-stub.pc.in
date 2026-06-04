@@ -1,0 +1,8 @@
+prefix=@PREFIX@
+vapidir=@VAPIDIR@
+
+Name: win32-system-stub
+Description: Win32 loader stub (GetModuleHandleW)
+Version: 0.1.0
+Libs:
+Cflags:

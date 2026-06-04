@@ -1,4 +1,4 @@
-/* Placeholder — literals live in examples/hello-window.vala until generated vapi is stable. */
+/* Placeholder pkg — apps use generated shards (win32-ui-windowsandmessaging, …). */
 
 namespace Win32Ui {
 }

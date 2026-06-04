@@ -12,6 +12,7 @@ namespace Generate.Parse {
 		public string Name { get; set; default = ""; }
 		public string TargetKind { get; set; default = ""; }
 		public string Api { get; set; default = ""; }
+		public TypeRef? Child { get; set; default = null; }
 		public Gee.ArrayList<string> Parents { get; set; default = new Gee.ArrayList<string> (); }
 
 		public override bool deserialize_property (
@@ -20,6 +21,14 @@ namespace Generate.Parse {
 			ParamSpec pspec,
 			Json.Node property_node
 		) {
+			if (property_name == "Child") {
+				this.Child = Json.gobject_deserialize (typeof (TypeRef), property_node) as TypeRef;
+				value = Value (typeof (TypeRef));
+				if (this.Child != null) {
+					value.set_object (this.Child);
+				}
+				return true;
+			}
 			if (property_name == "Parents") {
 				this.Parents = Base.deserialize_string_list (property_node);
 				value = Value (typeof (Gee.ArrayList));

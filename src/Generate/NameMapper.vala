@@ -131,9 +131,82 @@ namespace Generate {
 		static Gee.HashMap<string, string> type_overrides () {
 			var map = new Gee.HashMap<string, string> ();
 			map["WNDCLASSEX"] = "WndClassEx";
+			map["WNDCLASSEXW"] = "WndClassEx";
 			map["WNDPROC"] = "WndProc";
 			map["MSG"] = "Msg";
+			map["WINDOW_STYLE"] = "WindowStyle";
+			map["SYS_COLOR_INDEX"] = "SysColorIndex";
 			return map;
+		}
+
+		/** Known Win32 callback parameter names when metadata uses param0, param1, … */
+		public static string delegate_param_name (string delegate_c_name, string param_name, int index) {
+			if (delegate_c_name == "WNDPROC") {
+				switch (index) {
+				case 0:
+					return "h_wnd";
+				case 1:
+					return "msg";
+				case 2:
+					return "w_param";
+				case 3:
+					return "l_param";
+				default:
+					break;
+				}
+			}
+			return NameMapper.to_snake (param_name);
+		}
+
+		/**
+		 * JSON basename → pkg / vapi filename id.
+		 * UI.WindowsAndMessaging.json → win32-ui-windowsandmessaging
+		 */
+		public static string json_basename_to_pkg_id (string json_basename) {
+			var stem = json_basename;
+			if (stem.has_suffix (".json")) {
+				stem = stem.slice (0, -5);
+			}
+			return "win32-" + stem.replace (".", "-").down ();
+		}
+
+		/**
+		 * JSON basename → dotted Vala namespace (app-facing).
+		 * UI.WindowsAndMessaging.json → Win32.Ui.WindowsAndMessaging
+		 */
+		public static string vala_namespace_from_basename (string json_basename) {
+			var stem = json_basename;
+			if (stem.has_suffix (".json")) {
+				stem = stem.slice (0, -5);
+			}
+			var sb = new GLib.StringBuilder ("Win32");
+			foreach (var part in stem.split (".")) {
+				if (part.length == 0) {
+					continue;
+				}
+				sb.append_c ('.');
+				sb.append (NameMapper.to_pascal_words (part));
+			}
+			return sb.str;
+		}
+
+		/** Skip Ansi …A siblings when Unicode …W variants exist in win32json. */
+		public static bool skip_ansi_name (string c_name) {
+			if (!c_name.has_suffix ("A") || c_name.length < 2) {
+				return false;
+			}
+			if (c_name.has_suffix ("W")) {
+				return false;
+			}
+			return true;
+		}
+
+		/** Skip explicit Ansi struct/version names (e.g. PROPSHEETPAGEA_V1). */
+		public static bool skip_ansi_variant_name (string c_name) {
+			if (NameMapper.skip_ansi_name (c_name)) {
+				return true;
+			}
+			return c_name.index_of ("A_V") >= 0;
 		}
 	}
 }
