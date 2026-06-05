@@ -24,6 +24,9 @@ namespace Generate.Parse {
 		public Gee.ArrayList<Field> Fields { get; set; default = new Gee.ArrayList<Field> (); }
 		public Gee.ArrayList<EnumValue> Values { get; set; default = new Gee.ArrayList<EnumValue> (); }
 		public Gee.ArrayList<Parameter> Params { get; set; default = new Gee.ArrayList<Parameter> (); }
+		public Gee.ArrayList<Function> Methods { get; set; default = new Gee.ArrayList<Function> (); }
+		public TypeRef Interface { get; set; default = new TypeRef (); }
+		public string? Guid { get; set; default = null; }
 		public Gee.ArrayList<MetadataType> NestedTypes { get; set; default = new Gee.ArrayList<MetadataType> (); }
 
 		public override bool deserialize_property (
@@ -115,6 +118,30 @@ namespace Generate.Parse {
 				}
 				value = Value (typeof (TypeRef));
 				value.set_object (this.ReturnType);
+				return true;
+			}
+			case "Methods": {
+				this.Methods = new Gee.ArrayList<Function> ();
+				if (property_node.get_node_type () == Json.NodeType.ARRAY) {
+					var arr = property_node.get_array ();
+					for (uint i = 0; i < arr.get_length (); i++) {
+						var item = Json.gobject_deserialize (typeof (Function), arr.get_element (i)) as Function;
+						if (item != null) {
+							this.Methods.add (item);
+						}
+					}
+				}
+				value = Value (typeof (Gee.ArrayList));
+				value.set_object (this.Methods);
+				return true;
+			}
+			case "Interface": {
+				this.Interface = Json.gobject_deserialize (typeof (TypeRef), property_node) as TypeRef;
+				if (this.Interface == null) {
+					this.Interface = new TypeRef ();
+				}
+				value = Value (typeof (TypeRef));
+				value.set_object (this.Interface);
 				return true;
 			}
 			default:

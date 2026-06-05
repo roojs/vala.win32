@@ -1,4 +1,5 @@
-# Phase 7i — subset for host + navigation + script + capture (extend as needed).
+# Phase 7i — whitelist for host + navigation + script + capture (extend as needed).
+-Microsoft.Web.WebView2.Win32.*
 +Microsoft.Web.WebView2.Win32.ICoreWebView2
 +Microsoft.Web.WebView2.Win32.ICoreWebView2Controller
 +Microsoft.Web.WebView2.Win32.ICoreWebView2Environment
@@ -7,4 +8,7 @@
 +Microsoft.Web.WebView2.Win32.ICoreWebView2ExecuteScriptCompletedHandler
 +Microsoft.Web.WebView2.Win32.ICoreWebView2CapturePreviewCompletedHandler
 +Microsoft.Web.WebView2.Win32.ICoreWebView2NavigationCompletedEventHandler
++Microsoft.Web.WebView2.Win32.ICoreWebView2NavigationCompletedEventArgs
 +Microsoft.Web.WebView2.Win32.COREWEBVIEW2_CAPTURE_PREVIEW_IMAGE_FORMAT
++Microsoft.Web.WebView2.Win32.COREWEBVIEW2_MOVE_FOCUS_REASON
++Microsoft.Web.WebView2.Win32.EventRegistrationToken

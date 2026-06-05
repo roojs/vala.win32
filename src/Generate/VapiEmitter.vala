@@ -23,10 +23,29 @@ namespace Generate {
 		GLib.StringBuilder buffer;
 		private Gee.HashSet<string> emitted_vala_names = new Gee.HashSet<string> ();
 		private string shard_basename = "";
+		public string symbol_prefix { get; set; default = "Windows.Win32"; }
+		public bool basename_in_symbol { get; set; default = true; }
+		public string cheader_filename { get; set; default = "windows.h"; }
+		public string vala_namespace_override { get; set; default = ""; }
+		private bool iunknown_emitted = false;
 
 		public VapiEmitter (SymbolFilter filter) {
 			this.filter = filter;
 			this.buffer = new GLib.StringBuilder ();
+		}
+
+		string full_symbol_name (string basename, string symbol_name) {
+			if (this.basename_in_symbol) {
+				return this.symbol_prefix + "." + basename.slice (0, -5) + "." + symbol_name;
+			}
+			return this.symbol_prefix + "." + symbol_name;
+		}
+
+		string shard_vala_namespace (string json_basename) {
+			if (this.vala_namespace_override.length > 0) {
+				return this.vala_namespace_override;
+			}
+			return NameMapper.vala_namespace_from_basename (json_basename);
 		}
 
 		bool claim_vala_name (string vala_name) {
@@ -45,13 +64,16 @@ namespace Generate {
 			this.buffer = new GLib.StringBuilder ();
 			this.emitted_vala_names.clear ();
 			this.shard_basename = "";
+			this.iunknown_emitted = false;
 		}
 
 		void append_namespace_open (string ns, bool with_ccode) {
 			if (with_ccode) {
-				this.buffer.append (@"$(GENERATED_HEADER)[CCode (cprefix = $(VapiEmitter.quoted_c_string ("")), cheader_filename = $(VapiEmitter.quoted_c_string ("windows.h")))]
+				this.buffer.append (
+					@"$(GENERATED_HEADER)[CCode (cprefix = $(VapiEmitter.quoted_c_string ("")), cheader_filename = $(VapiEmitter.quoted_c_string (this.cheader_filename)))]
 namespace $(ns) {
-");
+"
+				);
 			} else {
 				this.buffer.append (@"$(GENERATED_HEADER)namespace $(ns) {
 ");
@@ -78,7 +100,7 @@ namespace $(ns) {
 				if (!VapiEmitter.is_string_constant (c)) {
 					continue;
 				}
-				var full = Parse.ApiFile.full_name (basename, c.Name);
+				var full = this.full_symbol_name (basename, c.Name);
 				if (!this.filter.include_symbol (full)) {
 					continue;
 				}
@@ -95,7 +117,8 @@ namespace $(ns) {
 		/** One vapi shard: namespace Win32.Ui.* { … } */
 		public string emit_shard (Parse.ApiFileEntry entry) {
 			this.reset_shard ();
-			var ns = NameMapper.vala_namespace_from_basename (entry.basename);
+			this.iunknown_emitted = false;
+			var ns = this.shard_vala_namespace (entry.basename);
 			this.append_namespace_open (ns, true);
 			this.emit_shard_body (entry);
 			if (entry.basename == "UI.WindowsAndMessaging.json") {
@@ -136,7 +159,7 @@ namespace Win32 {
 				if (NameMapper.skip_ansi_name (c.Name)) {
 					continue;
 				}
-				var full = Parse.ApiFile.full_name (basename, c.Name);
+				var full = this.full_symbol_name (basename, c.Name);
 				if (!this.filter.include_symbol (full)) {
 					continue;
 				}
@@ -147,7 +170,7 @@ namespace Win32 {
 				if (NameMapper.skip_ansi_name (t.Name)) {
 					continue;
 				}
-				var full = Parse.ApiFile.full_name (basename, t.Name);
+				var full = this.full_symbol_name (basename, t.Name);
 				if (!this.filter.include_symbol (full)) {
 					continue;
 				}
@@ -160,7 +183,7 @@ namespace Win32 {
 				if (NameMapper.skip_ansi_name (t.Name)) {
 					continue;
 				}
-				var full = Parse.ApiFile.full_name (basename, t.Name);
+				var full = this.full_symbol_name (basename, t.Name);
 				if (!this.filter.include_symbol (full)) {
 					continue;
 				}
@@ -173,7 +196,7 @@ namespace Win32 {
 				if (NameMapper.skip_ansi_name (t.Name)) {
 					continue;
 				}
-				var full = Parse.ApiFile.full_name (basename, t.Name);
+				var full = this.full_symbol_name (basename, t.Name);
 				if (!this.filter.include_symbol (full)) {
 					continue;
 				}
@@ -182,11 +205,25 @@ namespace Win32 {
 				}
 			}
 
+			foreach (var t in doc.Types) {
+				if (NameMapper.skip_ansi_name (t.Name)) {
+					continue;
+				}
+				var full = this.full_symbol_name (basename, t.Name);
+				if (!this.filter.include_symbol (full)) {
+					continue;
+				}
+				if (t.Kind == "Com") {
+					this.maybe_emit_iunknown ();
+					this.emit_com (t);
+				}
+			}
+
 			foreach (var f in doc.Functions) {
 				if (NameMapper.skip_ansi_name (f.Name)) {
 					continue;
 				}
-				var full = Parse.ApiFile.full_name (basename, f.Name);
+				var full = this.full_symbol_name (basename, f.Name);
 				if (!this.filter.include_symbol (full)) {
 					continue;
 				}
@@ -358,6 +395,76 @@ namespace Win32 {
 			this.buffer.append ("\t);\n\n");
 		}
 
+		void maybe_emit_iunknown () {
+			if (this.iunknown_emitted) {
+				return;
+			}
+			this.iunknown_emitted = true;
+			this.buffer.append ("""	[CCode (cheader_filename = "objbase.h", cname = "IUnknown", ref_function = "", unref_function = "")]
+	public interface IUnknown {
+		[CCode (cname = "QueryInterface")]
+		public abstract int query_interface (void* riid, void** ppv_object);
+
+		[CCode (cname = "AddRef")]
+		public abstract uint add_ref ();
+
+		[CCode (cname = "Release")]
+		public abstract uint release ();
+	}
+
+""");
+		}
+
+		void emit_com (Parse.MetadataType t) {
+			if (!this.claim_vala_name (t.Name)) {
+				return;
+			}
+			var parent = "IUnknown";
+			if (t.Interface != null && t.Interface.Name.length > 0) {
+				parent = t.Interface.Name;
+			}
+			this.buffer.append (
+				"\t[CCode (cname = %s, ref_function = \"\", unref_function = \"\")]\n\tpublic interface %s : %s {\n".printf (
+					VapiEmitter.quoted_c_string (t.Name),
+					t.Name,
+					parent
+				)
+			);
+			foreach (var method in t.Methods) {
+				this.emit_com_method (method);
+			}
+			this.buffer.append ("\t}\n\n");
+		}
+
+		void emit_com_method (Parse.Function method) {
+			var vala_name = NameMapper.to_snake (method.Name);
+			var ret = VapiEmitter.com_return_type (method.ReturnType);
+			this.buffer.append (@"		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+");
+			var n = method.Params.size;
+			for (int i = 0; i < n; i++) {
+				var p = method.Params.get (i);
+				var ptype = VapiEmitter.com_param_type (p, this.shard_basename);
+				var pname = NameMapper.to_snake (p.Name.length > 0 ? p.Name : @"param$(i)");
+				var comma = i < n - 1 ? "," : "";
+				this.buffer.append (@"			$(ptype) $(pname)$(comma)
+");
+			}
+			this.buffer.append ("\t\t);\n\n");
+		}
+
+		static string com_return_type (Parse.TypeRef type_ref) {
+			if (type_ref.Name == "HRESULT") {
+				return "int";
+			}
+			return VapiEmitter.vala_type_for_ref (type_ref, "", null);
+		}
+
+		static string com_param_type (Parse.Parameter p, string shard_basename) {
+			return VapiEmitter.vala_param_type (p, shard_basename);
+		}
+
 		void emit_function (Parse.Function f) {
 			var vala_name = NameMapper.to_snake_function (f.Name);
 			if (!this.claim_vala_name (vala_name)) {
@@ -426,6 +533,12 @@ namespace Win32 {
 			if (NameMapper.skip_ansi_name (name)) {
 				return "void*";
 			}
+			if (name.has_prefix ("ICoreWebView2") || name == "IUnknown") {
+				return name;
+			}
+			if (name == "IStream") {
+				return "void*";
+			}
 			var mapped = VapiEmitter.map_type_name (name);
 			if (mapped != "void*") {
 				return mapped;
@@ -464,6 +577,9 @@ namespace Win32 {
 			var type_name = type_ref.TargetKind == "FunctionPointer"
 				? NameMapper.to_vala_type (type_ref.Name)
 				: VapiEmitter.api_ref_vala_name (type_ref.Name);
+			if (type_ref.TargetKind == "Com") {
+				return type_ref.Name;
+			}
 			if (type_ref.Api == "Foundation") {
 				return VapiEmitter.foundation_vala_type (type_ref.Name);
 			}
@@ -553,6 +669,9 @@ namespace Win32 {
 				if (NameMapper.skip_ansi_name (type_ref.Name)) {
 					return "void*";
 				}
+				if (type_ref.TargetKind == "Com") {
+					return type_ref.Name;
+				}
 				if (type_ref.TargetKind == "FunctionPointer") {
 					return VapiEmitter.qualified_api_type (type_ref, shard_basename);
 				}
@@ -622,10 +741,19 @@ namespace Win32 {
 			case "HMENU":
 			case "HANDLE":
 				return "void*";
+			case "HRESULT":
+				return "int";
+			case "DOUBLE":
+			case "double":
+				return "double";
 			case "LPCWSTR":
 			case "LPWSTR":
 			case "PWSTR":
 				return "uint16*";
+			case "RECT":
+				return "Win32.Foundation.Rect";
+			case "EventRegistrationToken":
+				return "EventRegistrationToken";
 			case "LRESULT":
 				return "int64";
 			case "WPARAM":

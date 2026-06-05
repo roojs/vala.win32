@@ -44,6 +44,7 @@ int main (string[] args) {
 
 	scrape_enums (text, types);
 	scrape_interfaces (text, prefix, types);
+	append_event_registration_token (types);
 
 	root.set_array_member ("Constants", new Json.Array ());
 	root.set_array_member ("Types", types);
@@ -81,22 +82,164 @@ static Json.Object api_ref (string name, bool com = false, string api = "WebView
 	return o;
 }
 
-static Json.Object? parse_method_line (string line) {
-	if (!line.has_prefix ("virtual")) {
-		return null;
-	}
-	var rest = line.substring ("virtual".length).strip ();
-	if (rest.has_prefix ("/*")) {
-		var close = rest.index_of ("*/");
-		if (close < 0) {
-			return null;
+static string strip_c_comments (string s) {
+	var sb = new StringBuilder ();
+	int i = 0;
+	while (i < s.length) {
+		if (i + 1 < s.length && s[i:i+2] == "/*") {
+			var close = s.index_of ("*/", i + 2);
+			if (close < 0) {
+				break;
+			}
+			i = close + 2;
+			continue;
 		}
-		rest = rest.substring (close + 2).strip ();
+		sb.append_c (s[i]);
+		i++;
 	}
-	if (!rest.has_prefix ("HRESULT STDMETHODCALLTYPE ")) {
+	return sb.str.strip ();
+}
+
+static Json.Array extract_param_attrs (string raw) {
+	var attrs = new Json.Array ();
+	var pos = 0;
+	while (true) {
+		var open = raw.index_of ("/*", pos);
+		if (open < 0) {
+			break;
+		}
+		var close = raw.index_of ("*/", open + 2);
+		if (close < 0) {
+			break;
+		}
+		var body = raw.substring (open + 2, close - open - 2).strip ();
+		if (body.has_prefix ("[")) {
+			body = body.substring (1);
+		}
+		if (body.has_suffix ("]")) {
+			body = body.substring (0, body.length - 1);
+		}
+		foreach (var token in body.split ("]")) {
+			var part = token.strip ();
+			if (part.has_prefix ("[")) {
+				part = part.substring (1);
+			}
+			part = part.strip ();
+			if (part.length == 0) {
+				continue;
+			}
+			foreach (var attr in part.split (",")) {
+				var a = attr.strip ();
+				if (a.length > 0) {
+					attrs.add_string_element (a);
+				}
+			}
+		}
+		pos = close + 2;
+	}
+	return attrs;
+}
+
+static int find_matching_paren (string text, int open_pos) {
+	int depth = 0;
+	for (int i = open_pos; i < text.length; i++) {
+		if (text[i] == '(') {
+			depth++;
+		} else if (text[i] == ')') {
+			depth--;
+			if (depth == 0) {
+				return i;
+			}
+		}
+	}
+	return -1;
+}
+
+static bool is_com_iface_type (string ctype) {
+	return ctype.has_prefix ("I") && ctype.index_of_char (' ') < 0 && ctype.index_of_char ('*') < 0;
+}
+
+static Json.Object type_from_c (string raw_ctype, bool com = false) {
+	var ctype = raw_ctype.strip ();
+	var stars = 0;
+	while (ctype.has_suffix ("*")) {
+		stars++;
+		ctype = ctype.substring (0, ctype.length - 1).strip ();
+	}
+	Json.Object leaf;
+	if (is_com_iface_type (ctype)) {
+		leaf = api_ref (ctype, true);
+	} else {
+		leaf = api_ref (ctype, false, ctype == "RECT" ? "Foundation" : "WebView2");
+	}
+	var node = leaf;
+	for (int i = 0; i < stars; i++) {
+		var ptr = new Json.Object ();
+		ptr.set_string_member ("Kind", "PointerTo");
+		ptr.set_object_member ("Child", node);
+		node = ptr;
+	}
+	return node;
+}
+
+static string[] split_param_list (string s) {
+	string[] out = {};
+	int depth = 0;
+	int start = 0;
+	for (int i = 0; i < s.length; i++) {
+		if (s[i] == '(') {
+			depth++;
+		} else if (s[i] == ')') {
+			depth--;
+		} else if (s[i] == ',' && depth == 0) {
+			out += s.substring (start, i - start).strip ();
+			start = i + 1;
+		}
+	}
+	if (start < s.length) {
+		out += s.substring (start).strip ();
+	}
+	return out;
+}
+
+static Json.Object? parse_param (string raw) {
+	if (raw.length == 0) {
 		return null;
 	}
-	rest = rest.substring ("HRESULT STDMETHODCALLTYPE ".length);
+	var attrs = extract_param_attrs (raw);
+	var cleaned = strip_c_comments (raw);
+	if (cleaned.length == 0) {
+		return null;
+	}
+	var space = cleaned.last_index_of (" ");
+	if (space <= 0) {
+		return null;
+	}
+	var ctype = cleaned.substring (0, space).strip ();
+	var pname = cleaned.substring (space + 1).strip ();
+	if (pname.has_suffix ("*")) {
+		ctype += "*";
+		pname = pname.substring (0, pname.length - 1).strip ();
+	}
+	var param = new Json.Object ();
+	param.set_string_member ("Name", pname);
+	param.set_object_member ("Type", type_from_c (ctype));
+	param.set_array_member ("Attrs", attrs);
+	return param;
+}
+
+static Json.Object? parse_method_blob (string blob) {
+	var s = blob.strip ();
+	if (!s.has_prefix ("virtual")) {
+		return null;
+	}
+	s = strip_c_comments (s);
+	var marker = "HRESULT STDMETHODCALLTYPE ";
+	var hr = s.index_of (marker);
+	if (hr < 0) {
+		return null;
+	}
+	var rest = s.substring (hr + marker.length);
 	var paren = rest.index_of ("(");
 	if (paren <= 0) {
 		return null;
@@ -105,6 +248,11 @@ static Json.Object? parse_method_line (string line) {
 	if (mname == "QueryInterface" || mname == "AddRef" || mname == "Release") {
 		return null;
 	}
+	var close_paren = find_matching_paren (rest, paren);
+	if (close_paren < 0) {
+		return null;
+	}
+	var params_str = rest.substring (paren + 1, close_paren - paren - 1);
 	var method = new Json.Object ();
 	method.set_string_member ("Name", mname);
 	method.set_boolean_member ("SetLastError", false);
@@ -113,8 +261,60 @@ static Json.Object? parse_method_line (string line) {
 	method.set_array_member ("Architectures", new Json.Array ());
 	method.set_null_member ("Platform");
 	method.set_array_member ("Attrs", new Json.Array ());
-	method.set_array_member ("Params", new Json.Array ());
+	var params = new Json.Array ();
+	foreach (var part in split_param_list (params_str)) {
+		var p = parse_param (part);
+		if (p != null) {
+			params.add_object_element (p);
+		}
+	}
+	method.set_array_member ("Params", params);
 	return method;
+}
+
+static void collect_methods (string block, Json.Array methods) {
+	int pos = 0;
+	while (true) {
+		int vidx = block.index_of ("virtual", pos);
+		if (vidx < 0) {
+			break;
+		}
+		int end = block.index_of ("= 0;", vidx);
+		if (end < 0) {
+			break;
+		}
+		end += "= 0;".length;
+		var blob = block.substring (vidx, end - vidx);
+		var m = parse_method_blob (blob);
+		if (m != null) {
+			methods.add_object_element (m);
+		}
+		pos = end;
+	}
+}
+
+static void append_event_registration_token (Json.Array types) {
+	for (uint i = 0; i < types.get_length (); i++) {
+		var t = types.get_object_element (i);
+		if (t.get_string_member ("Name") == "EventRegistrationToken") {
+			return;
+		}
+	}
+	var value_field = new Json.Object ();
+	value_field.set_string_member ("Name", "value");
+	value_field.set_object_member ("Type", api_ref ("Int64", false, "Foundation"));
+	value_field.set_array_member ("Attrs", new Json.Array ());
+	var fields = new Json.Array ();
+	fields.add_object_element (value_field);
+	var st = new Json.Object ();
+	st.set_string_member ("Name", "EventRegistrationToken");
+	st.set_array_member ("Architectures", new Json.Array ());
+	st.set_null_member ("Platform");
+	st.set_string_member ("Kind", "Struct");
+	st.set_int_member ("Size", 8);
+	st.set_int_member ("PackingSize", 8);
+	st.set_array_member ("Fields", fields);
+	types.add_object_element (st);
 }
 
 static int find_matching_brace (string text, int open_pos) {
@@ -258,12 +458,7 @@ static void scrape_interfaces (string text, string prefix, Json.Array types) {
 		}
 		var block = text.substring (brace + 1, close - brace - 1);
 		var methods = new Json.Array ();
-		foreach (var body_line in block.split ("\n")) {
-			var m = parse_method_line (body_line.strip ());
-			if (m != null) {
-				methods.add_object_element (m);
-			}
-		}
+		collect_methods (block, methods);
 		if (methods.get_length () == 0) {
 			pos = idx + 1;
 			continue;

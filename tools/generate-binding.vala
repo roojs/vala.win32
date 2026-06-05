@@ -13,8 +13,13 @@ int main (string[] args) {
 	var opt_debug_critical = false;
 	var opt_coverage_report = "";
 	var opt_coverage_only = false;
+	var opt_symbol_prefix = "Windows.Win32";
+	var opt_no_basename_in_symbol = false;
+	var opt_cheader = "windows.h";
+	var opt_vala_namespace = "";
+	var opt_vapi_only = false;
 
-	var options = new OptionEntry[11];
+	var options = new OptionEntry[16];
 	options[0] = { "metadata", 'm', 0, OptionArg.STRING, ref opt_metadata, "Vendored win32json root (api/ subdir)", "DIR" };
 	options[1] = { "filter", 'f', 0, OptionArg.STRING, ref opt_filter, "Symbol filter file", "FILE" };
 	options[2] = { "api-list", 'l', 0, OptionArg.STRING, ref opt_api_list, "JSON basename list (win32json-api.files)", "FILE" };
@@ -28,7 +33,17 @@ int main (string[] args) {
 		"Write Phase 6a coverage matrix markdown to PATH", "FILE" };
 	options[9] = { "coverage-only", 0, 0, OptionArg.NONE, ref opt_coverage_only,
 		"Only write --coverage-report (skip vapi / generated emit)", null };
-	options[10] = { null };
+	options[10] = { "symbol-prefix", 0, 0, OptionArg.STRING, ref opt_symbol_prefix,
+		"Metadata symbol prefix (default Windows.Win32)", "PREFIX" };
+	options[11] = { "no-basename-in-symbol", 0, 0, OptionArg.NONE, ref opt_no_basename_in_symbol,
+		"Omit JSON basename from symbol names (WebView2)", null };
+	options[12] = { "cheader", 0, 0, OptionArg.STRING, ref opt_cheader,
+		"C header for [CCode (cheader_filename=…)]", "FILE" };
+	options[13] = { "vala-namespace", 0, 0, OptionArg.STRING, ref opt_vala_namespace,
+		"Override Vala namespace for shard output", "NS" };
+	options[14] = { "vapi-only", 0, 0, OptionArg.NONE, ref opt_vapi_only,
+		"Emit vapi shards only (skip generated/*.vala)", null };
+	options[15] = { null };
 
 	try {
 		var ctx = new OptionContext ("Generate Win32 vapi from vendored win32json");
@@ -120,6 +135,10 @@ int main (string[] args) {
 
 	GLib.DirUtils.create_with_parents (opt_out, 0755);
 	var emitter = new Generate.VapiEmitter (filter);
+	emitter.symbol_prefix = opt_symbol_prefix;
+	emitter.basename_in_symbol = !opt_no_basename_in_symbol;
+	emitter.cheader_filename = opt_cheader;
+	emitter.vala_namespace_override = opt_vala_namespace;
 
 	if (opt_monolith) {
 		var vapi_text = emitter.emit_all (files);
@@ -146,6 +165,10 @@ int main (string[] args) {
 			return 1;
 		}
 		print ("wrote %s (%u bytes)\n", out_path, text.length);
+	}
+
+	if (opt_vapi_only) {
+		return 0;
 	}
 
 	var generated_dir = GLib.Path.build_filename (project_root, "generated");

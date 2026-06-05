@@ -503,6 +503,23 @@ compile_check = find_program('scripts/compile-check.sh')
 
 run_target('vendor-webview2', command: [vendor_webview2])
 
+webview2_filter = metadata_root / 'filters' / 'webview2.filter'
+webview2_api_list = metadata_root / 'webview2-api.files'
+regen_webview2_vapi_cmd = [
+  generate_binding,
+  '--metadata', metadata_root / 'webview2',
+  '--filter', webview2_filter,
+  '--api-list', webview2_api_list,
+  '--out', vapidir,
+  '--symbol-prefix', 'Microsoft.Web.WebView2.Win32',
+  '--no-basename-in-symbol',
+  '--cheader', 'WebView2.h',
+  '--vala-namespace', 'Microsoft.Web.WebView2.Win32',
+  '--vapi-only',
+]
+
+run_target('regen-webview2-vapi', command: regen_webview2_vapi_cmd)
+
 run_target('regen', command: regen_base_cmd)
 
 run_target(
