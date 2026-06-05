@@ -388,12 +388,13 @@ webview2_header = webview2_sdk / 'include' / 'WebView2.h'
 webview2_loader_x64 = webview2_sdk / 'x64' / 'WebView2Loader.dll'
 have_webview2_sdk = run_command('test', '-f', webview2_header, check: false).returncode() == 0
 vendor_webview2 = find_program('scripts/vendor-webview2-sdk.sh')
-webview2_plumbing_c = project_root / 'src' / 'webview2-plumbing.c'
+webview2_loader_c = project_root / 'src' / 'webview2-loader.c'
+webview2_host_vala = files('src/webview2-host.vala')
 webview2_capture_spike_c = project_root / 'src' / 'webview2-capture-spike.c'
 webview2_link_libs = ['-lole32', '-luuid', '-lshlwapi', '-lshell32', '-ladvapi32']
 
 if have_webview2_sdk
-  webview2_vala_args = ['--vapidir', vapidir, '--profile=posix', '--pkg', 'webview2']
+  webview2_vala_args = ['--vapidir', vapidir, '--profile=posix', '--pkg', 'webview2', '--pkg', 'win32-webview2']
   foreach pkg : example_pkgs
     webview2_vala_args += ['--pkg', pkg]
   endforeach
@@ -410,8 +411,9 @@ endif
 if have_webview2_sdk and host_machine.system() == 'windows'
   webview2_sources = [
     files('examples/native/webview2-host-demo.vala'),
+    webview2_host_vala,
     wide_strings_vala,
-    webview2_plumbing_c,
+    webview2_loader_c,
     webview2_capture_spike_c,
   ]
   if get_option('regen_on_build')
