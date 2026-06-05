@@ -90,12 +90,12 @@ private string utf16_ptr_to_string(uint16* wide) {
 	if (wide == null) {
 		return "";
 	}
-	int len = 0;
+	var len = 0;
 	while (wide[len] != 0) {
 		len++;
 	}
 	var buf = new uint16[len + 1];
-	for (int i = 0; i <= len; i++) {
+	for (var i = 0; i <= len; i++) {
 		buf[i] = wide[i];
 	}
 	return utf16_buffer_to_string(buf);
