@@ -2,7 +2,7 @@ option(
   'build_posix_examples',
   type: 'boolean',
   value: true,
-  description: 'Build Track A native examples (native-hello-window, native-button-demo, …)',
+  description: 'Build Track A native examples (hello-window-native, button-demo-native, …)',
 )
 option(
   'build_ergonomic_examples',

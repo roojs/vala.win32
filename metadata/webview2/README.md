@@ -1,7 +1,7 @@
 # WebView2 metadata (committed JSON)
 
 win32json-shaped input for Phase **7i** (`generate-binding` + Com emit).  
-**Regenerate on Linux or Windows** (needs vendored SDK + Meson build). **Running the browser host** still requires real Windows.
+**Regenerate JSON/vapi on Linux or Windows** (needs vendored SDK + Meson build). **`webview2-host-native`** is built only on a Windows host — see [docs/windows-build.md](../../docs/windows-build.md).
 
 | File | Role |
 |------|------|
@@ -29,11 +29,19 @@ C:\msys64\msys2_shell.cmd -defterm -no-start -ucrt64 -c 'cd /x/vala.win32 && ./s
 
 Commit `api/WebView2.json` after regen when the SDK pin changes.
 
+## Regenerate vapi (COM bindings)
+
+```bash
+./scripts/regen-webview2-vapi.sh
+```
+
+Writes `vapi/win32-ui-webview2.vapi` (filtered COM subset — see `metadata/filters/webview2.filter`). Ergo widget vapi `win32-ergo-webview2.vapi` is reserved for Phase 7h.
+
 Optional: `BUILD_WINMD=1 ./scripts/regen-webview2-json.sh` also builds `Microsoft.Web.WebView2.Win32.winmd` (needs `dotnet` + `pwsh` on the machine). **Not required** for the JSON file today.
 
 ## More context
 
 - [docs/webview2-binding-architecture.md](../../docs/webview2-binding-architecture.md) — pipeline and Phase 7i
-- [docs/windows-build.md](../../docs/windows-build.md) — build/run `webview2-host-demo` on Windows
+- [docs/windows-build.md](../../docs/windows-build.md) — build/run `webview2-host-native` and `webview2-demo` on Windows
 
 Last regenerated against SDK pin **1.0.2792.45**.

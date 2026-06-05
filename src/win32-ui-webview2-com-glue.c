@@ -1,34 +1,30 @@
-/* Phase 7b: minimal WebView2 host bootstrap (loader + env + controller). */
+/* Async COM completed handlers; host logic continues in Vala (Phase 7i). */
 
 #define COBJMACROS
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
-#include <objbase.h>
-#include <initguid.h>
 #include <stdio.h>
 
-#include "webview2-plumbing.h"
-#include "webview2-capture-spike.h"
-#include "WebView2.h"
+#include "win32-ui-webview2-com-glue.h"
+#include "win32-ui-webview2-loader.h"
+#include "win32-ui-webview2-sdk.h"
 
-typedef HRESULT (STDMETHODCALLTYPE *PFN_CreateCoreWebView2EnvironmentWithOptions)(
-	PCWSTR browserExecutableFolder,
-	PCWSTR userDataFolder,
-	ICoreWebView2EnvironmentOptions *environmentOptions,
-	ICoreWebView2CreateCoreWebView2EnvironmentCompletedHandler *environmentCreatedHandler);
+void vala_webview2_host_finish_setup (
+	ICoreWebView2Controller *controller,
+	ICoreWebView2 *webview,
+	HWND parent); /* WebView2.h included above */
 
-typedef struct WebView2HostState {
+typedef struct WebView2GlueState {
 	HWND parent;
 	wchar_t url[2048];
+	BOOL use_client_bounds;
+	RECT bounds;
 	ICoreWebView2Environment *environment;
 	ICoreWebView2Controller *controller;
 	ICoreWebView2 *webview;
-	BOOL ready;
-} WebView2HostState;
+} WebView2GlueState;
 
-static WebView2HostState g_state;
-static HMODULE g_loader_module;
-static PFN_CreateCoreWebView2EnvironmentWithOptions g_create_env_with_options;
+static WebView2GlueState g_glue;
 
 typedef struct EnvCompletedHandler {
 	ICoreWebView2CreateCoreWebView2EnvironmentCompletedHandler iface;
@@ -113,29 +109,42 @@ static HRESULT STDMETHODCALLTYPE controller_handler_invoke (
 	HRESULT error_code,
 	ICoreWebView2Controller *controller)
 {
-	ControllerCompletedHandler *self = (ControllerCompletedHandler *) This;
-	RECT bounds;
 	HRESULT hr;
 
-	(void) self;
+	(void) This;
 	if (FAILED (error_code) || controller == NULL) {
 		fprintf (stderr, "WebView2 controller failed: 0x%08lx\n", (unsigned long) error_code);
 		return error_code;
 	}
 
-	g_state.controller = controller;
-	ICoreWebView2Controller_AddRef (g_state.controller);
-	hr = ICoreWebView2Controller_get_CoreWebView2 (g_state.controller, &g_state.webview);
-	if (FAILED (hr) || g_state.webview == NULL) {
+	g_glue.controller = controller;
+	ICoreWebView2Controller_AddRef (g_glue.controller);
+	hr = ICoreWebView2Controller_get_CoreWebView2 (g_glue.controller, &g_glue.webview);
+	if (FAILED (hr) || g_glue.webview == NULL) {
 		fprintf (stderr, "get_CoreWebView2 failed: 0x%08lx\n", (unsigned long) hr);
 		return hr;
 	}
 
-	GetClientRect (g_state.parent, &bounds);
-	ICoreWebView2Controller_put_Bounds (g_state.controller, bounds);
-	vala_webview2_capture_spike_on_host_ready (g_state.webview, g_state.controller, g_state.parent);
-	ICoreWebView2_Navigate (g_state.webview, g_state.url);
-	g_state.ready = TRUE;
+	{
+		RECT bounds;
+		if (g_glue.use_client_bounds) {
+			GetClientRect (g_glue.parent, &bounds);
+		} else {
+			bounds = g_glue.bounds;
+		}
+		hr = ICoreWebView2Controller_put_Bounds (g_glue.controller, bounds);
+		if (FAILED (hr)) {
+			fprintf (stderr, "WebView2 put_Bounds failed: 0x%08lx\n", (unsigned long) hr);
+		}
+	}
+	if (g_glue.url[0] != L'\0') {
+		hr = ICoreWebView2_Navigate (g_glue.webview, g_glue.url);
+		if (FAILED (hr)) {
+			fprintf (stderr, "WebView2 Navigate failed: 0x%08lx (url=%ls)\n",
+			         (unsigned long) hr, g_glue.url);
+		}
+	}
+	vala_webview2_host_finish_setup (g_glue.controller, g_glue.webview, g_glue.parent);
 	return S_OK;
 }
 
@@ -154,8 +163,8 @@ static HRESULT STDMETHODCALLTYPE env_handler_invoke (
 		return error_code;
 	}
 
-	g_state.environment = environment;
-	ICoreWebView2Environment_AddRef (g_state.environment);
+	g_glue.environment = environment;
+	ICoreWebView2Environment_AddRef (g_glue.environment);
 
 	controller_handler = (ControllerCompletedHandler *) CoTaskMemAlloc (sizeof (ControllerCompletedHandler));
 	if (controller_handler == NULL) {
@@ -170,58 +179,34 @@ static HRESULT STDMETHODCALLTYPE env_handler_invoke (
 	controller_handler->ref_count = 1;
 
 	hr = ICoreWebView2Environment_CreateCoreWebView2Controller (
-		g_state.environment,
-		g_state.parent,
+		environment,
+		g_glue.parent,
 		&controller_handler->iface);
 	ICoreWebView2CreateCoreWebView2ControllerCompletedHandler_Release (&controller_handler->iface);
 	return hr;
 }
 
-static BOOL load_webview2_loader (void)
-{
-	if (g_create_env_with_options != NULL) {
-		return TRUE;
-	}
-
-	g_loader_module = LoadLibraryW (L"WebView2Loader.dll");
-	if (g_loader_module == NULL) {
-		fprintf (stderr, "LoadLibrary WebView2Loader.dll failed: %lu\n", (unsigned long) GetLastError ());
-		return FALSE;
-	}
-
-	g_create_env_with_options = (PFN_CreateCoreWebView2EnvironmentWithOptions) (void *) GetProcAddress (
-		g_loader_module,
-		"CreateCoreWebView2EnvironmentWithOptions");
-	if (g_create_env_with_options == NULL) {
-		fprintf (stderr, "GetProcAddress CreateCoreWebView2EnvironmentWithOptions failed\n");
-		FreeLibrary (g_loader_module);
-		g_loader_module = NULL;
-		return FALSE;
-	}
-	return TRUE;
-}
-
-BOOL vala_webview2_host_create (HWND parent, LPCWSTR url)
+BOOL vala_webview2_com_begin_host (HWND parent, LPCWSTR url, const RECT *bounds)
 {
 	EnvCompletedHandler *env_handler;
 	HRESULT hr;
 
-	if (parent == NULL || url == NULL) {
+	if (parent == NULL) {
 		return FALSE;
 	}
 
-	ZeroMemory (&g_state, sizeof (g_state));
-	g_state.parent = parent;
-	wcsncpy (g_state.url, url, (sizeof (g_state.url) / sizeof (g_state.url[0])) - 1);
-	g_state.url[(sizeof (g_state.url) / sizeof (g_state.url[0])) - 1] = L'\0';
-
-	if (!load_webview2_loader ()) {
-		return FALSE;
+	ZeroMemory (&g_glue, sizeof (g_glue));
+	g_glue.parent = parent;
+	g_glue.use_client_bounds = (bounds == NULL);
+	if (bounds != NULL) {
+		g_glue.bounds = *bounds;
+	}
+	if (url != NULL) {
+		wcsncpy (g_glue.url, url, (sizeof (g_glue.url) / sizeof (g_glue.url[0])) - 1);
+		g_glue.url[(sizeof (g_glue.url) / sizeof (g_glue.url[0])) - 1] = L'\0';
 	}
 
-	hr = CoInitializeEx (NULL, COINIT_APARTMENTTHREADED);
-	if (FAILED (hr) && hr != RPC_E_CHANGED_MODE) {
-		fprintf (stderr, "CoInitializeEx failed: 0x%08lx\n", (unsigned long) hr);
+	if (!vala_webview2_loader_init ()) {
 		return FALSE;
 	}
 
@@ -237,7 +222,7 @@ BOOL vala_webview2_host_create (HWND parent, LPCWSTR url)
 	env_handler->vtbl.Invoke = env_handler_invoke;
 	env_handler->ref_count = 1;
 
-	hr = g_create_env_with_options (NULL, NULL, NULL, &env_handler->iface);
+	hr = vala_webview2_loader_create_environment (&env_handler->iface);
 	ICoreWebView2CreateCoreWebView2EnvironmentCompletedHandler_Release (&env_handler->iface);
 	if (FAILED (hr)) {
 		fprintf (stderr, "CreateCoreWebView2EnvironmentWithOptions failed: 0x%08lx\n", (unsigned long) hr);
@@ -246,36 +231,19 @@ BOOL vala_webview2_host_create (HWND parent, LPCWSTR url)
 	return TRUE;
 }
 
-void vala_webview2_host_on_size (HWND parent)
+void vala_webview2_com_release_host (void)
 {
-	RECT bounds;
-
-	if (g_state.controller == NULL || parent != g_state.parent) {
-		return;
+	if (g_glue.webview != NULL) {
+		ICoreWebView2_Release (g_glue.webview);
+		g_glue.webview = NULL;
 	}
-	GetClientRect (parent, &bounds);
-	ICoreWebView2Controller_put_Bounds (g_state.controller, bounds);
-}
-
-void vala_webview2_host_destroy (void)
-{
-	vala_webview2_capture_spike_on_host_destroy ();
-	if (g_state.webview != NULL) {
-		ICoreWebView2_Release (g_state.webview);
-		g_state.webview = NULL;
+	if (g_glue.controller != NULL) {
+		ICoreWebView2Controller_Close (g_glue.controller);
+		ICoreWebView2Controller_Release (g_glue.controller);
+		g_glue.controller = NULL;
 	}
-	if (g_state.controller != NULL) {
-		ICoreWebView2Controller_Release (g_state.controller);
-		g_state.controller = NULL;
+	if (g_glue.environment != NULL) {
+		ICoreWebView2Environment_Release (g_glue.environment);
+		g_glue.environment = NULL;
 	}
-	if (g_state.environment != NULL) {
-		ICoreWebView2Environment_Release (g_state.environment);
-		g_state.environment = NULL;
-	}
-	g_state.ready = FALSE;
-}
-
-BOOL vala_webview2_host_is_ready (void)
-{
-	return g_state.ready;
 }

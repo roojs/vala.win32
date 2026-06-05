@@ -8,8 +8,8 @@ namespace Generate.Parse {
 		public string basename { get; construct; }
 		public ApiFile document { get; construct; }
 
-		public ApiFileEntry (string basename, ApiFile document) {
-			Object (basename: basename, document: document);
+		public ApiFileEntry(string basename, ApiFile document) {
+			Object(basename: basename, document: document);
 		}
 	}
 }

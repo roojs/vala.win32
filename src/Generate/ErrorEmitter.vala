@@ -1,5 +1,5 @@
 /*
- * Emit Win32 GetLastError → Vala errordomain helpers (Phase 4d).
+ * Emit Win32 GetLastError → Vala errordomain helpers(Phase 4d).
  */
 
 namespace Generate {
@@ -8,28 +8,28 @@ namespace Generate {
 
 """;
 
-		public string emit () {
+		public string emit() {
 			return @"$(GENERATED_HEADER)using Win32.System;
 
 namespace Win32 {
 
 	/** Returns false and sets err from GetLastError when ok == 0. */
-	public bool win32_bool_ok (int ok, out uint err) {
+	public bool win32_bool_ok(int ok, out uint err) {
 		if (ok != 0) {
 			err = 0;
 			return true;
 		}
-		err = get_last_error ();
+		err = get_last_error();
 		return false;
 	}
 
 	/** Returns false and sets err from GetLastError when p == null. */
-	public bool win32_pointer_ok (void* p, out uint err) {
+	public bool win32_pointer_ok(void* p, out uint err) {
 		if (p != null) {
 			err = 0;
 			return true;
 		}
-		err = get_last_error ();
+		err = get_last_error();
 		return false;
 	}
 }

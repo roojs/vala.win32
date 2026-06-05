@@ -1,6 +1,6 @@
 /*
- * Emit Track B ergonomic widget layer (namespace Win32).
- * G2/G3: dispatch shell from template; all catalog control classes (Track B + catalog shell).
+ * Emit Track B ergonomic widget layer(namespace Win32).
+ * G2/G3: dispatch shell from template; all catalog control classes(Track B + catalog shell).
  */
 
 namespace Generate {
@@ -13,27 +13,27 @@ namespace Generate {
 		const string MESSAGING_PKG = "Win32.Ui.WindowsAndMessaging";
 		const string CONTROLS_PKG = "Win32.Ui.Controls";
 
-		public string emit (WidgetCodegen codegen, string template_path) throws GLib.Error {
+		public string emit(WidgetCodegen codegen, string template_path) throws GLib.Error {
 			string body;
-			GLib.FileUtils.get_contents (template_path, out body);
-			body = strip_template_preamble (body);
-			var marker_at = body.index_of (TRACK_B_MARKER);
+			GLib.FileUtils.get_contents(template_path, out body);
+			body = strip_template_preamble(body);
+			var marker_at = body.index_of(TRACK_B_MARKER);
 			if (marker_at < 0) {
-				throw new GLib.IOError.FAILED (
+				throw new GLib.IOError.FAILED(
 					@"template $(template_path): missing $(TRACK_B_MARKER)"
 				);
 			}
-			var shell = body.substring (0, marker_at);
-			var tail = body.substring (marker_at + TRACK_B_MARKER.length);
-			var widgets = emit_catalog_classes (codegen);
+			var shell = body.substring(0, marker_at);
+			var tail = body.substring(marker_at + TRACK_B_MARKER.length);
+			var widgets = emit_catalog_classes(codegen);
 			return GENERATED_HEADER + shell + widgets + tail;
 		}
 
-		static string strip_template_preamble (string body) {
-			if (!body.has_prefix ("/*")) {
+		static string strip_template_preamble(string body) {
+			if (!body.has_prefix("/*")) {
 				return body;
 			}
-			var end = body.index_of ("*/");
+			var end = body.index_of("*/");
 			if (end < 0) {
 				return body;
 			}
@@ -45,246 +45,237 @@ namespace Generate {
 				}
 				i++;
 			}
-			return body.substring (i);
+			return body.substring(i);
 		}
 
-		static string emit_catalog_classes (WidgetCodegen codegen) {
-			var controls = codegen.catalog_controls ();
+		static string emit_catalog_classes(WidgetCodegen codegen) {
+			var controls = codegen.catalog_controls();
 			var names = new Gee.ArrayList<string> ();
 			foreach (var d in controls) {
 				if (d != null) {
-					names.add (d.class_name ());
+					names.add(d.class_name());
 				}
 			}
-			names.sort ();
-			var sb = new GLib.StringBuilder ();
-			sb.append ("\n");
+			names.sort();
+			var sb = new GLib.StringBuilder();
+			sb.append("\n");
 			foreach (var class_name in names) {
-				var d = find_by_class_name (controls, class_name);
+				var d = find_by_class_name(controls, class_name);
 				if (d == null) {
 					continue;
 				}
-				if (d.has_track_b_profile ()) {
-					emit_control_class (sb, d, codegen);
+				if (d.has_track_b_profile()) {
+					emit_control_class(sb, d, codegen);
 				} else {
-					emit_catalog_shell_class (sb, d);
+					emit_catalog_shell_class(sb, d);
 				}
 			}
 			return sb.str;
 		}
 
-		static WidgetControlDescriptor? find_by_class_name (
+		static WidgetControlDescriptor? find_by_class_name(
 			WidgetControlDescriptor?[] controls,
 			string class_name
 		) {
 			foreach (var d in controls) {
-				if (d != null && d.class_name () == class_name) {
+				if (d != null && d.class_name() == class_name) {
 					return d;
 				}
 			}
 			return null;
 		}
 
-		static void emit_catalog_shell_class (GLib.StringBuilder sb, WidgetControlDescriptor d) {
-			sb.append (@"/**
+		static void emit_catalog_shell_class(GLib.StringBuilder sb, WidgetControlDescriptor d) {
+			sb.append(@"/**
  * Catalog wrapper for `$(d.wc_symbol)` ($(d.win32_class_text)).
  * Minimal `create_window_ex` — add a profile in metadata/widget-conventions.json for signals/dispatch.
  */
-public class $(d.class_name ()) {
-	public void* handle { get; private set; }
-
-	public $(d.class_name ()) (
+public class $(d.class_name()) : Widget {
+	public $(d.class_name())(
 		Window parent,
 		int x, int y, int width, int height,
-		int control_id = 0,
 		string? caption = null
 	) {
+		base(parent);
 		uint style = (uint) (WindowStyle.WS_CHILD | WindowStyle.WS_VISIBLE);
-		handle = create_window_ex (
+		handle = create_window_ex(
 			0, $(d.wc_symbol), null, style,
 			x, y, width, height,
 			parent.handle,
-			control_id != 0 ? (void*) (intptr) control_id : null,
+			null,
 			parent.instance, null
 		);
 		if (caption != null && handle != null) {
-			window_text_set (handle, caption);
+			window_text_set(handle, caption);
 		}
-		ControlFont.apply_default (handle);
+		ControlFont.apply_default(handle);
 	}
 }
 
 ");
 		}
 
-		static void emit_control_class (
+		static void emit_control_class(
 			GLib.StringBuilder sb,
 			WidgetControlDescriptor d,
 			WidgetCodegen symbols
 		) {
-			emit_class_doc (sb, d);
+			emit_class_doc(sb, d);
 			var signal_decl = "";
-			if (d.signal_name () != null) {
-				signal_decl = @"	public signal void $(d.signal_name ()) ();
+			if (d.signal_name() != null) {
+				signal_decl = @"	public signal void $(d.signal_name())();
 ";
 			}
-			var control_id_field = "";
-			if (d.uses_control_id ()) {
-				control_id_field = "	public int control_id { get; private set; }\n";
-			}
-			sb.append (@"public class $(d.class_name ()) {
-$(signal_decl)	public void* handle { get; private set; }
-$(control_id_field)
+			sb.append(@"public class $(d.class_name()) : Widget {
+$(signal_decl)
 ");
-			emit_ctor (sb, d, symbols);
-			emit_members (sb, d, symbols);
-			sb.append ("}\n\n");
+			emit_ctor(sb, d, symbols);
+			emit_members(sb, d, symbols);
+			sb.append("}\n\n");
 		}
 
-		static void emit_class_doc (GLib.StringBuilder sb, WidgetControlDescriptor d) {
+		static void emit_class_doc(GLib.StringBuilder sb, WidgetControlDescriptor d) {
 			string route_line;
-			switch (d.dispatch_route ()) {
+			switch (d.dispatch_route()) {
 			case WidgetDispatchRoute.WM_COMMAND:
-				route_line = @" * Signal `$(d.signal_name ())` when WM_COMMAND notify is $(d.wm_notify_const ()).
+				route_line = @" * Signal `$(d.signal_name())` when WM_COMMAND notify is $(d.wm_notify_const()).
 ";
 				break;
 			case WidgetDispatchRoute.WM_SCROLL:
-				route_line = " * Signal `value_changed` after WM_HSCROLL / WM_VSCROLL (parent def_window_proc).\n";
+				route_line = " * Signal `value_changed` after WM_HSCROLL / WM_VSCROLL(parent def_window_proc).\n";
 				break;
 			case WidgetDispatchRoute.WM_NOTIFY:
-				route_line = @" * Signal `$(d.signal_name ())` on WM_NOTIFY ($(d.wm_notify_code_expr () ?? d.wm_notify_const ())). 
+				route_line = @" * Signal `$(d.signal_name())` on WM_NOTIFY($(d.wm_notify_code_expr() ?? d.wm_notify_const())). 
 ";
 				break;
 			default:
 				route_line = " * No WM_COMMAND / WM_SCROLL dispatch registration.\n";
 				break;
 			}
-			sb.append (@"/**
+			sb.append(@"/**
  * Track B wrapper for `$(d.wc_symbol)` ($(d.win32_class_text)).
 $(route_line) */
 ");
 		}
 
-		static void emit_ctor (GLib.StringBuilder sb, WidgetControlDescriptor d, WidgetCodegen symbols) {
-			var extra_params = new GLib.StringBuilder ();
-			if (d.uses_control_id ()) {
-				extra_params.append (",\n\t\tint control_id");
-			}
+		static void emit_ctor(GLib.StringBuilder sb, WidgetControlDescriptor d, WidgetCodegen symbols) {
+			var extra_params = new GLib.StringBuilder();
 			if (d.wc_symbol == "WC_BUTTON") {
-				extra_params.append (",\n\t\tstring label");
-			} else if (d.has_text_property () && !d.uses_control_id ()) {
-				extra_params.append (",\n\t\tstring text");
+				extra_params.append(",\n\t\tstring label");
+			} else if (d.has_text_property() && !d.uses_control_id()) {
+				extra_params.append(",\n\t\tstring text");
 			}
 			if (d.wc_symbol == "WC_SCROLLBAR") {
-				extra_params.append (
+				extra_params.append(
 					",\n\t\tint range_min = 0,\n\t\tint range_max = 100,\n\t\tint initial_value = 0"
 				);
 			} else if (d.wc_symbol == "PROGRESS_CLASS") {
-				extra_params.append (",\n\t\tint range_max = 100");
+				extra_params.append(",\n\t\tint range_max = 100");
 			}
-			var control_id_init = d.uses_control_id ()
-				? "\t\tthis.control_id = control_id;\n"
+			var wid_init = d.uses_control_id()
+				? "\t\tallocate_wid();\n"
 				: "";
-			var styles = join_style_tokens (d, symbols);
-			var hmnu = d.uses_control_id ()
-				? "(void*) (intptr) control_id"
+			var styles = join_style_tokens(d, symbols);
+			var hmnu = d.uses_control_id()
+				? "(void*) (intptr) WID"
 				: "null";
-			sb.append (@"	public $(d.class_name ()) (
+			sb.append(@"	public $(d.class_name())(
 		Window parent,
 		int x, int y, int width, int height$(extra_params.str)
 	) {
-$(control_id_init)		uint style = (uint) (
+		base(parent);
+$(wid_init)		uint style = (uint) (
 			$(styles)
 		);
-		handle = create_window_ex (
+		handle = create_window_ex(
 			0, $(d.wc_symbol), null, style,
 			x, y, width, height,
 			parent.handle, $(hmnu), parent.instance, null
 		);
 ");
-			emit_post_create (sb, d, symbols);
-			emit_dispatch_register (sb, d);
-			sb.append ("\t\tControlFont.apply_default (handle);\n");
-			sb.append ("\t}\n");
+			emit_post_create(sb, d, symbols);
+			emit_dispatch_register(sb, d);
+			sb.append("\t\tControlFont.apply_default(handle);\n");
+			sb.append("\t}\n");
 		}
 
-		static string join_style_tokens (WidgetControlDescriptor d, WidgetCodegen symbols) {
+		static string join_style_tokens(WidgetControlDescriptor d, WidgetCodegen symbols) {
 			var parts = new Gee.ArrayList<string> ();
-			foreach (var t in d.window_style_tokens ()) {
-				parts.add (t);
+			foreach (var t in d.window_style_tokens()) {
+				parts.add(t);
 			}
-			foreach (var t in d.control_style_tokens ()) {
-				parts.add (resolve_style_token (symbols, t));
+			foreach (var t in d.control_style_tokens()) {
+				parts.add(resolve_style_token(symbols, t));
 			}
-			foreach (var t in d.style_literal_exprs ()) {
-				parts.add (resolve_style_token (symbols, t));
+			foreach (var t in d.style_literal_exprs()) {
+				parts.add(resolve_style_token(symbols, t));
 			}
 			if (parts.size == 0) {
 				return "0";
 			}
-			var sb = new GLib.StringBuilder ();
+			var sb = new GLib.StringBuilder();
 			for (int i = 0; i < parts.size; i++) {
 				if (i > 0) {
-					sb.append (" | ");
+					sb.append(" | ");
 				}
-				sb.append (parts[i]);
+				sb.append(parts[i]);
 			}
 			return sb.str;
 		}
 
-		static void emit_post_create (
+		static void emit_post_create(
 			GLib.StringBuilder sb,
 			WidgetControlDescriptor d,
 			WidgetCodegen symbols
 		) {
-			if (d.needs_init_common_controls ()) {
-				sb.append ("\t\tensure_common_controls ();\n");
+			if (d.needs_init_common_controls()) {
+				sb.append("\t\tensure_common_controls();\n");
 			}
 			if (d.wc_symbol == "WC_BUTTON") {
-				sb.append (@"		if (handle != null) {
-			window_text_set (handle, label);
+				sb.append(@"		if (handle != null) {
+			window_text_set(handle, label);
 		}
 ");
-			} else if (d.has_text_property () && !d.uses_control_id ()) {
-				sb.append (@"		if (handle != null) {
-			window_text_set (handle, text);
+			} else if (d.has_text_property() && !d.uses_control_id()) {
+				sb.append(@"		if (handle != null) {
+			window_text_set(handle, text);
 		}
 ");
 			} else if (d.wc_symbol == "WC_SCROLLBAR") {
-				sb.append (@"		if (handle != null) {
-			send_message (
+				sb.append(@"		if (handle != null) {
+			send_message(
 				handle, SBM_SETRANGE, 0,
-				makelparam_uint ((uint) range_min, (uint) range_max)
+				makelparam_uint((uint) range_min, (uint) range_max)
 			);
-			send_message (handle, SBM_SETPOS, 1, (ulong) initial_value);
+			send_message(handle, SBM_SETPOS, 1, (ulong) initial_value);
 		}
 ");
 			} else if (d.wc_symbol == "PROGRESS_CLASS") {
-				var pbm_setrange32 = symbols.uint_constant_expr ("PBM_SETRANGE32");
-				sb.append (@"		if (handle != null) {
-			send_message (handle, $(pbm_setrange32), 0, (int64) range_max);
+				var pbm_setrange32 = symbols.uint_constant_expr("PBM_SETRANGE32");
+				sb.append(@"		if (handle != null) {
+			send_message(handle, $(pbm_setrange32), 0, (int64) range_max);
 		}
 ");
 			}
 		}
 
-		static void emit_dispatch_register (GLib.StringBuilder sb, WidgetControlDescriptor d) {
-			var reg = wm_command_register_fn (d.wc_symbol);
+		static void emit_dispatch_register(GLib.StringBuilder sb, WidgetControlDescriptor d) {
+			var reg = wm_command_register_fn(d.wc_symbol);
 			if (reg != null) {
-				sb.append (@"		$(reg) (this);
+				sb.append(@"		$(reg)(this);
 ");
-			} else if (d.dispatch_route () == WidgetDispatchRoute.WM_SCROLL) {
-				sb.append ("\t\twm_scroll_register (this);\n");
-			} else if (d.dispatch_route () == WidgetDispatchRoute.WM_NOTIFY) {
-				var notify_reg = wm_notify_register_fn (d.wc_symbol);
+			} else if (d.dispatch_route() == WidgetDispatchRoute.WM_SCROLL) {
+				sb.append("\t\twm_scroll_register(this);\n");
+			} else if (d.dispatch_route() == WidgetDispatchRoute.WM_NOTIFY) {
+				var notify_reg = wm_notify_register_fn(d.wc_symbol);
 				if (notify_reg != null) {
-					sb.append (@"		$(notify_reg) (this);
+					sb.append(@"		$(notify_reg)(this);
 ");
 				}
 			}
 		}
 
-		static string? wm_command_register_fn (string wc_symbol) {
+		static string? wm_command_register_fn(string wc_symbol) {
 			switch (wc_symbol) {
 			case "WC_BUTTON":
 				return "wm_command_register_button";
@@ -299,7 +290,7 @@ $(control_id_init)		uint style = (uint) (
 			}
 		}
 
-		static string? wm_notify_register_fn (string wc_symbol) {
+		static string? wm_notify_register_fn(string wc_symbol) {
 			switch (wc_symbol) {
 			case "WC_LISTVIEW":
 				return "wm_notify_register_list_view";
@@ -312,67 +303,67 @@ $(control_id_init)		uint style = (uint) (
 			}
 		}
 
-		static void emit_members (
+		static void emit_members(
 			GLib.StringBuilder sb,
 			WidgetControlDescriptor d,
 			WidgetCodegen symbols
 		) {
-			if (d.has_text_property ()) {
-				sb.append (@"
+			if (d.has_text_property()) {
+				sb.append(@"
 
 	public string text {
-		owned get { return window_text_get (handle); }
-		set { window_text_set (handle, value); }
+		owned get { return window_text_get(handle); }
+		set { window_text_set(handle, value); }
 	}
 ");
 			}
-			if (d.has_selection_helpers ()) {
-				emit_selection_helpers (sb, d);
+			if (d.has_selection_helpers()) {
+				emit_selection_helpers(sb, d);
 			}
-			if (d.has_list_view_helpers ()) {
-				emit_list_view_helpers (sb);
+			if (d.has_list_view_helpers()) {
+				emit_list_view_helpers(sb);
 			}
-			if (d.has_tree_view_helpers ()) {
-				emit_tree_view_helpers (sb);
+			if (d.has_tree_view_helpers()) {
+				emit_tree_view_helpers(sb);
 			}
-			if (d.has_tab_page_helpers ()) {
-				emit_tab_page_helpers (sb);
+			if (d.has_tab_page_helpers()) {
+				emit_tab_page_helpers(sb);
 			}
-			if (d.has_scroll_value_property ()) {
-				sb.append (@"
+			if (d.has_scroll_value_property()) {
+				sb.append(@"
 
 	public int value {
-		get { return (int) send_message (handle, SBM_GETPOS, 0, 0); }
-		set { send_message (handle, SBM_SETPOS, 1, (ulong) value); }
+		get { return (int) send_message(handle, SBM_GETPOS, 0, 0); }
+		set { send_message(handle, SBM_SETPOS, 1, (ulong) value); }
 	}
 ");
 			}
-			if (d.has_progress_value_property ()) {
-				var pbm_getpos = symbols.uint_constant_expr ("PBM_GETPOS");
-				var pbm_setpos = symbols.uint_constant_expr ("PBM_SETPOS");
-				var pbm_setrange32 = symbols.uint_constant_expr ("PBM_SETRANGE32");
-				sb.append (@"
+			if (d.has_progress_value_property()) {
+				var pbm_getpos = symbols.uint_constant_expr("PBM_GETPOS");
+				var pbm_setpos = symbols.uint_constant_expr("PBM_SETPOS");
+				var pbm_setrange32 = symbols.uint_constant_expr("PBM_SETRANGE32");
+				sb.append(@"
 
 	public int value {
-		get { return (int) send_message (handle, $(pbm_getpos), 0, 0); }
-		set { send_message (handle, $(pbm_setpos), (ulong) value, 0); }
+		get { return (int) send_message(handle, $(pbm_getpos), 0, 0); }
+		set { send_message(handle, $(pbm_setpos), (ulong) value, 0); }
 	}
 
 	public int range_max {
 		set {
-			send_message (handle, $(pbm_setrange32), 0, (int64) value);
+			send_message(handle, $(pbm_setrange32), 0, (int64) value);
 		}
 	}
 ");
 			}
 		}
 
-		static string resolve_style_token (WidgetCodegen symbols, string token) {
-			if (token.has_prefix ("0x") || token.has_prefix ("Win32.") || token.has_prefix ("WindowStyle.")) {
+		static string resolve_style_token(WidgetCodegen symbols, string token) {
+			if (token.has_prefix("0x") || token.has_prefix("Win32.") || token.has_prefix("WindowStyle.")) {
 				return token;
 			}
-			if (symbols.uint_constant_expr (token) != token) {
-				return symbols.uint_constant_expr (token);
+			if (symbols.uint_constant_expr(token) != token) {
+				return symbols.uint_constant_expr(token);
 			}
 			switch (token) {
 			case "ES_AUTOHSCROLL":
@@ -382,73 +373,73 @@ $(control_id_init)		uint style = (uint) (
 			case "SBS_HORZ":
 				return MESSAGING_PKG + "." + token;
 			default:
-				if (token.has_prefix ("LVS_")
-					|| token.has_prefix ("TVS_")
-					|| token.has_prefix ("TCS_")
-					|| token.has_prefix ("PBS_")) {
+				if (token.has_prefix("LVS_")
+					|| token.has_prefix("TVS_")
+					|| token.has_prefix("TCS_")
+					|| token.has_prefix("PBS_")) {
 					return CONTROLS_PKG + "." + token;
 				}
 				return token;
 			}
 		}
 
-		static void emit_selection_helpers (GLib.StringBuilder sb, WidgetControlDescriptor d) {
+		static void emit_selection_helpers(GLib.StringBuilder sb, WidgetControlDescriptor d) {
 			bool is_list = d.wc_symbol == "WC_LISTBOX";
 			var add_msg = is_list ? "LB_ADDSTRING" : "CB_ADDSTRING";
 			var get_sel = is_list ? "LB_GETCURSEL" : "CB_GETCURSEL";
 			var set_sel = is_list ? "LB_SETCURSEL" : "CB_SETCURSEL";
 			var item_helper = is_list ? "list_box_item_text" : "combo_box_item_text";
-			sb.append (@"
+			sb.append(@"
 
-	public void add_item (string text) {
-		var wide = WideString (text);
-		send_message (handle, $(add_msg), 0, (int64) wide.ptr);
+	public void add_item(string text) {
+		var wide = WideString(text);
+		send_message(handle, $(add_msg), 0, (int64) wide.ptr);
 	}
 
 	public int selected_index {
-		get { return (int) send_message (handle, $(get_sel), 0, 0); }
-		set { send_message (handle, $(set_sel), (ulong) value, 0); }
+		get { return (int) send_message(handle, $(get_sel), 0, 0); }
+		set { send_message(handle, $(set_sel), (ulong) value, 0); }
 	}
 
 	public string selected_text {
-		owned get { return $(item_helper) (handle, selected_index); }
+		owned get { return $(item_helper)(handle, selected_index); }
 	}
 ");
 		}
 
-		static void emit_list_view_helpers (GLib.StringBuilder sb) {
-			sb.append (@"
+		static void emit_list_view_helpers(GLib.StringBuilder sb) {
+			sb.append(@"
 
-	private int _list_view_column = 0;
-	private int _list_view_row = 0;
+	private int list_view_column = 0;
+	private int list_view_row = 0;
 
-	public void add_column (string title, int width = 120) {
-		var col = LVCOLUMN ();
+	public void add_column(string title, int width = 120) {
+		var col = LVCOLUMN();
 		col.mask = LVCOLUMNWMASK.LVCF_WIDTH | LVCOLUMNWMASK.LVCF_TEXT;
 		col.cx = width;
-		col.pszText = WideString (title).ptr;
-		send_message (handle, LVM_INSERTCOLUMN, (ulong) _list_view_column, (int64) &col);
-		_list_view_column++;
+		col.pszText = WideString(title).ptr;
+		send_message(handle, LVM_INSERTCOLUMN, (ulong) list_view_column, (int64) &col);
+		list_view_column++;
 	}
 
-	public void append_row (string primary, string? secondary = null) {
-		var item = LVITEM ();
+	public void append_row(string primary, string? secondary = null) {
+		var item = LVITEM();
 		item.mask = LVIF_TEXT;
-		item.iItem = _list_view_row;
-		item.pszText = WideString (primary).ptr;
-		send_message (handle, LVM_INSERTITEM, 0, (int64) &item);
+		item.iItem = list_view_row;
+		item.pszText = WideString(primary).ptr;
+		send_message(handle, LVM_INSERTITEM, 0, (int64) &item);
 		if (secondary != null) {
 			item.iSubItem = 1;
-			item.pszText = WideString (secondary).ptr;
-			send_message (handle, LVM_SETITEMTEXT, 0, (int64) &item);
+			item.pszText = WideString(secondary).ptr;
+			send_message(handle, LVM_SETITEMTEXT, 0, (int64) &item);
 		}
-		_list_view_row++;
+		list_view_row++;
 	}
 ");
 		}
 
-		static void emit_tree_view_helpers (GLib.StringBuilder sb) {
-			sb.append (@"
+		static void emit_tree_view_helpers(GLib.StringBuilder sb) {
+			sb.append(@"
 
 	private const int64 TVI_ROOT = -65536;
 	private const int64 TVI_LAST = -65534;
@@ -459,33 +450,33 @@ $(control_id_init)		uint style = (uint) (
 		public TVITEM item;
 	}
 
-	public void* add_root (string text) {
-		return insert_item (null, text);
+	public void* add_root(string text) {
+		return insert_item(null, text);
 	}
 
-	public void* add_child (void* parent, string text) {
-		return insert_item (parent, text);
+	public void* add_child(void* parent, string text) {
+		return insert_item(parent, text);
 	}
 
-	private void* insert_item (void* parent_item, string text) {
-		var ins = TreeInsertRow ();
+	private void* insert_item(void* parent_item, string text) {
+		var ins = TreeInsertRow();
 		ins.h_parent = parent_item != null ? parent_item : (void*) TVI_ROOT;
 		ins.h_insert_after = (void*) TVI_LAST;
 		ins.item.mask = TVITEMMASK.TVIF_TEXT;
-		ins.item.pszText = WideString (text).ptr;
-		return (void*) send_message (handle, TVM_INSERTITEM, 0, (int64) &ins);
+		ins.item.pszText = WideString(text).ptr;
+		return (void*) send_message(handle, TVM_INSERTITEM, 0, (int64) &ins);
 	}
 ");
 		}
 
-		static void emit_tab_page_helpers (GLib.StringBuilder sb) {
-			sb.append (@"
+		static void emit_tab_page_helpers(GLib.StringBuilder sb) {
+			sb.append(@"
 
-	public void add_page (string title) {
-		var item = TCITEM ();
+	public void add_page(string title) {
+		var item = TCITEM();
 		item.mask = TCITEMHEADERAMASK.TCIF_TEXT;
-		item.pszText = WideString (title).ptr;
-		send_message (handle, TCM_INSERTITEM, 0, (int64) &item);
+		item.pszText = WideString(title).ptr;
+		send_message(handle, TCM_INSERTITEM, 0, (int64) &item);
 	}
 ");
 		}

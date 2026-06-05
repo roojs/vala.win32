@@ -1,0 +1,61 @@
+{
+  "symbol_prefix": "Microsoft.Web.WebView2.Win32",
+  "host_interfaces": ["ICoreWebView2", "ICoreWebView2Controller"],
+  "skip": [
+    "get_settings",
+    "get_bounds",
+    "get_browser_process_id",
+    "get_dev_tools_protocol_event_receiver",
+    "get_parent_window",
+    "get_core_web_view2",
+    "close",
+    "set_bounds_and_zoom_factor",
+    "move_focus",
+    "put_parent_window",
+    "notify_parent_window_position_changed",
+    "add_host_object_to_script",
+    "remove_host_object_from_script",
+    "add_script_to_execute_on_document_created",
+    "remove_script_to_execute_on_document_created",
+    "add_web_resource_requested_filter",
+    "remove_web_resource_requested_filter",
+    "call_dev_tools_protocol_method",
+    "capture_preview"
+  ],
+  "glue_hand": ["navigate"],
+  "async_stub_glue": ["execute_script"],
+  "vala_call": {
+    "put_bounds": "com_controller_put_bounds(host_controller_com(), g_host.bounds)"
+  },
+  "ergo_bool_methods": ["execute_script", "post_web_message_as_json"],
+  "ergo_property": {
+    "get_is_visible": "visible",
+    "put_is_visible": "visible"
+  },
+  "ergo_events": [
+    {
+      "add": "add_NavigationCompleted",
+      "remove": "remove_NavigationCompleted",
+      "handler_iface": "ICoreWebView2NavigationCompletedEventHandler",
+      "callback": "vala_webview2_emit_navigation_completed",
+      "invoke": "bool_get_is_success",
+      "args_iface": "ICoreWebView2NavigationCompletedEventArgs"
+    },
+    {
+      "add": "add_NavigationStarting",
+      "remove": "remove_NavigationStarting",
+      "handler_iface": "ICoreWebView2NavigationStartingEventHandler",
+      "callback": "vala_webview2_emit_navigation_starting",
+      "invoke": "void",
+      "args_iface": "ICoreWebView2NavigationStartingEventArgs"
+    },
+    {
+      "add": "add_DocumentTitleChanged",
+      "remove": "remove_DocumentTitleChanged",
+      "handler_iface": "ICoreWebView2DocumentTitleChangedEventHandler",
+      "callback": "vala_webview2_emit_document_title_changed",
+      "invoke": "void",
+      "args_iface": "IUnknown"
+    }
+  ]
+}

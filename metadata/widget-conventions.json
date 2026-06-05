@@ -16,6 +16,7 @@
       "signal_name": "clicked",
       "wm_notify_const": "BN_CLICKED",
       "uses_control_id": true,
+      "text_property": true,
       "window_style_tokens": [
         "WindowStyle.WS_CHILD",
         "WindowStyle.WS_VISIBLE",
@@ -151,6 +152,28 @@
       "control_style_tokens": ["TCS_TABS"],
       "style_literal_exprs": [],
       "tab_page_helpers": true
+    },
+    "WebView2": {
+      "dispatch_route": "NONE",
+      "uses_control_id": false,
+      "constructor": "Window parent, int x, int y, int width, int height",
+      "hand_baseline_source": "generated/win32-ergo-webview2.vala",
+      "ergo_generated_source": "generated/win32-ergo-webview2.vala",
+      "glue_baseline_source": "src/win32-ui-webview2-host.vala",
+      "glue_generated_source": "generated/win32-ui-webview2-host-glue.vala",
+      "glue_catalog_source": "metadata/webview2/api/WebView2.json",
+      "glue_overrides_source": "metadata/webview2-host-overrides.json",
+      "ergo_pkg": "win32-ergo-webview2",
+      "notes": "Glue/COM sync/ergo API: WebView2MethodCatalog(WebView2.json + webview2.filter + webview2-host-overrides.json). ergo_native_map: widget shell only(ctor, layout, lifecycle, signals).",
+      "ergo_native_map": [
+        { "kind": "lifecycle", "ergo": "create (ctor layout)", "glue": "Ui.WebView.create_with_xywh", "status": "done" },
+        { "kind": "lifecycle", "ergo": "ready", "glue": "Ui.WebView.is_ready", "status": "done" },
+        { "kind": "lifecycle", "ergo": "destroy", "glue": "Ui.WebView.destroy", "status": "done" },
+        { "kind": "layout", "ergo": "set_bounds / move / resize (x,y,w,h)", "glue": "Ui.WebView.set_bounds_xywh", "status": "done" },
+        { "kind": "signal", "ergo": "navigation_completed(bool success)", "status": "generated" },
+        { "kind": "signal", "ergo": "navigation_starting(cancellable?)", "status": "generated" },
+        { "kind": "signal", "ergo": "document_title_changed()", "status": "generated" }
+      ]
     }
   }
 }

@@ -1,4 +1,4 @@
-/* Phase 4c: menu bar + LoadCursor (Track A). See docs/win32-rc.md for .rc resources. */
+/* Phase 4c: menu bar + LoadCursor(Track A). See docs/win32-rc.md for .rc resources. */
 
 using Win32.Ui;
 using Win32.Ui.WindowsAndMessaging;
@@ -7,84 +7,84 @@ using Win32.System;
 const int ID_FILE_HELLO = 300;
 const int ID_FILE_EXIT = 301;
 
-/* IDC_ARROW from win32metadata (not emitted as const yet). */
-const int IDC_ARROW = 32512;
+/* Standard arrow cursor resource id (avoid IDC_ARROW — defined in winuser.h). */
+const int CURSOR_ARROW = 32512;
 
-private int64 window_proc (
-	[CCode (type_id = "HWND")] void* h_wnd,
+private int64 window_proc(
+	[CCode(type_id = "HWND")] void* h_wnd,
 	uint msg,
 	ulong w_param,
 	int64 l_param
 ) {
 	if (msg == WM_COMMAND) {
-		var id = loword (w_param);
+		var id = loword(w_param);
 		if (id == ID_FILE_HELLO) {
 			uint style = (uint) (
 				MESSAGEBOXSTYLE.MB_OK |
 				MESSAGEBOXSTYLE.MB_ICONINFORMATION
 			);
-			message_box (
+			message_box(
 				h_wnd,
-				WideString ("Hello from the menu.").ptr,
-				WideString ("menu-demo").ptr,
+				WideString("Hello from the menu.").ptr,
+				WideString("menu-demo").ptr,
 				style
 			);
 			return 0;
 		}
 		if (id == ID_FILE_EXIT) {
-			destroy_window (h_wnd);
+			destroy_window(h_wnd);
 			return 0;
 		}
 	}
 	if (msg == WM_DESTROY) {
-		post_quit_message (0);
+		post_quit_message(0);
 		return 0;
 	}
-	return def_window_proc (h_wnd, msg, w_param, l_param);
+	return def_window_proc(h_wnd, msg, w_param, l_param);
 }
 
-public static int main (string[] args) {
-	void* inst = get_module_handle (null);
+public static int main(string[] args) {
+	void* inst = get_module_handle(null);
 
-	var class_name = WideString ("ValaMenuDemo");
-	var window_title = WideString ("vala.win32 menu-demo");
+	var class_name = WideString("ValaMenuDemo");
+	var window_title = WideString("vala.win32 menu-demo");
 
-	var wc = WndClassEx ();
+	var wc = WndClassEx();
 	wc.cbSize = (uint) sizeof (WndClassEx);
 	wc.lpfnWndProc = window_proc;
 	wc.hInstance = inst;
 	wc.hbrBackground = (void*) (SysColorIndex.COLOR_WINDOW + 1);
 	wc.lpszClassName = class_name.ptr;
-	wc.hCursor = load_cursor (null, (uint16*) (ulong) IDC_ARROW);
+	wc.hCursor = load_cursor(null, (uint16*) (ulong) CURSOR_ARROW);
 
-	if (register_class_ex (ref wc) == 0) {
-		stderr.printf ("RegisterClassExW failed\n");
+	if (register_class_ex(ref wc) == 0) {
+		stderr.printf("RegisterClassExW failed\n");
 		return 1;
 	}
 
-	void* file_menu = create_menu ();
-	append_menu (
+	void* file_menu = create_menu();
+	append_menu(
 		file_menu,
 		MENUITEMFLAGS.MF_STRING,
-		(void*) ID_FILE_HELLO,
-		WideString ("Say &hello").ptr
+		(ulong) ID_FILE_HELLO,
+		WideString("Say &hello").ptr
 	);
-	append_menu (
+	append_menu(
 		file_menu,
 		MENUITEMFLAGS.MF_STRING,
-		(void*) ID_FILE_EXIT,
-		WideString ("E&xit").ptr
+		(ulong) ID_FILE_EXIT,
+		WideString("E&xit").ptr
 	);
 
-	void* bar = create_menu ();
-	append_menu (
+	void* bar = create_menu();
+	append_menu(
 		bar,
 		MENUITEMFLAGS.MF_POPUP | MENUITEMFLAGS.MF_STRING,
-		file_menu,
-		WideString ("&File").ptr
+		(ulong) file_menu,
+		WideString("&File").ptr
 	);
 
-	void* hwnd = create_window_ex (
+	void* hwnd = create_window_ex(
 		0,
 		class_name.ptr,
 		window_title.ptr,
@@ -99,16 +99,16 @@ public static int main (string[] args) {
 		null
 	);
 	if (hwnd == null) {
-		stderr.printf ("CreateWindowExW failed\n");
+		stderr.printf("CreateWindowExW failed\n");
 		return 1;
 	}
 
-	set_menu (hwnd, bar);
+	set_menu(hwnd, bar);
 
 	Msg msg;
-	while (get_message (out msg, null, 0, 0) > 0) {
-		translate_message (ref msg);
-		dispatch_message (ref msg);
+	while (get_message(out msg, null, 0, 0) > 0) {
+		translate_message(ref msg);
+		dispatch_message(ref msg);
 	}
 
 	return 0;

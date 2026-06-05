@@ -2,8 +2,8 @@
 
 using GLib;
 
-public static int main (string[] args) {
-	var frame = new Win32.Window (
+public static int main(string[] args) {
+	var frame = new Win32.Window(
 		"ValaWin32Hello",
 		"vala.win32 hello",
 		480,
@@ -13,5 +13,5 @@ public static int main (string[] args) {
 		return 1;
 	}
 
-	return frame.run ();
+	return frame.run();
 }

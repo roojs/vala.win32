@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-# Vendor WebView2 SDK, configure, compile webview2-host-demo.
+# Vendor WebView2 SDK, configure, compile all demo EXEs (Track A + Track B + WebView2).
 #
 # Uses a **local** Meson build directory (not on X:) — Samba breaks Vala -C paths and
-# makes regen/configure painfully slow. Copies the .exe + loader back to build-win/ on X:.
+# makes regen/configure painfully slow. Copies .exe (+ WebView2Loader.dll) back to build-win/ on X:.
 #
 # Debug log: build-win/last-build.log
 #
@@ -18,9 +18,28 @@ DEBUG_LOG="${ROOT}/build-win/last-build.log"
 LOCAL_BUILD="${LOCAL_BUILD_DIR:-/c/msys64/tmp/vala-win32-build-win}"
 
 MESON_OPTS=(
-	-Dbuild_posix_examples=false
-	-Dbuild_ergonomic_examples=false
+	-Dbuild_posix_examples=true
+	-Dbuild_ergonomic_examples=true
 	-Dregen_on_build=false
+)
+
+# All demo executables (must match meson.build target names).
+DEMO_EXES=(
+	hello-window-native
+	button-demo-native
+	dialog-demo-native
+	common-dialog-demo-native
+	menu-demo-native
+	error-demo-native
+	hello-window
+	button-demo
+	widgets-demo
+	dialog-demo
+	common-dialog-demo
+	menu-demo
+	error-demo
+	webview2-host-native
+	webview2-demo
 )
 
 dump_debug_bundle() {
@@ -34,9 +53,10 @@ dump_debug_bundle() {
 		echo "MSYSTEM=${MSYSTEM:-}"
 		command -v gcc valac meson ninja 2>/dev/null || true
 		if [[ -f "${LOCAL_BUILD}/build.ninja" ]]; then
-			echo "--- ninja targets (count) ---"
-			ninja -C "${LOCAL_BUILD}" -t targets all 2>/dev/null | wc -l || true
-			ninja -C "${LOCAL_BUILD}" -t targets all 2>/dev/null | grep -i webview2 || true
+			echo "--- ninja demo targets ---"
+			ninja -C "${LOCAL_BUILD}" -t targets all 2>/dev/null \
+				| grep -E '\.exe:|\.exe$' \
+				| grep -E 'demo|hello-window|webview2' || true
 		fi
 		if [[ -f "${LOCAL_BUILD}/meson-logs/meson-log.txt" ]]; then
 			echo "--- tail LOCAL meson-log.txt ---"
@@ -70,34 +90,67 @@ needs_fresh_setup() {
 	local coredata="${LOCAL_BUILD}/meson-private/coredata.dat"
 	[[ ! -f "${coredata}" ]] && return 0
 	grep -qE 'cross/mingw-w64\.ini|/home/[^/]+/' "${coredata}" 2>/dev/null && return 0
-	grep -q 'build_posix_examples=true' "${coredata}" 2>/dev/null && return 0
 	grep -q 'regen_on_build=true' "${coredata}" 2>/dev/null && return 0
+	if [[ -f "${LOCAL_BUILD}/build.ninja" ]]; then
+		# Stale build from before target renames (webview2-host-demo → webview2-host-native).
+		grep -q 'webview2-host-demo\.exe:' "${LOCAL_BUILD}/build.ninja" 2>/dev/null && return 0
+		grep -q 'webview2-ergo-demo\.exe:' "${LOCAL_BUILD}/build.ninja" 2>/dev/null && return 0
+		if ! grep -q 'webview2-host-native\.exe:' "${LOCAL_BUILD}/build.ninja" 2>/dev/null; then
+			return 0
+		fi
+	fi
 	return 1
 }
 
 configure_build_win() {
 	mkdir -p "$(dirname "${LOCAL_BUILD}")"
 	if needs_fresh_setup; then
-		echo '[build-win] meson setup (local build dir, WebView2 only, no regen)...'
+		echo '[build-win] meson setup (fresh local build dir, all demos, no regen)...'
 		rm -rf "${LOCAL_BUILD}"
 		meson setup "${LOCAL_BUILD}" "${ROOT}" "${MESON_OPTS[@]}"
-		return 0
+	elif [[ -f "${LOCAL_BUILD}/meson-private/coredata.dat" ]]; then
+		echo '[build-win] meson setup --reconfigure (apply option changes)...'
+		meson setup --reconfigure "${LOCAL_BUILD}" "${ROOT}" "${MESON_OPTS[@]}"
+	else
+		meson setup "${LOCAL_BUILD}" "${ROOT}" "${MESON_OPTS[@]}"
 	fi
-	echo '[build-win] Using existing local Meson build (skip reconfigure)'
 }
 
 copy_artifacts_to_share() {
 	mkdir -p build-win
-	local exe="${LOCAL_BUILD}/webview2-host-demo.exe"
+	local copied=0
+	local missing=()
+	for name in "${DEMO_EXES[@]}"; do
+		local src="${LOCAL_BUILD}/${name}.exe"
+		[[ -f "${src}" ]] || src="${LOCAL_BUILD}/${name}"
+		if [[ -f "${src}" ]]; then
+			cp -f "${src}" "build-win/${name}.exe"
+			copied=$((copied + 1))
+		else
+			missing+=("${name}")
+		fi
+	done
 	local dll="${LOCAL_BUILD}/WebView2Loader.dll"
-	[[ -f "${exe}" ]] || exe="${LOCAL_BUILD}/webview2-host-demo"
-	[[ -f "${exe}" ]] || { echo "error: no webview2-host-demo.exe in ${LOCAL_BUILD}" >&2; return 1; }
-	cp -f "${exe}" build-win/webview2-host-demo.exe
 	if [[ -f "${dll}" ]]; then
 		cp -f "${dll}" build-win/WebView2Loader.dll
 	elif [[ -f build/vendor/webview2/x64/WebView2Loader.dll ]]; then
 		cp -f build/vendor/webview2/x64/WebView2Loader.dll build-win/
 	fi
+	# Track B demos (webview2-demo, hello-window, …) need MSYS2 GLib beside the exe when not run from UCRT64 shell.
+	local ucrt_bin="${MINGW_PREFIX:-/ucrt64}/bin"
+	if [[ -d "${ucrt_bin}" ]]; then
+		for dll in libglib-2.0-0.dll libgobject-2.0-0.dll libintl-8.dll libiconv-2.dll libffi-8.dll libpcre2-8-0.dll; do
+			if [[ -f "${ucrt_bin}/${dll}" ]]; then
+				cp -f "${ucrt_bin}/${dll}" build-win/
+			fi
+		done
+	fi
+	if [[ ${#missing[@]} -gt 0 ]]; then
+		echo "[build-win] error: ${#missing[@]} demo EXE(s) not built:" >&2
+		printf '  %s\n' "${missing[@]}" >&2
+		return 1
+	fi
+	echo "[build-win] copied ${copied}/${#DEMO_EXES[@]} demo EXEs to build-win/"
 }
 
 if [[ "${MSYSTEM:-}" != UCRT64 ]]; then
@@ -112,11 +165,10 @@ echo "[build-win] Local Meson dir: ${LOCAL_BUILD} (source stays on X:)"
 ./scripts/vendor-webview2-sdk.sh
 configure_build_win
 
-echo '[build-win] meson compile webview2-host-demo (5 targets typical, not 22)'
-meson compile -C "${LOCAL_BUILD}" webview2-host-demo
+echo '[build-win] meson compile (all demo targets)'
+meson compile -C "${LOCAL_BUILD}" "${DEMO_EXES[@]}"
 
 copy_artifacts_to_share
 
-echo "[build-win] OK — X:\\vala.win32\\build-win\\webview2-host-demo.exe"
+echo "[build-win] OK — demos in X:\\vala.win32\\build-win\\"
 echo "  Full log: ${DEBUG_LOG}"
-echo "  Run: build-win/webview2-host-demo.exe https://example.com/"

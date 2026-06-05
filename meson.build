@@ -44,6 +44,12 @@ control_strings_vala = generated_root / 'win32-ui-control-strings.vala'
 wide_strings_vala = generated_root / 'win32-wide-strings.vala'
 widgets_vala = generated_root / 'win32-widgets.vala'
 errors_vala = generated_root / 'win32-errors.vala'
+webview2_host_glue_vala = generated_root / 'win32-ui-webview2-host-glue.vala'
+webview2_ergo_vala = generated_root / 'win32-ergo-webview2.vala'
+webview2_com_sync_c = generated_root / 'win32-ui-webview2-com-sync.c'
+webview2_com_sync_vala = generated_root / 'win32-ui-webview2-com-sync.vala'
+webview2_events_c = generated_root / 'win32-ui-webview2-events.c'
+webview2_events_bridge_vala = generated_root / 'win32-ui-webview2-events-bridge.vala'
 
 example_pkg_dialogs = 'win32-ui-controls-dialogs'
 example_pkg_gdi = 'win32-graphics-gdi'
@@ -51,18 +57,18 @@ example_pkg_gdi = 'win32-graphics-gdi'
 # Track A — raw Win32 (--profile=posix, no GLib)
 # [name, source, companion .vala sources, extra --pkg, extra -l libs]
 posix_example_apps = [
-  ['native-hello-window', 'examples/native/hello-window.vala', [wide_strings_vala], [], []],
-  ['native-button-demo', 'examples/native/button-demo.vala', [control_strings_vala, wide_strings_vala], [], []],
-  ['native-dialog-demo', 'examples/native/dialog-demo.vala', [wide_strings_vala], [], []],
+  ['hello-window-native', 'examples/native/hello-window.vala', [wide_strings_vala], [], []],
+  ['button-demo-native', 'examples/native/button-demo.vala', [control_strings_vala, wide_strings_vala], [], []],
+  ['dialog-demo-native', 'examples/native/dialog-demo.vala', [wide_strings_vala], [], []],
   [
-    'native-common-dialog-demo',
+    'common-dialog-demo-native',
     'examples/native/common-dialog-demo.vala',
     [control_strings_vala, wide_strings_vala],
     [example_pkg_dialogs],
     ['comdlg32'],
   ],
-  ['native-menu-demo', 'examples/native/menu-demo.vala', [wide_strings_vala], [], []],
-  ['native-error-demo', 'examples/native/error-demo.vala', [errors_vala, wide_strings_vala], [], []],
+  ['menu-demo-native', 'examples/native/menu-demo.vala', [wide_strings_vala], [], []],
+  ['error-demo-native', 'examples/native/error-demo.vala', [errors_vala, wide_strings_vala], [], []],
 ]
 
 generate_sources = files(
@@ -75,7 +81,14 @@ generate_sources = files(
   'src/Generate/ErrorEmitter.vala',
   'src/Generate/WidgetCodegen.vala',
   'src/Generate/WidgetEmitter.vala',
+  'src/Generate/WebView2GlueEmitter.vala',
+  'src/Generate/WebView2MethodCatalog.vala',
+  'src/Generate/ErgoWebView2Emitter.vala',
+  'src/Generate/WebView2EventEmitter.vala',
+  'src/Generate/WebView2ComSyncEmitter.vala',
   'src/Generate/WideStringsEmitter.vala',
+  'src/Generate/Parser/ErgoNativeMapEntry.vala',
+  'src/Generate/Parser/SyncComSpec.vala',
   'src/Generate/Parser/WidgetBehaviorProfileSpec.vala',
   'src/Generate/Parser/WidgetConventionsFile.vala',
   'src/Generate/Parser/ApiFileEntry.vala',
@@ -111,7 +124,6 @@ regen_base_cmd = [
   '--filter', filter_file,
   '--api-list', api_list_file,
   '--out', vapidir,
-  '--debug-critical',
 ]
 
 regen_vapi = custom_target(
@@ -289,14 +301,80 @@ ergonomic_apps = [
   ],
 ]
 
-if get_option('build_ergonomic_examples') and mingw_cc.found() and have_mingw_glib
+if get_option('build_ergonomic_examples')
   track_b_pkgs = example_pkgs + ['win32-ui-controls', example_pkg_dialogs]
   ergo_vala_args_base = ['--vapidir', vapidir, '--profile=gobject']
   foreach pkg : track_b_pkgs
     ergo_vala_args_base += ['--pkg', pkg]
   endforeach
   ergo_link_libs = ['-luser32', '-lgdi32', '-lcomctl32']
-  foreach app : ergonomic_apps
+
+  if host_machine.system() == 'windows'
+    ergo_glib = dependency('glib-2.0', required: false)
+    ergo_gobject = dependency('gobject-2.0', required: false)
+    native_windres = find_program('windres', required: false)
+    if ergo_glib.found() and ergo_gobject.found()
+      foreach app : ergonomic_apps
+        app_name = app[0]
+        app_source = app[1]
+        app_companion = app[2]
+        app_extra_pkgs = app[3]
+        app_extra_libs = app[4]
+        ergo_vala_args = []
+        foreach a : ergo_vala_args_base
+          ergo_vala_args += a
+        endforeach
+        foreach pkg : app_extra_pkgs
+          ergo_vala_args += ['--pkg', pkg]
+        endforeach
+        ergo_vala_link = ['-X', '-mwindows'] + vala_win32_quiet_x
+        foreach lib : ergo_link_libs
+          ergo_vala_link += ['-X', lib]
+        endforeach
+        foreach lib : app_extra_libs
+          ergo_vala_link += ['-X', '-l' + lib]
+        endforeach
+        app_link = ['-mwindows'] + ergo_link_libs
+        foreach lib : app_extra_libs
+          app_link += ['-l' + lib]
+        endforeach
+        ergo_inputs = [files(app_source)]
+        foreach src : app_companion
+          ergo_inputs += src
+        endforeach
+        if get_option('regen_on_build')
+          ergo_inputs += regen_vapi
+        endif
+        ergo_objects = []
+        if app_name == 'widgets-demo' and native_windres.found()
+          ergo_objects += custom_target(
+            app_name + '-manifest',
+            input: widgets_demo_rc,
+            output: app_name + '-manifest.o',
+            command: [
+              native_windres,
+              '-I', project_root / 'examples',
+              '-i', '@INPUT@',
+              '-o', '@OUTPUT@',
+            ],
+          )
+        endif
+        executable(
+          app_name,
+          ergo_inputs,
+          vala_args: ergo_vala_args + ergo_vala_link,
+          c_args: vala_win32_c_quiet,
+          dependencies: [ergo_glib, ergo_gobject],
+          link_args: app_link,
+          objects: ergo_objects,
+          install: false,
+        )
+      endforeach
+    else
+      warning('Track B ergonomic demos skipped: install glib2-devel (MSYS2 UCRT64)')
+    endif
+  elif mingw_cc.found() and have_mingw_glib
+    foreach app : ergonomic_apps
     app_name = app[0]
     app_source = app[1]
     app_companion = app[2]
@@ -370,29 +448,34 @@ if get_option('build_ergonomic_examples') and mingw_cc.found() and have_mingw_gl
       depends: regen_dep,
       build_by_default: true,
     )
-  endforeach
-else
-  if mingw_cc.found() and not have_mingw_glib
-    warning(
-      'Track B ergonomic demos skipped: run ./scripts/setup-mingw-libs.sh',
-    )
-  elif not mingw_cc.found()
-    warning('Track B ergonomic demos skipped: x86_64-w64-mingw32-gcc not found')
+    endforeach
+  else
+  if host_machine.system() != 'windows'
+    if mingw_cc.found() and not have_mingw_glib
+      warning(
+        'Track B ergonomic demos skipped: run ./scripts/setup-mingw-libs.sh',
+      )
+    elif not mingw_cc.found()
+      warning('Track B ergonomic demos skipped: x86_64-w64-mingw32-gcc not found')
+    endif
+  endif
   endif
 endif
 
-# Phase 7 — WebView2 host (requires ./scripts/vendor-webview2-sdk.sh)
+# Phase 7 — WebView2 host
+# JSON/vapi regen still works on Linux; see scripts/regen-webview2-*.sh
 webview2_sdk = project_root / 'build/vendor/webview2'
 webview2_header = webview2_sdk / 'include' / 'WebView2.h'
 webview2_loader_x64 = webview2_sdk / 'x64' / 'WebView2Loader.dll'
 have_webview2_sdk = run_command('test', '-f', webview2_header, check: false).returncode() == 0
 vendor_webview2 = find_program('scripts/vendor-webview2-sdk.sh')
-webview2_plumbing_c = project_root / 'src' / 'webview2-plumbing.c'
-webview2_capture_spike_c = project_root / 'src' / 'webview2-capture-spike.c'
-webview2_link_libs = ['-lole32', '-luuid', '-lshlwapi', '-lshell32', '-ladvapi32']
+webview2_loader_c = project_root / 'src' / 'win32-ui-webview2-loader.c'
+webview2_com_glue_c = project_root / 'src' / 'win32-ui-webview2-com-glue.c'
+webview2_host_vala = files('src/win32-ui-webview2-host.vala')
+webview2_link_libs = ['-lole32', '-luuid', '-lshell32', '-ladvapi32']
 
 if have_webview2_sdk
-  webview2_vala_args = ['--vapidir', vapidir, '--profile=posix', '--pkg', 'webview2']
+  webview2_vala_args = ['--vapidir', vapidir, '--profile=posix', '--pkg', 'win32-ui-webview2']
   foreach pkg : example_pkgs
     webview2_vala_args += ['--pkg', pkg]
   endforeach
@@ -403,24 +486,32 @@ if have_webview2_sdk
   webview2_inc = include_directories(
     'build/vendor/webview2/include',
     'src',
+    'generated',
   )
 endif
 
 if have_webview2_sdk and host_machine.system() == 'windows'
   webview2_sources = [
-    files('examples/native/webview2-host-demo.vala'),
+    files('examples/native/webview2-host-native.vala'),
+    webview2_host_vala,
+    webview2_host_glue_vala,
+    webview2_com_sync_vala,
     wide_strings_vala,
-    webview2_plumbing_c,
-    webview2_capture_spike_c,
+    webview2_com_sync_c,
+    webview2_events_c,
+    webview2_events_bridge_vala,
+    webview2_loader_c,
+    webview2_com_glue_c,
   ]
   if get_option('regen_on_build')
     webview2_sources += regen_vapi
   endif
   webview2_host_exe = executable(
-    'webview2-host-demo',
+    'webview2-host-native',
     webview2_sources,
     vala_args: webview2_vala_args + webview2_vala_link,
     include_directories: webview2_inc,
+    c_args: vala_win32_c_quiet,
     link_args: ['-mwindows'] + webview2_link_libs,
     install: false,
   )
@@ -434,74 +525,87 @@ if have_webview2_sdk and host_machine.system() == 'windows'
     depends: webview2_host_exe,
     build_by_default: true,
   )
-elif have_webview2_sdk and mingw_cc.found()
-  webview2_build_dir = 'track-webview2-host-demo'
-  webview2_companion = [wide_strings_vala]
-  webview2_companion_c = []
-  webview2_vala_inputs = [files('examples/native/webview2-host-demo.vala')]
-  foreach src : webview2_companion
-    webview2_vala_inputs += src
-    parts = src.split('/')
-    vala_name = parts[-1]
-    webview2_companion_c += webview2_build_dir + '/' + vala_name.substring(0, -5) + '.c'
-  endforeach
-  webview2_plumbing_o = webview2_build_dir + '/webview2-plumbing.o'
-  webview2_capture_spike_o = webview2_build_dir + '/webview2-capture-spike.o'
-  custom_target(
-    'webview2-host-demo',
-    input: webview2_vala_inputs,
-    output: 'webview2-host-demo.exe',
-    command: [
-      'mkdir', '-p', webview2_build_dir,
-      '&&',
-      valac,
-      webview2_vala_args,
-      '-C',
-      '-d', webview2_build_dir,
-      '@INPUT@',
-      '&&',
-      mingw_cc,
-    ] + vala_win32_c_quiet + [
-      '-c',
-      '-I', webview2_sdk / 'include',
-      '-I', project_root / 'src',
-      '-o', webview2_plumbing_o,
-      webview2_plumbing_c,
-      '&&',
-      mingw_cc,
-    ] + vala_win32_c_quiet + [
-      '-c',
-      '-I', webview2_sdk / 'include',
-      '-I', project_root / 'src',
-      '-o', webview2_capture_spike_o,
-      webview2_capture_spike_c,
-      '&&',
-      mingw_cc,
-    ] + vala_win32_c_quiet + [
-      '-mwindows',
-      '-I', project_root / 'src',
-      '-o', '@OUTPUT@',
-      webview2_build_dir + '/webview2-host-demo.c',
-      webview2_companion_c,
-      webview2_plumbing_o,
-      webview2_capture_spike_o,
-    ] + webview2_link_libs + [
-      '&&',
-      'cp', webview2_loader_x64, webview2_build_dir + '/',
-      '&&',
-      'cp', webview2_loader_x64, '.',
-    ],
-    depends: regen_dep,
-    build_by_default: true,
-  )
-elif mingw_cc.found() or host_machine.system() == 'windows'
-  warning('webview2-host-demo skipped: run ./scripts/vendor-webview2-sdk.sh')
+
+  webview2_ergo_glib = dependency('glib-2.0', required: false)
+  webview2_ergo_gobject = dependency('gobject-2.0', required: false)
+  have_webview2_ergo = webview2_ergo_glib.found() and webview2_ergo_gobject.found()
+  if have_webview2_ergo
+    webview2_ergo_vala_args = ['--vapidir', vapidir, '--profile=gobject', '--pkg', 'win32-ui-webview2']
+    foreach pkg : example_pkgs
+      webview2_ergo_vala_args += ['--pkg', pkg]
+    endforeach
+    webview2_ergo_vala_args += ['--pkg', 'win32-ui-controls', '--pkg', example_pkg_dialogs]
+    webview2_ergo_link = ['-X', '-mwindows'] + vala_win32_quiet_x
+    foreach lib : webview2_link_libs
+      webview2_ergo_link += ['-X', lib]
+    endforeach
+    webview2_ergo_link += ['-X', 'comdlg32', '-X', 'comctl32']
+    webview2_ergo_sources = [
+      files('examples/webview2-demo.vala'),
+      webview2_ergo_vala,
+      webview2_host_vala,
+      webview2_host_glue_vala,
+      webview2_com_sync_vala,
+      control_strings_vala,
+      wide_strings_vala,
+      widgets_vala,
+      webview2_com_sync_c,
+      webview2_events_c,
+      webview2_events_bridge_vala,
+      webview2_loader_c,
+      webview2_com_glue_c,
+    ]
+    if get_option('regen_on_build')
+      webview2_ergo_sources += regen_vapi
+    endif
+    webview2_ergo_exe = executable(
+      'webview2-demo',
+      webview2_ergo_sources,
+      vala_args: webview2_ergo_vala_args + webview2_ergo_link,
+      include_directories: webview2_inc,
+      c_args: vala_win32_c_quiet,
+      dependencies: [webview2_ergo_glib, webview2_ergo_gobject],
+      link_args: ['-mwindows'] + webview2_link_libs + ['-lcomdlg32', '-lcomctl32'],
+      install: false,
+    )
+    custom_target(
+      'webview2-demo-copy-loader',
+      output: 'webview2-demo-loader.stamp',
+      command: [
+        'cp', webview2_loader_x64, meson.current_build_dir(),
+        '&&', 'touch', '@OUTPUT@',
+      ],
+      depends: webview2_ergo_exe,
+      build_by_default: true,
+    )
+  else
+    warning('webview2-demo skipped: install glib2-devel (MSYS2 UCRT64) for Track B WebView')
+  endif
+elif host_machine.system() == 'windows'
+  warning('webview2-host-native skipped: run ./scripts/vendor-webview2-sdk.sh')
 endif
 
 check_regen = find_program('scripts/check-regen.sh')
 compile_check = find_program('scripts/compile-check.sh')
 
 run_target('vendor-webview2', command: [vendor_webview2])
+
+webview2_filter = metadata_root / 'filters' / 'webview2.filter'
+webview2_api_list = metadata_root / 'webview2-api.files'
+regen_webview2_vapi_cmd = [
+  generate_binding,
+  '--metadata', metadata_root / 'webview2',
+  '--filter', webview2_filter,
+  '--api-list', webview2_api_list,
+  '--out', vapidir,
+  '--symbol-prefix', 'Microsoft.Web.WebView2.Win32',
+  '--no-basename-in-symbol',
+  '--cheader', 'win32-ui-webview2-sdk.h',
+  '--vala-namespace', 'Microsoft.Web.WebView2.Win32',
+  '--vapi-only',
+]
+
+run_target('regen-webview2-vapi', command: regen_webview2_vapi_cmd)
 
 run_target('regen', command: regen_base_cmd)
 
