@@ -3803,6 +3803,15 @@ namespace Win32.Ui.WindowsAndMessaging {
 	[CCode (cname = "STRSAFE_NO_TRUNCATION")]
 	public const uint STRSAFE_NO_TRUNCATION;
 
+	[CCode (cname = "STRSAFE_E_INSUFFICIENT_BUFFER")]
+	public const int STRSAFE_E_INSUFFICIENT_BUFFER;
+
+	[CCode (cname = "STRSAFE_E_INVALID_PARAMETER")]
+	public const int STRSAFE_E_INVALID_PARAMETER;
+
+	[CCode (cname = "STRSAFE_E_END_OF_FILE")]
+	public const int STRSAFE_E_END_OF_FILE;
+
 	[CCode (cname = "__WARNING_CYCLOMATIC_COMPLEXITY")]
 	public const uint __WARNING_CYCLOMATIC_COMPLEXITY;
 
@@ -8367,7 +8376,7 @@ namespace Win32.Ui.WindowsAndMessaging {
 	);
 
 	[CCode (cname = "CreateResourceIndexer")]
-	public extern void* create_resource_indexer (
+	public extern int create_resource_indexer (
 		[CCode (type_id = "LPCWSTR")] uint16* project_root,
 		[CCode (type_id = "LPCWSTR")] uint16* extension_dll_path,
 		out void** pp_resource_indexer
@@ -8379,7 +8388,7 @@ namespace Win32.Ui.WindowsAndMessaging {
 	);
 
 	[CCode (cname = "IndexFilePath")]
-	public extern void* index_file_path (
+	public extern int index_file_path (
 		void* resource_indexer,
 		[CCode (type_id = "LPCWSTR")] uint16* file_path,
 		[CCode (type_id = "LPCWSTR")] out uint16* pp_resource_uri,
@@ -8395,7 +8404,7 @@ namespace Win32.Ui.WindowsAndMessaging {
 	);
 
 	[CCode (cname = "MrmCreateResourceIndexer")]
-	public extern void* mrm_create_resource_indexer (
+	public extern int mrm_create_resource_indexer (
 		[CCode (type_id = "LPCWSTR")] uint16* package_family_name,
 		[CCode (type_id = "LPCWSTR")] uint16* project_root,
 		void* platform_version,
@@ -8404,7 +8413,7 @@ namespace Win32.Ui.WindowsAndMessaging {
 	);
 
 	[CCode (cname = "MrmCreateResourceIndexerFromPreviousSchemaFile")]
-	public extern void* mrm_create_resource_indexer_from_previous_schema_file (
+	public extern int mrm_create_resource_indexer_from_previous_schema_file (
 		[CCode (type_id = "LPCWSTR")] uint16* project_root,
 		void* platform_version,
 		[CCode (type_id = "LPCWSTR")] uint16* default_qualifiers,
@@ -8413,7 +8422,7 @@ namespace Win32.Ui.WindowsAndMessaging {
 	);
 
 	[CCode (cname = "MrmCreateResourceIndexerFromPreviousPriFile")]
-	public extern void* mrm_create_resource_indexer_from_previous_pri_file (
+	public extern int mrm_create_resource_indexer_from_previous_pri_file (
 		[CCode (type_id = "LPCWSTR")] uint16* project_root,
 		void* platform_version,
 		[CCode (type_id = "LPCWSTR")] uint16* default_qualifiers,
@@ -8422,7 +8431,7 @@ namespace Win32.Ui.WindowsAndMessaging {
 	);
 
 	[CCode (cname = "MrmCreateResourceIndexerFromPreviousSchemaData")]
-	public extern void* mrm_create_resource_indexer_from_previous_schema_data (
+	public extern int mrm_create_resource_indexer_from_previous_schema_data (
 		[CCode (type_id = "LPCWSTR")] uint16* project_root,
 		void* platform_version,
 		[CCode (type_id = "LPCWSTR")] uint16* default_qualifiers,
@@ -8432,7 +8441,7 @@ namespace Win32.Ui.WindowsAndMessaging {
 	);
 
 	[CCode (cname = "MrmCreateResourceIndexerFromPreviousPriData")]
-	public extern void* mrm_create_resource_indexer_from_previous_pri_data (
+	public extern int mrm_create_resource_indexer_from_previous_pri_data (
 		[CCode (type_id = "LPCWSTR")] uint16* project_root,
 		void* platform_version,
 		[CCode (type_id = "LPCWSTR")] uint16* default_qualifiers,
@@ -8442,7 +8451,7 @@ namespace Win32.Ui.WindowsAndMessaging {
 	);
 
 	[CCode (cname = "MrmCreateResourceIndexerWithFlags")]
-	public extern void* mrm_create_resource_indexer_with_flags (
+	public extern int mrm_create_resource_indexer_with_flags (
 		[CCode (type_id = "LPCWSTR")] uint16* package_family_name,
 		[CCode (type_id = "LPCWSTR")] uint16* project_root,
 		void* platform_version,
@@ -8452,7 +8461,7 @@ namespace Win32.Ui.WindowsAndMessaging {
 	);
 
 	[CCode (cname = "MrmIndexString")]
-	public extern void* mrm_index_string (
+	public extern int mrm_index_string (
 		void* indexer,
 		[CCode (type_id = "LPCWSTR")] uint16* resource_uri,
 		[CCode (type_id = "LPCWSTR")] uint16* resource_string,
@@ -8460,7 +8469,7 @@ namespace Win32.Ui.WindowsAndMessaging {
 	);
 
 	[CCode (cname = "MrmIndexEmbeddedData")]
-	public extern void* mrm_index_embedded_data (
+	public extern int mrm_index_embedded_data (
 		void* indexer,
 		[CCode (type_id = "LPCWSTR")] uint16* resource_uri,
 		void* embedded_data,
@@ -8469,7 +8478,7 @@ namespace Win32.Ui.WindowsAndMessaging {
 	);
 
 	[CCode (cname = "MrmIndexFile")]
-	public extern void* mrm_index_file (
+	public extern int mrm_index_file (
 		void* indexer,
 		[CCode (type_id = "LPCWSTR")] uint16* resource_uri,
 		[CCode (type_id = "LPCWSTR")] uint16* file_path,
@@ -8477,19 +8486,19 @@ namespace Win32.Ui.WindowsAndMessaging {
 	);
 
 	[CCode (cname = "MrmIndexFileAutoQualifiers")]
-	public extern void* mrm_index_file_auto_qualifiers (
+	public extern int mrm_index_file_auto_qualifiers (
 		void* indexer,
 		[CCode (type_id = "LPCWSTR")] uint16* file_path
 	);
 
 	[CCode (cname = "MrmIndexResourceContainerAutoQualifiers")]
-	public extern void* mrm_index_resource_container_auto_qualifiers (
+	public extern int mrm_index_resource_container_auto_qualifiers (
 		void* indexer,
 		[CCode (type_id = "LPCWSTR")] uint16* container_path
 	);
 
 	[CCode (cname = "MrmCreateResourceFile")]
-	public extern void* mrm_create_resource_file (
+	public extern int mrm_create_resource_file (
 		void* indexer,
 		void* packaging_mode,
 		void* packaging_options,
@@ -8497,7 +8506,7 @@ namespace Win32.Ui.WindowsAndMessaging {
 	);
 
 	[CCode (cname = "MrmCreateResourceFileWithChecksum")]
-	public extern void* mrm_create_resource_file_with_checksum (
+	public extern int mrm_create_resource_file_with_checksum (
 		void* indexer,
 		void* packaging_mode,
 		void* packaging_options,
@@ -8506,7 +8515,7 @@ namespace Win32.Ui.WindowsAndMessaging {
 	);
 
 	[CCode (cname = "MrmCreateResourceFileInMemory")]
-	public extern void* mrm_create_resource_file_in_memory (
+	public extern int mrm_create_resource_file_in_memory (
 		void* indexer,
 		void* packaging_mode,
 		void* packaging_options,
@@ -8515,24 +8524,24 @@ namespace Win32.Ui.WindowsAndMessaging {
 	);
 
 	[CCode (cname = "MrmPeekResourceIndexerMessages")]
-	public extern void* mrm_peek_resource_indexer_messages (
+	public extern int mrm_peek_resource_indexer_messages (
 		void* handle,
 		void* messages,
 		out uint num_msgs
 	);
 
 	[CCode (cname = "MrmDestroyIndexerAndMessages")]
-	public extern void* mrm_destroy_indexer_and_messages (
+	public extern int mrm_destroy_indexer_and_messages (
 		void* indexer
 	);
 
 	[CCode (cname = "MrmFreeMemory")]
-	public extern void* mrm_free_memory (
+	public extern int mrm_free_memory (
 		void* data
 	);
 
 	[CCode (cname = "MrmDumpPriFile")]
-	public extern void* mrm_dump_pri_file (
+	public extern int mrm_dump_pri_file (
 		[CCode (type_id = "LPCWSTR")] uint16* index_file_name,
 		[CCode (type_id = "LPCWSTR")] uint16* schema_pri_file,
 		void* dump_type,
@@ -8540,7 +8549,7 @@ namespace Win32.Ui.WindowsAndMessaging {
 	);
 
 	[CCode (cname = "MrmDumpPriFileInMemory")]
-	public extern void* mrm_dump_pri_file_in_memory (
+	public extern int mrm_dump_pri_file_in_memory (
 		[CCode (type_id = "LPCWSTR")] uint16* index_file_name,
 		[CCode (type_id = "LPCWSTR")] uint16* schema_pri_file,
 		void* dump_type,
@@ -8549,7 +8558,7 @@ namespace Win32.Ui.WindowsAndMessaging {
 	);
 
 	[CCode (cname = "MrmDumpPriDataInMemory")]
-	public extern void* mrm_dump_pri_data_in_memory (
+	public extern int mrm_dump_pri_data_in_memory (
 		void* input_pri_data,
 		uint input_pri_size,
 		void* schema_pri_data,
@@ -8560,14 +8569,14 @@ namespace Win32.Ui.WindowsAndMessaging {
 	);
 
 	[CCode (cname = "MrmCreateConfig")]
-	public extern void* mrm_create_config (
+	public extern int mrm_create_config (
 		void* platform_version,
 		[CCode (type_id = "LPCWSTR")] uint16* default_qualifiers,
 		[CCode (type_id = "LPCWSTR")] uint16* output_xml_file
 	);
 
 	[CCode (cname = "MrmCreateConfigInMemory")]
-	public extern void* mrm_create_config_in_memory (
+	public extern int mrm_create_config_in_memory (
 		void* platform_version,
 		[CCode (type_id = "LPCWSTR")] uint16* default_qualifiers,
 		out void** output_xml_data,
@@ -8575,7 +8584,7 @@ namespace Win32.Ui.WindowsAndMessaging {
 	);
 
 	[CCode (cname = "MrmGetPriFileContentChecksum")]
-	public extern void* mrm_get_pri_file_content_checksum (
+	public extern int mrm_get_pri_file_content_checksum (
 		[CCode (type_id = "LPCWSTR")] uint16* pri_file,
 		out uint checksum
 	);

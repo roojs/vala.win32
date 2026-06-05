@@ -141,7 +141,6 @@ public void host_destroy () {
 	g_host = null;
 }
 
-[CCode (cname = "vala_webview2_host_is_ready")]
 public bool host_is_ready () {
 	return g_host != null && g_host.ready;
 }

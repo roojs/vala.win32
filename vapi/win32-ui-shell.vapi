@@ -2,6 +2,12 @@
 
 [CCode (cprefix = "", cheader_filename = "windows.h")]
 namespace Win32.Ui.Shell {
+	[CCode (cname = "HLINK_E_FIRST")]
+	public const int HLINK_E_FIRST;
+
+	[CCode (cname = "HLINK_S_FIRST")]
+	public const int HLINK_S_FIRST;
+
 	[CCode (cname = "WM_CPL_LAUNCH")]
 	public const uint WM_CPL_LAUNCH;
 
@@ -2003,6 +2009,18 @@ namespace Win32.Ui.Shell {
 	[CCode (cname = "SMINV_ID")]
 	public const uint SMINV_ID;
 
+	[CCode (cname = "E_PREVIEWHANDLER_DRM_FAIL")]
+	public const int E_PREVIEWHANDLER_DRM_FAIL;
+
+	[CCode (cname = "E_PREVIEWHANDLER_NOAUTH")]
+	public const int E_PREVIEWHANDLER_NOAUTH;
+
+	[CCode (cname = "E_PREVIEWHANDLER_NOTFOUND")]
+	public const int E_PREVIEWHANDLER_NOTFOUND;
+
+	[CCode (cname = "E_PREVIEWHANDLER_CORRUPT")]
+	public const int E_PREVIEWHANDLER_CORRUPT;
+
 	[CCode (cname = "ISIOI_ICONFILE")]
 	public const uint ISIOI_ICONFILE;
 
@@ -2711,6 +2729,30 @@ namespace Win32.Ui.Shell {
 	[CCode (cname = "DLLVER_QFE_MASK")]
 	public const ulong DLLVER_QFE_MASK;
 
+	[CCode (cname = "WTS_E_FAILEDEXTRACTION")]
+	public const int WTS_E_FAILEDEXTRACTION;
+
+	[CCode (cname = "WTS_E_EXTRACTIONTIMEDOUT")]
+	public const int WTS_E_EXTRACTIONTIMEDOUT;
+
+	[CCode (cname = "WTS_E_SURROGATEUNAVAILABLE")]
+	public const int WTS_E_SURROGATEUNAVAILABLE;
+
+	[CCode (cname = "WTS_E_FASTEXTRACTIONNOTSUPPORTED")]
+	public const int WTS_E_FASTEXTRACTIONNOTSUPPORTED;
+
+	[CCode (cname = "WTS_E_DATAFILEUNAVAILABLE")]
+	public const int WTS_E_DATAFILEUNAVAILABLE;
+
+	[CCode (cname = "WTS_E_EXTRACTIONPENDING")]
+	public const int WTS_E_EXTRACTIONPENDING;
+
+	[CCode (cname = "WTS_E_EXTRACTIONBLOCKED")]
+	public const int WTS_E_EXTRACTIONBLOCKED;
+
+	[CCode (cname = "WTS_E_NOSTORAGEPROVIDERTHUMBNAILHANDLER")]
+	public const int WTS_E_NOSTORAGEPROVIDERTHUMBNAILHANDLER;
+
 	[CCode (cname = "SHIMGDEC_DEFAULT")]
 	public const uint SHIMGDEC_DEFAULT;
 
@@ -2719,6 +2761,27 @@ namespace Win32.Ui.Shell {
 
 	[CCode (cname = "SHIMGDEC_LOADFULL")]
 	public const uint SHIMGDEC_LOADFULL;
+
+	[CCode (cname = "E_NOTVALIDFORANIMATEDIMAGE")]
+	public const int E_NOTVALIDFORANIMATEDIMAGE;
+
+	[CCode (cname = "S_SYNCMGR_MISSINGITEMS")]
+	public const int S_SYNCMGR_MISSINGITEMS;
+
+	[CCode (cname = "S_SYNCMGR_RETRYSYNC")]
+	public const int S_SYNCMGR_RETRYSYNC;
+
+	[CCode (cname = "S_SYNCMGR_CANCELITEM")]
+	public const int S_SYNCMGR_CANCELITEM;
+
+	[CCode (cname = "S_SYNCMGR_CANCELALL")]
+	public const int S_SYNCMGR_CANCELALL;
+
+	[CCode (cname = "S_SYNCMGR_ITEMDELETED")]
+	public const int S_SYNCMGR_ITEMDELETED;
+
+	[CCode (cname = "S_SYNCMGR_ENUMITEMS")]
+	public const int S_SYNCMGR_ENUMITEMS;
 
 	[CCode (cname = "SYNCMGRPROGRESSITEM_STATUSTEXT")]
 	public const uint SYNCMGRPROGRESSITEM_STATUSTEXT;
@@ -2948,6 +3011,18 @@ namespace Win32.Ui.Shell {
 	[CCode (cname = "SCRM_VERIFYPW")]
 	public const uint SCRM_VERIFYP;
 
+	[CCode (cname = "E_FLAGS")]
+	public const int E_FLAGS;
+
+	[CCode (cname = "IS_E_EXEC_FAILED")]
+	public const int IS_E_EXEC_FAILED;
+
+	[CCode (cname = "URL_E_INVALID_SYNTAX")]
+	public const int URL_E_INVALID_SYNTAX;
+
+	[CCode (cname = "URL_E_UNREGISTERED_PROTOCOL")]
+	public const int URL_E_UNREGISTERED_PROTOCOL;
+
 	[CCode (cname = "CPLPAGE_MOUSE_BUTTONS")]
 	public const uint CPLPAGE_MOUSE_BUTTONS;
 
@@ -3079,6 +3154,360 @@ namespace Win32.Ui.Shell {
 
 	[CCode (cname = "DISPID_IADCCTL_DEFAULTCAT")]
 	public const uint DISPID_IADCCTL_DEFAULTCAT;
+
+	[CCode (cname = "COPYENGINE_S_YES")]
+	public const int COPYENGINE_S_YES;
+
+	[CCode (cname = "COPYENGINE_S_NOT_HANDLED")]
+	public const int COPYENGINE_S_NOT_HANDLED;
+
+	[CCode (cname = "COPYENGINE_S_USER_RETRY")]
+	public const int COPYENGINE_S_USER_RETRY;
+
+	[CCode (cname = "COPYENGINE_S_USER_IGNORED")]
+	public const int COPYENGINE_S_USER_IGNORED;
+
+	[CCode (cname = "COPYENGINE_S_MERGE")]
+	public const int COPYENGINE_S_MERGE;
+
+	[CCode (cname = "COPYENGINE_S_DONT_PROCESS_CHILDREN")]
+	public const int COPYENGINE_S_DONT_PROCESS_CHILDREN;
+
+	[CCode (cname = "COPYENGINE_S_ALREADY_DONE")]
+	public const int COPYENGINE_S_ALREADY_DONE;
+
+	[CCode (cname = "COPYENGINE_S_PENDING")]
+	public const int COPYENGINE_S_PENDING;
+
+	[CCode (cname = "COPYENGINE_S_KEEP_BOTH")]
+	public const int COPYENGINE_S_KEEP_BOTH;
+
+	[CCode (cname = "COPYENGINE_S_CLOSE_PROGRAM")]
+	public const int COPYENGINE_S_CLOSE_PROGRAM;
+
+	[CCode (cname = "COPYENGINE_S_COLLISIONRESOLVED")]
+	public const int COPYENGINE_S_COLLISIONRESOLVED;
+
+	[CCode (cname = "COPYENGINE_S_PROGRESS_PAUSE")]
+	public const int COPYENGINE_S_PROGRESS_PAUSE;
+
+	[CCode (cname = "COPYENGINE_E_USER_CANCELLED")]
+	public const int COPYENGINE_E_USER_CANCELLED;
+
+	[CCode (cname = "COPYENGINE_E_CANCELLED")]
+	public const int COPYENGINE_E_CANCELLED;
+
+	[CCode (cname = "COPYENGINE_E_REQUIRES_ELEVATION")]
+	public const int COPYENGINE_E_REQUIRES_ELEVATION;
+
+	[CCode (cname = "COPYENGINE_E_SAME_FILE")]
+	public const int COPYENGINE_E_SAME_FILE;
+
+	[CCode (cname = "COPYENGINE_E_DIFF_DIR")]
+	public const int COPYENGINE_E_DIFF_DIR;
+
+	[CCode (cname = "COPYENGINE_E_MANY_SRC_1_DEST")]
+	public const int COPYENGINE_E_MANY_SRC_1_DEST;
+
+	[CCode (cname = "COPYENGINE_E_DEST_SUBTREE")]
+	public const int COPYENGINE_E_DEST_SUBTREE;
+
+	[CCode (cname = "COPYENGINE_E_DEST_SAME_TREE")]
+	public const int COPYENGINE_E_DEST_SAME_TREE;
+
+	[CCode (cname = "COPYENGINE_E_FLD_IS_FILE_DEST")]
+	public const int COPYENGINE_E_FLD_IS_FILE_DEST;
+
+	[CCode (cname = "COPYENGINE_E_FILE_IS_FLD_DEST")]
+	public const int COPYENGINE_E_FILE_IS_FLD_DEST;
+
+	[CCode (cname = "COPYENGINE_E_FILE_TOO_LARGE")]
+	public const int COPYENGINE_E_FILE_TOO_LARGE;
+
+	[CCode (cname = "COPYENGINE_E_REMOVABLE_FULL")]
+	public const int COPYENGINE_E_REMOVABLE_FULL;
+
+	[CCode (cname = "COPYENGINE_E_DEST_IS_RO_CD")]
+	public const int COPYENGINE_E_DEST_IS_RO_CD;
+
+	[CCode (cname = "COPYENGINE_E_DEST_IS_RW_CD")]
+	public const int COPYENGINE_E_DEST_IS_RW_CD;
+
+	[CCode (cname = "COPYENGINE_E_DEST_IS_R_CD")]
+	public const int COPYENGINE_E_DEST_IS_R_CD;
+
+	[CCode (cname = "COPYENGINE_E_DEST_IS_RO_DVD")]
+	public const int COPYENGINE_E_DEST_IS_RO_DVD;
+
+	[CCode (cname = "COPYENGINE_E_DEST_IS_RW_DVD")]
+	public const int COPYENGINE_E_DEST_IS_RW_DVD;
+
+	[CCode (cname = "COPYENGINE_E_DEST_IS_R_DVD")]
+	public const int COPYENGINE_E_DEST_IS_R_DVD;
+
+	[CCode (cname = "COPYENGINE_E_SRC_IS_RO_CD")]
+	public const int COPYENGINE_E_SRC_IS_RO_CD;
+
+	[CCode (cname = "COPYENGINE_E_SRC_IS_RW_CD")]
+	public const int COPYENGINE_E_SRC_IS_RW_CD;
+
+	[CCode (cname = "COPYENGINE_E_SRC_IS_R_CD")]
+	public const int COPYENGINE_E_SRC_IS_R_CD;
+
+	[CCode (cname = "COPYENGINE_E_SRC_IS_RO_DVD")]
+	public const int COPYENGINE_E_SRC_IS_RO_DVD;
+
+	[CCode (cname = "COPYENGINE_E_SRC_IS_RW_DVD")]
+	public const int COPYENGINE_E_SRC_IS_RW_DVD;
+
+	[CCode (cname = "COPYENGINE_E_SRC_IS_R_DVD")]
+	public const int COPYENGINE_E_SRC_IS_R_DVD;
+
+	[CCode (cname = "COPYENGINE_E_INVALID_FILES_SRC")]
+	public const int COPYENGINE_E_INVALID_FILES_SRC;
+
+	[CCode (cname = "COPYENGINE_E_INVALID_FILES_DEST")]
+	public const int COPYENGINE_E_INVALID_FILES_DEST;
+
+	[CCode (cname = "COPYENGINE_E_PATH_TOO_DEEP_SRC")]
+	public const int COPYENGINE_E_PATH_TOO_DEEP_SRC;
+
+	[CCode (cname = "COPYENGINE_E_PATH_TOO_DEEP_DEST")]
+	public const int COPYENGINE_E_PATH_TOO_DEEP_DEST;
+
+	[CCode (cname = "COPYENGINE_E_ROOT_DIR_SRC")]
+	public const int COPYENGINE_E_ROOT_DIR_SRC;
+
+	[CCode (cname = "COPYENGINE_E_ROOT_DIR_DEST")]
+	public const int COPYENGINE_E_ROOT_DIR_DEST;
+
+	[CCode (cname = "COPYENGINE_E_ACCESS_DENIED_SRC")]
+	public const int COPYENGINE_E_ACCESS_DENIED_SRC;
+
+	[CCode (cname = "COPYENGINE_E_ACCESS_DENIED_DEST")]
+	public const int COPYENGINE_E_ACCESS_DENIED_DEST;
+
+	[CCode (cname = "COPYENGINE_E_PATH_NOT_FOUND_SRC")]
+	public const int COPYENGINE_E_PATH_NOT_FOUND_SRC;
+
+	[CCode (cname = "COPYENGINE_E_PATH_NOT_FOUND_DEST")]
+	public const int COPYENGINE_E_PATH_NOT_FOUND_DEST;
+
+	[CCode (cname = "COPYENGINE_E_NET_DISCONNECT_SRC")]
+	public const int COPYENGINE_E_NET_DISCONNECT_SRC;
+
+	[CCode (cname = "COPYENGINE_E_NET_DISCONNECT_DEST")]
+	public const int COPYENGINE_E_NET_DISCONNECT_DEST;
+
+	[CCode (cname = "COPYENGINE_E_SHARING_VIOLATION_SRC")]
+	public const int COPYENGINE_E_SHARING_VIOLATION_SRC;
+
+	[CCode (cname = "COPYENGINE_E_SHARING_VIOLATION_DEST")]
+	public const int COPYENGINE_E_SHARING_VIOLATION_DEST;
+
+	[CCode (cname = "COPYENGINE_E_ALREADY_EXISTS_NORMAL")]
+	public const int COPYENGINE_E_ALREADY_EXISTS_NORMAL;
+
+	[CCode (cname = "COPYENGINE_E_ALREADY_EXISTS_READONLY")]
+	public const int COPYENGINE_E_ALREADY_EXISTS_READONLY;
+
+	[CCode (cname = "COPYENGINE_E_ALREADY_EXISTS_SYSTEM")]
+	public const int COPYENGINE_E_ALREADY_EXISTS_SYSTEM;
+
+	[CCode (cname = "COPYENGINE_E_ALREADY_EXISTS_FOLDER")]
+	public const int COPYENGINE_E_ALREADY_EXISTS_FOLDER;
+
+	[CCode (cname = "COPYENGINE_E_STREAM_LOSS")]
+	public const int COPYENGINE_E_STREAM_LOSS;
+
+	[CCode (cname = "COPYENGINE_E_EA_LOSS")]
+	public const int COPYENGINE_E_EA_LOSS;
+
+	[CCode (cname = "COPYENGINE_E_PROPERTY_LOSS")]
+	public const int COPYENGINE_E_PROPERTY_LOSS;
+
+	[CCode (cname = "COPYENGINE_E_PROPERTIES_LOSS")]
+	public const int COPYENGINE_E_PROPERTIES_LOSS;
+
+	[CCode (cname = "COPYENGINE_E_ENCRYPTION_LOSS")]
+	public const int COPYENGINE_E_ENCRYPTION_LOSS;
+
+	[CCode (cname = "COPYENGINE_E_DISK_FULL")]
+	public const int COPYENGINE_E_DISK_FULL;
+
+	[CCode (cname = "COPYENGINE_E_DISK_FULL_CLEAN")]
+	public const int COPYENGINE_E_DISK_FULL_CLEAN;
+
+	[CCode (cname = "COPYENGINE_E_EA_NOT_SUPPORTED")]
+	public const int COPYENGINE_E_EA_NOT_SUPPORTED;
+
+	[CCode (cname = "COPYENGINE_E_CANT_REACH_SOURCE")]
+	public const int COPYENGINE_E_CANT_REACH_SOURCE;
+
+	[CCode (cname = "COPYENGINE_E_RECYCLE_UNKNOWN_ERROR")]
+	public const int COPYENGINE_E_RECYCLE_UNKNOWN_ERROR;
+
+	[CCode (cname = "COPYENGINE_E_RECYCLE_FORCE_NUKE")]
+	public const int COPYENGINE_E_RECYCLE_FORCE_NUKE;
+
+	[CCode (cname = "COPYENGINE_E_RECYCLE_SIZE_TOO_BIG")]
+	public const int COPYENGINE_E_RECYCLE_SIZE_TOO_BIG;
+
+	[CCode (cname = "COPYENGINE_E_RECYCLE_PATH_TOO_LONG")]
+	public const int COPYENGINE_E_RECYCLE_PATH_TOO_LONG;
+
+	[CCode (cname = "COPYENGINE_E_RECYCLE_BIN_NOT_FOUND")]
+	public const int COPYENGINE_E_RECYCLE_BIN_NOT_FOUND;
+
+	[CCode (cname = "COPYENGINE_E_NEWFILE_NAME_TOO_LONG")]
+	public const int COPYENGINE_E_NEWFILE_NAME_TOO_LONG;
+
+	[CCode (cname = "COPYENGINE_E_NEWFOLDER_NAME_TOO_LONG")]
+	public const int COPYENGINE_E_NEWFOLDER_NAME_TOO_LONG;
+
+	[CCode (cname = "COPYENGINE_E_DIR_NOT_EMPTY")]
+	public const int COPYENGINE_E_DIR_NOT_EMPTY;
+
+	[CCode (cname = "COPYENGINE_E_FAT_MAX_IN_ROOT")]
+	public const int COPYENGINE_E_FAT_MAX_IN_ROOT;
+
+	[CCode (cname = "COPYENGINE_E_ACCESSDENIED_READONLY")]
+	public const int COPYENGINE_E_ACCESSDENIED_READONLY;
+
+	[CCode (cname = "COPYENGINE_E_REDIRECTED_TO_WEBPAGE")]
+	public const int COPYENGINE_E_REDIRECTED_TO_WEBPAGE;
+
+	[CCode (cname = "COPYENGINE_E_SERVER_BAD_FILE_TYPE")]
+	public const int COPYENGINE_E_SERVER_BAD_FILE_TYPE;
+
+	[CCode (cname = "COPYENGINE_E_INTERNET_ITEM_UNAVAILABLE")]
+	public const int COPYENGINE_E_INTERNET_ITEM_UNAVAILABLE;
+
+	[CCode (cname = "COPYENGINE_E_CANNOT_MOVE_FROM_RECYCLE_BIN")]
+	public const int COPYENGINE_E_CANNOT_MOVE_FROM_RECYCLE_BIN;
+
+	[CCode (cname = "COPYENGINE_E_CANNOT_MOVE_SHARED_FOLDER")]
+	public const int COPYENGINE_E_CANNOT_MOVE_SHARED_FOLDER;
+
+	[CCode (cname = "COPYENGINE_E_INTERNET_ITEM_STORAGE_PROVIDER_ERROR")]
+	public const int COPYENGINE_E_INTERNET_ITEM_STORAGE_PROVIDER_ERROR;
+
+	[CCode (cname = "COPYENGINE_E_INTERNET_ITEM_STORAGE_PROVIDER_PAUSED")]
+	public const int COPYENGINE_E_INTERNET_ITEM_STORAGE_PROVIDER_PAUSED;
+
+	[CCode (cname = "COPYENGINE_E_REQUIRES_EDP_CONSENT")]
+	public const int COPYENGINE_E_REQUIRES_EDP_CONSENT;
+
+	[CCode (cname = "COPYENGINE_E_BLOCKED_BY_EDP_POLICY")]
+	public const int COPYENGINE_E_BLOCKED_BY_EDP_POLICY;
+
+	[CCode (cname = "COPYENGINE_E_REQUIRES_EDP_CONSENT_FOR_REMOVABLE_DRIVE")]
+	public const int COPYENGINE_E_REQUIRES_EDP_CONSENT_FOR_REMOVABLE_DRIVE;
+
+	[CCode (cname = "COPYENGINE_E_BLOCKED_BY_EDP_FOR_REMOVABLE_DRIVE")]
+	public const int COPYENGINE_E_BLOCKED_BY_EDP_FOR_REMOVABLE_DRIVE;
+
+	[CCode (cname = "COPYENGINE_E_RMS_REQUIRES_EDP_CONSENT_FOR_REMOVABLE_DRIVE")]
+	public const int COPYENGINE_E_RMS_REQUIRES_EDP_CONSENT_FOR_REMOVABLE_DRIVE;
+
+	[CCode (cname = "COPYENGINE_E_RMS_BLOCKED_BY_EDP_FOR_REMOVABLE_DRIVE")]
+	public const int COPYENGINE_E_RMS_BLOCKED_BY_EDP_FOR_REMOVABLE_DRIVE;
+
+	[CCode (cname = "COPYENGINE_E_WARNED_BY_DLP_POLICY")]
+	public const int COPYENGINE_E_WARNED_BY_DLP_POLICY;
+
+	[CCode (cname = "COPYENGINE_E_BLOCKED_BY_DLP_POLICY")]
+	public const int COPYENGINE_E_BLOCKED_BY_DLP_POLICY;
+
+	[CCode (cname = "COPYENGINE_E_SILENT_FAIL_BY_DLP_POLICY")]
+	public const int COPYENGINE_E_SILENT_FAIL_BY_DLP_POLICY;
+
+	[CCode (cname = "NETCACHE_E_NEGATIVE_CACHE")]
+	public const int NETCACHE_E_NEGATIVE_CACHE;
+
+	[CCode (cname = "EXECUTE_E_LAUNCH_APPLICATION")]
+	public const int EXECUTE_E_LAUNCH_APPLICATION;
+
+	[CCode (cname = "SHELL_E_WRONG_BITDEPTH")]
+	public const int SHELL_E_WRONG_BITDEPTH;
+
+	[CCode (cname = "LINK_E_DELETE")]
+	public const int LINK_E_DELETE;
+
+	[CCode (cname = "STORE_E_NEWER_VERSION_AVAILABLE")]
+	public const int STORE_E_NEWER_VERSION_AVAILABLE;
+
+	[CCode (cname = "E_FILE_PLACEHOLDER_NOT_INITIALIZED")]
+	public const int E_FILE_PLACEHOLDER_NOT_INITIALIZED;
+
+	[CCode (cname = "E_FILE_PLACEHOLDER_VERSION_MISMATCH")]
+	public const int E_FILE_PLACEHOLDER_VERSION_MISMATCH;
+
+	[CCode (cname = "E_FILE_PLACEHOLDER_SERVER_TIMED_OUT")]
+	public const int E_FILE_PLACEHOLDER_SERVER_TIMED_OUT;
+
+	[CCode (cname = "E_FILE_PLACEHOLDER_STORAGEPROVIDER_NOT_FOUND")]
+	public const int E_FILE_PLACEHOLDER_STORAGEPROVIDER_NOT_FOUND;
+
+	[CCode (cname = "CAMERAROLL_E_NO_DOWNSAMPLING_REQUIRED")]
+	public const int CAMERAROLL_E_NO_DOWNSAMPLING_REQUIRED;
+
+	[CCode (cname = "E_ACTIVATIONDENIED_USERCLOSE")]
+	public const int E_ACTIVATIONDENIED_USERCLOSE;
+
+	[CCode (cname = "E_ACTIVATIONDENIED_SHELLERROR")]
+	public const int E_ACTIVATIONDENIED_SHELLERROR;
+
+	[CCode (cname = "E_ACTIVATIONDENIED_SHELLRESTART")]
+	public const int E_ACTIVATIONDENIED_SHELLRESTART;
+
+	[CCode (cname = "E_ACTIVATIONDENIED_UNEXPECTED")]
+	public const int E_ACTIVATIONDENIED_UNEXPECTED;
+
+	[CCode (cname = "E_ACTIVATIONDENIED_SHELLNOTREADY")]
+	public const int E_ACTIVATIONDENIED_SHELLNOTREADY;
+
+	[CCode (cname = "LIBRARY_E_NO_SAVE_LOCATION")]
+	public const int LIBRARY_E_NO_SAVE_LOCATION;
+
+	[CCode (cname = "LIBRARY_E_NO_ACCESSIBLE_LOCATION")]
+	public const int LIBRARY_E_NO_ACCESSIBLE_LOCATION;
+
+	[CCode (cname = "E_USERTILE_UNSUPPORTEDFILETYPE")]
+	public const int E_USERTILE_UNSUPPORTEDFILETYPE;
+
+	[CCode (cname = "E_USERTILE_CHANGEDISABLED")]
+	public const int E_USERTILE_CHANGEDISABLED;
+
+	[CCode (cname = "E_USERTILE_LARGEORDYNAMIC")]
+	public const int E_USERTILE_LARGEORDYNAMIC;
+
+	[CCode (cname = "E_USERTILE_VIDEOFRAMESIZE")]
+	public const int E_USERTILE_VIDEOFRAMESIZE;
+
+	[CCode (cname = "E_USERTILE_FILESIZE")]
+	public const int E_USERTILE_FILESIZE;
+
+	[CCode (cname = "IMM_ACC_DOCKING_E_INSUFFICIENTHEIGHT")]
+	public const int IMM_ACC_DOCKING_E_INSUFFICIENTHEIGHT;
+
+	[CCode (cname = "IMM_ACC_DOCKING_E_DOCKOCCUPIED")]
+	public const int IMM_ACC_DOCKING_E_DOCKOCCUPIED;
+
+	[CCode (cname = "IMSC_E_SHELL_COMPONENT_STARTUP_FAILURE")]
+	public const int IMSC_E_SHELL_COMPONENT_STARTUP_FAILURE;
+
+	[CCode (cname = "SHC_E_SHELL_COMPONENT_STARTUP_FAILURE")]
+	public const int SHC_E_SHELL_COMPONENT_STARTUP_FAILURE;
+
+	[CCode (cname = "E_TILE_NOTIFICATIONS_PLATFORM_FAILURE")]
+	public const int E_TILE_NOTIFICATIONS_PLATFORM_FAILURE;
+
+	[CCode (cname = "E_SHELL_EXTENSION_BLOCKED")]
+	public const int E_SHELL_EXTENSION_BLOCKED;
+
+	[CCode (cname = "E_IMAGEFEED_CHANGEDISABLED")]
+	public const int E_IMAGEFEED_CHANGEDISABLED;
 
 	[CCode (cname = "GPFIDL_DEFAULT")]
 	public const int GPFIDL_DEFAULT;
@@ -8346,19 +8775,19 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "LPFNDFMCALLBACK", has_target = false)]
-	public delegate void* LPFNDFMCALLBACK (
-		void* psf,
+	public delegate int LPFNDFMCALLBACK (
+		IShellFolder psf,
 		[CCode (type_id = "HWND")] void* hwnd,
-		void* pdtobj,
+		IDataObject pdtobj,
 		uint u_msg,
 		ulong w_param,
 		int64 l_param
 	);
 
 	[CCode (cname = "LPFNVIEWCALLBACK", has_target = false)]
-	public delegate void* LPFNVIEWCALLBACK (
-		void* psv_outer,
-		void* psf,
+	public delegate int LPFNVIEWCALLBACK (
+		IShellView psv_outer,
+		IShellFolder psf,
 		[CCode (type_id = "HWND")] void* hwnd_main,
 		uint u_msg,
 		ulong w_param,
@@ -8366,18 +8795,18 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "PFNCANSHAREFOLDERW", has_target = false)]
-	public delegate void* PFNCANSHAREFOLDER (
+	public delegate int PFNCANSHAREFOLDER (
 		[CCode (type_id = "LPCWSTR")] uint16* psz_path
 	);
 
 	[CCode (cname = "PFNSHOWSHAREFOLDERUIW", has_target = false)]
-	public delegate void* PFNSHOWSHAREFOLDERUI (
+	public delegate int PFNSHOWSHAREFOLDERUI (
 		[CCode (type_id = "HWND")] void* hwnd_parent,
 		[CCode (type_id = "LPCWSTR")] uint16* psz_path
 	);
 
 	[CCode (cname = "DLLGETVERSIONPROC", has_target = false)]
-	public delegate void* DLLGETVERSIONPROC (
+	public delegate int DLLGETVERSIONPROC (
 		ref DLLVERSIONINFO param0
 	);
 
@@ -8527,9 +8956,9 @@ namespace Win32.Ui.Shell {
 	[CCode (cname = "SV2CVW2_PARAMS")]
 	public struct SV2CVW2PARAMS {
 		public uint cbSize;
-		public void* psvPrev;
+		public IShellView psvPrev;
 		public void** pfs;
-		public void* psbOwner;
+		public IShellBrowser psbOwner;
 		public Win32.Foundation.Rect* prcView;
 		public void** pvid;
 		public void* hwndView;
@@ -8656,7 +9085,7 @@ namespace Win32.Ui.Shell {
 
 	[CCode (cname = "NSTCCUSTOMDRAW")]
 	public struct NSTCCUSTOMDRA {
-		public void* psi;
+		public IShellItem psi;
 		public uint uItemState;
 		public uint nstcis;
 		public unowned uint16* pszText;
@@ -8822,7 +9251,7 @@ namespace Win32.Ui.Shell {
 
 	[CCode (cname = "SHARDAPPIDINFO")]
 	public struct SHARDAPPIDINFO {
-		public void* psi;
+		public IShellItem psi;
 		public unowned uint16* pszAppID;
 	}
 
@@ -8919,20 +9348,20 @@ namespace Win32.Ui.Shell {
 	[CCode (cname = "SFV_CREATE")]
 	public struct SfvCREATE {
 		public uint cbSize;
-		public void* pshf;
-		public void* psvOuter;
-		public void* psfvcb;
+		public IShellFolder pshf;
+		public IShellView psvOuter;
+		public IShellFolderViewCB psfvcb;
 	}
 
 	[CCode (cname = "DEFCONTEXTMENU")]
 	public struct DEFCONTEXTMENU {
 		public void* hwnd;
-		public void* pcmcb;
+		public IContextMenuCB pcmcb;
 		public void** pidlFolder;
-		public void* psf;
+		public IShellFolder psf;
 		public uint cidl;
 		public void*** apidl;
-		public void* punkAssociationInfo;
+		public IUnknown punkAssociationInfo;
 		public uint cKeys;
 		public void** aKeys;
 	}
@@ -8945,14 +9374,14 @@ namespace Win32.Ui.Shell {
 		public uint idCmdFirst;
 		public uint idDefMax;
 		public CMINVOKECOMMANDINFO* pici;
-		public void* punkSite;
+		public IUnknown punkSite;
 	}
 
 	[CCode (cname = "CSFV")]
 	public struct CSFV {
 		public uint cbSize;
-		public void* pshf;
-		public void* psvOuter;
+		public IShellFolder pshf;
+		public IShellView psvOuter;
 		public void** pidl;
 		public int lEvents;
 		public LPFNVIEWCALLBACK pfnCallback;
@@ -8986,7 +9415,7 @@ namespace Win32.Ui.Shell {
 		public void* crBtnDk;
 		public ushort wViewMode;
 		public ushort wAlign;
-		public void* psf;
+		public IShellFolder psf;
 		public void** pidl;
 	}
 
@@ -9258,7 +9687,7 @@ namespace Win32.Ui.Shell {
 
 	[CCode (cname = "CONFIRM_CONFLICT_ITEM")]
 	public struct CONFIRMCONFLICTITEM {
-		public void* pShellItem;
+		public IShellItem2 pShellItem;
 		public unowned uint16* pszOriginalName;
 		public unowned uint16* pszAlternateName;
 		public unowned uint16* pszLocationShort;
@@ -9333,24 +9762,24 @@ namespace Win32.Ui.Shell {
 	[CCode (cname = "BASEBROWSERDATAXP")]
 	public struct BASEBROWSERDATAXP {
 		public void* _hwnd;
-		public void* _ptl;
-		public void* _phlf;
-		public void* _pautoWB2;
-		public void* _pautoEDS;
-		public void* _pautoSS;
+		public ITravelLog _ptl;
+		public IHlinkFrame _phlf;
+		public IWebBrowser2 _pautoWB2;
+		public IExpDispSupportXP _pautoEDS;
+		public IShellService _pautoSS;
 		public int _eSecureLockIcon;
 		public uint _bitfield;
 		public uint _uActivateState;
 		public void** _pidlViewState;
-		public void* _pctView;
+		public IOleCommandTarget _pctView;
 		public void** _pidlCur;
-		public void* _psv;
-		public void* _psf;
+		public IShellView _psv;
+		public IShellFolder _psf;
 		public void* _hwndView;
 		public unowned uint16* _pszTitleCur;
 		public void** _pidlPending;
-		public void* _psvPending;
-		public void* _psfPending;
+		public IShellView _psvPending;
+		public IShellFolder _psfPending;
 		public void* _hwndViewPending;
 		public unowned uint16* _pszTitlePending;
 		public int _fIsViewMSHTML;
@@ -9363,24 +9792,24 @@ namespace Win32.Ui.Shell {
 	[CCode (cname = "BASEBROWSERDATALH")]
 	public struct BASEBROWSERDATALH {
 		public void* _hwnd;
-		public void* _ptl;
-		public void* _phlf;
-		public void* _pautoWB2;
-		public void* _pautoEDS;
-		public void* _pautoSS;
+		public ITravelLog _ptl;
+		public IHlinkFrame _phlf;
+		public IWebBrowser2 _pautoWB2;
+		public IExpDispSupport _pautoEDS;
+		public IShellService _pautoSS;
 		public int _eSecureLockIcon;
 		public uint _bitfield;
 		public uint _uActivateState;
 		public void** _pidlViewState;
-		public void* _pctView;
+		public IOleCommandTarget _pctView;
 		public void** _pidlCur;
-		public void* _psv;
-		public void* _psf;
+		public IShellView _psv;
+		public IShellFolder _psf;
 		public void* _hwndView;
 		public unowned uint16* _pszTitleCur;
 		public void** _pidlPending;
-		public void* _psvPending;
-		public void* _psfPending;
+		public IShellView _psvPending;
+		public IShellFolder _psfPending;
 		public void* _hwndViewPending;
 		public unowned uint16* _pszTitlePending;
 		public int _fIsViewMSHTML;
@@ -9393,7 +9822,7 @@ namespace Win32.Ui.Shell {
 
 	[CCode (cname = "TOOLBARITEM")]
 	public struct TOOLBARITEM {
-		public void* ptbar;
+		public IDockingWindow ptbar;
 		public Win32.Foundation.Rect rcBorderTool;
 		public unowned uint16* pwszItem;
 		public int fShow;
@@ -9440,6 +9869,12428 @@ namespace Win32.Ui.Shell {
 		public unowned uint16* pcszVerb;
 	}
 
+	[CCode (cheader_filename = "objbase.h", cname = "IUnknown", ref_function = "", unref_function = "")]
+	public interface IUnknown {
+		[CCode (cname = "QueryInterface")]
+		public abstract int query_interface (void* riid, void** ppv_object);
+
+		[CCode (cname = "AddRef")]
+		public abstract uint add_ref ();
+
+		[CCode (cname = "Release")]
+		public abstract uint release ();
+	}
+
+	[CCode (cname = "INotifyReplica", ref_function = "", unref_function = "")]
+	public interface INotifyReplica : IUnknown {
+		[CCode (cname = "YouAreAReplica")]
+		public abstract int you_are_areplica (
+			uint ulc_other_replicas,
+			void* rgpmk_other_replicas
+		);
+
+	}
+
+	[CCode (cname = "IContextMenu", ref_function = "", unref_function = "")]
+	public interface IContextMenu : IUnknown {
+		[CCode (cname = "QueryContextMenu")]
+		public abstract int query_context_menu (
+			[CCode (type_id = "HMENU")] void* hmenu,
+			uint index_menu,
+			uint id_cmd_first,
+			uint id_cmd_last,
+			uint u_flags
+		);
+
+		[CCode (cname = "InvokeCommand")]
+		public abstract int invoke_command (
+			ref CMINVOKECOMMANDINFO pici
+		);
+
+		[CCode (cname = "GetCommandString")]
+		public abstract int get_command_string (
+			void* id_cmd,
+			uint u_type,
+			out uint p_reserved,
+			void* psz_name,
+			uint cch_max
+		);
+
+	}
+
+	[CCode (cname = "IContextMenu2", ref_function = "", unref_function = "")]
+	public interface IContextMenu2 : IContextMenu {
+		[CCode (cname = "HandleMenuMsg")]
+		public abstract int handle_menu_msg (
+			uint u_msg,
+			ulong w_param,
+			int64 l_param
+		);
+
+	}
+
+	[CCode (cname = "IContextMenu3", ref_function = "", unref_function = "")]
+	public interface IContextMenu3 : IContextMenu2 {
+		[CCode (cname = "HandleMenuMsg2")]
+		public abstract int handle_menu_msg2 (
+			uint u_msg,
+			ulong w_param,
+			int64 l_param,
+			out int64 pl_result
+		);
+
+	}
+
+	[CCode (cname = "IExecuteCommand", ref_function = "", unref_function = "")]
+	public interface IExecuteCommand : IUnknown {
+		[CCode (cname = "SetKeyState")]
+		public abstract int set_key_state (
+			uint grf_key_state
+		);
+
+		[CCode (cname = "SetParameters")]
+		public abstract int set_parameters (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_parameters
+		);
+
+		[CCode (cname = "SetPosition")]
+		public abstract int set_position (
+			Win32.Foundation.Point pt
+		);
+
+		[CCode (cname = "SetShowWindow")]
+		public abstract int set_show_window (
+			int n_show
+		);
+
+		[CCode (cname = "SetNoShowUI")]
+		public abstract int set_no_show_ui (
+			int f_no_show_ui
+		);
+
+		[CCode (cname = "SetDirectory")]
+		public abstract int set_directory (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_directory
+		);
+
+		[CCode (cname = "Execute")]
+		public abstract int execute (
+		);
+
+	}
+
+	[CCode (cname = "IPersistFolder", ref_function = "", unref_function = "")]
+	public interface IPersistFolder : IPersist {
+		[CCode (cname = "Initialize")]
+		public abstract int initialize (
+			void* pidl
+		);
+
+	}
+
+	[CCode (cname = "IRunnableTask", ref_function = "", unref_function = "")]
+	public interface IRunnableTask : IUnknown {
+		[CCode (cname = "Run")]
+		public abstract int run (
+		);
+
+		[CCode (cname = "Kill")]
+		public abstract int kill (
+			int b_wait
+		);
+
+		[CCode (cname = "Suspend")]
+		public abstract int suspend (
+		);
+
+		[CCode (cname = "Resume")]
+		public abstract int resume (
+		);
+
+		[CCode (cname = "IsRunning")]
+		public abstract uint is_running (
+		);
+
+	}
+
+	[CCode (cname = "IShellTaskScheduler", ref_function = "", unref_function = "")]
+	public interface IShellTaskScheduler : IUnknown {
+		[CCode (cname = "AddTask")]
+		public abstract int add_task (
+			IRunnableTask prt,
+			void* rtoid,
+			void* l_param,
+			uint dw_priority
+		);
+
+		[CCode (cname = "RemoveTasks")]
+		public abstract int remove_tasks (
+			void* rtoid,
+			void* l_param,
+			int b_wait_if_running
+		);
+
+		[CCode (cname = "CountTasks")]
+		public abstract uint count_tasks (
+			void* rtoid
+		);
+
+		[CCode (cname = "Status")]
+		public abstract int status (
+			uint dw_release_status,
+			uint dw_thread_timeout
+		);
+
+	}
+
+	[CCode (cname = "IPersistFolder2", ref_function = "", unref_function = "")]
+	public interface IPersistFolder2 : IPersistFolder {
+		[CCode (cname = "GetCurFolder")]
+		public abstract int get_cur_folder (
+			out out void* ppidl
+		);
+
+	}
+
+	[CCode (cname = "IPersistFolder3", ref_function = "", unref_function = "")]
+	public interface IPersistFolder3 : IPersistFolder2 {
+		[CCode (cname = "InitializeEx")]
+		public abstract int initialize_ex (
+			IBindCtx pbc,
+			void* pidl_root,
+			ref PERSISTFOLDERTARGETINFO ppfti
+		);
+
+		[CCode (cname = "GetFolderTargetInfo")]
+		public abstract int get_folder_target_info (
+			out PERSISTFOLDERTARGETINFO ppfti
+		);
+
+	}
+
+	[CCode (cname = "IPersistIDList", ref_function = "", unref_function = "")]
+	public interface IPersistIDList : IPersist {
+		[CCode (cname = "SetIDList")]
+		public abstract int set_idlist (
+			void* pidl
+		);
+
+		[CCode (cname = "GetIDList")]
+		public abstract int get_idlist (
+			out out void* ppidl
+		);
+
+	}
+
+	[CCode (cname = "IEnumIDList", ref_function = "", unref_function = "")]
+	public interface IEnumIDList : IUnknown {
+		[CCode (cname = "Next")]
+		public abstract int next (
+			uint celt,
+			void* rgelt,
+			out uint pcelt_fetched
+		);
+
+		[CCode (cname = "Skip")]
+		public abstract int skip (
+			uint celt
+		);
+
+		[CCode (cname = "Reset")]
+		public abstract int reset (
+		);
+
+		[CCode (cname = "Clone")]
+		public abstract int clone (
+			IEnumIDList ppenum
+		);
+
+	}
+
+	[CCode (cname = "IEnumFullIDList", ref_function = "", unref_function = "")]
+	public interface IEnumFullIDList : IUnknown {
+		[CCode (cname = "Next")]
+		public abstract int next (
+			uint celt,
+			void* rgelt,
+			out uint pcelt_fetched
+		);
+
+		[CCode (cname = "Skip")]
+		public abstract int skip (
+			uint celt
+		);
+
+		[CCode (cname = "Reset")]
+		public abstract int reset (
+		);
+
+		[CCode (cname = "Clone")]
+		public abstract int clone (
+			IEnumFullIDList ppenum
+		);
+
+	}
+
+	[CCode (cname = "IFileSyncMergeHandler", ref_function = "", unref_function = "")]
+	public interface IFileSyncMergeHandler : IUnknown {
+		[CCode (cname = "Merge")]
+		public abstract int merge (
+			[CCode (type_id = "LPCWSTR")] uint16* local_file_path,
+			[CCode (type_id = "LPCWSTR")] uint16* server_file_path,
+			out MERGEUPDATESTATUS update_status
+		);
+
+		[CCode (cname = "ShowResolveConflictUIAsync")]
+		public abstract int show_resolve_conflict_uiasync (
+			[CCode (type_id = "LPCWSTR")] uint16* local_file_path,
+			void* monitor_to_display_on
+		);
+
+	}
+
+	[CCode (cname = "IObjectWithFolderEnumMode", ref_function = "", unref_function = "")]
+	public interface IObjectWithFolderEnumMode : IUnknown {
+		[CCode (cname = "SetMode")]
+		public abstract int set_mode (
+			FOLDERENUMMODE fe_mode
+		);
+
+		[CCode (cname = "GetMode")]
+		public abstract int get_mode (
+			out FOLDERENUMMODE pfe_mode
+		);
+
+	}
+
+	[CCode (cname = "IParseAndCreateItem", ref_function = "", unref_function = "")]
+	public interface IParseAndCreateItem : IUnknown {
+		[CCode (cname = "SetItem")]
+		public abstract int set_item (
+			IShellItem psi
+		);
+
+		[CCode (cname = "GetItem")]
+		public abstract int get_item (
+			void* riid,
+			out out void* ppv
+		);
+
+	}
+
+	[CCode (cname = "IShellFolder", ref_function = "", unref_function = "")]
+	public interface IShellFolder : IUnknown {
+		[CCode (cname = "ParseDisplayName")]
+		public abstract int parse_display_name (
+			[CCode (type_id = "HWND")] void* hwnd,
+			IBindCtx pbc,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_display_name,
+			out uint pch_eaten,
+			out out void* ppidl,
+			out uint pdw_attributes
+		);
+
+		[CCode (cname = "EnumObjects")]
+		public abstract int enum_objects (
+			[CCode (type_id = "HWND")] void* hwnd,
+			uint grf_flags,
+			IEnumIDList ppenum_idlist
+		);
+
+		[CCode (cname = "BindToObject")]
+		public abstract int bind_to_object (
+			void* pidl,
+			IBindCtx pbc,
+			void* riid,
+			out out void* ppv
+		);
+
+		[CCode (cname = "BindToStorage")]
+		public abstract int bind_to_storage (
+			void* pidl,
+			IBindCtx pbc,
+			void* riid,
+			out out void* ppv
+		);
+
+		[CCode (cname = "CompareIDs")]
+		public abstract int compare_ids (
+			int64 l_param,
+			void* pidl1,
+			void* pidl2
+		);
+
+		[CCode (cname = "CreateViewObject")]
+		public abstract int create_view_object (
+			[CCode (type_id = "HWND")] void* hwnd_owner,
+			void* riid,
+			out out void* ppv
+		);
+
+		[CCode (cname = "GetAttributesOf")]
+		public abstract int get_attributes_of (
+			uint cidl,
+			void* apidl,
+			out uint rgf_in_out
+		);
+
+		[CCode (cname = "GetUIObjectOf")]
+		public abstract int get_uiobject_of (
+			[CCode (type_id = "HWND")] void* hwnd_owner,
+			uint cidl,
+			void* apidl,
+			void* riid,
+			out uint rgf_reserved,
+			out out void* ppv
+		);
+
+		[CCode (cname = "GetDisplayNameOf")]
+		public abstract int get_display_name_of (
+			void* pidl,
+			void* u_flags,
+			out void* p_name
+		);
+
+		[CCode (cname = "SetNameOf")]
+		public abstract int set_name_of (
+			[CCode (type_id = "HWND")] void* hwnd,
+			void* pidl,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_name,
+			void* u_flags,
+			out out void* ppidl_out
+		);
+
+	}
+
+	[CCode (cname = "IEnumExtraSearch", ref_function = "", unref_function = "")]
+	public interface IEnumExtraSearch : IUnknown {
+		[CCode (cname = "Next")]
+		public abstract int next (
+			uint celt,
+			void* rgelt,
+			out uint pcelt_fetched
+		);
+
+		[CCode (cname = "Skip")]
+		public abstract int skip (
+			uint celt
+		);
+
+		[CCode (cname = "Reset")]
+		public abstract int reset (
+		);
+
+		[CCode (cname = "Clone")]
+		public abstract int clone (
+			IEnumExtraSearch ppenum
+		);
+
+	}
+
+	[CCode (cname = "IShellFolder2", ref_function = "", unref_function = "")]
+	public interface IShellFolder2 : IShellFolder {
+		[CCode (cname = "GetDefaultSearchGUID")]
+		public abstract int get_default_search_guid (
+			out void* pguid
+		);
+
+		[CCode (cname = "EnumSearches")]
+		public abstract int enum_searches (
+			IEnumExtraSearch ppenum
+		);
+
+		[CCode (cname = "GetDefaultColumn")]
+		public abstract int get_default_column (
+			uint dw_res,
+			out uint p_sort,
+			out uint p_display
+		);
+
+		[CCode (cname = "GetDefaultColumnState")]
+		public abstract int get_default_column_state (
+			uint i_column,
+			out uint pcs_flags
+		);
+
+		[CCode (cname = "GetDetailsEx")]
+		public abstract int get_details_ex (
+			void* pidl,
+			void* pscid,
+			out void* pv
+		);
+
+		[CCode (cname = "GetDetailsOf")]
+		public abstract int get_details_of (
+			void* pidl,
+			uint i_column,
+			out void* psd
+		);
+
+		[CCode (cname = "MapColumnToSCID")]
+		public abstract int map_column_to_scid (
+			uint i_column,
+			out void* pscid
+		);
+
+	}
+
+	[CCode (cname = "IShellView", ref_function = "", unref_function = "")]
+	public interface IShellView : IOleWindow {
+		[CCode (cname = "TranslateAccelerator")]
+		public abstract int translate_accelerator (
+			ref Win32.Ui.WindowsAndMessaging.Msg pmsg
+		);
+
+		[CCode (cname = "EnableModeless")]
+		public abstract int enable_modeless (
+			int f_enable
+		);
+
+		[CCode (cname = "UIActivate")]
+		public abstract int uiactivate (
+			uint u_state
+		);
+
+		[CCode (cname = "Refresh")]
+		public abstract int refresh (
+		);
+
+		[CCode (cname = "CreateViewWindow")]
+		public abstract int create_view_window (
+			IShellView psv_previous,
+			void* pfs,
+			IShellBrowser psb,
+			ref Win32.Foundation.Rect prc_view,
+			out void* ph_wnd
+		);
+
+		[CCode (cname = "DestroyViewWindow")]
+		public abstract int destroy_view_window (
+		);
+
+		[CCode (cname = "GetCurrentInfo")]
+		public abstract int get_current_info (
+			out void* pfs
+		);
+
+		[CCode (cname = "AddPropertySheetPages")]
+		public abstract int add_property_sheet_pages (
+			uint dw_reserved,
+			Win32.Ui.Controls.LPFNSVADDPROPSHEETPAGE pfn,
+			int64 lparam
+		);
+
+		[CCode (cname = "SaveViewState")]
+		public abstract int save_view_state (
+		);
+
+		[CCode (cname = "SelectItem")]
+		public abstract int select_item (
+			void* pidl_item,
+			uint u_flags
+		);
+
+		[CCode (cname = "GetItemObject")]
+		public abstract int get_item_object (
+			uint u_item,
+			void* riid,
+			out out void* ppv
+		);
+
+	}
+
+	[CCode (cname = "IShellView2", ref_function = "", unref_function = "")]
+	public interface IShellView2 : IShellView {
+		[CCode (cname = "GetView")]
+		public abstract int get_view (
+			out void* pvid,
+			uint u_view
+		);
+
+		[CCode (cname = "CreateViewWindow2")]
+		public abstract int create_view_window2 (
+			ref SV2CVW2PARAMS lp_params
+		);
+
+		[CCode (cname = "HandleRename")]
+		public abstract int handle_rename (
+			void* pidl_new
+		);
+
+		[CCode (cname = "SelectAndPositionItem")]
+		public abstract int select_and_position_item (
+			void* pidl_item,
+			uint u_flags,
+			ref Win32.Foundation.Point ppt
+		);
+
+	}
+
+	[CCode (cname = "IFolderView", ref_function = "", unref_function = "")]
+	public interface IFolderView : IUnknown {
+		[CCode (cname = "GetCurrentViewMode")]
+		public abstract int get_current_view_mode (
+			out uint p_view_mode
+		);
+
+		[CCode (cname = "SetCurrentViewMode")]
+		public abstract int set_current_view_mode (
+			uint view_mode
+		);
+
+		[CCode (cname = "GetFolder")]
+		public abstract int get_folder (
+			void* riid,
+			out out void* ppv
+		);
+
+		[CCode (cname = "Item")]
+		public abstract int item (
+			int i_item_index,
+			out out void* ppidl
+		);
+
+		[CCode (cname = "ItemCount")]
+		public abstract int item_count (
+			uint u_flags,
+			out int pc_items
+		);
+
+		[CCode (cname = "Items")]
+		public abstract int items (
+			uint u_flags,
+			void* riid,
+			out out void* ppv
+		);
+
+		[CCode (cname = "GetSelectionMarkedItem")]
+		public abstract int get_selection_marked_item (
+			out int pi_item
+		);
+
+		[CCode (cname = "GetFocusedItem")]
+		public abstract int get_focused_item (
+			out int pi_item
+		);
+
+		[CCode (cname = "GetItemPosition")]
+		public abstract int get_item_position (
+			void* pidl,
+			out Win32.Foundation.Point ppt
+		);
+
+		[CCode (cname = "GetSpacing")]
+		public abstract int get_spacing (
+			out Win32.Foundation.Point ppt
+		);
+
+		[CCode (cname = "GetDefaultSpacing")]
+		public abstract int get_default_spacing (
+			out Win32.Foundation.Point ppt
+		);
+
+		[CCode (cname = "GetAutoArrange")]
+		public abstract int get_auto_arrange (
+		);
+
+		[CCode (cname = "SelectItem")]
+		public abstract int select_item (
+			int i_item,
+			uint dw_flags
+		);
+
+		[CCode (cname = "SelectAndPositionItems")]
+		public abstract int select_and_position_items (
+			uint cidl,
+			void* apidl,
+			void* apt,
+			uint dw_flags
+		);
+
+	}
+
+	[CCode (cname = "IFolderView2", ref_function = "", unref_function = "")]
+	public interface IFolderView2 : IFolderView {
+		[CCode (cname = "SetGroupBy")]
+		public abstract int set_group_by (
+			void* key,
+			int f_ascending
+		);
+
+		[CCode (cname = "GetGroupBy")]
+		public abstract int get_group_by (
+			out void* pkey,
+			out int pf_ascending
+		);
+
+		[CCode (cname = "SetViewProperty")]
+		public abstract int set_view_property (
+			void* pidl,
+			void* propkey,
+			void* propvar
+		);
+
+		[CCode (cname = "GetViewProperty")]
+		public abstract int get_view_property (
+			void* pidl,
+			void* propkey,
+			out void* ppropvar
+		);
+
+		[CCode (cname = "SetTileViewProperties")]
+		public abstract int set_tile_view_properties (
+			void* pidl,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_prop_list
+		);
+
+		[CCode (cname = "SetExtendedTileViewProperties")]
+		public abstract int set_extended_tile_view_properties (
+			void* pidl,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_prop_list
+		);
+
+		[CCode (cname = "SetText")]
+		public abstract int set_text (
+			FVTEXTTYPE i_type,
+			[CCode (type_id = "LPCWSTR")] uint16* pwsz_text
+		);
+
+		[CCode (cname = "SetCurrentFolderFlags")]
+		public abstract int set_current_folder_flags (
+			uint dw_mask,
+			uint dw_flags
+		);
+
+		[CCode (cname = "GetCurrentFolderFlags")]
+		public abstract int get_current_folder_flags (
+			out uint pdw_flags
+		);
+
+		[CCode (cname = "GetSortColumnCount")]
+		public abstract int get_sort_column_count (
+			out int pc_columns
+		);
+
+		[CCode (cname = "SetSortColumns")]
+		public abstract int set_sort_columns (
+			void* rg_sort_columns,
+			int c_columns
+		);
+
+		[CCode (cname = "GetSortColumns")]
+		public abstract int get_sort_columns (
+			void* rg_sort_columns,
+			int c_columns
+		);
+
+		[CCode (cname = "GetItem")]
+		public abstract int get_item (
+			int i_item,
+			void* riid,
+			out out void* ppv
+		);
+
+		[CCode (cname = "GetVisibleItem")]
+		public abstract int get_visible_item (
+			int i_start,
+			int f_previous,
+			out int pi_item
+		);
+
+		[CCode (cname = "GetSelectedItem")]
+		public abstract int get_selected_item (
+			int i_start,
+			out int pi_item
+		);
+
+		[CCode (cname = "GetSelection")]
+		public abstract int get_selection (
+			int f_none_implies_folder,
+			IShellItemArray ppsia
+		);
+
+		[CCode (cname = "GetSelectionState")]
+		public abstract int get_selection_state (
+			void* pidl,
+			out uint pdw_flags
+		);
+
+		[CCode (cname = "InvokeVerbOnSelection")]
+		public abstract int invoke_verb_on_selection (
+			void* psz_verb
+		);
+
+		[CCode (cname = "SetViewModeAndIconSize")]
+		public abstract int set_view_mode_and_icon_size (
+			FOLDERVIEWMODE u_view_mode,
+			int i_image_size
+		);
+
+		[CCode (cname = "GetViewModeAndIconSize")]
+		public abstract int get_view_mode_and_icon_size (
+			out FOLDERVIEWMODE pu_view_mode,
+			out int pi_image_size
+		);
+
+		[CCode (cname = "SetGroupSubsetCount")]
+		public abstract int set_group_subset_count (
+			uint c_visible_rows
+		);
+
+		[CCode (cname = "GetGroupSubsetCount")]
+		public abstract int get_group_subset_count (
+			out uint pc_visible_rows
+		);
+
+		[CCode (cname = "SetRedraw")]
+		public abstract int set_redraw (
+			int f_redraw_on
+		);
+
+		[CCode (cname = "IsMoveInSameFolder")]
+		public abstract int is_move_in_same_folder (
+		);
+
+		[CCode (cname = "DoRename")]
+		public abstract int do_rename (
+		);
+
+	}
+
+	[CCode (cname = "IFolderViewSettings", ref_function = "", unref_function = "")]
+	public interface IFolderViewSettings : IUnknown {
+		[CCode (cname = "GetColumnPropertyList")]
+		public abstract int get_column_property_list (
+			void* riid,
+			out out void* ppv
+		);
+
+		[CCode (cname = "GetGroupByProperty")]
+		public abstract int get_group_by_property (
+			out void* pkey,
+			out int pf_group_ascending
+		);
+
+		[CCode (cname = "GetViewMode")]
+		public abstract int get_view_mode (
+			out FOLDERLOGICALVIEWMODE plvm
+		);
+
+		[CCode (cname = "GetIconSize")]
+		public abstract int get_icon_size (
+			out uint pu_icon_size
+		);
+
+		[CCode (cname = "GetFolderFlags")]
+		public abstract int get_folder_flags (
+			out FOLDERFLAGS pfolder_mask,
+			out FOLDERFLAGS pfolder_flags
+		);
+
+		[CCode (cname = "GetSortColumns")]
+		public abstract int get_sort_columns (
+			void* rg_sort_columns,
+			uint c_columns_in,
+			out uint pc_columns_out
+		);
+
+		[CCode (cname = "GetGroupSubsetCount")]
+		public abstract int get_group_subset_count (
+			out uint pc_visible_rows
+		);
+
+	}
+
+	[CCode (cname = "IInitializeNetworkFolder", ref_function = "", unref_function = "")]
+	public interface IInitializeNetworkFolder : IUnknown {
+		[CCode (cname = "Initialize")]
+		public abstract int initialize (
+			void* pidl,
+			void* pidl_target,
+			uint u_display_type,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_res_name,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_provider
+		);
+
+	}
+
+	[CCode (cname = "INetworkFolderInternal", ref_function = "", unref_function = "")]
+	public interface INetworkFolderInternal : IUnknown {
+		[CCode (cname = "GetResourceDisplayType")]
+		public abstract int get_resource_display_type (
+			out uint display_type
+		);
+
+		[CCode (cname = "GetIDList")]
+		public abstract int get_idlist (
+			out out void* id_list
+		);
+
+		[CCode (cname = "GetProvider")]
+		public abstract int get_provider (
+			uint item_id_count,
+			void* item_ids,
+			uint provider_max_length,
+			void* provider
+		);
+
+	}
+
+	[CCode (cname = "IPreviewHandlerVisuals", ref_function = "", unref_function = "")]
+	public interface IPreviewHandlerVisuals : IUnknown {
+		[CCode (cname = "SetBackgroundColor")]
+		public abstract int set_background_color (
+			void* color
+		);
+
+		[CCode (cname = "SetFont")]
+		public abstract int set_font (
+			void* plf
+		);
+
+		[CCode (cname = "SetTextColor")]
+		public abstract int set_text_color (
+			void* color
+		);
+
+	}
+
+	[CCode (cname = "ICommDlgBrowser", ref_function = "", unref_function = "")]
+	public interface ICommDlgBrowser : IUnknown {
+		[CCode (cname = "OnDefaultCommand")]
+		public abstract int on_default_command (
+			IShellView ppshv
+		);
+
+		[CCode (cname = "OnStateChange")]
+		public abstract int on_state_change (
+			IShellView ppshv,
+			uint u_change
+		);
+
+		[CCode (cname = "IncludeObject")]
+		public abstract int include_object (
+			IShellView ppshv,
+			void* pidl
+		);
+
+	}
+
+	[CCode (cname = "ICommDlgBrowser2", ref_function = "", unref_function = "")]
+	public interface ICommDlgBrowser2 : ICommDlgBrowser {
+		[CCode (cname = "Notify")]
+		public abstract int notify (
+			IShellView ppshv,
+			uint dw_notify_type
+		);
+
+		[CCode (cname = "GetDefaultMenuText")]
+		public abstract int get_default_menu_text (
+			IShellView ppshv,
+			void* psz_text,
+			int cch_max
+		);
+
+		[CCode (cname = "GetViewFlags")]
+		public abstract int get_view_flags (
+			out uint pdw_flags
+		);
+
+	}
+
+	[CCode (cname = "IColumnManager", ref_function = "", unref_function = "")]
+	public interface IColumnManager : IUnknown {
+		[CCode (cname = "SetColumnInfo")]
+		public abstract int set_column_info (
+			void* propkey,
+			ref CmCOLUMNINFO pcmci
+		);
+
+		[CCode (cname = "GetColumnInfo")]
+		public abstract int get_column_info (
+			void* propkey,
+			out CmCOLUMNINFO pcmci
+		);
+
+		[CCode (cname = "GetColumnCount")]
+		public abstract int get_column_count (
+			CmENUMFLAGS dw_flags,
+			out uint pu_count
+		);
+
+		[CCode (cname = "GetColumns")]
+		public abstract int get_columns (
+			CmENUMFLAGS dw_flags,
+			void* rgkey_order,
+			uint c_columns
+		);
+
+		[CCode (cname = "SetColumns")]
+		public abstract int set_columns (
+			void* rgkey_order,
+			uint c_visible
+		);
+
+	}
+
+	[CCode (cname = "IFolderFilterSite", ref_function = "", unref_function = "")]
+	public interface IFolderFilterSite : IUnknown {
+		[CCode (cname = "SetFilter")]
+		public abstract int set_filter (
+			IUnknown punk
+		);
+
+	}
+
+	[CCode (cname = "IFolderFilter", ref_function = "", unref_function = "")]
+	public interface IFolderFilter : IUnknown {
+		[CCode (cname = "ShouldShow")]
+		public abstract int should_show (
+			IShellFolder psf,
+			void* pidl_folder,
+			void* pidl_item
+		);
+
+		[CCode (cname = "GetEnumFlags")]
+		public abstract int get_enum_flags (
+			IShellFolder psf,
+			void* pidl_folder,
+			out void* phwnd,
+			out uint pgrf_flags
+		);
+
+	}
+
+	[CCode (cname = "IInputObjectSite", ref_function = "", unref_function = "")]
+	public interface IInputObjectSite : IUnknown {
+		[CCode (cname = "OnFocusChangeIS")]
+		public abstract int on_focus_change_is (
+			IUnknown punk_obj,
+			int f_set_focus
+		);
+
+	}
+
+	[CCode (cname = "IInputObject", ref_function = "", unref_function = "")]
+	public interface IInputObject : IUnknown {
+		[CCode (cname = "UIActivateIO")]
+		public abstract int uiactivate_io (
+			int f_activate,
+			ref Win32.Ui.WindowsAndMessaging.Msg p_msg
+		);
+
+		[CCode (cname = "HasFocusIO")]
+		public abstract int has_focus_io (
+		);
+
+		[CCode (cname = "TranslateAcceleratorIO")]
+		public abstract int translate_accelerator_io (
+			ref Win32.Ui.WindowsAndMessaging.Msg p_msg
+		);
+
+	}
+
+	[CCode (cname = "IInputObject2", ref_function = "", unref_function = "")]
+	public interface IInputObject2 : IInputObject {
+		[CCode (cname = "TranslateAcceleratorGlobal")]
+		public abstract int translate_accelerator_global (
+			ref Win32.Ui.WindowsAndMessaging.Msg p_msg
+		);
+
+	}
+
+	[CCode (cname = "IShellIcon", ref_function = "", unref_function = "")]
+	public interface IShellIcon : IUnknown {
+		[CCode (cname = "GetIconOf")]
+		public abstract int get_icon_of (
+			void* pidl,
+			uint flags,
+			out int p_icon_index
+		);
+
+	}
+
+	[CCode (cname = "IShellBrowser", ref_function = "", unref_function = "")]
+	public interface IShellBrowser : IOleWindow {
+		[CCode (cname = "InsertMenusSB")]
+		public abstract int insert_menus_sb (
+			[CCode (type_id = "HMENU")] void* hmenu_shared,
+			out void* lp_menu_widths
+		);
+
+		[CCode (cname = "SetMenuSB")]
+		public abstract int set_menu_sb (
+			[CCode (type_id = "HMENU")] void* hmenu_shared,
+			void* holemenu_res,
+			[CCode (type_id = "HWND")] void* hwnd_active_object
+		);
+
+		[CCode (cname = "RemoveMenusSB")]
+		public abstract int remove_menus_sb (
+			[CCode (type_id = "HMENU")] void* hmenu_shared
+		);
+
+		[CCode (cname = "SetStatusTextSB")]
+		public abstract int set_status_text_sb (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_status_text
+		);
+
+		[CCode (cname = "EnableModelessSB")]
+		public abstract int enable_modeless_sb (
+			int f_enable
+		);
+
+		[CCode (cname = "TranslateAcceleratorSB")]
+		public abstract int translate_accelerator_sb (
+			ref Win32.Ui.WindowsAndMessaging.Msg pmsg,
+			ushort w_id
+		);
+
+		[CCode (cname = "BrowseObject")]
+		public abstract int browse_object (
+			void* pidl,
+			uint w_flags
+		);
+
+		[CCode (cname = "GetViewStateStream")]
+		public abstract int get_view_state_stream (
+			uint grf_mode,
+			void* pp_strm
+		);
+
+		[CCode (cname = "GetControlWindow")]
+		public abstract int get_control_window (
+			uint id,
+			out void* phwnd
+		);
+
+		[CCode (cname = "SendControlMsg")]
+		public abstract int send_control_msg (
+			uint id,
+			uint u_msg,
+			ulong w_param,
+			int64 l_param,
+			out int64 pret
+		);
+
+		[CCode (cname = "QueryActiveShellView")]
+		public abstract int query_active_shell_view (
+			IShellView ppshv
+		);
+
+		[CCode (cname = "OnViewWindowActive")]
+		public abstract int on_view_window_active (
+			IShellView pshv
+		);
+
+		[CCode (cname = "SetToolbarItems")]
+		public abstract int set_toolbar_items (
+			void* lp_buttons,
+			uint n_buttons,
+			uint u_flags
+		);
+
+	}
+
+	[CCode (cname = "IProfferService", ref_function = "", unref_function = "")]
+	public interface IProfferService : IUnknown {
+		[CCode (cname = "ProfferService")]
+		public abstract int proffer_service (
+			void* service_id,
+			IServiceProvider service_provider,
+			out uint cookie
+		);
+
+		[CCode (cname = "RevokeService")]
+		public abstract int revoke_service (
+			uint cookie
+		);
+
+	}
+
+	[CCode (cname = "IGetServiceIds", ref_function = "", unref_function = "")]
+	public interface IGetServiceIds : IUnknown {
+		[CCode (cname = "GetServiceIds")]
+		public abstract int get_service_ids (
+			out uint service_id_count,
+			void* service_ids
+		);
+
+	}
+
+	[CCode (cname = "IShellItem", ref_function = "", unref_function = "")]
+	public interface IShellItem : IUnknown {
+		[CCode (cname = "BindToHandler")]
+		public abstract int bind_to_handler (
+			IBindCtx pbc,
+			void* bhid,
+			void* riid,
+			out out void* ppv
+		);
+
+		[CCode (cname = "GetParent")]
+		public abstract int get_parent (
+			IShellItem ppsi
+		);
+
+		[CCode (cname = "GetDisplayName")]
+		public abstract int get_display_name (
+			void* sigdn_name,
+			out uint16* ppsz_name
+		);
+
+		[CCode (cname = "GetAttributes")]
+		public abstract int get_attributes (
+			uint sfgao_mask,
+			out uint psfgao_attribs
+		);
+
+		[CCode (cname = "Compare")]
+		public abstract int compare (
+			IShellItem psi,
+			uint hint,
+			out int pi_order
+		);
+
+	}
+
+	[CCode (cname = "IShellItem2", ref_function = "", unref_function = "")]
+	public interface IShellItem2 : IShellItem {
+		[CCode (cname = "GetPropertyStore")]
+		public abstract int get_property_store (
+			Win32.Ui.Shell.PropertiesSystem.GETPROPERTYSTOREFLAGS flags,
+			void* riid,
+			out out void* ppv
+		);
+
+		[CCode (cname = "GetPropertyStoreWithCreateObject")]
+		public abstract int get_property_store_with_create_object (
+			Win32.Ui.Shell.PropertiesSystem.GETPROPERTYSTOREFLAGS flags,
+			IUnknown punk_create_object,
+			void* riid,
+			out out void* ppv
+		);
+
+		[CCode (cname = "GetPropertyStoreForKeys")]
+		public abstract int get_property_store_for_keys (
+			void* rg_keys,
+			uint c_keys,
+			Win32.Ui.Shell.PropertiesSystem.GETPROPERTYSTOREFLAGS flags,
+			void* riid,
+			out out void* ppv
+		);
+
+		[CCode (cname = "GetPropertyDescriptionList")]
+		public abstract int get_property_description_list (
+			void* key_type,
+			void* riid,
+			out out void* ppv
+		);
+
+		[CCode (cname = "Update")]
+		public abstract int update (
+			IBindCtx pbc
+		);
+
+		[CCode (cname = "GetProperty")]
+		public abstract int get_property (
+			void* key,
+			out void* ppropvar
+		);
+
+		[CCode (cname = "GetCLSID")]
+		public abstract int get_clsid (
+			void* key,
+			out void* pclsid
+		);
+
+		[CCode (cname = "GetFileTime")]
+		public abstract int get_file_time (
+			void* key,
+			out void* pft
+		);
+
+		[CCode (cname = "GetInt32")]
+		public abstract int get_int32 (
+			void* key,
+			out int pi
+		);
+
+		[CCode (cname = "GetString")]
+		public abstract int get_string (
+			void* key,
+			out uint16* ppsz
+		);
+
+		[CCode (cname = "GetUInt32")]
+		public abstract int get_uint32 (
+			void* key,
+			out uint pui
+		);
+
+		[CCode (cname = "GetUInt64")]
+		public abstract int get_uint64 (
+			void* key,
+			out ulong pull
+		);
+
+		[CCode (cname = "GetBool")]
+		public abstract int get_bool (
+			void* key,
+			out int pf
+		);
+
+	}
+
+	[CCode (cname = "IShellItemImageFactory", ref_function = "", unref_function = "")]
+	public interface IShellItemImageFactory : IUnknown {
+		[CCode (cname = "GetImage")]
+		public abstract int get_image (
+			Win32.Foundation.Size size,
+			void* flags,
+			out void* phbm
+		);
+
+	}
+
+	[CCode (cname = "IEnumShellItems", ref_function = "", unref_function = "")]
+	public interface IEnumShellItems : IUnknown {
+		[CCode (cname = "Next")]
+		public abstract int next (
+			uint celt,
+			void* rgelt,
+			out uint pcelt_fetched
+		);
+
+		[CCode (cname = "Skip")]
+		public abstract int skip (
+			uint celt
+		);
+
+		[CCode (cname = "Reset")]
+		public abstract int reset (
+		);
+
+		[CCode (cname = "Clone")]
+		public abstract int clone (
+			IEnumShellItems ppenum
+		);
+
+	}
+
+	[CCode (cname = "ITransferAdviseSink", ref_function = "", unref_function = "")]
+	public interface ITransferAdviseSink : IUnknown {
+		[CCode (cname = "UpdateProgress")]
+		public abstract int update_progress (
+			ulong ull_size_current,
+			ulong ull_size_total,
+			int n_files_current,
+			int n_files_total,
+			int n_folders_current,
+			int n_folders_total
+		);
+
+		[CCode (cname = "UpdateTransferState")]
+		public abstract int update_transfer_state (
+			uint ts
+		);
+
+		[CCode (cname = "ConfirmOverwrite")]
+		public abstract int confirm_overwrite (
+			IShellItem psi_source,
+			IShellItem psi_dest_parent,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_name
+		);
+
+		[CCode (cname = "ConfirmEncryptionLoss")]
+		public abstract int confirm_encryption_loss (
+			IShellItem psi_source
+		);
+
+		[CCode (cname = "FileFailure")]
+		public abstract int file_failure (
+			IShellItem psi,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_item,
+			int hr_error,
+			void* psz_rename,
+			uint cch_rename
+		);
+
+		[CCode (cname = "SubStreamFailure")]
+		public abstract int sub_stream_failure (
+			IShellItem psi,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_stream_name,
+			int hr_error
+		);
+
+		[CCode (cname = "PropertyFailure")]
+		public abstract int property_failure (
+			IShellItem psi,
+			void* pkey,
+			int hr_error
+		);
+
+	}
+
+	[CCode (cname = "ITransferSource", ref_function = "", unref_function = "")]
+	public interface ITransferSource : IUnknown {
+		[CCode (cname = "Advise")]
+		public abstract int advise (
+			ITransferAdviseSink psink,
+			out uint pdw_cookie
+		);
+
+		[CCode (cname = "Unadvise")]
+		public abstract int unadvise (
+			uint dw_cookie
+		);
+
+		[CCode (cname = "SetProperties")]
+		public abstract int set_properties (
+			IPropertyChangeArray pproparray
+		);
+
+		[CCode (cname = "OpenItem")]
+		public abstract int open_item (
+			IShellItem psi,
+			uint flags,
+			void* riid,
+			out out void* ppv
+		);
+
+		[CCode (cname = "MoveItem")]
+		public abstract int move_item (
+			IShellItem psi,
+			IShellItem psi_parent_dst,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_name_dst,
+			uint flags,
+			IShellItem ppsi_new
+		);
+
+		[CCode (cname = "RecycleItem")]
+		public abstract int recycle_item (
+			IShellItem psi_source,
+			IShellItem psi_parent_dest,
+			uint flags,
+			IShellItem ppsi_new_dest
+		);
+
+		[CCode (cname = "RemoveItem")]
+		public abstract int remove_item (
+			IShellItem psi_source,
+			uint flags
+		);
+
+		[CCode (cname = "RenameItem")]
+		public abstract int rename_item (
+			IShellItem psi_source,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_new_name,
+			uint flags,
+			IShellItem ppsi_new_dest
+		);
+
+		[CCode (cname = "LinkItem")]
+		public abstract int link_item (
+			IShellItem psi_source,
+			IShellItem psi_parent_dest,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_new_name,
+			uint flags,
+			IShellItem ppsi_new_dest
+		);
+
+		[CCode (cname = "ApplyPropertiesToItem")]
+		public abstract int apply_properties_to_item (
+			IShellItem psi_source,
+			IShellItem ppsi_new
+		);
+
+		[CCode (cname = "GetDefaultDestinationName")]
+		public abstract int get_default_destination_name (
+			IShellItem psi_source,
+			IShellItem psi_parent_dest,
+			out uint16* ppsz_destination_name
+		);
+
+		[CCode (cname = "EnterFolder")]
+		public abstract int enter_folder (
+			IShellItem psi_child_folder_dest
+		);
+
+		[CCode (cname = "LeaveFolder")]
+		public abstract int leave_folder (
+			IShellItem psi_child_folder_dest
+		);
+
+	}
+
+	[CCode (cname = "IEnumResources", ref_function = "", unref_function = "")]
+	public interface IEnumResources : IUnknown {
+		[CCode (cname = "Next")]
+		public abstract int next (
+			uint celt,
+			void* psir,
+			out uint pcelt_fetched
+		);
+
+		[CCode (cname = "Skip")]
+		public abstract int skip (
+			uint celt
+		);
+
+		[CCode (cname = "Reset")]
+		public abstract int reset (
+		);
+
+		[CCode (cname = "Clone")]
+		public abstract int clone (
+			IEnumResources ppenumr
+		);
+
+	}
+
+	[CCode (cname = "IShellItemResources", ref_function = "", unref_function = "")]
+	public interface IShellItemResources : IUnknown {
+		[CCode (cname = "GetAttributes")]
+		public abstract int get_attributes (
+			out uint pdw_attributes
+		);
+
+		[CCode (cname = "GetSize")]
+		public abstract int get_size (
+			out ulong pull_size
+		);
+
+		[CCode (cname = "GetTimes")]
+		public abstract int get_times (
+			out void* pft_creation,
+			out void* pft_write,
+			out void* pft_access
+		);
+
+		[CCode (cname = "SetTimes")]
+		public abstract int set_times (
+			void* pft_creation,
+			void* pft_write,
+			void* pft_access
+		);
+
+		[CCode (cname = "GetResourceDescription")]
+		public abstract int get_resource_description (
+			ref SHELLITEMRESOURCE pcsir,
+			out uint16* ppsz_description
+		);
+
+		[CCode (cname = "EnumResources")]
+		public abstract int enum_resources (
+			IEnumResources ppenumr
+		);
+
+		[CCode (cname = "SupportsResource")]
+		public abstract int supports_resource (
+			ref SHELLITEMRESOURCE pcsir
+		);
+
+		[CCode (cname = "OpenResource")]
+		public abstract int open_resource (
+			ref SHELLITEMRESOURCE pcsir,
+			void* riid,
+			out out void* ppv
+		);
+
+		[CCode (cname = "CreateResource")]
+		public abstract int create_resource (
+			ref SHELLITEMRESOURCE pcsir,
+			void* riid,
+			out out void* ppv
+		);
+
+		[CCode (cname = "MarkForDelete")]
+		public abstract int mark_for_delete (
+		);
+
+	}
+
+	[CCode (cname = "ITransferDestination", ref_function = "", unref_function = "")]
+	public interface ITransferDestination : IUnknown {
+		[CCode (cname = "Advise")]
+		public abstract int advise (
+			ITransferAdviseSink psink,
+			out uint pdw_cookie
+		);
+
+		[CCode (cname = "Unadvise")]
+		public abstract int unadvise (
+			uint dw_cookie
+		);
+
+		[CCode (cname = "CreateItem")]
+		public abstract int create_item (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_name,
+			uint dw_attributes,
+			ulong ull_size,
+			uint flags,
+			void* riid_item,
+			out out void* ppv_item,
+			void* riid_resources,
+			out out void* ppv_resources
+		);
+
+	}
+
+	[CCode (cname = "IFileOperationProgressSink", ref_function = "", unref_function = "")]
+	public interface IFileOperationProgressSink : IUnknown {
+		[CCode (cname = "StartOperations")]
+		public abstract int start_operations (
+		);
+
+		[CCode (cname = "FinishOperations")]
+		public abstract int finish_operations (
+			int hr_result
+		);
+
+		[CCode (cname = "PreRenameItem")]
+		public abstract int pre_rename_item (
+			uint dw_flags,
+			IShellItem psi_item,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_new_name
+		);
+
+		[CCode (cname = "PostRenameItem")]
+		public abstract int post_rename_item (
+			uint dw_flags,
+			IShellItem psi_item,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_new_name,
+			int hr_rename,
+			IShellItem psi_newly_created
+		);
+
+		[CCode (cname = "PreMoveItem")]
+		public abstract int pre_move_item (
+			uint dw_flags,
+			IShellItem psi_item,
+			IShellItem psi_destination_folder,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_new_name
+		);
+
+		[CCode (cname = "PostMoveItem")]
+		public abstract int post_move_item (
+			uint dw_flags,
+			IShellItem psi_item,
+			IShellItem psi_destination_folder,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_new_name,
+			int hr_move,
+			IShellItem psi_newly_created
+		);
+
+		[CCode (cname = "PreCopyItem")]
+		public abstract int pre_copy_item (
+			uint dw_flags,
+			IShellItem psi_item,
+			IShellItem psi_destination_folder,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_new_name
+		);
+
+		[CCode (cname = "PostCopyItem")]
+		public abstract int post_copy_item (
+			uint dw_flags,
+			IShellItem psi_item,
+			IShellItem psi_destination_folder,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_new_name,
+			int hr_copy,
+			IShellItem psi_newly_created
+		);
+
+		[CCode (cname = "PreDeleteItem")]
+		public abstract int pre_delete_item (
+			uint dw_flags,
+			IShellItem psi_item
+		);
+
+		[CCode (cname = "PostDeleteItem")]
+		public abstract int post_delete_item (
+			uint dw_flags,
+			IShellItem psi_item,
+			int hr_delete,
+			IShellItem psi_newly_created
+		);
+
+		[CCode (cname = "PreNewItem")]
+		public abstract int pre_new_item (
+			uint dw_flags,
+			IShellItem psi_destination_folder,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_new_name
+		);
+
+		[CCode (cname = "PostNewItem")]
+		public abstract int post_new_item (
+			uint dw_flags,
+			IShellItem psi_destination_folder,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_new_name,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_template_name,
+			uint dw_file_attributes,
+			int hr_new,
+			IShellItem psi_new_item
+		);
+
+		[CCode (cname = "UpdateProgress")]
+		public abstract int update_progress (
+			uint i_work_total,
+			uint i_work_so_far
+		);
+
+		[CCode (cname = "ResetTimer")]
+		public abstract int reset_timer (
+		);
+
+		[CCode (cname = "PauseTimer")]
+		public abstract int pause_timer (
+		);
+
+		[CCode (cname = "ResumeTimer")]
+		public abstract int resume_timer (
+		);
+
+	}
+
+	[CCode (cname = "IShellItemArray", ref_function = "", unref_function = "")]
+	public interface IShellItemArray : IUnknown {
+		[CCode (cname = "BindToHandler")]
+		public abstract int bind_to_handler (
+			IBindCtx pbc,
+			void* bhid,
+			void* riid,
+			out out void* ppv_out
+		);
+
+		[CCode (cname = "GetPropertyStore")]
+		public abstract int get_property_store (
+			Win32.Ui.Shell.PropertiesSystem.GETPROPERTYSTOREFLAGS flags,
+			void* riid,
+			out out void* ppv
+		);
+
+		[CCode (cname = "GetPropertyDescriptionList")]
+		public abstract int get_property_description_list (
+			void* key_type,
+			void* riid,
+			out out void* ppv
+		);
+
+		[CCode (cname = "GetAttributes")]
+		public abstract int get_attributes (
+			SIATTRIBFLAGS attrib_flags,
+			uint sfgao_mask,
+			out uint psfgao_attribs
+		);
+
+		[CCode (cname = "GetCount")]
+		public abstract int get_count (
+			out uint pdw_num_items
+		);
+
+		[CCode (cname = "GetItemAt")]
+		public abstract int get_item_at (
+			uint dw_index,
+			IShellItem ppsi
+		);
+
+		[CCode (cname = "EnumItems")]
+		public abstract int enum_items (
+			IEnumShellItems ppenum_shell_items
+		);
+
+	}
+
+	[CCode (cname = "IInitializeWithItem", ref_function = "", unref_function = "")]
+	public interface IInitializeWithItem : IUnknown {
+		[CCode (cname = "Initialize")]
+		public abstract int initialize (
+			IShellItem psi,
+			uint grf_mode
+		);
+
+	}
+
+	[CCode (cname = "IObjectWithSelection", ref_function = "", unref_function = "")]
+	public interface IObjectWithSelection : IUnknown {
+		[CCode (cname = "SetSelection")]
+		public abstract int set_selection (
+			IShellItemArray psia
+		);
+
+		[CCode (cname = "GetSelection")]
+		public abstract int get_selection (
+			void* riid,
+			out out void* ppv
+		);
+
+	}
+
+	[CCode (cname = "IObjectWithBackReferences", ref_function = "", unref_function = "")]
+	public interface IObjectWithBackReferences : IUnknown {
+		[CCode (cname = "RemoveBackReferences")]
+		public abstract int remove_back_references (
+		);
+
+	}
+
+	[CCode (cname = "ICategoryProvider", ref_function = "", unref_function = "")]
+	public interface ICategoryProvider : IUnknown {
+		[CCode (cname = "CanCategorizeOnSCID")]
+		public abstract int can_categorize_on_scid (
+			void* pscid
+		);
+
+		[CCode (cname = "GetDefaultCategory")]
+		public abstract int get_default_category (
+			out void* pguid,
+			out void* pscid
+		);
+
+		[CCode (cname = "GetCategoryForSCID")]
+		public abstract int get_category_for_scid (
+			void* pscid,
+			out void* pguid
+		);
+
+		[CCode (cname = "EnumCategories")]
+		public abstract int enum_categories (
+			void* penum
+		);
+
+		[CCode (cname = "GetCategoryName")]
+		public abstract int get_category_name (
+			void* pguid,
+			void* psz_name,
+			uint cch
+		);
+
+		[CCode (cname = "CreateCategory")]
+		public abstract int create_category (
+			void* pguid,
+			void* riid,
+			out out void* ppv
+		);
+
+	}
+
+	[CCode (cname = "ICategorizer", ref_function = "", unref_function = "")]
+	public interface ICategorizer : IUnknown {
+		[CCode (cname = "GetDescription")]
+		public abstract int get_description (
+			void* psz_desc,
+			uint cch
+		);
+
+		[CCode (cname = "GetCategory")]
+		public abstract int get_category (
+			uint cidl,
+			void* apidl,
+			void* rg_category_ids
+		);
+
+		[CCode (cname = "GetCategoryInfo")]
+		public abstract int get_category_info (
+			uint dw_category_id,
+			out CATEGORYINFO pci
+		);
+
+		[CCode (cname = "CompareCategory")]
+		public abstract int compare_category (
+			CATSORTFLAGS csf_flags,
+			uint dw_category_id1,
+			uint dw_category_id2
+		);
+
+	}
+
+	[CCode (cname = "IDropTargetHelper", ref_function = "", unref_function = "")]
+	public interface IDropTargetHelper : IUnknown {
+		[CCode (cname = "DragEnter")]
+		public abstract int drag_enter (
+			[CCode (type_id = "HWND")] void* hwnd_target,
+			IDataObject p_data_object,
+			ref Win32.Foundation.Point ppt,
+			uint dw_effect
+		);
+
+		[CCode (cname = "DragLeave")]
+		public abstract int drag_leave (
+		);
+
+		[CCode (cname = "DragOver")]
+		public abstract int drag_over (
+			ref Win32.Foundation.Point ppt,
+			uint dw_effect
+		);
+
+		[CCode (cname = "Drop")]
+		public abstract int drop (
+			IDataObject p_data_object,
+			ref Win32.Foundation.Point ppt,
+			uint dw_effect
+		);
+
+		[CCode (cname = "Show")]
+		public abstract int show (
+			int f_show
+		);
+
+	}
+
+	[CCode (cname = "IDragSourceHelper", ref_function = "", unref_function = "")]
+	public interface IDragSourceHelper : IUnknown {
+		[CCode (cname = "InitializeFromBitmap")]
+		public abstract int initialize_from_bitmap (
+			void* pshdi,
+			IDataObject p_data_object
+		);
+
+		[CCode (cname = "InitializeFromWindow")]
+		public abstract int initialize_from_window (
+			[CCode (type_id = "HWND")] void* hwnd,
+			ref Win32.Foundation.Point ppt,
+			IDataObject p_data_object
+		);
+
+	}
+
+	[CCode (cname = "IShellLinkW", ref_function = "", unref_function = "")]
+	public interface IShellLinkW : IUnknown {
+		[CCode (cname = "GetPath")]
+		public abstract int get_path (
+			void* psz_file,
+			int cch,
+			out Win32.Storage.FileSystem.WIN32FINDDATA pfd,
+			uint f_flags
+		);
+
+		[CCode (cname = "GetIDList")]
+		public abstract int get_idlist (
+			out out void* ppidl
+		);
+
+		[CCode (cname = "SetIDList")]
+		public abstract int set_idlist (
+			void* pidl
+		);
+
+		[CCode (cname = "GetDescription")]
+		public abstract int get_description (
+			void* psz_name,
+			int cch
+		);
+
+		[CCode (cname = "SetDescription")]
+		public abstract int set_description (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_name
+		);
+
+		[CCode (cname = "GetWorkingDirectory")]
+		public abstract int get_working_directory (
+			void* psz_dir,
+			int cch
+		);
+
+		[CCode (cname = "SetWorkingDirectory")]
+		public abstract int set_working_directory (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_dir
+		);
+
+		[CCode (cname = "GetArguments")]
+		public abstract int get_arguments (
+			void* psz_args,
+			int cch
+		);
+
+		[CCode (cname = "SetArguments")]
+		public abstract int set_arguments (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_args
+		);
+
+		[CCode (cname = "GetHotkey")]
+		public abstract int get_hotkey (
+			out ushort pw_hotkey
+		);
+
+		[CCode (cname = "SetHotkey")]
+		public abstract int set_hotkey (
+			ushort w_hotkey
+		);
+
+		[CCode (cname = "GetShowCmd")]
+		public abstract int get_show_cmd (
+			out int pi_show_cmd
+		);
+
+		[CCode (cname = "SetShowCmd")]
+		public abstract int set_show_cmd (
+			int i_show_cmd
+		);
+
+		[CCode (cname = "GetIconLocation")]
+		public abstract int get_icon_location (
+			void* psz_icon_path,
+			int cch,
+			out int pi_icon
+		);
+
+		[CCode (cname = "SetIconLocation")]
+		public abstract int set_icon_location (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_icon_path,
+			int i_icon
+		);
+
+		[CCode (cname = "SetRelativePath")]
+		public abstract int set_relative_path (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_path_rel,
+			uint dw_reserved
+		);
+
+		[CCode (cname = "Resolve")]
+		public abstract int resolve (
+			[CCode (type_id = "HWND")] void* hwnd,
+			uint f_flags
+		);
+
+		[CCode (cname = "SetPath")]
+		public abstract int set_path (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_file
+		);
+
+	}
+
+	[CCode (cname = "IShellLinkDataList", ref_function = "", unref_function = "")]
+	public interface IShellLinkDataList : IUnknown {
+		[CCode (cname = "AddDataBlock")]
+		public abstract int add_data_block (
+			void* p_data_block
+		);
+
+		[CCode (cname = "CopyDataBlock")]
+		public abstract int copy_data_block (
+			uint dw_sig,
+			out out void* pp_data_block
+		);
+
+		[CCode (cname = "RemoveDataBlock")]
+		public abstract int remove_data_block (
+			uint dw_sig
+		);
+
+		[CCode (cname = "GetFlags")]
+		public abstract int get_flags (
+			out uint pdw_flags
+		);
+
+		[CCode (cname = "SetFlags")]
+		public abstract int set_flags (
+			uint dw_flags
+		);
+
+	}
+
+	[CCode (cname = "IResolveShellLink", ref_function = "", unref_function = "")]
+	public interface IResolveShellLink : IUnknown {
+		[CCode (cname = "ResolveShellLink")]
+		public abstract int resolve_shell_link (
+			IUnknown punk_link,
+			[CCode (type_id = "HWND")] void* hwnd,
+			uint f_flags
+		);
+
+	}
+
+	[CCode (cname = "IActionProgressDialog", ref_function = "", unref_function = "")]
+	public interface IActionProgressDialog : IUnknown {
+		[CCode (cname = "Initialize")]
+		public abstract int initialize (
+			uint flags,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_title,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_cancel
+		);
+
+		[CCode (cname = "Stop")]
+		public abstract int stop (
+		);
+
+	}
+
+	[CCode (cname = "IActionProgress", ref_function = "", unref_function = "")]
+	public interface IActionProgress : IUnknown {
+		[CCode (cname = "Begin")]
+		public abstract int begin (
+			void* action,
+			uint flags
+		);
+
+		[CCode (cname = "UpdateProgress")]
+		public abstract int update_progress (
+			ulong ul_completed,
+			ulong ul_total
+		);
+
+		[CCode (cname = "UpdateText")]
+		public abstract int update_text (
+			void* sptext,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_text,
+			int f_may_compact
+		);
+
+		[CCode (cname = "QueryCancel")]
+		public abstract int query_cancel (
+			out int pf_cancelled
+		);
+
+		[CCode (cname = "ResetCancel")]
+		public abstract int reset_cancel (
+		);
+
+		[CCode (cname = "End")]
+		public abstract int end (
+		);
+
+	}
+
+	[CCode (cname = "IShellExtInit", ref_function = "", unref_function = "")]
+	public interface IShellExtInit : IUnknown {
+		[CCode (cname = "Initialize")]
+		public abstract int initialize (
+			void* pidl_folder,
+			IDataObject pdtobj,
+			void* hkey_prog_id
+		);
+
+	}
+
+	[CCode (cname = "IShellPropSheetExt", ref_function = "", unref_function = "")]
+	public interface IShellPropSheetExt : IUnknown {
+		[CCode (cname = "AddPages")]
+		public abstract int add_pages (
+			Win32.Ui.Controls.LPFNSVADDPROPSHEETPAGE pfn_add_page,
+			int64 l_param
+		);
+
+		[CCode (cname = "ReplacePage")]
+		public abstract int replace_page (
+			uint u_page_id,
+			Win32.Ui.Controls.LPFNSVADDPROPSHEETPAGE pfn_replace_with,
+			int64 l_param
+		);
+
+	}
+
+	[CCode (cname = "IRemoteComputer", ref_function = "", unref_function = "")]
+	public interface IRemoteComputer : IUnknown {
+		[CCode (cname = "Initialize")]
+		public abstract int initialize (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_machine,
+			int b_enumerating
+		);
+
+	}
+
+	[CCode (cname = "IQueryContinue", ref_function = "", unref_function = "")]
+	public interface IQueryContinue : IUnknown {
+		[CCode (cname = "QueryContinue")]
+		public abstract int query_continue (
+		);
+
+	}
+
+	[CCode (cname = "IObjectWithCancelEvent", ref_function = "", unref_function = "")]
+	public interface IObjectWithCancelEvent : IUnknown {
+		[CCode (cname = "GetCancelEvent")]
+		public abstract int get_cancel_event (
+			out void* ph_event
+		);
+
+	}
+
+	[CCode (cname = "IUserNotification", ref_function = "", unref_function = "")]
+	public interface IUserNotification : IUnknown {
+		[CCode (cname = "SetBalloonInfo")]
+		public abstract int set_balloon_info (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_title,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_text,
+			uint dw_info_flags
+		);
+
+		[CCode (cname = "SetBalloonRetry")]
+		public abstract int set_balloon_retry (
+			uint dw_show_time,
+			uint dw_interval,
+			uint c_retry_count
+		);
+
+		[CCode (cname = "SetIconInfo")]
+		public abstract int set_icon_info (
+			[CCode (type_id = "HICON")] void* h_icon,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_tool_tip
+		);
+
+		[CCode (cname = "Show")]
+		public abstract int show (
+			IQueryContinue pqc,
+			uint dw_continue_poll_interval
+		);
+
+		[CCode (cname = "PlaySound")]
+		public abstract int play_sound (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_sound_name
+		);
+
+	}
+
+	[CCode (cname = "IItemNameLimits", ref_function = "", unref_function = "")]
+	public interface IItemNameLimits : IUnknown {
+		[CCode (cname = "GetValidCharacters")]
+		public abstract int get_valid_characters (
+			out uint16* ppwsz_valid_chars,
+			out uint16* ppwsz_invalid_chars
+		);
+
+		[CCode (cname = "GetMaxLength")]
+		public abstract int get_max_length (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_name,
+			out int pi_max_name_len
+		);
+
+	}
+
+	[CCode (cname = "ISearchFolderItemFactory", ref_function = "", unref_function = "")]
+	public interface ISearchFolderItemFactory : IUnknown {
+		[CCode (cname = "SetDisplayName")]
+		public abstract int set_display_name (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_display_name
+		);
+
+		[CCode (cname = "SetFolderTypeID")]
+		public abstract int set_folder_type_id (
+			void* ftid
+		);
+
+		[CCode (cname = "SetFolderLogicalViewMode")]
+		public abstract int set_folder_logical_view_mode (
+			FOLDERLOGICALVIEWMODE flvm
+		);
+
+		[CCode (cname = "SetIconSize")]
+		public abstract int set_icon_size (
+			int i_icon_size
+		);
+
+		[CCode (cname = "SetVisibleColumns")]
+		public abstract int set_visible_columns (
+			uint c_visible_columns,
+			void* rg_key
+		);
+
+		[CCode (cname = "SetSortColumns")]
+		public abstract int set_sort_columns (
+			uint c_sort_columns,
+			void* rg_sort_columns
+		);
+
+		[CCode (cname = "SetGroupColumn")]
+		public abstract int set_group_column (
+			void* key_group
+		);
+
+		[CCode (cname = "SetStacks")]
+		public abstract int set_stacks (
+			uint c_stack_keys,
+			void* rg_stack_keys
+		);
+
+		[CCode (cname = "SetScope")]
+		public abstract int set_scope (
+			IShellItemArray psia_scope
+		);
+
+		[CCode (cname = "SetCondition")]
+		public abstract int set_condition (
+			ICondition p_condition
+		);
+
+		[CCode (cname = "GetShellItem")]
+		public abstract int get_shell_item (
+			void* riid,
+			out out void* ppv
+		);
+
+		[CCode (cname = "GetIDList")]
+		public abstract int get_idlist (
+			out out void* ppidl
+		);
+
+	}
+
+	[CCode (cname = "IExtractImage", ref_function = "", unref_function = "")]
+	public interface IExtractImage : IUnknown {
+		[CCode (cname = "GetLocation")]
+		public abstract int get_location (
+			void* psz_path_buffer,
+			uint cch,
+			out uint pdw_priority,
+			ref Win32.Foundation.Size prg_size,
+			uint dw_rec_clr_depth,
+			out uint pdw_flags
+		);
+
+		[CCode (cname = "Extract")]
+		public abstract int extract (
+			out void* ph_bmp_thumbnail
+		);
+
+	}
+
+	[CCode (cname = "IExtractImage2", ref_function = "", unref_function = "")]
+	public interface IExtractImage2 : IExtractImage {
+		[CCode (cname = "GetDateStamp")]
+		public abstract int get_date_stamp (
+			out void* p_date_stamp
+		);
+
+	}
+
+	[CCode (cname = "IThumbnailHandlerFactory", ref_function = "", unref_function = "")]
+	public interface IThumbnailHandlerFactory : IUnknown {
+		[CCode (cname = "GetThumbnailHandler")]
+		public abstract int get_thumbnail_handler (
+			void* pidl_child,
+			IBindCtx pbc,
+			void* riid,
+			out out void* ppv
+		);
+
+	}
+
+	[CCode (cname = "IParentAndItem", ref_function = "", unref_function = "")]
+	public interface IParentAndItem : IUnknown {
+		[CCode (cname = "SetParentAndItem")]
+		public abstract int set_parent_and_item (
+			void* pidl_parent,
+			IShellFolder psf,
+			void* pidl_child
+		);
+
+		[CCode (cname = "GetParentAndItem")]
+		public abstract int get_parent_and_item (
+			out out void* ppidl_parent,
+			IShellFolder ppsf,
+			out out void* ppidl_child
+		);
+
+	}
+
+	[CCode (cname = "IDockingWindow", ref_function = "", unref_function = "")]
+	public interface IDockingWindow : IOleWindow {
+		[CCode (cname = "ShowDW")]
+		public abstract int show_dw (
+			int f_show
+		);
+
+		[CCode (cname = "CloseDW")]
+		public abstract int close_dw (
+			uint dw_reserved
+		);
+
+		[CCode (cname = "ResizeBorderDW")]
+		public abstract int resize_border_dw (
+			ref Win32.Foundation.Rect prc_border,
+			IUnknown punk_toolbar_site,
+			int f_reserved
+		);
+
+	}
+
+	[CCode (cname = "IDeskBand", ref_function = "", unref_function = "")]
+	public interface IDeskBand : IDockingWindow {
+		[CCode (cname = "GetBandInfo")]
+		public abstract int get_band_info (
+			uint dw_band_id,
+			uint dw_view_mode,
+			out DESKBANDINFO pdbi
+		);
+
+	}
+
+	[CCode (cname = "IDeskBandInfo", ref_function = "", unref_function = "")]
+	public interface IDeskBandInfo : IUnknown {
+		[CCode (cname = "GetDefaultBandWidth")]
+		public abstract int get_default_band_width (
+			uint dw_band_id,
+			uint dw_view_mode,
+			out int pn_width
+		);
+
+	}
+
+	[CCode (cname = "ITaskbarList", ref_function = "", unref_function = "")]
+	public interface ITaskbarList : IUnknown {
+		[CCode (cname = "HrInit")]
+		public abstract int hr_init (
+		);
+
+		[CCode (cname = "AddTab")]
+		public abstract int add_tab (
+			[CCode (type_id = "HWND")] void* hwnd
+		);
+
+		[CCode (cname = "DeleteTab")]
+		public abstract int delete_tab (
+			[CCode (type_id = "HWND")] void* hwnd
+		);
+
+		[CCode (cname = "ActivateTab")]
+		public abstract int activate_tab (
+			[CCode (type_id = "HWND")] void* hwnd
+		);
+
+		[CCode (cname = "SetActiveAlt")]
+		public abstract int set_active_alt (
+			[CCode (type_id = "HWND")] void* hwnd
+		);
+
+	}
+
+	[CCode (cname = "ITaskbarList2", ref_function = "", unref_function = "")]
+	public interface ITaskbarList2 : ITaskbarList {
+		[CCode (cname = "MarkFullscreenWindow")]
+		public abstract int mark_fullscreen_window (
+			[CCode (type_id = "HWND")] void* hwnd,
+			int f_fullscreen
+		);
+
+	}
+
+	[CCode (cname = "ITaskbarList3", ref_function = "", unref_function = "")]
+	public interface ITaskbarList3 : ITaskbarList2 {
+		[CCode (cname = "SetProgressValue")]
+		public abstract int set_progress_value (
+			[CCode (type_id = "HWND")] void* hwnd,
+			ulong ull_completed,
+			ulong ull_total
+		);
+
+		[CCode (cname = "SetProgressState")]
+		public abstract int set_progress_state (
+			[CCode (type_id = "HWND")] void* hwnd,
+			void* tbp_flags
+		);
+
+		[CCode (cname = "RegisterTab")]
+		public abstract int register_tab (
+			[CCode (type_id = "HWND")] void* hwnd_tab,
+			[CCode (type_id = "HWND")] void* hwnd_mdi
+		);
+
+		[CCode (cname = "UnregisterTab")]
+		public abstract int unregister_tab (
+			[CCode (type_id = "HWND")] void* hwnd_tab
+		);
+
+		[CCode (cname = "SetTabOrder")]
+		public abstract int set_tab_order (
+			[CCode (type_id = "HWND")] void* hwnd_tab,
+			[CCode (type_id = "HWND")] void* hwnd_insert_before
+		);
+
+		[CCode (cname = "SetTabActive")]
+		public abstract int set_tab_active (
+			[CCode (type_id = "HWND")] void* hwnd_tab,
+			[CCode (type_id = "HWND")] void* hwnd_mdi,
+			uint dw_reserved
+		);
+
+		[CCode (cname = "ThumbBarAddButtons")]
+		public abstract int thumb_bar_add_buttons (
+			[CCode (type_id = "HWND")] void* hwnd,
+			uint c_buttons,
+			void* p_button
+		);
+
+		[CCode (cname = "ThumbBarUpdateButtons")]
+		public abstract int thumb_bar_update_buttons (
+			[CCode (type_id = "HWND")] void* hwnd,
+			uint c_buttons,
+			void* p_button
+		);
+
+		[CCode (cname = "ThumbBarSetImageList")]
+		public abstract int thumb_bar_set_image_list (
+			[CCode (type_id = "HWND")] void* hwnd,
+			void* himl
+		);
+
+		[CCode (cname = "SetOverlayIcon")]
+		public abstract int set_overlay_icon (
+			[CCode (type_id = "HWND")] void* hwnd,
+			[CCode (type_id = "HICON")] void* h_icon,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_description
+		);
+
+		[CCode (cname = "SetThumbnailTooltip")]
+		public abstract int set_thumbnail_tooltip (
+			[CCode (type_id = "HWND")] void* hwnd,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_tip
+		);
+
+		[CCode (cname = "SetThumbnailClip")]
+		public abstract int set_thumbnail_clip (
+			[CCode (type_id = "HWND")] void* hwnd,
+			ref Win32.Foundation.Rect prc_clip
+		);
+
+	}
+
+	[CCode (cname = "ITaskbarList4", ref_function = "", unref_function = "")]
+	public interface ITaskbarList4 : ITaskbarList3 {
+		[CCode (cname = "SetTabProperties")]
+		public abstract int set_tab_properties (
+			[CCode (type_id = "HWND")] void* hwnd_tab,
+			void* stp_flags
+		);
+
+	}
+
+	[CCode (cname = "IExplorerBrowserEvents", ref_function = "", unref_function = "")]
+	public interface IExplorerBrowserEvents : IUnknown {
+		[CCode (cname = "OnNavigationPending")]
+		public abstract int on_navigation_pending (
+			void* pidl_folder
+		);
+
+		[CCode (cname = "OnViewCreated")]
+		public abstract int on_view_created (
+			IShellView psv
+		);
+
+		[CCode (cname = "OnNavigationComplete")]
+		public abstract int on_navigation_complete (
+			void* pidl_folder
+		);
+
+		[CCode (cname = "OnNavigationFailed")]
+		public abstract int on_navigation_failed (
+			void* pidl_folder
+		);
+
+	}
+
+	[CCode (cname = "IExplorerBrowser", ref_function = "", unref_function = "")]
+	public interface IExplorerBrowser : IUnknown {
+		[CCode (cname = "Initialize")]
+		public abstract int initialize (
+			[CCode (type_id = "HWND")] void* hwnd_parent,
+			ref Win32.Foundation.Rect prc,
+			void* pfs
+		);
+
+		[CCode (cname = "Destroy")]
+		public abstract int destroy (
+		);
+
+		[CCode (cname = "SetRect")]
+		public abstract int set_rect (
+			out void* phdwp,
+			Win32.Foundation.Rect rc_browser
+		);
+
+		[CCode (cname = "SetPropertyBag")]
+		public abstract int set_property_bag (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_property_bag
+		);
+
+		[CCode (cname = "SetEmptyText")]
+		public abstract int set_empty_text (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_empty_text
+		);
+
+		[CCode (cname = "SetFolderSettings")]
+		public abstract int set_folder_settings (
+			void* pfs
+		);
+
+		[CCode (cname = "Advise")]
+		public abstract int advise (
+			IExplorerBrowserEvents psbe,
+			out uint pdw_cookie
+		);
+
+		[CCode (cname = "Unadvise")]
+		public abstract int unadvise (
+			uint dw_cookie
+		);
+
+		[CCode (cname = "SetOptions")]
+		public abstract int set_options (
+			EXPLORERBROWSEROPTIONS dw_flag
+		);
+
+		[CCode (cname = "GetOptions")]
+		public abstract int get_options (
+			out EXPLORERBROWSEROPTIONS pdw_flag
+		);
+
+		[CCode (cname = "BrowseToIDList")]
+		public abstract int browse_to_idlist (
+			void* pidl,
+			uint u_flags
+		);
+
+		[CCode (cname = "BrowseToObject")]
+		public abstract int browse_to_object (
+			IUnknown punk,
+			uint u_flags
+		);
+
+		[CCode (cname = "FillFromObject")]
+		public abstract int fill_from_object (
+			IUnknown punk,
+			EXPLORERBROWSERFILLFLAGS dw_flags
+		);
+
+		[CCode (cname = "RemoveAll")]
+		public abstract int remove_all (
+		);
+
+		[CCode (cname = "GetCurrentView")]
+		public abstract int get_current_view (
+			void* riid,
+			out out void* ppv
+		);
+
+	}
+
+	[CCode (cname = "IEnumObjects", ref_function = "", unref_function = "")]
+	public interface IEnumObjects : IUnknown {
+		[CCode (cname = "Next")]
+		public abstract int next (
+			uint celt,
+			void* riid,
+			void* rgelt,
+			out uint pcelt_fetched
+		);
+
+		[CCode (cname = "Skip")]
+		public abstract int skip (
+			uint celt
+		);
+
+		[CCode (cname = "Reset")]
+		public abstract int reset (
+		);
+
+		[CCode (cname = "Clone")]
+		public abstract int clone (
+			IEnumObjects ppenum
+		);
+
+	}
+
+	[CCode (cname = "IOperationsProgressDialog", ref_function = "", unref_function = "")]
+	public interface IOperationsProgressDialog : IUnknown {
+		[CCode (cname = "StartProgressDialog")]
+		public abstract int start_progress_dialog (
+			[CCode (type_id = "HWND")] void* hwnd_owner,
+			uint flags
+		);
+
+		[CCode (cname = "StopProgressDialog")]
+		public abstract int stop_progress_dialog (
+		);
+
+		[CCode (cname = "SetOperation")]
+		public abstract int set_operation (
+			void* action
+		);
+
+		[CCode (cname = "SetMode")]
+		public abstract int set_mode (
+			uint mode
+		);
+
+		[CCode (cname = "UpdateProgress")]
+		public abstract int update_progress (
+			ulong ull_points_current,
+			ulong ull_points_total,
+			ulong ull_size_current,
+			ulong ull_size_total,
+			ulong ull_items_current,
+			ulong ull_items_total
+		);
+
+		[CCode (cname = "UpdateLocations")]
+		public abstract int update_locations (
+			IShellItem psi_source,
+			IShellItem psi_target,
+			IShellItem psi_item
+		);
+
+		[CCode (cname = "ResetTimer")]
+		public abstract int reset_timer (
+		);
+
+		[CCode (cname = "PauseTimer")]
+		public abstract int pause_timer (
+		);
+
+		[CCode (cname = "ResumeTimer")]
+		public abstract int resume_timer (
+		);
+
+		[CCode (cname = "GetMilliseconds")]
+		public abstract int get_milliseconds (
+			out ulong pull_elapsed,
+			out ulong pull_remaining
+		);
+
+		[CCode (cname = "GetOperationStatus")]
+		public abstract int get_operation_status (
+			out void* popstatus
+		);
+
+	}
+
+	[CCode (cname = "IIOCancelInformation", ref_function = "", unref_function = "")]
+	public interface IIOCancelInformation : IUnknown {
+		[CCode (cname = "SetCancelInformation")]
+		public abstract int set_cancel_information (
+			uint dw_thread_id,
+			uint u_msg_cancel
+		);
+
+		[CCode (cname = "GetCancelInformation")]
+		public abstract int get_cancel_information (
+			out uint pdw_thread_id,
+			out uint pu_msg_cancel
+		);
+
+	}
+
+	[CCode (cname = "IFileOperation", ref_function = "", unref_function = "")]
+	public interface IFileOperation : IUnknown {
+		[CCode (cname = "Advise")]
+		public abstract int advise (
+			IFileOperationProgressSink pfops,
+			out uint pdw_cookie
+		);
+
+		[CCode (cname = "Unadvise")]
+		public abstract int unadvise (
+			uint dw_cookie
+		);
+
+		[CCode (cname = "SetOperationFlags")]
+		public abstract int set_operation_flags (
+			uint dw_operation_flags
+		);
+
+		[CCode (cname = "SetProgressMessage")]
+		public abstract int set_progress_message (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_message
+		);
+
+		[CCode (cname = "SetProgressDialog")]
+		public abstract int set_progress_dialog (
+			IOperationsProgressDialog popd
+		);
+
+		[CCode (cname = "SetProperties")]
+		public abstract int set_properties (
+			IPropertyChangeArray pproparray
+		);
+
+		[CCode (cname = "SetOwnerWindow")]
+		public abstract int set_owner_window (
+			[CCode (type_id = "HWND")] void* hwnd_owner
+		);
+
+		[CCode (cname = "ApplyPropertiesToItem")]
+		public abstract int apply_properties_to_item (
+			IShellItem psi_item
+		);
+
+		[CCode (cname = "ApplyPropertiesToItems")]
+		public abstract int apply_properties_to_items (
+			IUnknown punk_items
+		);
+
+		[CCode (cname = "RenameItem")]
+		public abstract int rename_item (
+			IShellItem psi_item,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_new_name,
+			IFileOperationProgressSink pfops_item
+		);
+
+		[CCode (cname = "RenameItems")]
+		public abstract int rename_items (
+			IUnknown p_unk_items,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_new_name
+		);
+
+		[CCode (cname = "MoveItem")]
+		public abstract int move_item (
+			IShellItem psi_item,
+			IShellItem psi_destination_folder,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_new_name,
+			IFileOperationProgressSink pfops_item
+		);
+
+		[CCode (cname = "MoveItems")]
+		public abstract int move_items (
+			IUnknown punk_items,
+			IShellItem psi_destination_folder
+		);
+
+		[CCode (cname = "CopyItem")]
+		public abstract int copy_item (
+			IShellItem psi_item,
+			IShellItem psi_destination_folder,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_copy_name,
+			IFileOperationProgressSink pfops_item
+		);
+
+		[CCode (cname = "CopyItems")]
+		public abstract int copy_items (
+			IUnknown punk_items,
+			IShellItem psi_destination_folder
+		);
+
+		[CCode (cname = "DeleteItem")]
+		public abstract int delete_item (
+			IShellItem psi_item,
+			IFileOperationProgressSink pfops_item
+		);
+
+		[CCode (cname = "DeleteItems")]
+		public abstract int delete_items (
+			IUnknown punk_items
+		);
+
+		[CCode (cname = "NewItem")]
+		public abstract int new_item (
+			IShellItem psi_destination_folder,
+			uint dw_file_attributes,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_name,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_template_name,
+			IFileOperationProgressSink pfops_item
+		);
+
+		[CCode (cname = "PerformOperations")]
+		public abstract int perform_operations (
+		);
+
+		[CCode (cname = "GetAnyOperationsAborted")]
+		public abstract int get_any_operations_aborted (
+			out int pf_any_operations_aborted
+		);
+
+	}
+
+	[CCode (cname = "IFileOperation2", ref_function = "", unref_function = "")]
+	public interface IFileOperation2 : IFileOperation {
+		[CCode (cname = "SetOperationFlags2")]
+		public abstract int set_operation_flags2 (
+			FILEOPERATIONFLAGS2 operation_flags2
+		);
+
+	}
+
+	[CCode (cname = "IObjectProvider", ref_function = "", unref_function = "")]
+	public interface IObjectProvider : IUnknown {
+		[CCode (cname = "QueryObject")]
+		public abstract int query_object (
+			void* guid_object,
+			void* riid,
+			out out void* ppv_out
+		);
+
+	}
+
+	[CCode (cname = "INamespaceWalkCB", ref_function = "", unref_function = "")]
+	public interface INamespaceWalkCB : IUnknown {
+		[CCode (cname = "FoundItem")]
+		public abstract int found_item (
+			IShellFolder psf,
+			void* pidl
+		);
+
+		[CCode (cname = "EnterFolder")]
+		public abstract int enter_folder (
+			IShellFolder psf,
+			void* pidl
+		);
+
+		[CCode (cname = "LeaveFolder")]
+		public abstract int leave_folder (
+			IShellFolder psf,
+			void* pidl
+		);
+
+		[CCode (cname = "InitializeProgressDialog")]
+		public abstract int initialize_progress_dialog (
+			out uint16* ppsz_title,
+			out uint16* ppsz_cancel
+		);
+
+	}
+
+	[CCode (cname = "INamespaceWalkCB2", ref_function = "", unref_function = "")]
+	public interface INamespaceWalkCB2 : INamespaceWalkCB {
+		[CCode (cname = "WalkComplete")]
+		public abstract int walk_complete (
+			int hr
+		);
+
+	}
+
+	[CCode (cname = "INamespaceWalk", ref_function = "", unref_function = "")]
+	public interface INamespaceWalk : IUnknown {
+		[CCode (cname = "Walk")]
+		public abstract int walk (
+			IUnknown punk_to_walk,
+			uint dw_flags,
+			int c_depth,
+			INamespaceWalkCB pnswcb
+		);
+
+		[CCode (cname = "GetIDArrayResult")]
+		public abstract int get_idarray_result (
+			out uint pc_items,
+			void* prgpidl
+		);
+
+	}
+
+	[CCode (cname = "IBandSite", ref_function = "", unref_function = "")]
+	public interface IBandSite : IUnknown {
+		[CCode (cname = "AddBand")]
+		public abstract int add_band (
+			IUnknown punk
+		);
+
+		[CCode (cname = "EnumBands")]
+		public abstract int enum_bands (
+			uint u_band,
+			out uint pdw_band_id
+		);
+
+		[CCode (cname = "QueryBand")]
+		public abstract int query_band (
+			uint dw_band_id,
+			IDeskBand ppstb,
+			out uint pdw_state,
+			void* psz_name,
+			int cch_name
+		);
+
+		[CCode (cname = "SetBandState")]
+		public abstract int set_band_state (
+			uint dw_band_id,
+			uint dw_mask,
+			uint dw_state
+		);
+
+		[CCode (cname = "RemoveBand")]
+		public abstract int remove_band (
+			uint dw_band_id
+		);
+
+		[CCode (cname = "GetBandObject")]
+		public abstract int get_band_object (
+			uint dw_band_id,
+			void* riid,
+			out out void* ppv
+		);
+
+		[CCode (cname = "SetBandSiteInfo")]
+		public abstract int set_band_site_info (
+			ref BANDSITEINFO pbsinfo
+		);
+
+		[CCode (cname = "GetBandSiteInfo")]
+		public abstract int get_band_site_info (
+			out BANDSITEINFO pbsinfo
+		);
+
+	}
+
+	[CCode (cname = "IModalWindow", ref_function = "", unref_function = "")]
+	public interface IModalWindow : IUnknown {
+		[CCode (cname = "Show")]
+		public abstract int show (
+			[CCode (type_id = "HWND")] void* hwnd_owner
+		);
+
+	}
+
+	[CCode (cname = "IContextMenuSite", ref_function = "", unref_function = "")]
+	public interface IContextMenuSite : IUnknown {
+		[CCode (cname = "DoContextMenuPopup")]
+		public abstract int do_context_menu_popup (
+			IUnknown punk_context_menu,
+			uint f_flags,
+			Win32.Foundation.Point pt
+		);
+
+	}
+
+	[CCode (cname = "IMenuBand", ref_function = "", unref_function = "")]
+	public interface IMenuBand : IUnknown {
+		[CCode (cname = "IsMenuMessage")]
+		public abstract int is_menu_message (
+			ref Win32.Ui.WindowsAndMessaging.Msg pmsg
+		);
+
+		[CCode (cname = "TranslateMenuMessage")]
+		public abstract int translate_menu_message (
+			out Win32.Ui.WindowsAndMessaging.Msg pmsg,
+			out int64 pl_ret
+		);
+
+	}
+
+	[CCode (cname = "IRegTreeItem", ref_function = "", unref_function = "")]
+	public interface IRegTreeItem : IUnknown {
+		[CCode (cname = "GetCheckState")]
+		public abstract int get_check_state (
+			out int pb_check
+		);
+
+		[CCode (cname = "SetCheckState")]
+		public abstract int set_check_state (
+			int b_check
+		);
+
+	}
+
+	[CCode (cname = "IDeskBar", ref_function = "", unref_function = "")]
+	public interface IDeskBar : IOleWindow {
+		[CCode (cname = "SetClient")]
+		public abstract int set_client (
+			IUnknown punk_client
+		);
+
+		[CCode (cname = "GetClient")]
+		public abstract int get_client (
+			IUnknown ppunk_client
+		);
+
+		[CCode (cname = "OnPosRectChangeDB")]
+		public abstract int on_pos_rect_change_db (
+			ref Win32.Foundation.Rect prc
+		);
+
+	}
+
+	[CCode (cname = "IMenuPopup", ref_function = "", unref_function = "")]
+	public interface IMenuPopup : IDeskBar {
+		[CCode (cname = "Popup")]
+		public abstract int popup (
+			void* ppt,
+			void* prc_exclude,
+			int dw_flags
+		);
+
+		[CCode (cname = "OnSelect")]
+		public abstract int on_select (
+			uint dw_select_type
+		);
+
+		[CCode (cname = "SetSubMenu")]
+		public abstract int set_sub_menu (
+			IMenuPopup pmp,
+			int f_set
+		);
+
+	}
+
+	[CCode (cname = "IFileIsInUse", ref_function = "", unref_function = "")]
+	public interface IFileIsInUse : IUnknown {
+		[CCode (cname = "GetAppName")]
+		public abstract int get_app_name (
+			out uint16* ppsz_name
+		);
+
+		[CCode (cname = "GetUsage")]
+		public abstract int get_usage (
+			out FILEUSAGETYPE pfut
+		);
+
+		[CCode (cname = "GetCapabilities")]
+		public abstract int get_capabilities (
+			out uint pdw_cap_flags
+		);
+
+		[CCode (cname = "GetSwitchToHWND")]
+		public abstract int get_switch_to_hwnd (
+			out void* phwnd
+		);
+
+		[CCode (cname = "CloseFile")]
+		public abstract int close_file (
+		);
+
+	}
+
+	[CCode (cname = "IFileDialogEvents", ref_function = "", unref_function = "")]
+	public interface IFileDialogEvents : IUnknown {
+		[CCode (cname = "OnFileOk")]
+		public abstract int on_file_ok (
+			IFileDialog pfd
+		);
+
+		[CCode (cname = "OnFolderChanging")]
+		public abstract int on_folder_changing (
+			IFileDialog pfd,
+			IShellItem psi_folder
+		);
+
+		[CCode (cname = "OnFolderChange")]
+		public abstract int on_folder_change (
+			IFileDialog pfd
+		);
+
+		[CCode (cname = "OnSelectionChange")]
+		public abstract int on_selection_change (
+			IFileDialog pfd
+		);
+
+		[CCode (cname = "OnShareViolation")]
+		public abstract int on_share_violation (
+			IFileDialog pfd,
+			IShellItem psi,
+			out FdeSHAREVIOLATIONRESPONSE p_response
+		);
+
+		[CCode (cname = "OnTypeChange")]
+		public abstract int on_type_change (
+			IFileDialog pfd
+		);
+
+		[CCode (cname = "OnOverwrite")]
+		public abstract int on_overwrite (
+			IFileDialog pfd,
+			IShellItem psi,
+			out FdeOVERWRITERESPONSE p_response
+		);
+
+	}
+
+	[CCode (cname = "IFileDialog", ref_function = "", unref_function = "")]
+	public interface IFileDialog : IModalWindow {
+		[CCode (cname = "SetFileTypes")]
+		public abstract int set_file_types (
+			uint c_file_types,
+			void* rg_filter_spec
+		);
+
+		[CCode (cname = "SetFileTypeIndex")]
+		public abstract int set_file_type_index (
+			uint i_file_type
+		);
+
+		[CCode (cname = "GetFileTypeIndex")]
+		public abstract int get_file_type_index (
+			out uint pi_file_type
+		);
+
+		[CCode (cname = "Advise")]
+		public abstract int advise (
+			IFileDialogEvents pfde,
+			out uint pdw_cookie
+		);
+
+		[CCode (cname = "Unadvise")]
+		public abstract int unadvise (
+			uint dw_cookie
+		);
+
+		[CCode (cname = "SetOptions")]
+		public abstract int set_options (
+			void* fos
+		);
+
+		[CCode (cname = "GetOptions")]
+		public abstract int get_options (
+			out void* pfos
+		);
+
+		[CCode (cname = "SetDefaultFolder")]
+		public abstract int set_default_folder (
+			IShellItem psi
+		);
+
+		[CCode (cname = "SetFolder")]
+		public abstract int set_folder (
+			IShellItem psi
+		);
+
+		[CCode (cname = "GetFolder")]
+		public abstract int get_folder (
+			IShellItem ppsi
+		);
+
+		[CCode (cname = "GetCurrentSelection")]
+		public abstract int get_current_selection (
+			IShellItem ppsi
+		);
+
+		[CCode (cname = "SetFileName")]
+		public abstract int set_file_name (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_name
+		);
+
+		[CCode (cname = "GetFileName")]
+		public abstract int get_file_name (
+			out uint16* psz_name
+		);
+
+		[CCode (cname = "SetTitle")]
+		public abstract int set_title (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_title
+		);
+
+		[CCode (cname = "SetOkButtonLabel")]
+		public abstract int set_ok_button_label (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_text
+		);
+
+		[CCode (cname = "SetFileNameLabel")]
+		public abstract int set_file_name_label (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_label
+		);
+
+		[CCode (cname = "GetResult")]
+		public abstract int get_result (
+			IShellItem ppsi
+		);
+
+		[CCode (cname = "AddPlace")]
+		public abstract int add_place (
+			IShellItem psi,
+			void* fdap
+		);
+
+		[CCode (cname = "SetDefaultExtension")]
+		public abstract int set_default_extension (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_default_extension
+		);
+
+		[CCode (cname = "Close")]
+		public abstract int close (
+			int hr
+		);
+
+		[CCode (cname = "SetClientGuid")]
+		public abstract int set_client_guid (
+			void* guid
+		);
+
+		[CCode (cname = "ClearClientData")]
+		public abstract int clear_client_data (
+		);
+
+		[CCode (cname = "SetFilter")]
+		public abstract int set_filter (
+			IShellItemFilter p_filter
+		);
+
+	}
+
+	[CCode (cname = "IFileSaveDialog", ref_function = "", unref_function = "")]
+	public interface IFileSaveDialog : IFileDialog {
+		[CCode (cname = "SetSaveAsItem")]
+		public abstract int set_save_as_item (
+			IShellItem psi
+		);
+
+		[CCode (cname = "SetProperties")]
+		public abstract int set_properties (
+			IPropertyStore p_store
+		);
+
+		[CCode (cname = "SetCollectedProperties")]
+		public abstract int set_collected_properties (
+			IPropertyDescriptionList p_list,
+			int f_append_default
+		);
+
+		[CCode (cname = "GetProperties")]
+		public abstract int get_properties (
+			void* pp_store
+		);
+
+		[CCode (cname = "ApplyProperties")]
+		public abstract int apply_properties (
+			IShellItem psi,
+			IPropertyStore p_store,
+			[CCode (type_id = "HWND")] void* hwnd,
+			IFileOperationProgressSink p_sink
+		);
+
+	}
+
+	[CCode (cname = "IFileOpenDialog", ref_function = "", unref_function = "")]
+	public interface IFileOpenDialog : IFileDialog {
+		[CCode (cname = "GetResults")]
+		public abstract int get_results (
+			IShellItemArray ppenum
+		);
+
+		[CCode (cname = "GetSelectedItems")]
+		public abstract int get_selected_items (
+			IShellItemArray ppsai
+		);
+
+	}
+
+	[CCode (cname = "IFileDialogCustomize", ref_function = "", unref_function = "")]
+	public interface IFileDialogCustomize : IUnknown {
+		[CCode (cname = "EnableOpenDropDown")]
+		public abstract int enable_open_drop_down (
+			uint dw_idctl
+		);
+
+		[CCode (cname = "AddMenu")]
+		public abstract int add_menu (
+			uint dw_idctl,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_label
+		);
+
+		[CCode (cname = "AddPushButton")]
+		public abstract int add_push_button (
+			uint dw_idctl,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_label
+		);
+
+		[CCode (cname = "AddComboBox")]
+		public abstract int add_combo_box (
+			uint dw_idctl
+		);
+
+		[CCode (cname = "AddRadioButtonList")]
+		public abstract int add_radio_button_list (
+			uint dw_idctl
+		);
+
+		[CCode (cname = "AddCheckButton")]
+		public abstract int add_check_button (
+			uint dw_idctl,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_label,
+			int b_checked
+		);
+
+		[CCode (cname = "AddEditBox")]
+		public abstract int add_edit_box (
+			uint dw_idctl,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_text
+		);
+
+		[CCode (cname = "AddSeparator")]
+		public abstract int add_separator (
+			uint dw_idctl
+		);
+
+		[CCode (cname = "AddText")]
+		public abstract int add_text (
+			uint dw_idctl,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_text
+		);
+
+		[CCode (cname = "SetControlLabel")]
+		public abstract int set_control_label (
+			uint dw_idctl,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_label
+		);
+
+		[CCode (cname = "GetControlState")]
+		public abstract int get_control_state (
+			uint dw_idctl,
+			out void* pdw_state
+		);
+
+		[CCode (cname = "SetControlState")]
+		public abstract int set_control_state (
+			uint dw_idctl,
+			void* dw_state
+		);
+
+		[CCode (cname = "GetEditBoxText")]
+		public abstract int get_edit_box_text (
+			uint dw_idctl,
+			out out ushort ppsz_text
+		);
+
+		[CCode (cname = "SetEditBoxText")]
+		public abstract int set_edit_box_text (
+			uint dw_idctl,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_text
+		);
+
+		[CCode (cname = "GetCheckButtonState")]
+		public abstract int get_check_button_state (
+			uint dw_idctl,
+			out int pb_checked
+		);
+
+		[CCode (cname = "SetCheckButtonState")]
+		public abstract int set_check_button_state (
+			uint dw_idctl,
+			int b_checked
+		);
+
+		[CCode (cname = "AddControlItem")]
+		public abstract int add_control_item (
+			uint dw_idctl,
+			uint dw_iditem,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_label
+		);
+
+		[CCode (cname = "RemoveControlItem")]
+		public abstract int remove_control_item (
+			uint dw_idctl,
+			uint dw_iditem
+		);
+
+		[CCode (cname = "RemoveAllControlItems")]
+		public abstract int remove_all_control_items (
+			uint dw_idctl
+		);
+
+		[CCode (cname = "GetControlItemState")]
+		public abstract int get_control_item_state (
+			uint dw_idctl,
+			uint dw_iditem,
+			out void* pdw_state
+		);
+
+		[CCode (cname = "SetControlItemState")]
+		public abstract int set_control_item_state (
+			uint dw_idctl,
+			uint dw_iditem,
+			void* dw_state
+		);
+
+		[CCode (cname = "GetSelectedControlItem")]
+		public abstract int get_selected_control_item (
+			uint dw_idctl,
+			out uint pdw_iditem
+		);
+
+		[CCode (cname = "SetSelectedControlItem")]
+		public abstract int set_selected_control_item (
+			uint dw_idctl,
+			uint dw_iditem
+		);
+
+		[CCode (cname = "StartVisualGroup")]
+		public abstract int start_visual_group (
+			uint dw_idctl,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_label
+		);
+
+		[CCode (cname = "EndVisualGroup")]
+		public abstract int end_visual_group (
+		);
+
+		[CCode (cname = "MakeProminent")]
+		public abstract int make_prominent (
+			uint dw_idctl
+		);
+
+		[CCode (cname = "SetControlItemText")]
+		public abstract int set_control_item_text (
+			uint dw_idctl,
+			uint dw_iditem,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_label
+		);
+
+	}
+
+	[CCode (cname = "IApplicationAssociationRegistration", ref_function = "", unref_function = "")]
+	public interface IApplicationAssociationRegistration : IUnknown {
+		[CCode (cname = "QueryCurrentDefault")]
+		public abstract int query_current_default (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_query,
+			ASSOCIATIONTYPE at_query_type,
+			void* al_query_level,
+			out uint16* ppsz_association
+		);
+
+		[CCode (cname = "QueryAppIsDefault")]
+		public abstract int query_app_is_default (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_query,
+			ASSOCIATIONTYPE at_query_type,
+			void* al_query_level,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_app_registry_name,
+			out int pf_default
+		);
+
+		[CCode (cname = "QueryAppIsDefaultAll")]
+		public abstract int query_app_is_default_all (
+			void* al_query_level,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_app_registry_name,
+			out int pf_default
+		);
+
+		[CCode (cname = "SetAppAsDefault")]
+		public abstract int set_app_as_default (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_app_registry_name,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_set,
+			ASSOCIATIONTYPE at_set_type
+		);
+
+		[CCode (cname = "SetAppAsDefaultAll")]
+		public abstract int set_app_as_default_all (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_app_registry_name
+		);
+
+		[CCode (cname = "ClearUserAssociations")]
+		public abstract int clear_user_associations (
+		);
+
+	}
+
+	[CCode (cname = "IDelegateFolder", ref_function = "", unref_function = "")]
+	public interface IDelegateFolder : IUnknown {
+		[CCode (cname = "SetItemAlloc")]
+		public abstract int set_item_alloc (
+			IMalloc pmalloc
+		);
+
+	}
+
+	[CCode (cname = "IBrowserFrameOptions", ref_function = "", unref_function = "")]
+	public interface IBrowserFrameOptions : IUnknown {
+		[CCode (cname = "GetFrameOptions")]
+		public abstract int get_frame_options (
+			uint dw_mask,
+			out uint pdw_options
+		);
+
+	}
+
+	[CCode (cname = "INewWindowManager", ref_function = "", unref_function = "")]
+	public interface INewWindowManager : IUnknown {
+		[CCode (cname = "EvaluateNewWindow")]
+		public abstract int evaluate_new_window (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_url,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_name,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_url_context,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_features,
+			int f_replace,
+			uint dw_flags,
+			uint dw_user_action_time
+		);
+
+	}
+
+	[CCode (cname = "IAttachmentExecute", ref_function = "", unref_function = "")]
+	public interface IAttachmentExecute : IUnknown {
+		[CCode (cname = "SetClientTitle")]
+		public abstract int set_client_title (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_title
+		);
+
+		[CCode (cname = "SetClientGuid")]
+		public abstract int set_client_guid (
+			void* guid
+		);
+
+		[CCode (cname = "SetLocalPath")]
+		public abstract int set_local_path (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_local_path
+		);
+
+		[CCode (cname = "SetFileName")]
+		public abstract int set_file_name (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_file_name
+		);
+
+		[CCode (cname = "SetSource")]
+		public abstract int set_source (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_source
+		);
+
+		[CCode (cname = "SetReferrer")]
+		public abstract int set_referrer (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_referrer
+		);
+
+		[CCode (cname = "CheckPolicy")]
+		public abstract int check_policy (
+		);
+
+		[CCode (cname = "Prompt")]
+		public abstract int prompt (
+			[CCode (type_id = "HWND")] void* hwnd,
+			ATTACHMENTPROMPT prompt,
+			out ATTACHMENTACTION paction
+		);
+
+		[CCode (cname = "Save")]
+		public abstract int save (
+		);
+
+		[CCode (cname = "Execute")]
+		public abstract int execute (
+			[CCode (type_id = "HWND")] void* hwnd,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_verb,
+			out void* ph_process
+		);
+
+		[CCode (cname = "SaveWithUI")]
+		public abstract int save_with_ui (
+			[CCode (type_id = "HWND")] void* hwnd
+		);
+
+		[CCode (cname = "ClearClientState")]
+		public abstract int clear_client_state (
+		);
+
+	}
+
+	[CCode (cname = "IShellMenuCallback", ref_function = "", unref_function = "")]
+	public interface IShellMenuCallback : IUnknown {
+		[CCode (cname = "CallbackSM")]
+		public abstract int callback_sm (
+			out void* psmd,
+			uint u_msg,
+			ulong w_param,
+			int64 l_param
+		);
+
+	}
+
+	[CCode (cname = "IShellMenu", ref_function = "", unref_function = "")]
+	public interface IShellMenu : IUnknown {
+		[CCode (cname = "Initialize")]
+		public abstract int initialize (
+			IShellMenuCallback psmc,
+			uint u_id,
+			uint u_id_ancestor,
+			uint dw_flags
+		);
+
+		[CCode (cname = "GetMenuInfo")]
+		public abstract int get_menu_info (
+			IShellMenuCallback ppsmc,
+			out uint pu_id,
+			out uint pu_id_ancestor,
+			out uint pdw_flags
+		);
+
+		[CCode (cname = "SetShellFolder")]
+		public abstract int set_shell_folder (
+			IShellFolder psf,
+			void* pidl_folder,
+			void* h_key,
+			uint dw_flags
+		);
+
+		[CCode (cname = "GetShellFolder")]
+		public abstract int get_shell_folder (
+			out uint pdw_flags,
+			out out void* ppidl,
+			void* riid,
+			out out void* ppv
+		);
+
+		[CCode (cname = "SetMenu")]
+		public abstract int set_menu (
+			[CCode (type_id = "HMENU")] void* hmenu,
+			[CCode (type_id = "HWND")] void* hwnd,
+			uint dw_flags
+		);
+
+		[CCode (cname = "GetMenu")]
+		public abstract int get_menu (
+			out void* phmenu,
+			out void* phwnd,
+			out uint pdw_flags
+		);
+
+		[CCode (cname = "InvalidateItem")]
+		public abstract int invalidate_item (
+			void* psmd,
+			uint dw_flags
+		);
+
+		[CCode (cname = "GetState")]
+		public abstract int get_state (
+			out void* psmd
+		);
+
+		[CCode (cname = "SetMenuToolbar")]
+		public abstract int set_menu_toolbar (
+			IUnknown punk,
+			uint dw_flags
+		);
+
+	}
+
+	[CCode (cname = "IKnownFolder", ref_function = "", unref_function = "")]
+	public interface IKnownFolder : IUnknown {
+		[CCode (cname = "GetId")]
+		public abstract int get_id (
+			out void* pkfid
+		);
+
+		[CCode (cname = "GetCategory")]
+		public abstract int get_category (
+			out KfCATEGORY p_category
+		);
+
+		[CCode (cname = "GetShellItem")]
+		public abstract int get_shell_item (
+			uint dw_flags,
+			void* riid,
+			out out void* ppv
+		);
+
+		[CCode (cname = "GetPath")]
+		public abstract int get_path (
+			uint dw_flags,
+			out uint16* ppsz_path
+		);
+
+		[CCode (cname = "SetPath")]
+		public abstract int set_path (
+			uint dw_flags,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_path
+		);
+
+		[CCode (cname = "GetIDList")]
+		public abstract int get_idlist (
+			uint dw_flags,
+			out out void* ppidl
+		);
+
+		[CCode (cname = "GetFolderType")]
+		public abstract int get_folder_type (
+			out void* pftid
+		);
+
+		[CCode (cname = "GetRedirectionCapabilities")]
+		public abstract int get_redirection_capabilities (
+			out uint p_capabilities
+		);
+
+		[CCode (cname = "GetFolderDefinition")]
+		public abstract int get_folder_definition (
+			out KNOWNFOLDERDEFINITION p_kfd
+		);
+
+	}
+
+	[CCode (cname = "IKnownFolderManager", ref_function = "", unref_function = "")]
+	public interface IKnownFolderManager : IUnknown {
+		[CCode (cname = "FolderIdFromCsidl")]
+		public abstract int folder_id_from_csidl (
+			int n_csidl,
+			out void* pfid
+		);
+
+		[CCode (cname = "FolderIdToCsidl")]
+		public abstract int folder_id_to_csidl (
+			void* rfid,
+			out int pn_csidl
+		);
+
+		[CCode (cname = "GetFolderIds")]
+		public abstract int get_folder_ids (
+			void* pp_kfid,
+			out uint p_count
+		);
+
+		[CCode (cname = "GetFolder")]
+		public abstract int get_folder (
+			void* rfid,
+			IKnownFolder ppkf
+		);
+
+		[CCode (cname = "GetFolderByName")]
+		public abstract int get_folder_by_name (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_canonical_name,
+			IKnownFolder ppkf
+		);
+
+		[CCode (cname = "RegisterFolder")]
+		public abstract int register_folder (
+			void* rfid,
+			ref KNOWNFOLDERDEFINITION p_kfd
+		);
+
+		[CCode (cname = "UnregisterFolder")]
+		public abstract int unregister_folder (
+			void* rfid
+		);
+
+		[CCode (cname = "FindFolderFromPath")]
+		public abstract int find_folder_from_path (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_path,
+			FFFPMODE mode,
+			IKnownFolder ppkf
+		);
+
+		[CCode (cname = "FindFolderFromIDList")]
+		public abstract int find_folder_from_idlist (
+			void* pidl,
+			IKnownFolder ppkf
+		);
+
+		[CCode (cname = "Redirect")]
+		public abstract int redirect (
+			void* rfid,
+			[CCode (type_id = "HWND")] void* hwnd,
+			uint flags,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_target_path,
+			uint c_folders,
+			void* p_exclusion,
+			out uint16* ppsz_error
+		);
+
+	}
+
+	[CCode (cname = "ISharingConfigurationManager", ref_function = "", unref_function = "")]
+	public interface ISharingConfigurationManager : IUnknown {
+		[CCode (cname = "CreateShare")]
+		public abstract int create_share (
+			DefSHAREId dsid,
+			SHAREROLE role
+		);
+
+		[CCode (cname = "DeleteShare")]
+		public abstract int delete_share (
+			DefSHAREId dsid
+		);
+
+		[CCode (cname = "ShareExists")]
+		public abstract int share_exists (
+			DefSHAREId dsid
+		);
+
+		[CCode (cname = "GetSharePermissions")]
+		public abstract int get_share_permissions (
+			DefSHAREId dsid,
+			out SHAREROLE p_role
+		);
+
+		[CCode (cname = "SharePrinters")]
+		public abstract int share_printers (
+		);
+
+		[CCode (cname = "StopSharingPrinters")]
+		public abstract int stop_sharing_printers (
+		);
+
+		[CCode (cname = "ArePrintersShared")]
+		public abstract int are_printers_shared (
+		);
+
+	}
+
+	[CCode (cname = "IRelatedItem", ref_function = "", unref_function = "")]
+	public interface IRelatedItem : IUnknown {
+		[CCode (cname = "GetItemIDList")]
+		public abstract int get_item_idlist (
+			out out void* ppidl
+		);
+
+		[CCode (cname = "GetItem")]
+		public abstract int get_item (
+			IShellItem ppsi
+		);
+
+	}
+
+	[CCode (cname = "IIdentityName", ref_function = "", unref_function = "")]
+	public interface IIdentityName : IRelatedItem {
+	}
+
+	[CCode (cname = "IDelegateItem", ref_function = "", unref_function = "")]
+	public interface IDelegateItem : IRelatedItem {
+	}
+
+	[CCode (cname = "ICurrentItem", ref_function = "", unref_function = "")]
+	public interface ICurrentItem : IRelatedItem {
+	}
+
+	[CCode (cname = "ITransferMediumItem", ref_function = "", unref_function = "")]
+	public interface ITransferMediumItem : IRelatedItem {
+	}
+
+	[CCode (cname = "IDisplayItem", ref_function = "", unref_function = "")]
+	public interface IDisplayItem : IRelatedItem {
+	}
+
+	[CCode (cname = "IViewStateIdentityItem", ref_function = "", unref_function = "")]
+	public interface IViewStateIdentityItem : IRelatedItem {
+	}
+
+	[CCode (cname = "IPreviewItem", ref_function = "", unref_function = "")]
+	public interface IPreviewItem : IRelatedItem {
+	}
+
+	[CCode (cname = "IDestinationStreamFactory", ref_function = "", unref_function = "")]
+	public interface IDestinationStreamFactory : IUnknown {
+		[CCode (cname = "GetDestinationStream")]
+		public abstract int get_destination_stream (
+			void* ppstm
+		);
+
+	}
+
+	[CCode (cname = "ICreateProcessInputs", ref_function = "", unref_function = "")]
+	public interface ICreateProcessInputs : IUnknown {
+		[CCode (cname = "GetCreateFlags")]
+		public abstract int get_create_flags (
+			out uint pdw_creation_flags
+		);
+
+		[CCode (cname = "SetCreateFlags")]
+		public abstract int set_create_flags (
+			uint dw_creation_flags
+		);
+
+		[CCode (cname = "AddCreateFlags")]
+		public abstract int add_create_flags (
+			uint dw_creation_flags
+		);
+
+		[CCode (cname = "SetHotKey")]
+		public abstract int set_hot_key (
+			ushort w_hot_key
+		);
+
+		[CCode (cname = "AddStartupFlags")]
+		public abstract int add_startup_flags (
+			uint dw_startup_info_flags
+		);
+
+		[CCode (cname = "SetTitle")]
+		public abstract int set_title (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_title
+		);
+
+		[CCode (cname = "SetEnvironmentVariable")]
+		public abstract int set_environment_variable (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_name,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_value
+		);
+
+	}
+
+	[CCode (cname = "ICreatingProcess", ref_function = "", unref_function = "")]
+	public interface ICreatingProcess : IUnknown {
+		[CCode (cname = "OnCreating")]
+		public abstract int on_creating (
+			ICreateProcessInputs pcpi
+		);
+
+	}
+
+	[CCode (cname = "ILaunchUIContext", ref_function = "", unref_function = "")]
+	public interface ILaunchUIContext : IUnknown {
+		[CCode (cname = "SetAssociatedWindow")]
+		public abstract int set_associated_window (
+			[CCode (type_id = "HWND")] void* value
+		);
+
+		[CCode (cname = "SetTabGroupingPreference")]
+		public abstract int set_tab_grouping_preference (
+			uint value
+		);
+
+	}
+
+	[CCode (cname = "ILaunchUIContextProvider", ref_function = "", unref_function = "")]
+	public interface ILaunchUIContextProvider : IUnknown {
+		[CCode (cname = "UpdateContext")]
+		public abstract int update_context (
+			ILaunchUIContext context
+		);
+
+	}
+
+	[CCode (cname = "INewMenuClient", ref_function = "", unref_function = "")]
+	public interface INewMenuClient : IUnknown {
+		[CCode (cname = "IncludeItems")]
+		public abstract int include_items (
+			out int pflags
+		);
+
+		[CCode (cname = "SelectAndEditItem")]
+		public abstract int select_and_edit_item (
+			void* pidl_item,
+			int flags
+		);
+
+	}
+
+	[CCode (cname = "IInitializeWithBindCtx", ref_function = "", unref_function = "")]
+	public interface IInitializeWithBindCtx : IUnknown {
+		[CCode (cname = "Initialize")]
+		public abstract int initialize (
+			IBindCtx pbc
+		);
+
+	}
+
+	[CCode (cname = "IShellItemFilter", ref_function = "", unref_function = "")]
+	public interface IShellItemFilter : IUnknown {
+		[CCode (cname = "IncludeItem")]
+		public abstract int include_item (
+			IShellItem psi
+		);
+
+		[CCode (cname = "GetEnumFlagsForItem")]
+		public abstract int get_enum_flags_for_item (
+			IShellItem psi,
+			out uint pgrf_flags
+		);
+
+	}
+
+	[CCode (cname = "INameSpaceTreeControl", ref_function = "", unref_function = "")]
+	public interface INameSpaceTreeControl : IUnknown {
+		[CCode (cname = "Initialize")]
+		public abstract int initialize (
+			[CCode (type_id = "HWND")] void* hwnd_parent,
+			ref Win32.Foundation.Rect prc,
+			uint nscts_flags
+		);
+
+		[CCode (cname = "TreeAdvise")]
+		public abstract int tree_advise (
+			IUnknown punk,
+			out uint pdw_cookie
+		);
+
+		[CCode (cname = "TreeUnadvise")]
+		public abstract int tree_unadvise (
+			uint dw_cookie
+		);
+
+		[CCode (cname = "AppendRoot")]
+		public abstract int append_root (
+			IShellItem psi_root,
+			uint grf_enum_flags,
+			uint grf_root_style,
+			IShellItemFilter pif
+		);
+
+		[CCode (cname = "InsertRoot")]
+		public abstract int insert_root (
+			int i_index,
+			IShellItem psi_root,
+			uint grf_enum_flags,
+			uint grf_root_style,
+			IShellItemFilter pif
+		);
+
+		[CCode (cname = "RemoveRoot")]
+		public abstract int remove_root (
+			IShellItem psi_root
+		);
+
+		[CCode (cname = "RemoveAllRoots")]
+		public abstract int remove_all_roots (
+		);
+
+		[CCode (cname = "GetRootItems")]
+		public abstract int get_root_items (
+			IShellItemArray ppsia_root_items
+		);
+
+		[CCode (cname = "SetItemState")]
+		public abstract int set_item_state (
+			IShellItem psi,
+			uint nstcis_mask,
+			uint nstcis_flags
+		);
+
+		[CCode (cname = "GetItemState")]
+		public abstract int get_item_state (
+			IShellItem psi,
+			uint nstcis_mask,
+			out uint pnstcis_flags
+		);
+
+		[CCode (cname = "GetSelectedItems")]
+		public abstract int get_selected_items (
+			IShellItemArray psia_items
+		);
+
+		[CCode (cname = "GetItemCustomState")]
+		public abstract int get_item_custom_state (
+			IShellItem psi,
+			out int pi_state_number
+		);
+
+		[CCode (cname = "SetItemCustomState")]
+		public abstract int set_item_custom_state (
+			IShellItem psi,
+			int i_state_number
+		);
+
+		[CCode (cname = "EnsureItemVisible")]
+		public abstract int ensure_item_visible (
+			IShellItem psi
+		);
+
+		[CCode (cname = "SetTheme")]
+		public abstract int set_theme (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_theme
+		);
+
+		[CCode (cname = "GetNextItem")]
+		public abstract int get_next_item (
+			IShellItem psi,
+			void* nstcgi,
+			IShellItem ppsi_next
+		);
+
+		[CCode (cname = "HitTest")]
+		public abstract int hit_test (
+			ref Win32.Foundation.Point ppt,
+			IShellItem ppsi_out
+		);
+
+		[CCode (cname = "GetItemRect")]
+		public abstract int get_item_rect (
+			IShellItem psi,
+			out Win32.Foundation.Rect prect
+		);
+
+		[CCode (cname = "CollapseAll")]
+		public abstract int collapse_all (
+		);
+
+	}
+
+	[CCode (cname = "INameSpaceTreeControlFolderCapabilities", ref_function = "", unref_function = "")]
+	public interface INameSpaceTreeControlFolderCapabilities : IUnknown {
+		[CCode (cname = "GetFolderCapabilities")]
+		public abstract int get_folder_capabilities (
+			void* nfc_mask,
+			out void* pnfc_value
+		);
+
+	}
+
+	[CCode (cname = "IPreviewHandler", ref_function = "", unref_function = "")]
+	public interface IPreviewHandler : IUnknown {
+		[CCode (cname = "SetWindow")]
+		public abstract int set_window (
+			[CCode (type_id = "HWND")] void* hwnd,
+			ref Win32.Foundation.Rect prc
+		);
+
+		[CCode (cname = "SetRect")]
+		public abstract int set_rect (
+			ref Win32.Foundation.Rect prc
+		);
+
+		[CCode (cname = "DoPreview")]
+		public abstract int do_preview (
+		);
+
+		[CCode (cname = "Unload")]
+		public abstract int unload (
+		);
+
+		[CCode (cname = "SetFocus")]
+		public abstract int set_focus (
+		);
+
+		[CCode (cname = "QueryFocus")]
+		public abstract int query_focus (
+			out void* phwnd
+		);
+
+		[CCode (cname = "TranslateAccelerator")]
+		public abstract int translate_accelerator (
+			ref Win32.Ui.WindowsAndMessaging.Msg pmsg
+		);
+
+	}
+
+	[CCode (cname = "IPreviewHandlerFrame", ref_function = "", unref_function = "")]
+	public interface IPreviewHandlerFrame : IUnknown {
+		[CCode (cname = "GetWindowContext")]
+		public abstract int get_window_context (
+			out PREVIEWHANDLERFRAMEINFO pinfo
+		);
+
+		[CCode (cname = "TranslateAccelerator")]
+		public abstract int translate_accelerator (
+			ref Win32.Ui.WindowsAndMessaging.Msg pmsg
+		);
+
+	}
+
+	[CCode (cname = "IExplorerPaneVisibility", ref_function = "", unref_function = "")]
+	public interface IExplorerPaneVisibility : IUnknown {
+		[CCode (cname = "GetPaneState")]
+		public abstract int get_pane_state (
+			void* ep,
+			out uint peps
+		);
+
+	}
+
+	[CCode (cname = "IContextMenuCB", ref_function = "", unref_function = "")]
+	public interface IContextMenuCB : IUnknown {
+		[CCode (cname = "CallBack")]
+		public abstract int call_back (
+			IShellFolder psf,
+			[CCode (type_id = "HWND")] void* hwnd_owner,
+			IDataObject pdtobj,
+			uint u_msg,
+			ulong w_param,
+			int64 l_param
+		);
+
+	}
+
+	[CCode (cname = "IDefaultExtractIconInit", ref_function = "", unref_function = "")]
+	public interface IDefaultExtractIconInit : IUnknown {
+		[CCode (cname = "SetFlags")]
+		public abstract int set_flags (
+			uint u_flags
+		);
+
+		[CCode (cname = "SetKey")]
+		public abstract int set_key (
+			void* hkey
+		);
+
+		[CCode (cname = "SetNormalIcon")]
+		public abstract int set_normal_icon (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_file,
+			int i_icon
+		);
+
+		[CCode (cname = "SetOpenIcon")]
+		public abstract int set_open_icon (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_file,
+			int i_icon
+		);
+
+		[CCode (cname = "SetShortcutIcon")]
+		public abstract int set_shortcut_icon (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_file,
+			int i_icon
+		);
+
+		[CCode (cname = "SetDefaultIcon")]
+		public abstract int set_default_icon (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_file,
+			int i_icon
+		);
+
+	}
+
+	[CCode (cname = "IExplorerCommand", ref_function = "", unref_function = "")]
+	public interface IExplorerCommand : IUnknown {
+		[CCode (cname = "GetTitle")]
+		public abstract int get_title (
+			IShellItemArray psi_item_array,
+			out uint16* ppsz_name
+		);
+
+		[CCode (cname = "GetIcon")]
+		public abstract int get_icon (
+			IShellItemArray psi_item_array,
+			out uint16* ppsz_icon
+		);
+
+		[CCode (cname = "GetToolTip")]
+		public abstract int get_tool_tip (
+			IShellItemArray psi_item_array,
+			out uint16* ppsz_infotip
+		);
+
+		[CCode (cname = "GetCanonicalName")]
+		public abstract int get_canonical_name (
+			out void* pguid_command_name
+		);
+
+		[CCode (cname = "GetState")]
+		public abstract int get_state (
+			IShellItemArray psi_item_array,
+			int f_ok_to_be_slow,
+			out uint p_cmd_state
+		);
+
+		[CCode (cname = "Invoke")]
+		public abstract int invoke (
+			IShellItemArray psi_item_array,
+			IBindCtx pbc
+		);
+
+		[CCode (cname = "GetFlags")]
+		public abstract int get_flags (
+			out uint p_flags
+		);
+
+		[CCode (cname = "EnumSubCommands")]
+		public abstract int enum_sub_commands (
+			IEnumExplorerCommand pp_enum
+		);
+
+	}
+
+	[CCode (cname = "IExplorerCommandState", ref_function = "", unref_function = "")]
+	public interface IExplorerCommandState : IUnknown {
+		[CCode (cname = "GetState")]
+		public abstract int get_state (
+			IShellItemArray psi_item_array,
+			int f_ok_to_be_slow,
+			out uint p_cmd_state
+		);
+
+	}
+
+	[CCode (cname = "IInitializeCommand", ref_function = "", unref_function = "")]
+	public interface IInitializeCommand : IUnknown {
+		[CCode (cname = "Initialize")]
+		public abstract int initialize (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_command_name,
+			IPropertyBag ppb
+		);
+
+	}
+
+	[CCode (cname = "IEnumExplorerCommand", ref_function = "", unref_function = "")]
+	public interface IEnumExplorerCommand : IUnknown {
+		[CCode (cname = "Next")]
+		public abstract int next (
+			uint celt,
+			void* p_uicommand,
+			out uint pcelt_fetched
+		);
+
+		[CCode (cname = "Skip")]
+		public abstract int skip (
+			uint celt
+		);
+
+		[CCode (cname = "Reset")]
+		public abstract int reset (
+		);
+
+		[CCode (cname = "Clone")]
+		public abstract int clone (
+			IEnumExplorerCommand ppenum
+		);
+
+	}
+
+	[CCode (cname = "IExplorerCommandProvider", ref_function = "", unref_function = "")]
+	public interface IExplorerCommandProvider : IUnknown {
+		[CCode (cname = "GetCommands")]
+		public abstract int get_commands (
+			IUnknown punk_site,
+			void* riid,
+			out out void* ppv
+		);
+
+		[CCode (cname = "GetCommand")]
+		public abstract int get_command (
+			void* rguid_command_id,
+			void* riid,
+			out out void* ppv
+		);
+
+	}
+
+	[CCode (cname = "IOpenControlPanel", ref_function = "", unref_function = "")]
+	public interface IOpenControlPanel : IUnknown {
+		[CCode (cname = "Open")]
+		public abstract int open (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_name,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_page,
+			IUnknown punk_site
+		);
+
+		[CCode (cname = "GetPath")]
+		public abstract int get_path (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_name,
+			void* psz_path,
+			uint cch_path
+		);
+
+		[CCode (cname = "GetCurrentView")]
+		public abstract int get_current_view (
+			out void* p_view
+		);
+
+	}
+
+	[CCode (cname = "IFileSystemBindData", ref_function = "", unref_function = "")]
+	public interface IFileSystemBindData : IUnknown {
+		[CCode (cname = "SetFindData")]
+		public abstract int set_find_data (
+			ref Win32.Storage.FileSystem.WIN32FINDDATA pfd
+		);
+
+		[CCode (cname = "GetFindData")]
+		public abstract int get_find_data (
+			out Win32.Storage.FileSystem.WIN32FINDDATA pfd
+		);
+
+	}
+
+	[CCode (cname = "IFileSystemBindData2", ref_function = "", unref_function = "")]
+	public interface IFileSystemBindData2 : IFileSystemBindData {
+		[CCode (cname = "SetFileID")]
+		public abstract int set_file_id (
+			void* li_file_id
+		);
+
+		[CCode (cname = "GetFileID")]
+		public abstract int get_file_id (
+			out void* pli_file_id
+		);
+
+		[CCode (cname = "SetJunctionCLSID")]
+		public abstract int set_junction_clsid (
+			void* clsid
+		);
+
+		[CCode (cname = "GetJunctionCLSID")]
+		public abstract int get_junction_clsid (
+			out void* pclsid
+		);
+
+	}
+
+	[CCode (cname = "ICustomDestinationList", ref_function = "", unref_function = "")]
+	public interface ICustomDestinationList : IUnknown {
+		[CCode (cname = "SetAppID")]
+		public abstract int set_app_id (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_app_id
+		);
+
+		[CCode (cname = "BeginList")]
+		public abstract int begin_list (
+			out uint pc_min_slots,
+			void* riid,
+			out out void* ppv
+		);
+
+		[CCode (cname = "AppendCategory")]
+		public abstract int append_category (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_category,
+			IObjectArray poa
+		);
+
+		[CCode (cname = "AppendKnownCategory")]
+		public abstract int append_known_category (
+			void* category
+		);
+
+		[CCode (cname = "AddUserTasks")]
+		public abstract int add_user_tasks (
+			IObjectArray poa
+		);
+
+		[CCode (cname = "CommitList")]
+		public abstract int commit_list (
+		);
+
+		[CCode (cname = "GetRemovedDestinations")]
+		public abstract int get_removed_destinations (
+			void* riid,
+			out out void* ppv
+		);
+
+		[CCode (cname = "DeleteList")]
+		public abstract int delete_list (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_app_id
+		);
+
+		[CCode (cname = "AbortList")]
+		public abstract int abort_list (
+		);
+
+	}
+
+	[CCode (cname = "IApplicationDestinations", ref_function = "", unref_function = "")]
+	public interface IApplicationDestinations : IUnknown {
+		[CCode (cname = "SetAppID")]
+		public abstract int set_app_id (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_app_id
+		);
+
+		[CCode (cname = "RemoveDestination")]
+		public abstract int remove_destination (
+			IUnknown punk
+		);
+
+		[CCode (cname = "RemoveAllDestinations")]
+		public abstract int remove_all_destinations (
+		);
+
+	}
+
+	[CCode (cname = "IApplicationDocumentLists", ref_function = "", unref_function = "")]
+	public interface IApplicationDocumentLists : IUnknown {
+		[CCode (cname = "SetAppID")]
+		public abstract int set_app_id (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_app_id
+		);
+
+		[CCode (cname = "GetList")]
+		public abstract int get_list (
+			APPDOCLISTTYPE listtype,
+			uint c_items_desired,
+			void* riid,
+			out out void* ppv
+		);
+
+	}
+
+	[CCode (cname = "IObjectWithAppUserModelID", ref_function = "", unref_function = "")]
+	public interface IObjectWithAppUserModelID : IUnknown {
+		[CCode (cname = "SetAppID")]
+		public abstract int set_app_id (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_app_id
+		);
+
+		[CCode (cname = "GetAppID")]
+		public abstract int get_app_id (
+			out uint16* ppsz_app_id
+		);
+
+	}
+
+	[CCode (cname = "IObjectWithProgID", ref_function = "", unref_function = "")]
+	public interface IObjectWithProgID : IUnknown {
+		[CCode (cname = "SetProgID")]
+		public abstract int set_prog_id (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_prog_id
+		);
+
+		[CCode (cname = "GetProgID")]
+		public abstract int get_prog_id (
+			out uint16* ppsz_prog_id
+		);
+
+	}
+
+	[CCode (cname = "IUpdateIDList", ref_function = "", unref_function = "")]
+	public interface IUpdateIDList : IUnknown {
+		[CCode (cname = "Update")]
+		public abstract int update (
+			IBindCtx pbc,
+			void* pidl_in,
+			out out void* ppidl_out
+		);
+
+	}
+
+	[CCode (cname = "IDesktopWallpaper", ref_function = "", unref_function = "")]
+	public interface IDesktopWallpaper : IUnknown {
+		[CCode (cname = "SetWallpaper")]
+		public abstract int set_wallpaper (
+			[CCode (type_id = "LPCWSTR")] uint16* monitor_id,
+			[CCode (type_id = "LPCWSTR")] uint16* wallpaper
+		);
+
+		[CCode (cname = "GetWallpaper")]
+		public abstract int get_wallpaper (
+			[CCode (type_id = "LPCWSTR")] uint16* monitor_id,
+			out uint16* wallpaper
+		);
+
+		[CCode (cname = "GetMonitorDevicePathAt")]
+		public abstract int get_monitor_device_path_at (
+			uint monitor_index,
+			out uint16* monitor_id
+		);
+
+		[CCode (cname = "GetMonitorDevicePathCount")]
+		public abstract int get_monitor_device_path_count (
+			out uint count
+		);
+
+		[CCode (cname = "GetMonitorRECT")]
+		public abstract int get_monitor_rect (
+			[CCode (type_id = "LPCWSTR")] uint16* monitor_id,
+			out Win32.Foundation.Rect display_rect
+		);
+
+		[CCode (cname = "SetBackgroundColor")]
+		public abstract int set_background_color (
+			void* color
+		);
+
+		[CCode (cname = "GetBackgroundColor")]
+		public abstract int get_background_color (
+			out void* color
+		);
+
+		[CCode (cname = "SetPosition")]
+		public abstract int set_position (
+			DESKTOPWALLPAPERPOSITION position
+		);
+
+		[CCode (cname = "GetPosition")]
+		public abstract int get_position (
+			out DESKTOPWALLPAPERPOSITION position
+		);
+
+		[CCode (cname = "SetSlideshow")]
+		public abstract int set_slideshow (
+			IShellItemArray items
+		);
+
+		[CCode (cname = "GetSlideshow")]
+		public abstract int get_slideshow (
+			IShellItemArray items
+		);
+
+		[CCode (cname = "SetSlideshowOptions")]
+		public abstract int set_slideshow_options (
+			DESKTOPSLIDESHOWOPTIONS options,
+			uint slideshow_tick
+		);
+
+		[CCode (cname = "GetSlideshowOptions")]
+		public abstract int get_slideshow_options (
+			out DESKTOPSLIDESHOWOPTIONS options,
+			out uint slideshow_tick
+		);
+
+		[CCode (cname = "AdvanceSlideshow")]
+		public abstract int advance_slideshow (
+			[CCode (type_id = "LPCWSTR")] uint16* monitor_id,
+			DESKTOPSLIDESHOWDIRECTION direction
+		);
+
+		[CCode (cname = "GetStatus")]
+		public abstract int get_status (
+			out DESKTOPSLIDESHOWSTATE state
+		);
+
+		[CCode (cname = "Enable")]
+		public abstract int enable (
+			int enable
+		);
+
+	}
+
+	[CCode (cname = "IHomeGroup", ref_function = "", unref_function = "")]
+	public interface IHomeGroup : IUnknown {
+		[CCode (cname = "IsMember")]
+		public abstract int is_member (
+			out int member
+		);
+
+		[CCode (cname = "ShowSharingWizard")]
+		public abstract int show_sharing_wizard (
+			[CCode (type_id = "HWND")] void* owner,
+			out void* sharingchoices
+		);
+
+	}
+
+	[CCode (cname = "IInitializeWithPropertyStore", ref_function = "", unref_function = "")]
+	public interface IInitializeWithPropertyStore : IUnknown {
+		[CCode (cname = "Initialize")]
+		public abstract int initialize (
+			IPropertyStore pps
+		);
+
+	}
+
+	[CCode (cname = "IOpenSearchSource", ref_function = "", unref_function = "")]
+	public interface IOpenSearchSource : IUnknown {
+		[CCode (cname = "GetResults")]
+		public abstract int get_results (
+			[CCode (type_id = "HWND")] void* hwnd,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_query,
+			uint dw_start_index,
+			uint dw_count,
+			void* riid,
+			out out void* ppv
+		);
+
+	}
+
+	[CCode (cname = "IShellLibrary", ref_function = "", unref_function = "")]
+	public interface IShellLibrary : IUnknown {
+		[CCode (cname = "LoadLibraryFromItem")]
+		public abstract int load_library_from_item (
+			IShellItem psi_library,
+			uint grf_mode
+		);
+
+		[CCode (cname = "LoadLibraryFromKnownFolder")]
+		public abstract int load_library_from_known_folder (
+			void* kfid_library,
+			uint grf_mode
+		);
+
+		[CCode (cname = "AddFolder")]
+		public abstract int add_folder (
+			IShellItem psi_location
+		);
+
+		[CCode (cname = "RemoveFolder")]
+		public abstract int remove_folder (
+			IShellItem psi_location
+		);
+
+		[CCode (cname = "GetFolders")]
+		public abstract int get_folders (
+			void* lff,
+			void* riid,
+			out out void* ppv
+		);
+
+		[CCode (cname = "ResolveFolder")]
+		public abstract int resolve_folder (
+			IShellItem psi_folder_to_resolve,
+			uint dw_timeout,
+			void* riid,
+			out out void* ppv
+		);
+
+		[CCode (cname = "GetDefaultSaveFolder")]
+		public abstract int get_default_save_folder (
+			DEFAULTSAVEFOLDERTYPE dsft,
+			void* riid,
+			out out void* ppv
+		);
+
+		[CCode (cname = "SetDefaultSaveFolder")]
+		public abstract int set_default_save_folder (
+			DEFAULTSAVEFOLDERTYPE dsft,
+			IShellItem psi
+		);
+
+		[CCode (cname = "GetOptions")]
+		public abstract int get_options (
+			out LIBRARYOPTIONFLAGS plof_options
+		);
+
+		[CCode (cname = "SetOptions")]
+		public abstract int set_options (
+			LIBRARYOPTIONFLAGS lof_mask,
+			LIBRARYOPTIONFLAGS lof_options
+		);
+
+		[CCode (cname = "GetFolderType")]
+		public abstract int get_folder_type (
+			out void* pftid
+		);
+
+		[CCode (cname = "SetFolderType")]
+		public abstract int set_folder_type (
+			void* ftid
+		);
+
+		[CCode (cname = "GetIcon")]
+		public abstract int get_icon (
+			out uint16* ppsz_icon
+		);
+
+		[CCode (cname = "SetIcon")]
+		public abstract int set_icon (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_icon
+		);
+
+		[CCode (cname = "Commit")]
+		public abstract int commit (
+		);
+
+		[CCode (cname = "Save")]
+		public abstract int save (
+			IShellItem psi_folder_to_save_in,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_library_name,
+			LIBRARYSAVEFLAGS lsf,
+			IShellItem ppsi_saved_to
+		);
+
+		[CCode (cname = "SaveInKnownFolder")]
+		public abstract int save_in_known_folder (
+			void* kfid_to_save_in,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_library_name,
+			LIBRARYSAVEFLAGS lsf,
+			IShellItem ppsi_saved_to
+		);
+
+	}
+
+	[CCode (cname = "IDefaultFolderMenuInitialize", ref_function = "", unref_function = "")]
+	public interface IDefaultFolderMenuInitialize : IUnknown {
+		[CCode (cname = "Initialize")]
+		public abstract int initialize (
+			[CCode (type_id = "HWND")] void* hwnd,
+			IContextMenuCB pcmcb,
+			void* pidl_folder,
+			IShellFolder psf,
+			uint cidl,
+			void* apidl,
+			IUnknown punk_association,
+			uint c_keys,
+			void* a_keys
+		);
+
+		[CCode (cname = "SetMenuRestrictions")]
+		public abstract int set_menu_restrictions (
+			DEFAULTFOLDERMENURESTRICTIONS dfmr_values
+		);
+
+		[CCode (cname = "GetMenuRestrictions")]
+		public abstract int get_menu_restrictions (
+			DEFAULTFOLDERMENURESTRICTIONS dfmr_mask,
+			out DEFAULTFOLDERMENURESTRICTIONS pdfmr_values
+		);
+
+		[CCode (cname = "SetHandlerClsid")]
+		public abstract int set_handler_clsid (
+			void* rclsid
+		);
+
+	}
+
+	[CCode (cname = "IApplicationActivationManager", ref_function = "", unref_function = "")]
+	public interface IApplicationActivationManager : IUnknown {
+		[CCode (cname = "ActivateApplication")]
+		public abstract int activate_application (
+			[CCode (type_id = "LPCWSTR")] uint16* app_user_model_id,
+			[CCode (type_id = "LPCWSTR")] uint16* arguments,
+			void* options,
+			out uint process_id
+		);
+
+		[CCode (cname = "ActivateForFile")]
+		public abstract int activate_for_file (
+			[CCode (type_id = "LPCWSTR")] uint16* app_user_model_id,
+			IShellItemArray item_array,
+			[CCode (type_id = "LPCWSTR")] uint16* verb,
+			out uint process_id
+		);
+
+		[CCode (cname = "ActivateForProtocol")]
+		public abstract int activate_for_protocol (
+			[CCode (type_id = "LPCWSTR")] uint16* app_user_model_id,
+			IShellItemArray item_array,
+			out uint process_id
+		);
+
+	}
+
+	[CCode (cname = "IVirtualDesktopManager", ref_function = "", unref_function = "")]
+	public interface IVirtualDesktopManager : IUnknown {
+		[CCode (cname = "IsWindowOnCurrentVirtualDesktop")]
+		public abstract int is_window_on_current_virtual_desktop (
+			[CCode (type_id = "HWND")] void* top_level_window,
+			out int on_current_desktop
+		);
+
+		[CCode (cname = "GetWindowDesktopId")]
+		public abstract int get_window_desktop_id (
+			[CCode (type_id = "HWND")] void* top_level_window,
+			out void* desktop_id
+		);
+
+		[CCode (cname = "MoveWindowToDesktop")]
+		public abstract int move_window_to_desktop (
+			[CCode (type_id = "HWND")] void* top_level_window,
+			void* desktop_id
+		);
+
+	}
+
+	[CCode (cname = "IAssocHandlerInvoker", ref_function = "", unref_function = "")]
+	public interface IAssocHandlerInvoker : IUnknown {
+		[CCode (cname = "SupportsSelection")]
+		public abstract int supports_selection (
+		);
+
+		[CCode (cname = "Invoke")]
+		public abstract int invoke (
+		);
+
+	}
+
+	[CCode (cname = "IAssocHandler", ref_function = "", unref_function = "")]
+	public interface IAssocHandler : IUnknown {
+		[CCode (cname = "GetName")]
+		public abstract int get_name (
+			out uint16* ppsz
+		);
+
+		[CCode (cname = "GetUIName")]
+		public abstract int get_uiname (
+			out uint16* ppsz
+		);
+
+		[CCode (cname = "GetIconLocation")]
+		public abstract int get_icon_location (
+			out uint16* ppsz_path,
+			out int p_index
+		);
+
+		[CCode (cname = "IsRecommended")]
+		public abstract int is_recommended (
+		);
+
+		[CCode (cname = "MakeDefault")]
+		public abstract int make_default (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_description
+		);
+
+		[CCode (cname = "Invoke")]
+		public abstract int invoke (
+			IDataObject pdo
+		);
+
+		[CCode (cname = "CreateInvoker")]
+		public abstract int create_invoker (
+			IDataObject pdo,
+			IAssocHandlerInvoker pp_invoker
+		);
+
+	}
+
+	[CCode (cname = "IEnumAssocHandlers", ref_function = "", unref_function = "")]
+	public interface IEnumAssocHandlers : IUnknown {
+		[CCode (cname = "Next")]
+		public abstract int next (
+			uint celt,
+			void* rgelt,
+			out uint pcelt_fetched
+		);
+
+	}
+
+	[CCode (cname = "IDataObjectProvider", ref_function = "", unref_function = "")]
+	public interface IDataObjectProvider : IUnknown {
+		[CCode (cname = "GetDataObject")]
+		public abstract int get_data_object (
+			void* data_object
+		);
+
+		[CCode (cname = "SetDataObject")]
+		public abstract int set_data_object (
+			IDataObject data_object
+		);
+
+	}
+
+	[CCode (cname = "IDataTransferManagerInterop", ref_function = "", unref_function = "")]
+	public interface IDataTransferManagerInterop : IUnknown {
+		[CCode (cname = "GetForWindow")]
+		public abstract int get_for_window (
+			[CCode (type_id = "HWND")] void* app_window,
+			void* riid,
+			out out void* data_transfer_manager
+		);
+
+		[CCode (cname = "ShowShareUIForWindow")]
+		public abstract int show_share_uifor_window (
+			[CCode (type_id = "HWND")] void* app_window
+		);
+
+	}
+
+	[CCode (cname = "IFrameworkInputPaneHandler", ref_function = "", unref_function = "")]
+	public interface IFrameworkInputPaneHandler : IUnknown {
+		[CCode (cname = "Showing")]
+		public abstract int showing (
+			ref Win32.Foundation.Rect prc_input_pane_screen_location,
+			int f_ensure_focused_element_in_view
+		);
+
+		[CCode (cname = "Hiding")]
+		public abstract int hiding (
+			int f_ensure_focused_element_in_view
+		);
+
+	}
+
+	[CCode (cname = "IFrameworkInputPane", ref_function = "", unref_function = "")]
+	public interface IFrameworkInputPane : IUnknown {
+		[CCode (cname = "Advise")]
+		public abstract int advise (
+			IUnknown p_window,
+			IFrameworkInputPaneHandler p_handler,
+			out uint pdw_cookie
+		);
+
+		[CCode (cname = "AdviseWithHWND")]
+		public abstract int advise_with_hwnd (
+			[CCode (type_id = "HWND")] void* hwnd,
+			IFrameworkInputPaneHandler p_handler,
+			out uint pdw_cookie
+		);
+
+		[CCode (cname = "Unadvise")]
+		public abstract int unadvise (
+			uint dw_cookie
+		);
+
+		[CCode (cname = "Location")]
+		public abstract int location (
+			out Win32.Foundation.Rect prc_input_pane_screen_location
+		);
+
+	}
+
+	[CCode (cname = "IAppVisibilityEvents", ref_function = "", unref_function = "")]
+	public interface IAppVisibilityEvents : IUnknown {
+		[CCode (cname = "AppVisibilityOnMonitorChanged")]
+		public abstract int app_visibility_on_monitor_changed (
+			void* h_monitor,
+			MONITORAppVISIBILITY previous_mode,
+			MONITORAppVISIBILITY current_mode
+		);
+
+		[CCode (cname = "LauncherVisibilityChange")]
+		public abstract int launcher_visibility_change (
+			int current_visible_state
+		);
+
+	}
+
+	[CCode (cname = "IAppVisibility", ref_function = "", unref_function = "")]
+	public interface IAppVisibility : IUnknown {
+		[CCode (cname = "GetAppVisibilityOnMonitor")]
+		public abstract int get_app_visibility_on_monitor (
+			void* h_monitor,
+			out MONITORAppVISIBILITY p_mode
+		);
+
+		[CCode (cname = "IsLauncherVisible")]
+		public abstract int is_launcher_visible (
+			out int pf_visible
+		);
+
+		[CCode (cname = "Advise")]
+		public abstract int advise (
+			IAppVisibilityEvents p_callback,
+			out uint pdw_cookie
+		);
+
+		[CCode (cname = "Unadvise")]
+		public abstract int unadvise (
+			uint dw_cookie
+		);
+
+	}
+
+	[CCode (cname = "IPackageExecutionStateChangeNotification", ref_function = "", unref_function = "")]
+	public interface IPackageExecutionStateChangeNotification : IUnknown {
+		[CCode (cname = "OnStateChanged")]
+		public abstract int on_state_changed (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_package_full_name,
+			PACKAGEEXECUTIONSTATE pes_new_state
+		);
+
+	}
+
+	[CCode (cname = "IPackageDebugSettings", ref_function = "", unref_function = "")]
+	public interface IPackageDebugSettings : IUnknown {
+		[CCode (cname = "EnableDebugging")]
+		public abstract int enable_debugging (
+			[CCode (type_id = "LPCWSTR")] uint16* package_full_name,
+			[CCode (type_id = "LPCWSTR")] uint16* debugger_command_line,
+			[CCode (type_id = "LPCWSTR")] uint16* environment
+		);
+
+		[CCode (cname = "DisableDebugging")]
+		public abstract int disable_debugging (
+			[CCode (type_id = "LPCWSTR")] uint16* package_full_name
+		);
+
+		[CCode (cname = "Suspend")]
+		public abstract int suspend (
+			[CCode (type_id = "LPCWSTR")] uint16* package_full_name
+		);
+
+		[CCode (cname = "Resume")]
+		public abstract int resume (
+			[CCode (type_id = "LPCWSTR")] uint16* package_full_name
+		);
+
+		[CCode (cname = "TerminateAllProcesses")]
+		public abstract int terminate_all_processes (
+			[CCode (type_id = "LPCWSTR")] uint16* package_full_name
+		);
+
+		[CCode (cname = "SetTargetSessionId")]
+		public abstract int set_target_session_id (
+			uint session_id
+		);
+
+		[CCode (cname = "EnumerateBackgroundTasks")]
+		public abstract int enumerate_background_tasks (
+			[CCode (type_id = "LPCWSTR")] uint16* package_full_name,
+			out uint task_count,
+			out out void* task_ids,
+			out out uint16* task_names
+		);
+
+		[CCode (cname = "ActivateBackgroundTask")]
+		public abstract int activate_background_task (
+			void* task_id
+		);
+
+		[CCode (cname = "StartServicing")]
+		public abstract int start_servicing (
+			[CCode (type_id = "LPCWSTR")] uint16* package_full_name
+		);
+
+		[CCode (cname = "StopServicing")]
+		public abstract int stop_servicing (
+			[CCode (type_id = "LPCWSTR")] uint16* package_full_name
+		);
+
+		[CCode (cname = "StartSessionRedirection")]
+		public abstract int start_session_redirection (
+			[CCode (type_id = "LPCWSTR")] uint16* package_full_name,
+			uint session_id
+		);
+
+		[CCode (cname = "StopSessionRedirection")]
+		public abstract int stop_session_redirection (
+			[CCode (type_id = "LPCWSTR")] uint16* package_full_name
+		);
+
+		[CCode (cname = "GetPackageExecutionState")]
+		public abstract int get_package_execution_state (
+			[CCode (type_id = "LPCWSTR")] uint16* package_full_name,
+			out PACKAGEEXECUTIONSTATE package_execution_state
+		);
+
+		[CCode (cname = "RegisterForPackageStateChanges")]
+		public abstract int register_for_package_state_changes (
+			[CCode (type_id = "LPCWSTR")] uint16* package_full_name,
+			IPackageExecutionStateChangeNotification p_package_execution_state_change_notification,
+			out uint pdw_cookie
+		);
+
+		[CCode (cname = "UnregisterForPackageStateChanges")]
+		public abstract int unregister_for_package_state_changes (
+			uint dw_cookie
+		);
+
+	}
+
+	[CCode (cname = "IPackageDebugSettings2", ref_function = "", unref_function = "")]
+	public interface IPackageDebugSettings2 : IPackageDebugSettings {
+		[CCode (cname = "EnumerateApps")]
+		public abstract int enumerate_apps (
+			[CCode (type_id = "LPCWSTR")] uint16* package_full_name,
+			out uint app_count,
+			out out uint16* app_user_model_ids,
+			out out uint16* app_display_names
+		);
+
+	}
+
+	[CCode (cname = "ISuspensionDependencyManager", ref_function = "", unref_function = "")]
+	public interface ISuspensionDependencyManager : IUnknown {
+		[CCode (cname = "RegisterAsChild")]
+		public abstract int register_as_child (
+			void* process_handle
+		);
+
+		[CCode (cname = "GroupChildWithParent")]
+		public abstract int group_child_with_parent (
+			void* child_process_handle
+		);
+
+		[CCode (cname = "UngroupChildFromParent")]
+		public abstract int ungroup_child_from_parent (
+			void* child_process_handle
+		);
+
+	}
+
+	[CCode (cname = "IExecuteCommandApplicationHostEnvironment", ref_function = "", unref_function = "")]
+	public interface IExecuteCommandApplicationHostEnvironment : IUnknown {
+		[CCode (cname = "GetValue")]
+		public abstract int get_value (
+			out AheTYPE pahe
+		);
+
+	}
+
+	[CCode (cname = "IExecuteCommandHost", ref_function = "", unref_function = "")]
+	public interface IExecuteCommandHost : IUnknown {
+		[CCode (cname = "GetUIMode")]
+		public abstract int get_uimode (
+			out EcHOSTUiMODE p_uimode
+		);
+
+	}
+
+	[CCode (cname = "IApplicationDesignModeSettings", ref_function = "", unref_function = "")]
+	public interface IApplicationDesignModeSettings : IUnknown {
+		[CCode (cname = "SetNativeDisplaySize")]
+		public abstract int set_native_display_size (
+			Win32.Foundation.Size native_display_size_pixels
+		);
+
+		[CCode (cname = "SetScaleFactor")]
+		public abstract int set_scale_factor (
+			Win32.Ui.Shell.Common.DEVICESCALEFACTOR scale_factor
+		);
+
+		[CCode (cname = "SetApplicationViewState")]
+		public abstract int set_application_view_state (
+			APPLICATIONVIEWSTATE view_state
+		);
+
+		[CCode (cname = "ComputeApplicationSize")]
+		public abstract int compute_application_size (
+			out Win32.Foundation.Size application_size_pixels
+		);
+
+		[CCode (cname = "IsApplicationViewStateSupported")]
+		public abstract int is_application_view_state_supported (
+			APPLICATIONVIEWSTATE view_state,
+			Win32.Foundation.Size native_display_size_pixels,
+			Win32.Ui.Shell.Common.DEVICESCALEFACTOR scale_factor,
+			out int supported
+		);
+
+		[CCode (cname = "TriggerEdgeGesture")]
+		public abstract int trigger_edge_gesture (
+			EDGEGESTUREKIND edge_gesture_kind
+		);
+
+	}
+
+	[CCode (cname = "IApplicationDesignModeSettings2", ref_function = "", unref_function = "")]
+	public interface IApplicationDesignModeSettings2 : IApplicationDesignModeSettings {
+		[CCode (cname = "SetNativeDisplayOrientation")]
+		public abstract int set_native_display_orientation (
+			NATIVEDISPLAYORIENTATION native_display_orientation
+		);
+
+		[CCode (cname = "SetApplicationViewOrientation")]
+		public abstract int set_application_view_orientation (
+			APPLICATIONVIEWORIENTATION view_orientation
+		);
+
+		[CCode (cname = "SetAdjacentDisplayEdges")]
+		public abstract int set_adjacent_display_edges (
+			ADJACENTDISPLAYEDGES adjacent_display_edges
+		);
+
+		[CCode (cname = "SetIsOnLockScreen")]
+		public abstract int set_is_on_lock_screen (
+			int is_on_lock_screen
+		);
+
+		[CCode (cname = "SetApplicationViewMinWidth")]
+		public abstract int set_application_view_min_width (
+			APPLICATIONVIEWMinWIDTH view_min_width
+		);
+
+		[CCode (cname = "GetApplicationSizeBounds")]
+		public abstract int get_application_size_bounds (
+			out Win32.Foundation.Size min_application_size_pixels,
+			out Win32.Foundation.Size max_application_size_pixels
+		);
+
+		[CCode (cname = "GetApplicationViewOrientation")]
+		public abstract int get_application_view_orientation (
+			Win32.Foundation.Size application_size_pixels,
+			out APPLICATIONVIEWORIENTATION view_orientation
+		);
+
+	}
+
+	[CCode (cname = "ILaunchTargetMonitor", ref_function = "", unref_function = "")]
+	public interface ILaunchTargetMonitor : IUnknown {
+		[CCode (cname = "GetMonitor")]
+		public abstract int get_monitor (
+			out void* monitor
+		);
+
+	}
+
+	[CCode (cname = "ILaunchSourceViewSizePreference", ref_function = "", unref_function = "")]
+	public interface ILaunchSourceViewSizePreference : IUnknown {
+		[CCode (cname = "GetSourceViewToPosition")]
+		public abstract int get_source_view_to_position (
+			out void* hwnd
+		);
+
+		[CCode (cname = "GetSourceViewSizePreference")]
+		public abstract int get_source_view_size_preference (
+			out APPLICATIONVIEWSIZEPREFERENCE source_size_after_launch
+		);
+
+	}
+
+	[CCode (cname = "ILaunchTargetViewSizePreference", ref_function = "", unref_function = "")]
+	public interface ILaunchTargetViewSizePreference : IUnknown {
+		[CCode (cname = "GetTargetViewSizePreference")]
+		public abstract int get_target_view_size_preference (
+			out APPLICATIONVIEWSIZEPREFERENCE target_size_on_launch
+		);
+
+	}
+
+	[CCode (cname = "ILaunchSourceAppUserModelId", ref_function = "", unref_function = "")]
+	public interface ILaunchSourceAppUserModelId : IUnknown {
+		[CCode (cname = "GetAppUserModelId")]
+		public abstract int get_app_user_model_id (
+			out uint16* launching_app
+		);
+
+	}
+
+	[CCode (cname = "IInitializeWithWindow", ref_function = "", unref_function = "")]
+	public interface IInitializeWithWindow : IUnknown {
+		[CCode (cname = "Initialize")]
+		public abstract int initialize (
+			[CCode (type_id = "HWND")] void* hwnd
+		);
+
+	}
+
+	[CCode (cname = "IHandlerInfo", ref_function = "", unref_function = "")]
+	public interface IHandlerInfo : IUnknown {
+		[CCode (cname = "GetApplicationDisplayName")]
+		public abstract int get_application_display_name (
+			out uint16* value
+		);
+
+		[CCode (cname = "GetApplicationPublisher")]
+		public abstract int get_application_publisher (
+			out uint16* value
+		);
+
+		[CCode (cname = "GetApplicationIconReference")]
+		public abstract int get_application_icon_reference (
+			out uint16* value
+		);
+
+	}
+
+	[CCode (cname = "IHandlerInfo2", ref_function = "", unref_function = "")]
+	public interface IHandlerInfo2 : IHandlerInfo {
+		[CCode (cname = "GetApplicationId")]
+		public abstract int get_application_id (
+			out uint16* value
+		);
+
+	}
+
+	[CCode (cname = "IHandlerActivationHost", ref_function = "", unref_function = "")]
+	public interface IHandlerActivationHost : IUnknown {
+		[CCode (cname = "BeforeCoCreateInstance")]
+		public abstract int before_co_create_instance (
+			void* clsid_handler,
+			IShellItemArray items_being_activated,
+			IHandlerInfo handler_info
+		);
+
+		[CCode (cname = "BeforeCreateProcess")]
+		public abstract int before_create_process (
+			[CCode (type_id = "LPCWSTR")] uint16* application_path,
+			[CCode (type_id = "LPCWSTR")] uint16* command_line,
+			IHandlerInfo handler_info
+		);
+
+	}
+
+	[CCode (cname = "IAppActivationUIInfo", ref_function = "", unref_function = "")]
+	public interface IAppActivationUIInfo : IUnknown {
+		[CCode (cname = "GetMonitor")]
+		public abstract int get_monitor (
+			out void* value
+		);
+
+		[CCode (cname = "GetInvokePoint")]
+		public abstract int get_invoke_point (
+			out Win32.Foundation.Point value
+		);
+
+		[CCode (cname = "GetShowCommand")]
+		public abstract int get_show_command (
+			out int value
+		);
+
+		[CCode (cname = "GetShowUI")]
+		public abstract int get_show_ui (
+			out int value
+		);
+
+		[CCode (cname = "GetKeyState")]
+		public abstract int get_key_state (
+			out uint value
+		);
+
+	}
+
+	[CCode (cname = "IContactManagerInterop", ref_function = "", unref_function = "")]
+	public interface IContactManagerInterop : IUnknown {
+		[CCode (cname = "ShowContactCardForWindow")]
+		public abstract int show_contact_card_for_window (
+			[CCode (type_id = "HWND")] void* app_window,
+			IUnknown contact,
+			ref Win32.Foundation.Rect selection,
+			FLYOUTPLACEMENT preferred_placement
+		);
+
+	}
+
+	[CCode (cname = "IShellIconOverlayIdentifier", ref_function = "", unref_function = "")]
+	public interface IShellIconOverlayIdentifier : IUnknown {
+		[CCode (cname = "IsMemberOf")]
+		public abstract int is_member_of (
+			[CCode (type_id = "LPCWSTR")] uint16* pwsz_path,
+			uint dw_attrib
+		);
+
+		[CCode (cname = "GetOverlayInfo")]
+		public abstract int get_overlay_info (
+			void* pwsz_icon_file,
+			int cch_max,
+			out int p_index,
+			out uint pdw_flags
+		);
+
+		[CCode (cname = "GetPriority")]
+		public abstract int get_priority (
+			out int p_priority
+		);
+
+	}
+
+	[CCode (cname = "IBannerNotificationHandler", ref_function = "", unref_function = "")]
+	public interface IBannerNotificationHandler : IUnknown {
+		[CCode (cname = "OnBannerEvent")]
+		public abstract int on_banner_event (
+			ref BANNERNOTIFICATION notification
+		);
+
+	}
+
+	[CCode (cname = "ISortColumnArray", ref_function = "", unref_function = "")]
+	public interface ISortColumnArray : IUnknown {
+		[CCode (cname = "GetCount")]
+		public abstract int get_count (
+			out uint column_count
+		);
+
+		[CCode (cname = "GetAt")]
+		public abstract int get_at (
+			uint index,
+			out void* sortcolumn
+		);
+
+		[CCode (cname = "GetSortType")]
+		public abstract int get_sort_type (
+			out SORTORDERTYPE type
+		);
+
+	}
+
+	[CCode (cname = "IPropertyKeyStore", ref_function = "", unref_function = "")]
+	public interface IPropertyKeyStore : IUnknown {
+		[CCode (cname = "GetKeyCount")]
+		public abstract int get_key_count (
+			out int key_count
+		);
+
+		[CCode (cname = "GetKeyAt")]
+		public abstract int get_key_at (
+			int index,
+			out void* pkey
+		);
+
+		[CCode (cname = "AppendKey")]
+		public abstract int append_key (
+			void* key
+		);
+
+		[CCode (cname = "DeleteKey")]
+		public abstract int delete_key (
+			int index
+		);
+
+		[CCode (cname = "IsKeyInStore")]
+		public abstract int is_key_in_store (
+			void* key
+		);
+
+		[CCode (cname = "RemoveKey")]
+		public abstract int remove_key (
+			void* key
+		);
+
+	}
+
+	[CCode (cname = "IQueryCodePage", ref_function = "", unref_function = "")]
+	public interface IQueryCodePage : IUnknown {
+		[CCode (cname = "GetCodePage")]
+		public abstract int get_code_page (
+			out uint pui_code_page
+		);
+
+		[CCode (cname = "SetCodePage")]
+		public abstract int set_code_page (
+			uint ui_code_page
+		);
+
+	}
+
+	[CCode (cname = "IFolderViewOptions", ref_function = "", unref_function = "")]
+	public interface IFolderViewOptions : IUnknown {
+		[CCode (cname = "SetFolderViewOptions")]
+		public abstract int set_folder_view_options (
+			void* fvo_mask,
+			void* fvo_flags
+		);
+
+		[CCode (cname = "GetFolderViewOptions")]
+		public abstract int get_folder_view_options (
+			out void* pfvo_flags
+		);
+
+	}
+
+	[CCode (cname = "IShellView3", ref_function = "", unref_function = "")]
+	public interface IShellView3 : IShellView2 {
+		[CCode (cname = "CreateViewWindow3")]
+		public abstract int create_view_window3 (
+			IShellBrowser psb_owner,
+			IShellView psv_prev,
+			uint dw_view_flags,
+			FOLDERFLAGS dw_mask,
+			FOLDERFLAGS dw_flags,
+			FOLDERVIEWMODE fv_mode,
+			void* pvid,
+			ref Win32.Foundation.Rect prc_view,
+			out void* phwnd_view
+		);
+
+	}
+
+	[CCode (cname = "ISearchBoxInfo", ref_function = "", unref_function = "")]
+	public interface ISearchBoxInfo : IUnknown {
+		[CCode (cname = "GetCondition")]
+		public abstract int get_condition (
+			void* riid,
+			out out void* ppv
+		);
+
+		[CCode (cname = "GetText")]
+		public abstract int get_text (
+			out uint16* ppsz
+		);
+
+	}
+
+	[CCode (cname = "IVisualProperties", ref_function = "", unref_function = "")]
+	public interface IVisualProperties : IUnknown {
+		[CCode (cname = "SetWatermark")]
+		public abstract int set_watermark (
+			void* hbmp,
+			VPWATERMARKFLAGS vpwf
+		);
+
+		[CCode (cname = "SetColor")]
+		public abstract int set_color (
+			VPCOLORFLAGS vpcf,
+			void* cr
+		);
+
+		[CCode (cname = "GetColor")]
+		public abstract int get_color (
+			VPCOLORFLAGS vpcf,
+			out void* pcr
+		);
+
+		[CCode (cname = "SetItemHeight")]
+		public abstract int set_item_height (
+			int cy_item_in_pixels
+		);
+
+		[CCode (cname = "GetItemHeight")]
+		public abstract int get_item_height (
+			out int cy_item_in_pixels
+		);
+
+		[CCode (cname = "SetFont")]
+		public abstract int set_font (
+			void* plf,
+			int b_redraw
+		);
+
+		[CCode (cname = "GetFont")]
+		public abstract int get_font (
+			out void* plf
+		);
+
+		[CCode (cname = "SetTheme")]
+		public abstract int set_theme (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_sub_app_name,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_sub_id_list
+		);
+
+	}
+
+	[CCode (cname = "ICommDlgBrowser3", ref_function = "", unref_function = "")]
+	public interface ICommDlgBrowser3 : ICommDlgBrowser2 {
+		[CCode (cname = "OnColumnClicked")]
+		public abstract int on_column_clicked (
+			IShellView ppshv,
+			int i_column
+		);
+
+		[CCode (cname = "GetCurrentFilter")]
+		public abstract int get_current_filter (
+			void* psz_file_spec,
+			int cch_file_spec
+		);
+
+		[CCode (cname = "OnPreViewCreated")]
+		public abstract int on_pre_view_created (
+			IShellView ppshv
+		);
+
+	}
+
+	[CCode (cname = "IUserAccountChangeCallback", ref_function = "", unref_function = "")]
+	public interface IUserAccountChangeCallback : IUnknown {
+		[CCode (cname = "OnPictureChange")]
+		public abstract int on_picture_change (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_user_name
+		);
+
+	}
+
+	[CCode (cname = "IStreamAsync", ref_function = "", unref_function = "")]
+	public interface IStreamAsync : IStream {
+		[CCode (cname = "ReadAsync")]
+		public abstract int read_async (
+			out void* pv,
+			uint cb,
+			out uint pcb_read,
+			void* lp_overlapped
+		);
+
+		[CCode (cname = "WriteAsync")]
+		public abstract int write_async (
+			void* lp_buffer,
+			uint cb,
+			out uint pcb_written,
+			void* lp_overlapped
+		);
+
+		[CCode (cname = "OverlappedResult")]
+		public abstract int overlapped_result (
+			void* lp_overlapped,
+			out uint lp_number_of_bytes_transferred,
+			int b_wait
+		);
+
+		[CCode (cname = "CancelIo")]
+		public abstract int cancel_io (
+		);
+
+	}
+
+	[CCode (cname = "IStreamUnbufferedInfo", ref_function = "", unref_function = "")]
+	public interface IStreamUnbufferedInfo : IUnknown {
+		[CCode (cname = "GetSectorSize")]
+		public abstract int get_sector_size (
+			out uint pcb_sector_size
+		);
+
+	}
+
+	[CCode (cname = "IDragSourceHelper2", ref_function = "", unref_function = "")]
+	public interface IDragSourceHelper2 : IDragSourceHelper {
+		[CCode (cname = "SetFlags")]
+		public abstract int set_flags (
+			uint dw_flags
+		);
+
+	}
+
+	[CCode (cname = "IHWEventHandler", ref_function = "", unref_function = "")]
+	public interface IHWEventHandler : IUnknown {
+		[CCode (cname = "Initialize")]
+		public abstract int initialize (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_params
+		);
+
+		[CCode (cname = "HandleEvent")]
+		public abstract int handle_event (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_device_id,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_alt_device_id,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_event_type
+		);
+
+		[CCode (cname = "HandleEventWithContent")]
+		public abstract int handle_event_with_content (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_device_id,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_alt_device_id,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_event_type,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_content_type_handler,
+			IDataObject pdataobject
+		);
+
+	}
+
+	[CCode (cname = "IHWEventHandler2", ref_function = "", unref_function = "")]
+	public interface IHWEventHandler2 : IHWEventHandler {
+		[CCode (cname = "HandleEventWithHWND")]
+		public abstract int handle_event_with_hwnd (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_device_id,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_alt_device_id,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_event_type,
+			[CCode (type_id = "HWND")] void* hwnd_owner
+		);
+
+	}
+
+	[CCode (cname = "IQueryCancelAutoPlay", ref_function = "", unref_function = "")]
+	public interface IQueryCancelAutoPlay : IUnknown {
+		[CCode (cname = "AllowAutoPlay")]
+		public abstract int allow_auto_play (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_path,
+			uint dw_content_type,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_label,
+			uint dw_serial_number
+		);
+
+	}
+
+	[CCode (cname = "IDynamicHWHandler", ref_function = "", unref_function = "")]
+	public interface IDynamicHWHandler : IUnknown {
+		[CCode (cname = "GetDynamicInfo")]
+		public abstract int get_dynamic_info (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_device_id,
+			uint dw_content_type,
+			out uint16* ppsz_action
+		);
+
+	}
+
+	[CCode (cname = "IUserNotificationCallback", ref_function = "", unref_function = "")]
+	public interface IUserNotificationCallback : IUnknown {
+		[CCode (cname = "OnBalloonUserClick")]
+		public abstract int on_balloon_user_click (
+			ref Win32.Foundation.Point pt
+		);
+
+		[CCode (cname = "OnLeftClick")]
+		public abstract int on_left_click (
+			ref Win32.Foundation.Point pt
+		);
+
+		[CCode (cname = "OnContextMenu")]
+		public abstract int on_context_menu (
+			ref Win32.Foundation.Point pt
+		);
+
+	}
+
+	[CCode (cname = "IUserNotification2", ref_function = "", unref_function = "")]
+	public interface IUserNotification2 : IUnknown {
+		[CCode (cname = "SetBalloonInfo")]
+		public abstract int set_balloon_info (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_title,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_text,
+			uint dw_info_flags
+		);
+
+		[CCode (cname = "SetBalloonRetry")]
+		public abstract int set_balloon_retry (
+			uint dw_show_time,
+			uint dw_interval,
+			uint c_retry_count
+		);
+
+		[CCode (cname = "SetIconInfo")]
+		public abstract int set_icon_info (
+			[CCode (type_id = "HICON")] void* h_icon,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_tool_tip
+		);
+
+		[CCode (cname = "Show")]
+		public abstract int show (
+			IQueryContinue pqc,
+			uint dw_continue_poll_interval,
+			IUserNotificationCallback p_sink
+		);
+
+		[CCode (cname = "PlaySound")]
+		public abstract int play_sound (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_sound_name
+		);
+
+	}
+
+	[CCode (cname = "IDeskBand2", ref_function = "", unref_function = "")]
+	public interface IDeskBand2 : IDeskBand {
+		[CCode (cname = "CanRenderComposited")]
+		public abstract int can_render_composited (
+			out int pf_can_render_composited
+		);
+
+		[CCode (cname = "SetCompositionState")]
+		public abstract int set_composition_state (
+			int f_composition_enabled
+		);
+
+		[CCode (cname = "GetCompositionState")]
+		public abstract int get_composition_state (
+			out int pf_composition_enabled
+		);
+
+	}
+
+	[CCode (cname = "IStartMenuPinnedList", ref_function = "", unref_function = "")]
+	public interface IStartMenuPinnedList : IUnknown {
+		[CCode (cname = "RemoveFromList")]
+		public abstract int remove_from_list (
+			IShellItem pitem
+		);
+
+	}
+
+	[CCode (cname = "ICDBurn", ref_function = "", unref_function = "")]
+	public interface ICDBurn : IUnknown {
+		[CCode (cname = "GetRecorderDriveLetter")]
+		public abstract int get_recorder_drive_letter (
+			void* psz_drive,
+			uint cch
+		);
+
+		[CCode (cname = "Burn")]
+		public abstract int burn (
+			[CCode (type_id = "HWND")] void* hwnd
+		);
+
+		[CCode (cname = "HasRecordableDrive")]
+		public abstract int has_recordable_drive (
+			out int pf_has_recorder
+		);
+
+	}
+
+	[CCode (cname = "IWizardSite", ref_function = "", unref_function = "")]
+	public interface IWizardSite : IUnknown {
+		[CCode (cname = "GetPreviousPage")]
+		public abstract int get_previous_page (
+			out void* phpage
+		);
+
+		[CCode (cname = "GetNextPage")]
+		public abstract int get_next_page (
+			out void* phpage
+		);
+
+		[CCode (cname = "GetCancelledPage")]
+		public abstract int get_cancelled_page (
+			out void* phpage
+		);
+
+	}
+
+	[CCode (cname = "IWizardExtension", ref_function = "", unref_function = "")]
+	public interface IWizardExtension : IUnknown {
+		[CCode (cname = "AddPages")]
+		public abstract int add_pages (
+			void* a_pages,
+			uint c_pages,
+			out uint pn_pages_added
+		);
+
+		[CCode (cname = "GetFirstPage")]
+		public abstract int get_first_page (
+			out void* phpage
+		);
+
+		[CCode (cname = "GetLastPage")]
+		public abstract int get_last_page (
+			out void* phpage
+		);
+
+	}
+
+	[CCode (cname = "IWebWizardExtension", ref_function = "", unref_function = "")]
+	public interface IWebWizardExtension : IWizardExtension {
+		[CCode (cname = "SetInitialURL")]
+		public abstract int set_initial_url (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_url
+		);
+
+		[CCode (cname = "SetErrorURL")]
+		public abstract int set_error_url (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_error_url
+		);
+
+	}
+
+	[CCode (cname = "IPublishingWizard", ref_function = "", unref_function = "")]
+	public interface IPublishingWizard : IWizardExtension {
+		[CCode (cname = "Initialize")]
+		public abstract int initialize (
+			IDataObject pdo,
+			uint dw_options,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_service_scope
+		);
+
+		[CCode (cname = "GetTransferManifest")]
+		public abstract int get_transfer_manifest (
+			out int phr_from_transfer,
+			void* pdoc_manifest
+		);
+
+	}
+
+	[CCode (cname = "IFolderViewHost", ref_function = "", unref_function = "")]
+	public interface IFolderViewHost : IUnknown {
+		[CCode (cname = "Initialize")]
+		public abstract int initialize (
+			[CCode (type_id = "HWND")] void* hwnd_parent,
+			IDataObject pdo,
+			ref Win32.Foundation.Rect prc
+		);
+
+	}
+
+	[CCode (cname = "IAccessibleObject", ref_function = "", unref_function = "")]
+	public interface IAccessibleObject : IUnknown {
+		[CCode (cname = "SetAccessibleName")]
+		public abstract int set_accessible_name (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_name
+		);
+
+	}
+
+	[CCode (cname = "IResultsFolder", ref_function = "", unref_function = "")]
+	public interface IResultsFolder : IUnknown {
+		[CCode (cname = "AddItem")]
+		public abstract int add_item (
+			IShellItem psi
+		);
+
+		[CCode (cname = "AddIDList")]
+		public abstract int add_idlist (
+			void* pidl,
+			out out void* ppidl_added
+		);
+
+		[CCode (cname = "RemoveItem")]
+		public abstract int remove_item (
+			IShellItem psi
+		);
+
+		[CCode (cname = "RemoveIDList")]
+		public abstract int remove_idlist (
+			void* pidl
+		);
+
+		[CCode (cname = "RemoveAll")]
+		public abstract int remove_all (
+		);
+
+	}
+
+	[CCode (cname = "IAutoCompleteDropDown", ref_function = "", unref_function = "")]
+	public interface IAutoCompleteDropDown : IUnknown {
+		[CCode (cname = "GetDropDownStatus")]
+		public abstract int get_drop_down_status (
+			out uint pdw_flags,
+			out uint16* ppwsz_string
+		);
+
+		[CCode (cname = "ResetEnumerator")]
+		public abstract int reset_enumerator (
+		);
+
+	}
+
+	[CCode (cname = "ICDBurnExt", ref_function = "", unref_function = "")]
+	public interface ICDBurnExt : IUnknown {
+		[CCode (cname = "GetSupportedActionTypes")]
+		public abstract int get_supported_action_types (
+			out uint pdw_actions
+		);
+
+	}
+
+	[CCode (cname = "IEnumReadyCallback", ref_function = "", unref_function = "")]
+	public interface IEnumReadyCallback : IUnknown {
+		[CCode (cname = "EnumReady")]
+		public abstract int enum_ready (
+		);
+
+	}
+
+	[CCode (cname = "IEnumerableView", ref_function = "", unref_function = "")]
+	public interface IEnumerableView : IUnknown {
+		[CCode (cname = "SetEnumReadyCallback")]
+		public abstract int set_enum_ready_callback (
+			IEnumReadyCallback percb
+		);
+
+		[CCode (cname = "CreateEnumIDListFromContents")]
+		public abstract int create_enum_idlist_from_contents (
+			void* pidl_folder,
+			uint dw_enum_flags,
+			IEnumIDList pp_enum_idlist
+		);
+
+	}
+
+	[CCode (cname = "IInsertItem", ref_function = "", unref_function = "")]
+	public interface IInsertItem : IUnknown {
+		[CCode (cname = "InsertItem")]
+		public abstract int insert_item (
+			void* pidl
+		);
+
+	}
+
+	[CCode (cname = "IFolderBandPriv", ref_function = "", unref_function = "")]
+	public interface IFolderBandPriv : IUnknown {
+		[CCode (cname = "SetCascade")]
+		public abstract int set_cascade (
+			int f_cascade
+		);
+
+		[CCode (cname = "SetAccelerators")]
+		public abstract int set_accelerators (
+			int f_accelerators
+		);
+
+		[CCode (cname = "SetNoIcons")]
+		public abstract int set_no_icons (
+			int f_no_icons
+		);
+
+		[CCode (cname = "SetNoText")]
+		public abstract int set_no_text (
+			int f_no_text
+		);
+
+	}
+
+	[CCode (cname = "IImageRecompress", ref_function = "", unref_function = "")]
+	public interface IImageRecompress : IUnknown {
+		[CCode (cname = "RecompressImage")]
+		public abstract int recompress_image (
+			IShellItem psi,
+			int cx,
+			int cy,
+			int i_quality,
+			IStorage pstg,
+			void* ppstrm_out
+		);
+
+	}
+
+	[CCode (cname = "IFileDialogControlEvents", ref_function = "", unref_function = "")]
+	public interface IFileDialogControlEvents : IUnknown {
+		[CCode (cname = "OnItemSelected")]
+		public abstract int on_item_selected (
+			IFileDialogCustomize pfdc,
+			uint dw_idctl,
+			uint dw_iditem
+		);
+
+		[CCode (cname = "OnButtonClicked")]
+		public abstract int on_button_clicked (
+			IFileDialogCustomize pfdc,
+			uint dw_idctl
+		);
+
+		[CCode (cname = "OnCheckButtonToggled")]
+		public abstract int on_check_button_toggled (
+			IFileDialogCustomize pfdc,
+			uint dw_idctl,
+			int b_checked
+		);
+
+		[CCode (cname = "OnControlActivating")]
+		public abstract int on_control_activating (
+			IFileDialogCustomize pfdc,
+			uint dw_idctl
+		);
+
+	}
+
+	[CCode (cname = "IFileDialog2", ref_function = "", unref_function = "")]
+	public interface IFileDialog2 : IFileDialog {
+		[CCode (cname = "SetCancelButtonLabel")]
+		public abstract int set_cancel_button_label (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_label
+		);
+
+		[CCode (cname = "SetNavigationRoot")]
+		public abstract int set_navigation_root (
+			IShellItem psi
+		);
+
+	}
+
+	[CCode (cname = "IApplicationAssociationRegistrationUI", ref_function = "", unref_function = "")]
+	public interface IApplicationAssociationRegistrationUI : IUnknown {
+		[CCode (cname = "LaunchAdvancedAssociationUI")]
+		public abstract int launch_advanced_association_ui (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_app_registry_name
+		);
+
+	}
+
+	[CCode (cname = "IShellRunDll", ref_function = "", unref_function = "")]
+	public interface IShellRunDll : IUnknown {
+		[CCode (cname = "Run")]
+		public abstract int run (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_args
+		);
+
+	}
+
+	[CCode (cname = "IPreviousVersionsInfo", ref_function = "", unref_function = "")]
+	public interface IPreviousVersionsInfo : IUnknown {
+		[CCode (cname = "AreSnapshotsAvailable")]
+		public abstract int are_snapshots_available (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_path,
+			int f_ok_to_be_slow,
+			out int pf_available
+		);
+
+	}
+
+	[CCode (cname = "IUseToBrowseItem", ref_function = "", unref_function = "")]
+	public interface IUseToBrowseItem : IRelatedItem {
+	}
+
+	[CCode (cname = "INameSpaceTreeControl2", ref_function = "", unref_function = "")]
+	public interface INameSpaceTreeControl2 : INameSpaceTreeControl {
+		[CCode (cname = "SetControlStyle")]
+		public abstract int set_control_style (
+			uint nstcs_mask,
+			uint nstcs_style
+		);
+
+		[CCode (cname = "GetControlStyle")]
+		public abstract int get_control_style (
+			uint nstcs_mask,
+			out uint pnstcs_style
+		);
+
+		[CCode (cname = "SetControlStyle2")]
+		public abstract int set_control_style2 (
+			void* nstcs_mask,
+			void* nstcs_style
+		);
+
+		[CCode (cname = "GetControlStyle2")]
+		public abstract int get_control_style2 (
+			void* nstcs_mask,
+			out void* pnstcs_style
+		);
+
+	}
+
+	[CCode (cname = "INameSpaceTreeControlEvents", ref_function = "", unref_function = "")]
+	public interface INameSpaceTreeControlEvents : IUnknown {
+		[CCode (cname = "OnItemClick")]
+		public abstract int on_item_click (
+			IShellItem psi,
+			uint nstce_hit_test,
+			uint nstce_click_type
+		);
+
+		[CCode (cname = "OnPropertyItemCommit")]
+		public abstract int on_property_item_commit (
+			IShellItem psi
+		);
+
+		[CCode (cname = "OnItemStateChanging")]
+		public abstract int on_item_state_changing (
+			IShellItem psi,
+			uint nstcis_mask,
+			uint nstcis_state
+		);
+
+		[CCode (cname = "OnItemStateChanged")]
+		public abstract int on_item_state_changed (
+			IShellItem psi,
+			uint nstcis_mask,
+			uint nstcis_state
+		);
+
+		[CCode (cname = "OnSelectionChanged")]
+		public abstract int on_selection_changed (
+			IShellItemArray psia_selection
+		);
+
+		[CCode (cname = "OnKeyboardInput")]
+		public abstract int on_keyboard_input (
+			uint u_msg,
+			ulong w_param,
+			int64 l_param
+		);
+
+		[CCode (cname = "OnBeforeExpand")]
+		public abstract int on_before_expand (
+			IShellItem psi
+		);
+
+		[CCode (cname = "OnAfterExpand")]
+		public abstract int on_after_expand (
+			IShellItem psi
+		);
+
+		[CCode (cname = "OnBeginLabelEdit")]
+		public abstract int on_begin_label_edit (
+			IShellItem psi
+		);
+
+		[CCode (cname = "OnEndLabelEdit")]
+		public abstract int on_end_label_edit (
+			IShellItem psi
+		);
+
+		[CCode (cname = "OnGetToolTip")]
+		public abstract int on_get_tool_tip (
+			IShellItem psi,
+			void* psz_tip,
+			int cch_tip
+		);
+
+		[CCode (cname = "OnBeforeItemDelete")]
+		public abstract int on_before_item_delete (
+			IShellItem psi
+		);
+
+		[CCode (cname = "OnItemAdded")]
+		public abstract int on_item_added (
+			IShellItem psi,
+			int f_is_root
+		);
+
+		[CCode (cname = "OnItemDeleted")]
+		public abstract int on_item_deleted (
+			IShellItem psi,
+			int f_is_root
+		);
+
+		[CCode (cname = "OnBeforeContextMenu")]
+		public abstract int on_before_context_menu (
+			IShellItem psi,
+			void* riid,
+			out out void* ppv
+		);
+
+		[CCode (cname = "OnAfterContextMenu")]
+		public abstract int on_after_context_menu (
+			IShellItem psi,
+			IContextMenu pcm_in,
+			void* riid,
+			out out void* ppv
+		);
+
+		[CCode (cname = "OnBeforeStateImageChange")]
+		public abstract int on_before_state_image_change (
+			IShellItem psi
+		);
+
+		[CCode (cname = "OnGetDefaultIconIndex")]
+		public abstract int on_get_default_icon_index (
+			IShellItem psi,
+			out int pi_default_icon,
+			out int pi_open_icon
+		);
+
+	}
+
+	[CCode (cname = "INameSpaceTreeControlDropHandler", ref_function = "", unref_function = "")]
+	public interface INameSpaceTreeControlDropHandler : IUnknown {
+		[CCode (cname = "OnDragEnter")]
+		public abstract int on_drag_enter (
+			IShellItem psi_over,
+			IShellItemArray psia_data,
+			int f_outside_source,
+			uint grf_key_state,
+			out uint pdw_effect
+		);
+
+		[CCode (cname = "OnDragOver")]
+		public abstract int on_drag_over (
+			IShellItem psi_over,
+			IShellItemArray psia_data,
+			uint grf_key_state,
+			out uint pdw_effect
+		);
+
+		[CCode (cname = "OnDragPosition")]
+		public abstract int on_drag_position (
+			IShellItem psi_over,
+			IShellItemArray psia_data,
+			int i_new_position,
+			int i_old_position
+		);
+
+		[CCode (cname = "OnDrop")]
+		public abstract int on_drop (
+			IShellItem psi_over,
+			IShellItemArray psia_data,
+			int i_position,
+			uint grf_key_state,
+			out uint pdw_effect
+		);
+
+		[CCode (cname = "OnDropPosition")]
+		public abstract int on_drop_position (
+			IShellItem psi_over,
+			IShellItemArray psia_data,
+			int i_new_position,
+			int i_old_position
+		);
+
+		[CCode (cname = "OnDragLeave")]
+		public abstract int on_drag_leave (
+			IShellItem psi_over
+		);
+
+	}
+
+	[CCode (cname = "INameSpaceTreeAccessible", ref_function = "", unref_function = "")]
+	public interface INameSpaceTreeAccessible : IUnknown {
+		[CCode (cname = "OnGetDefaultAccessibilityAction")]
+		public abstract int on_get_default_accessibility_action (
+			IShellItem psi,
+			out void* pbstr_default_action
+		);
+
+		[CCode (cname = "OnDoDefaultAccessibilityAction")]
+		public abstract int on_do_default_accessibility_action (
+			IShellItem psi
+		);
+
+		[CCode (cname = "OnGetAccessibilityRole")]
+		public abstract int on_get_accessibility_role (
+			IShellItem psi,
+			out void* pvar_role
+		);
+
+	}
+
+	[CCode (cname = "INameSpaceTreeControlCustomDraw", ref_function = "", unref_function = "")]
+	public interface INameSpaceTreeControlCustomDraw : IUnknown {
+		[CCode (cname = "PrePaint")]
+		public abstract int pre_paint (
+			void* hdc,
+			ref Win32.Foundation.Rect prc,
+			out int64 plres
+		);
+
+		[CCode (cname = "PostPaint")]
+		public abstract int post_paint (
+			void* hdc,
+			ref Win32.Foundation.Rect prc
+		);
+
+		[CCode (cname = "ItemPrePaint")]
+		public abstract int item_pre_paint (
+			void* hdc,
+			ref Win32.Foundation.Rect prc,
+			void* pnstccd_item,
+			out void* pclr_text,
+			out void* pclr_text_bk,
+			out int64 plres
+		);
+
+		[CCode (cname = "ItemPostPaint")]
+		public abstract int item_post_paint (
+			void* hdc,
+			ref Win32.Foundation.Rect prc,
+			void* pnstccd_item
+		);
+
+	}
+
+	[CCode (cname = "ITrayDeskBand", ref_function = "", unref_function = "")]
+	public interface ITrayDeskBand : IUnknown {
+		[CCode (cname = "ShowDeskBand")]
+		public abstract int show_desk_band (
+			void* clsid
+		);
+
+		[CCode (cname = "HideDeskBand")]
+		public abstract int hide_desk_band (
+			void* clsid
+		);
+
+		[CCode (cname = "IsDeskBandShown")]
+		public abstract int is_desk_band_shown (
+			void* clsid
+		);
+
+		[CCode (cname = "DeskBandRegistrationChanged")]
+		public abstract int desk_band_registration_changed (
+		);
+
+	}
+
+	[CCode (cname = "IBandHost", ref_function = "", unref_function = "")]
+	public interface IBandHost : IUnknown {
+		[CCode (cname = "CreateBand")]
+		public abstract int create_band (
+			void* rclsid_band,
+			int f_available,
+			int f_visible,
+			void* riid,
+			out out void* ppv
+		);
+
+		[CCode (cname = "SetBandAvailability")]
+		public abstract int set_band_availability (
+			void* rclsid_band,
+			int f_available
+		);
+
+		[CCode (cname = "DestroyBand")]
+		public abstract int destroy_band (
+			void* rclsid_band
+		);
+
+	}
+
+	[CCode (cname = "IComputerInfoChangeNotify", ref_function = "", unref_function = "")]
+	public interface IComputerInfoChangeNotify : IUnknown {
+		[CCode (cname = "ComputerInfoChanged")]
+		public abstract int computer_info_changed (
+		);
+
+	}
+
+	[CCode (cname = "IDesktopGadget", ref_function = "", unref_function = "")]
+	public interface IDesktopGadget : IUnknown {
+		[CCode (cname = "RunGadget")]
+		public abstract int run_gadget (
+			[CCode (type_id = "LPCWSTR")] uint16* gadget_path
+		);
+
+	}
+
+	[CCode (cname = "IAccessibilityDockingServiceCallback", ref_function = "", unref_function = "")]
+	public interface IAccessibilityDockingServiceCallback : IUnknown {
+		[CCode (cname = "Undocked")]
+		public abstract int undocked (
+			UNDOCKREASON undock_reason
+		);
+
+	}
+
+	[CCode (cname = "IAccessibilityDockingService", ref_function = "", unref_function = "")]
+	public interface IAccessibilityDockingService : IUnknown {
+		[CCode (cname = "GetAvailableSize")]
+		public abstract int get_available_size (
+			void* h_monitor,
+			out uint pcx_fixed,
+			out uint pcy_max
+		);
+
+		[CCode (cname = "DockWindow")]
+		public abstract int dock_window (
+			[CCode (type_id = "HWND")] void* hwnd,
+			void* h_monitor,
+			uint cy_requested,
+			IAccessibilityDockingServiceCallback p_callback
+		);
+
+		[CCode (cname = "UndockWindow")]
+		public abstract int undock_window (
+			[CCode (type_id = "HWND")] void* hwnd
+		);
+
+	}
+
+	[CCode (cname = "IStorageProviderBanners", ref_function = "", unref_function = "")]
+	public interface IStorageProviderBanners : IUnknown {
+		[CCode (cname = "SetBanner")]
+		public abstract int set_banner (
+			[CCode (type_id = "LPCWSTR")] uint16* provider_identity,
+			[CCode (type_id = "LPCWSTR")] uint16* subscription_id,
+			[CCode (type_id = "LPCWSTR")] uint16* content_id
+		);
+
+		[CCode (cname = "ClearBanner")]
+		public abstract int clear_banner (
+			[CCode (type_id = "LPCWSTR")] uint16* provider_identity,
+			[CCode (type_id = "LPCWSTR")] uint16* subscription_id
+		);
+
+		[CCode (cname = "ClearAllBanners")]
+		public abstract int clear_all_banners (
+			[CCode (type_id = "LPCWSTR")] uint16* provider_identity
+		);
+
+		[CCode (cname = "GetBanner")]
+		public abstract int get_banner (
+			[CCode (type_id = "LPCWSTR")] uint16* provider_identity,
+			[CCode (type_id = "LPCWSTR")] uint16* subscription_id,
+			out uint16* content_id
+		);
+
+	}
+
+	[CCode (cname = "IStorageProviderCopyHook", ref_function = "", unref_function = "")]
+	public interface IStorageProviderCopyHook : IUnknown {
+		[CCode (cname = "CopyCallback")]
+		public abstract int copy_callback (
+			[CCode (type_id = "HWND")] void* hwnd,
+			uint operation,
+			uint flags,
+			[CCode (type_id = "LPCWSTR")] uint16* src_file,
+			uint src_attribs,
+			[CCode (type_id = "LPCWSTR")] uint16* dest_file,
+			uint dest_attribs,
+			out uint result
+		);
+
+	}
+
+	[CCode (cname = "IWebBrowser", ref_function = "", unref_function = "")]
+	public interface IWebBrowser : IDispatch {
+		[CCode (cname = "GoBack")]
+		public abstract int go_back (
+		);
+
+		[CCode (cname = "GoForward")]
+		public abstract int go_forward (
+		);
+
+		[CCode (cname = "GoHome")]
+		public abstract int go_home (
+		);
+
+		[CCode (cname = "GoSearch")]
+		public abstract int go_search (
+		);
+
+		[CCode (cname = "Navigate")]
+		public abstract int navigate (
+			void* url,
+			void* flags,
+			void* target_frame_name,
+			void* post_data,
+			void* headers
+		);
+
+		[CCode (cname = "Refresh")]
+		public abstract int refresh (
+		);
+
+		[CCode (cname = "Refresh2")]
+		public abstract int refresh2 (
+			void* level
+		);
+
+		[CCode (cname = "Stop")]
+		public abstract int stop (
+		);
+
+		[CCode (cname = "get_Application")]
+		public abstract int get_application (
+			void* pp_disp
+		);
+
+		[CCode (cname = "get_Parent")]
+		public abstract int get_parent (
+			void* pp_disp
+		);
+
+		[CCode (cname = "get_Container")]
+		public abstract int get_container (
+			void* pp_disp
+		);
+
+		[CCode (cname = "get_Document")]
+		public abstract int get_document (
+			void* pp_disp
+		);
+
+		[CCode (cname = "get_TopLevelContainer")]
+		public abstract int get_top_level_container (
+			out void* p_bool
+		);
+
+		[CCode (cname = "get_Type")]
+		public abstract int get_type (
+			out void* type
+		);
+
+		[CCode (cname = "get_Left")]
+		public abstract int get_left (
+			out int pl
+		);
+
+		[CCode (cname = "put_Left")]
+		public abstract int put_left (
+			int left
+		);
+
+		[CCode (cname = "get_Top")]
+		public abstract int get_top (
+			out int pl
+		);
+
+		[CCode (cname = "put_Top")]
+		public abstract int put_top (
+			int top
+		);
+
+		[CCode (cname = "get_Width")]
+		public abstract int get_width (
+			out int pl
+		);
+
+		[CCode (cname = "put_Width")]
+		public abstract int put_width (
+			int width
+		);
+
+		[CCode (cname = "get_Height")]
+		public abstract int get_height (
+			out int pl
+		);
+
+		[CCode (cname = "put_Height")]
+		public abstract int put_height (
+			int height
+		);
+
+		[CCode (cname = "get_LocationName")]
+		public abstract int get_location_name (
+			out void* location_name
+		);
+
+		[CCode (cname = "get_LocationURL")]
+		public abstract int get_location_url (
+			out void* location_url
+		);
+
+		[CCode (cname = "get_Busy")]
+		public abstract int get_busy (
+			out void* p_bool
+		);
+
+	}
+
+	[CCode (cname = "DWebBrowserEvents", ref_function = "", unref_function = "")]
+	public interface DWebBrowserEvents : IDispatch {
+	}
+
+	[CCode (cname = "IWebBrowserApp", ref_function = "", unref_function = "")]
+	public interface IWebBrowserApp : IWebBrowser {
+		[CCode (cname = "Quit")]
+		public abstract int quit (
+		);
+
+		[CCode (cname = "ClientToWindow")]
+		public abstract int client_to_window (
+			out int pcx,
+			out int pcy
+		);
+
+		[CCode (cname = "PutProperty")]
+		public abstract int put_property (
+			void* property,
+			void* vt_value
+		);
+
+		[CCode (cname = "GetProperty")]
+		public abstract int get_property (
+			void* property,
+			out void* pvt_value
+		);
+
+		[CCode (cname = "get_Name")]
+		public abstract int get_name (
+			out void* name
+		);
+
+		[CCode (cname = "get_HWND")]
+		public abstract int get_hwnd (
+			out void* p_hwnd
+		);
+
+		[CCode (cname = "get_FullName")]
+		public abstract int get_full_name (
+			out void* full_name
+		);
+
+		[CCode (cname = "get_Path")]
+		public abstract int get_path (
+			out void* path
+		);
+
+		[CCode (cname = "get_Visible")]
+		public abstract int get_visible (
+			out void* p_bool
+		);
+
+		[CCode (cname = "put_Visible")]
+		public abstract int put_visible (
+			void* value
+		);
+
+		[CCode (cname = "get_StatusBar")]
+		public abstract int get_status_bar (
+			out void* p_bool
+		);
+
+		[CCode (cname = "put_StatusBar")]
+		public abstract int put_status_bar (
+			void* value
+		);
+
+		[CCode (cname = "get_StatusText")]
+		public abstract int get_status_text (
+			out void* status_text
+		);
+
+		[CCode (cname = "put_StatusText")]
+		public abstract int put_status_text (
+			void* status_text
+		);
+
+		[CCode (cname = "get_ToolBar")]
+		public abstract int get_tool_bar (
+			out int value
+		);
+
+		[CCode (cname = "put_ToolBar")]
+		public abstract int put_tool_bar (
+			int value
+		);
+
+		[CCode (cname = "get_MenuBar")]
+		public abstract int get_menu_bar (
+			out void* value
+		);
+
+		[CCode (cname = "put_MenuBar")]
+		public abstract int put_menu_bar (
+			void* value
+		);
+
+		[CCode (cname = "get_FullScreen")]
+		public abstract int get_full_screen (
+			out void* pb_full_screen
+		);
+
+		[CCode (cname = "put_FullScreen")]
+		public abstract int put_full_screen (
+			void* b_full_screen
+		);
+
+	}
+
+	[CCode (cname = "IWebBrowser2", ref_function = "", unref_function = "")]
+	public interface IWebBrowser2 : IWebBrowserApp {
+		[CCode (cname = "Navigate2")]
+		public abstract int navigate2 (
+			void* url,
+			void* flags,
+			void* target_frame_name,
+			void* post_data,
+			void* headers
+		);
+
+		[CCode (cname = "QueryStatusWB")]
+		public abstract int query_status_wb (
+			void* cmd_id,
+			out void* pcmdf
+		);
+
+		[CCode (cname = "ExecWB")]
+		public abstract int exec_wb (
+			void* cmd_id,
+			void* cmdexecopt,
+			void* pva_in,
+			out void* pva_out
+		);
+
+		[CCode (cname = "ShowBrowserBar")]
+		public abstract int show_browser_bar (
+			void* pva_clsid,
+			void* pvar_show,
+			void* pvar_size
+		);
+
+		[CCode (cname = "get_ReadyState")]
+		public abstract int get_ready_state (
+			out void* pl_ready_state
+		);
+
+		[CCode (cname = "get_Offline")]
+		public abstract int get_offline (
+			out void* pb_offline
+		);
+
+		[CCode (cname = "put_Offline")]
+		public abstract int put_offline (
+			void* b_offline
+		);
+
+		[CCode (cname = "get_Silent")]
+		public abstract int get_silent (
+			out void* pb_silent
+		);
+
+		[CCode (cname = "put_Silent")]
+		public abstract int put_silent (
+			void* b_silent
+		);
+
+		[CCode (cname = "get_RegisterAsBrowser")]
+		public abstract int get_register_as_browser (
+			out void* pb_register
+		);
+
+		[CCode (cname = "put_RegisterAsBrowser")]
+		public abstract int put_register_as_browser (
+			void* b_register
+		);
+
+		[CCode (cname = "get_RegisterAsDropTarget")]
+		public abstract int get_register_as_drop_target (
+			out void* pb_register
+		);
+
+		[CCode (cname = "put_RegisterAsDropTarget")]
+		public abstract int put_register_as_drop_target (
+			void* b_register
+		);
+
+		[CCode (cname = "get_TheaterMode")]
+		public abstract int get_theater_mode (
+			out void* pb_register
+		);
+
+		[CCode (cname = "put_TheaterMode")]
+		public abstract int put_theater_mode (
+			void* b_register
+		);
+
+		[CCode (cname = "get_AddressBar")]
+		public abstract int get_address_bar (
+			out void* value
+		);
+
+		[CCode (cname = "put_AddressBar")]
+		public abstract int put_address_bar (
+			void* value
+		);
+
+		[CCode (cname = "get_Resizable")]
+		public abstract int get_resizable (
+			out void* value
+		);
+
+		[CCode (cname = "put_Resizable")]
+		public abstract int put_resizable (
+			void* value
+		);
+
+	}
+
+	[CCode (cname = "DWebBrowserEvents2", ref_function = "", unref_function = "")]
+	public interface DWebBrowserEvents2 : IDispatch {
+	}
+
+	[CCode (cname = "DShellWindowsEvents", ref_function = "", unref_function = "")]
+	public interface DShellWindowsEvents : IDispatch {
+	}
+
+	[CCode (cname = "IShellWindows", ref_function = "", unref_function = "")]
+	public interface IShellWindows : IDispatch {
+		[CCode (cname = "get_Count")]
+		public abstract int get_count (
+			out int count
+		);
+
+		[CCode (cname = "Item")]
+		public abstract int item (
+			void* index,
+			void* folder
+		);
+
+		[CCode (cname = "_NewEnum")]
+		public abstract int __new_enum (
+			IUnknown ppunk
+		);
+
+		[CCode (cname = "Register")]
+		public abstract int register (
+			IDispatch pid,
+			int hwnd,
+			int sw_class,
+			out int pl_cookie
+		);
+
+		[CCode (cname = "RegisterPending")]
+		public abstract int register_pending (
+			int l_thread_id,
+			void* pvarloc,
+			void* pvarloc_root,
+			int sw_class,
+			out int pl_cookie
+		);
+
+		[CCode (cname = "Revoke")]
+		public abstract int revoke (
+			int l_cookie
+		);
+
+		[CCode (cname = "OnNavigate")]
+		public abstract int on_navigate (
+			int l_cookie,
+			void* pvar_loc
+		);
+
+		[CCode (cname = "OnActivated")]
+		public abstract int on_activated (
+			int l_cookie,
+			void* f_active
+		);
+
+		[CCode (cname = "FindWindowSW")]
+		public abstract int find_window_sw (
+			void* pvar_loc,
+			void* pvar_loc_root,
+			int sw_class,
+			out int phwnd,
+			int swfw_options,
+			void* ppdisp_out
+		);
+
+		[CCode (cname = "OnCreated")]
+		public abstract int on_created (
+			int l_cookie,
+			IUnknown punk
+		);
+
+		[CCode (cname = "ProcessAttachDetach")]
+		public abstract int process_attach_detach (
+			void* f_attach
+		);
+
+	}
+
+	[CCode (cname = "IShellUIHelper", ref_function = "", unref_function = "")]
+	public interface IShellUIHelper : IDispatch {
+		[CCode (cname = "ResetFirstBootMode")]
+		public abstract int reset_first_boot_mode (
+		);
+
+		[CCode (cname = "ResetSafeMode")]
+		public abstract int reset_safe_mode (
+		);
+
+		[CCode (cname = "RefreshOfflineDesktop")]
+		public abstract int refresh_offline_desktop (
+		);
+
+		[CCode (cname = "AddFavorite")]
+		public abstract int add_favorite (
+			void* url,
+			void* title
+		);
+
+		[CCode (cname = "AddChannel")]
+		public abstract int add_channel (
+			void* url
+		);
+
+		[CCode (cname = "AddDesktopComponent")]
+		public abstract int add_desktop_component (
+			void* url,
+			void* type,
+			void* left,
+			void* top,
+			void* width,
+			void* height
+		);
+
+		[CCode (cname = "IsSubscribed")]
+		public abstract int is_subscribed (
+			void* url,
+			out void* p_bool
+		);
+
+		[CCode (cname = "NavigateAndFind")]
+		public abstract int navigate_and_find (
+			void* url,
+			void* str_query,
+			void* var_target_frame
+		);
+
+		[CCode (cname = "ImportExportFavorites")]
+		public abstract int import_export_favorites (
+			void* f_import,
+			void* str_imp_exp_path
+		);
+
+		[CCode (cname = "AutoCompleteSaveForm")]
+		public abstract int auto_complete_save_form (
+			void* form
+		);
+
+		[CCode (cname = "AutoScan")]
+		public abstract int auto_scan (
+			void* str_search,
+			void* str_failure_url,
+			void* pvar_target_frame
+		);
+
+		[CCode (cname = "AutoCompleteAttach")]
+		public abstract int auto_complete_attach (
+			void* reserved
+		);
+
+		[CCode (cname = "ShowBrowserUI")]
+		public abstract int show_browser_ui (
+			void* bstr_name,
+			void* pvar_in,
+			out void* pvar_out
+		);
+
+	}
+
+	[CCode (cname = "IShellUIHelper2", ref_function = "", unref_function = "")]
+	public interface IShellUIHelper2 : IShellUIHelper {
+		[CCode (cname = "AddSearchProvider")]
+		public abstract int add_search_provider (
+			void* url
+		);
+
+		[CCode (cname = "RunOnceShown")]
+		public abstract int run_once_shown (
+		);
+
+		[CCode (cname = "SkipRunOnce")]
+		public abstract int skip_run_once (
+		);
+
+		[CCode (cname = "CustomizeSettings")]
+		public abstract int customize_settings (
+			void* f_sqm,
+			void* f_phishing,
+			void* bstr_locale
+		);
+
+		[CCode (cname = "SqmEnabled")]
+		public abstract int sqm_enabled (
+			out void* pf_enabled
+		);
+
+		[CCode (cname = "PhishingEnabled")]
+		public abstract int phishing_enabled (
+			out void* pf_enabled
+		);
+
+		[CCode (cname = "BrandImageUri")]
+		public abstract int brand_image_uri (
+			out void* pbstr_uri
+		);
+
+		[CCode (cname = "SkipTabsWelcome")]
+		public abstract int skip_tabs_welcome (
+		);
+
+		[CCode (cname = "DiagnoseConnection")]
+		public abstract int diagnose_connection (
+		);
+
+		[CCode (cname = "CustomizeClearType")]
+		public abstract int customize_clear_type (
+			void* f_set
+		);
+
+		[CCode (cname = "IsSearchProviderInstalled")]
+		public abstract int is_search_provider_installed (
+			void* url,
+			out uint pdw_result
+		);
+
+		[CCode (cname = "IsSearchMigrated")]
+		public abstract int is_search_migrated (
+			out void* pf_migrated
+		);
+
+		[CCode (cname = "DefaultSearchProvider")]
+		public abstract int default_search_provider (
+			out void* pbstr_name
+		);
+
+		[CCode (cname = "RunOnceRequiredSettingsComplete")]
+		public abstract int run_once_required_settings_complete (
+			void* f_complete
+		);
+
+		[CCode (cname = "RunOnceHasShown")]
+		public abstract int run_once_has_shown (
+			out void* pf_shown
+		);
+
+		[CCode (cname = "SearchGuideUrl")]
+		public abstract int search_guide_url (
+			out void* pbstr_url
+		);
+
+	}
+
+	[CCode (cname = "IShellUIHelper3", ref_function = "", unref_function = "")]
+	public interface IShellUIHelper3 : IShellUIHelper2 {
+		[CCode (cname = "AddService")]
+		public abstract int add_service (
+			void* url
+		);
+
+		[CCode (cname = "IsServiceInstalled")]
+		public abstract int is_service_installed (
+			void* url,
+			void* verb,
+			out uint pdw_result
+		);
+
+		[CCode (cname = "InPrivateFilteringEnabled")]
+		public abstract int in_private_filtering_enabled (
+			out void* pf_enabled
+		);
+
+		[CCode (cname = "AddToFavoritesBar")]
+		public abstract int add_to_favorites_bar (
+			void* url,
+			void* title,
+			void* type
+		);
+
+		[CCode (cname = "BuildNewTabPage")]
+		public abstract int build_new_tab_page (
+		);
+
+		[CCode (cname = "SetRecentlyClosedVisible")]
+		public abstract int set_recently_closed_visible (
+			void* f_visible
+		);
+
+		[CCode (cname = "SetActivitiesVisible")]
+		public abstract int set_activities_visible (
+			void* f_visible
+		);
+
+		[CCode (cname = "ContentDiscoveryReset")]
+		public abstract int content_discovery_reset (
+		);
+
+		[CCode (cname = "IsSuggestedSitesEnabled")]
+		public abstract int is_suggested_sites_enabled (
+			out void* pf_enabled
+		);
+
+		[CCode (cname = "EnableSuggestedSites")]
+		public abstract int enable_suggested_sites (
+			void* f_enable
+		);
+
+		[CCode (cname = "NavigateToSuggestedSites")]
+		public abstract int navigate_to_suggested_sites (
+			void* bstr_relative_url
+		);
+
+		[CCode (cname = "ShowTabsHelp")]
+		public abstract int show_tabs_help (
+		);
+
+		[CCode (cname = "ShowInPrivateHelp")]
+		public abstract int show_in_private_help (
+		);
+
+	}
+
+	[CCode (cname = "IShellUIHelper4", ref_function = "", unref_function = "")]
+	public interface IShellUIHelper4 : IShellUIHelper3 {
+		[CCode (cname = "msIsSiteMode")]
+		public abstract int ms_is_site_mode (
+			out void* pf_site_mode
+		);
+
+		[CCode (cname = "msSiteModeShowThumbBar")]
+		public abstract int ms_site_mode_show_thumb_bar (
+		);
+
+		[CCode (cname = "msSiteModeAddThumbBarButton")]
+		public abstract int ms_site_mode_add_thumb_bar_button (
+			void* bstr_icon_url,
+			void* bstr_tooltip,
+			out void* pvar_button_id
+		);
+
+		[CCode (cname = "msSiteModeUpdateThumbBarButton")]
+		public abstract int ms_site_mode_update_thumb_bar_button (
+			void* button_id,
+			void* f_enabled,
+			void* f_visible
+		);
+
+		[CCode (cname = "msSiteModeSetIconOverlay")]
+		public abstract int ms_site_mode_set_icon_overlay (
+			void* icon_url,
+			void* pvar_description
+		);
+
+		[CCode (cname = "msSiteModeClearIconOverlay")]
+		public abstract int ms_site_mode_clear_icon_overlay (
+		);
+
+		[CCode (cname = "msAddSiteMode")]
+		public abstract int ms_add_site_mode (
+		);
+
+		[CCode (cname = "msSiteModeCreateJumpList")]
+		public abstract int ms_site_mode_create_jump_list (
+			void* bstr_header
+		);
+
+		[CCode (cname = "msSiteModeAddJumpListItem")]
+		public abstract int ms_site_mode_add_jump_list_item (
+			void* bstr_name,
+			void* bstr_action_uri,
+			void* bstr_icon_uri,
+			void* pvar_window_type
+		);
+
+		[CCode (cname = "msSiteModeClearJumpList")]
+		public abstract int ms_site_mode_clear_jump_list (
+		);
+
+		[CCode (cname = "msSiteModeShowJumpList")]
+		public abstract int ms_site_mode_show_jump_list (
+		);
+
+		[CCode (cname = "msSiteModeAddButtonStyle")]
+		public abstract int ms_site_mode_add_button_style (
+			void* ui_button_id,
+			void* bstr_icon_url,
+			void* bstr_tooltip,
+			out void* pvar_style_id
+		);
+
+		[CCode (cname = "msSiteModeShowButtonStyle")]
+		public abstract int ms_site_mode_show_button_style (
+			void* ui_button_id,
+			void* ui_style_id
+		);
+
+		[CCode (cname = "msSiteModeActivate")]
+		public abstract int ms_site_mode_activate (
+		);
+
+		[CCode (cname = "msIsSiteModeFirstRun")]
+		public abstract int ms_is_site_mode_first_run (
+			void* f_preserve_state,
+			out void* pui_first_run
+		);
+
+		[CCode (cname = "msAddTrackingProtectionList")]
+		public abstract int ms_add_tracking_protection_list (
+			void* url,
+			void* bstr_filter_name
+		);
+
+		[CCode (cname = "msTrackingProtectionEnabled")]
+		public abstract int ms_tracking_protection_enabled (
+			out void* pf_enabled
+		);
+
+		[CCode (cname = "msActiveXFilteringEnabled")]
+		public abstract int ms_active_xfiltering_enabled (
+			out void* pf_enabled
+		);
+
+	}
+
+	[CCode (cname = "IShellUIHelper5", ref_function = "", unref_function = "")]
+	public interface IShellUIHelper5 : IShellUIHelper4 {
+		[CCode (cname = "msProvisionNetworks")]
+		public abstract int ms_provision_networks (
+			void* bstr_provisioning_xml,
+			out void* pui_result
+		);
+
+		[CCode (cname = "msReportSafeUrl")]
+		public abstract int ms_report_safe_url (
+		);
+
+		[CCode (cname = "msSiteModeRefreshBadge")]
+		public abstract int ms_site_mode_refresh_badge (
+		);
+
+		[CCode (cname = "msSiteModeClearBadge")]
+		public abstract int ms_site_mode_clear_badge (
+		);
+
+		[CCode (cname = "msDiagnoseConnectionUILess")]
+		public abstract int ms_diagnose_connection_uiless (
+		);
+
+		[CCode (cname = "msLaunchNetworkClientHelp")]
+		public abstract int ms_launch_network_client_help (
+		);
+
+		[CCode (cname = "msChangeDefaultBrowser")]
+		public abstract int ms_change_default_browser (
+			void* f_change
+		);
+
+	}
+
+	[CCode (cname = "IShellUIHelper6", ref_function = "", unref_function = "")]
+	public interface IShellUIHelper6 : IShellUIHelper5 {
+		[CCode (cname = "msStopPeriodicTileUpdate")]
+		public abstract int ms_stop_periodic_tile_update (
+		);
+
+		[CCode (cname = "msStartPeriodicTileUpdate")]
+		public abstract int ms_start_periodic_tile_update (
+			void* polling_uris,
+			void* start_time,
+			void* ui_update_recurrence
+		);
+
+		[CCode (cname = "msStartPeriodicTileUpdateBatch")]
+		public abstract int ms_start_periodic_tile_update_batch (
+			void* polling_uris,
+			void* start_time,
+			void* ui_update_recurrence
+		);
+
+		[CCode (cname = "msClearTile")]
+		public abstract int ms_clear_tile (
+		);
+
+		[CCode (cname = "msEnableTileNotificationQueue")]
+		public abstract int ms_enable_tile_notification_queue (
+			void* f_change
+		);
+
+		[CCode (cname = "msPinnedSiteState")]
+		public abstract int ms_pinned_site_state (
+			out void* pvar_site_state
+		);
+
+		[CCode (cname = "msEnableTileNotificationQueueForSquare150x150")]
+		public abstract int ms_enable_tile_notification_queue_for_square150x150 (
+			void* f_change
+		);
+
+		[CCode (cname = "msEnableTileNotificationQueueForWide310x150")]
+		public abstract int ms_enable_tile_notification_queue_for_wide310x150 (
+			void* f_change
+		);
+
+		[CCode (cname = "msEnableTileNotificationQueueForSquare310x310")]
+		public abstract int ms_enable_tile_notification_queue_for_square310x310 (
+			void* f_change
+		);
+
+		[CCode (cname = "msScheduledTileNotification")]
+		public abstract int ms_scheduled_tile_notification (
+			void* bstr_notification_xml,
+			void* bstr_notification_id,
+			void* bstr_notification_tag,
+			void* start_time,
+			void* expiration_time
+		);
+
+		[CCode (cname = "msRemoveScheduledTileNotification")]
+		public abstract int ms_remove_scheduled_tile_notification (
+			void* bstr_notification_id
+		);
+
+		[CCode (cname = "msStartPeriodicBadgeUpdate")]
+		public abstract int ms_start_periodic_badge_update (
+			void* polling_uri,
+			void* start_time,
+			void* ui_update_recurrence
+		);
+
+		[CCode (cname = "msStopPeriodicBadgeUpdate")]
+		public abstract int ms_stop_periodic_badge_update (
+		);
+
+		[CCode (cname = "msLaunchInternetOptions")]
+		public abstract int ms_launch_internet_options (
+		);
+
+	}
+
+	[CCode (cname = "IShellUIHelper7", ref_function = "", unref_function = "")]
+	public interface IShellUIHelper7 : IShellUIHelper6 {
+		[CCode (cname = "SetExperimentalFlag")]
+		public abstract int set_experimental_flag (
+			void* bstr_flag_string,
+			void* vf_flag
+		);
+
+		[CCode (cname = "GetExperimentalFlag")]
+		public abstract int get_experimental_flag (
+			void* bstr_flag_string,
+			out void* vf_flag
+		);
+
+		[CCode (cname = "SetExperimentalValue")]
+		public abstract int set_experimental_value (
+			void* bstr_value_string,
+			uint dw_value
+		);
+
+		[CCode (cname = "GetExperimentalValue")]
+		public abstract int get_experimental_value (
+			void* bstr_value_string,
+			out uint pdw_value
+		);
+
+		[CCode (cname = "ResetAllExperimentalFlagsAndValues")]
+		public abstract int reset_all_experimental_flags_and_values (
+		);
+
+		[CCode (cname = "GetNeedIEAutoLaunchFlag")]
+		public abstract int get_need_ieauto_launch_flag (
+			void* bstr_url,
+			out void* flag
+		);
+
+		[CCode (cname = "SetNeedIEAutoLaunchFlag")]
+		public abstract int set_need_ieauto_launch_flag (
+			void* bstr_url,
+			void* flag
+		);
+
+		[CCode (cname = "HasNeedIEAutoLaunchFlag")]
+		public abstract int has_need_ieauto_launch_flag (
+			void* bstr_url,
+			out void* exists
+		);
+
+		[CCode (cname = "LaunchIE")]
+		public abstract int launch_ie (
+			void* bstr_url,
+			void* automated
+		);
+
+	}
+
+	[CCode (cname = "IShellUIHelper8", ref_function = "", unref_function = "")]
+	public interface IShellUIHelper8 : IShellUIHelper7 {
+		[CCode (cname = "GetCVListData")]
+		public abstract int get_cvlist_data (
+			out void* pbstr_result
+		);
+
+		[CCode (cname = "GetCVListLocalData")]
+		public abstract int get_cvlist_local_data (
+			out void* pbstr_result
+		);
+
+		[CCode (cname = "GetEMIEListData")]
+		public abstract int get_emielist_data (
+			out void* pbstr_result
+		);
+
+		[CCode (cname = "GetEMIEListLocalData")]
+		public abstract int get_emielist_local_data (
+			out void* pbstr_result
+		);
+
+		[CCode (cname = "OpenFavoritesPane")]
+		public abstract int open_favorites_pane (
+		);
+
+		[CCode (cname = "OpenFavoritesSettings")]
+		public abstract int open_favorites_settings (
+		);
+
+		[CCode (cname = "LaunchInHVSI")]
+		public abstract int launch_in_hvsi (
+			void* bstr_url
+		);
+
+	}
+
+	[CCode (cname = "IShellUIHelper9", ref_function = "", unref_function = "")]
+	public interface IShellUIHelper9 : IShellUIHelper8 {
+		[CCode (cname = "GetOSSku")]
+		public abstract int get_ossku (
+			out uint pdw_result
+		);
+
+	}
+
+	[CCode (cname = "DShellNameSpaceEvents", ref_function = "", unref_function = "")]
+	public interface DShellNameSpaceEvents : IDispatch {
+	}
+
+	[CCode (cname = "IShellFavoritesNameSpace", ref_function = "", unref_function = "")]
+	public interface IShellFavoritesNameSpace : IDispatch {
+		[CCode (cname = "MoveSelectionUp")]
+		public abstract int move_selection_up (
+		);
+
+		[CCode (cname = "MoveSelectionDown")]
+		public abstract int move_selection_down (
+		);
+
+		[CCode (cname = "ResetSort")]
+		public abstract int reset_sort (
+		);
+
+		[CCode (cname = "NewFolder")]
+		public abstract int new_folder (
+		);
+
+		[CCode (cname = "Synchronize")]
+		public abstract int synchronize (
+		);
+
+		[CCode (cname = "Import")]
+		public abstract int import (
+		);
+
+		[CCode (cname = "Export")]
+		public abstract int export (
+		);
+
+		[CCode (cname = "InvokeContextMenuCommand")]
+		public abstract int invoke_context_menu_command (
+			void* str_command
+		);
+
+		[CCode (cname = "MoveSelectionTo")]
+		public abstract int move_selection_to (
+		);
+
+		[CCode (cname = "get_SubscriptionsEnabled")]
+		public abstract int get_subscriptions_enabled (
+			out void* p_bool
+		);
+
+		[CCode (cname = "CreateSubscriptionForSelection")]
+		public abstract int create_subscription_for_selection (
+			out void* p_bool
+		);
+
+		[CCode (cname = "DeleteSubscriptionForSelection")]
+		public abstract int delete_subscription_for_selection (
+			out void* p_bool
+		);
+
+		[CCode (cname = "SetRoot")]
+		public abstract int set_root (
+			void* bstr_full_path
+		);
+
+	}
+
+	[CCode (cname = "IShellNameSpace", ref_function = "", unref_function = "")]
+	public interface IShellNameSpace : IShellFavoritesNameSpace {
+		[CCode (cname = "get_EnumOptions")]
+		public abstract int get_enum_options (
+			out int pgrf_enum_flags
+		);
+
+		[CCode (cname = "put_EnumOptions")]
+		public abstract int put_enum_options (
+			int l_val
+		);
+
+		[CCode (cname = "get_SelectedItem")]
+		public abstract int get_selected_item (
+			void* p_item
+		);
+
+		[CCode (cname = "put_SelectedItem")]
+		public abstract int put_selected_item (
+			IDispatch p_item
+		);
+
+		[CCode (cname = "get_Root")]
+		public abstract int get_root (
+			out void* pvar
+		);
+
+		[CCode (cname = "put_Root")]
+		public abstract int put_root (
+			void* var
+		);
+
+		[CCode (cname = "get_Depth")]
+		public abstract int get_depth (
+			out int pi_depth
+		);
+
+		[CCode (cname = "put_Depth")]
+		public abstract int put_depth (
+			int i_depth
+		);
+
+		[CCode (cname = "get_Mode")]
+		public abstract int get_mode (
+			out uint pu_mode
+		);
+
+		[CCode (cname = "put_Mode")]
+		public abstract int put_mode (
+			uint u_mode
+		);
+
+		[CCode (cname = "get_Flags")]
+		public abstract int get_flags (
+			out uint pdw_flags
+		);
+
+		[CCode (cname = "put_Flags")]
+		public abstract int put_flags (
+			uint dw_flags
+		);
+
+		[CCode (cname = "put_TVFlags")]
+		public abstract int put_tvflags (
+			uint dw_flags
+		);
+
+		[CCode (cname = "get_TVFlags")]
+		public abstract int get_tvflags (
+			out uint dw_flags
+		);
+
+		[CCode (cname = "get_Columns")]
+		public abstract int get_columns (
+			out void* bstr_columns
+		);
+
+		[CCode (cname = "put_Columns")]
+		public abstract int put_columns (
+			void* bstr_columns
+		);
+
+		[CCode (cname = "get_CountViewTypes")]
+		public abstract int get_count_view_types (
+			out int pi_types
+		);
+
+		[CCode (cname = "SetViewType")]
+		public abstract int set_view_type (
+			int i_type
+		);
+
+		[CCode (cname = "SelectedItems")]
+		public abstract int selected_items (
+			void* ppid
+		);
+
+		[CCode (cname = "Expand")]
+		public abstract int expand (
+			void* var,
+			int i_depth
+		);
+
+		[CCode (cname = "UnselectAll")]
+		public abstract int unselect_all (
+		);
+
+	}
+
+	[CCode (cname = "IScriptErrorList", ref_function = "", unref_function = "")]
+	public interface IScriptErrorList : IDispatch {
+		[CCode (cname = "advanceError")]
+		public abstract int advance_error (
+		);
+
+		[CCode (cname = "retreatError")]
+		public abstract int retreat_error (
+		);
+
+		[CCode (cname = "canAdvanceError")]
+		public abstract int can_advance_error (
+			out int pf_can_advance
+		);
+
+		[CCode (cname = "canRetreatError")]
+		public abstract int can_retreat_error (
+			out int pf_can_retreat
+		);
+
+		[CCode (cname = "getErrorLine")]
+		public abstract int get_error_line (
+			out int pl_line
+		);
+
+		[CCode (cname = "getErrorChar")]
+		public abstract int get_error_char (
+			out int pl_char
+		);
+
+		[CCode (cname = "getErrorCode")]
+		public abstract int get_error_code (
+			out int pl_code
+		);
+
+		[CCode (cname = "getErrorMsg")]
+		public abstract int get_error_msg (
+			out void* pstr
+		);
+
+		[CCode (cname = "getErrorUrl")]
+		public abstract int get_error_url (
+			out void* pstr
+		);
+
+		[CCode (cname = "getAlwaysShowLockState")]
+		public abstract int get_always_show_lock_state (
+			out int pf_always_show_locked
+		);
+
+		[CCode (cname = "getDetailsPaneOpen")]
+		public abstract int get_details_pane_open (
+			out int pf_details_pane_open
+		);
+
+		[CCode (cname = "setDetailsPaneOpen")]
+		public abstract int set_details_pane_open (
+			int f_details_pane_open
+		);
+
+		[CCode (cname = "getPerErrorDisplay")]
+		public abstract int get_per_error_display (
+			out int pf_per_error_display
+		);
+
+		[CCode (cname = "setPerErrorDisplay")]
+		public abstract int set_per_error_display (
+			int f_per_error_display
+		);
+
+	}
+
+	[CCode (cname = "IFolderViewOC", ref_function = "", unref_function = "")]
+	public interface IFolderViewOC : IDispatch {
+		[CCode (cname = "SetFolderView")]
+		public abstract int set_folder_view (
+			IDispatch pdisp
+		);
+
+	}
+
+	[CCode (cname = "DShellFolderViewEvents", ref_function = "", unref_function = "")]
+	public interface DShellFolderViewEvents : IDispatch {
+	}
+
+	[CCode (cname = "DFConstraint", ref_function = "", unref_function = "")]
+	public interface DFConstraint : IDispatch {
+		[CCode (cname = "get_Name")]
+		public abstract int get_name (
+			out void* pbs
+		);
+
+		[CCode (cname = "get_Value")]
+		public abstract int get_value (
+			out void* pv
+		);
+
+	}
+
+	[CCode (cname = "FolderItem", ref_function = "", unref_function = "")]
+	public interface FolderItem : IDispatch {
+		[CCode (cname = "get_Application")]
+		public abstract int get_application (
+			void* ppid
+		);
+
+		[CCode (cname = "get_Parent")]
+		public abstract int get_parent (
+			void* ppid
+		);
+
+		[CCode (cname = "get_Name")]
+		public abstract int get_name (
+			out void* pbs
+		);
+
+		[CCode (cname = "put_Name")]
+		public abstract int put_name (
+			void* bs
+		);
+
+		[CCode (cname = "get_Path")]
+		public abstract int get_path (
+			out void* pbs
+		);
+
+		[CCode (cname = "get_GetLink")]
+		public abstract int get_get_link (
+			void* ppid
+		);
+
+		[CCode (cname = "get_GetFolder")]
+		public abstract int get_get_folder (
+			void* ppid
+		);
+
+		[CCode (cname = "get_IsLink")]
+		public abstract int get_is_link (
+			out void* pb
+		);
+
+		[CCode (cname = "get_IsFolder")]
+		public abstract int get_is_folder (
+			out void* pb
+		);
+
+		[CCode (cname = "get_IsFileSystem")]
+		public abstract int get_is_file_system (
+			out void* pb
+		);
+
+		[CCode (cname = "get_IsBrowsable")]
+		public abstract int get_is_browsable (
+			out void* pb
+		);
+
+		[CCode (cname = "get_ModifyDate")]
+		public abstract int get_modify_date (
+			out void* pdt
+		);
+
+		[CCode (cname = "put_ModifyDate")]
+		public abstract int put_modify_date (
+			void* dt
+		);
+
+		[CCode (cname = "get_Size")]
+		public abstract int get_size (
+			out int pul
+		);
+
+		[CCode (cname = "get_Type")]
+		public abstract int get_type (
+			out void* pbs
+		);
+
+		[CCode (cname = "Verbs")]
+		public abstract int verbs (
+			FolderItemVerbs ppfic
+		);
+
+		[CCode (cname = "InvokeVerb")]
+		public abstract int invoke_verb (
+			void* v_verb
+		);
+
+	}
+
+	[CCode (cname = "FolderItems", ref_function = "", unref_function = "")]
+	public interface FolderItems : IDispatch {
+		[CCode (cname = "get_Count")]
+		public abstract int get_count (
+			out int pl_count
+		);
+
+		[CCode (cname = "get_Application")]
+		public abstract int get_application (
+			void* ppid
+		);
+
+		[CCode (cname = "get_Parent")]
+		public abstract int get_parent (
+			void* ppid
+		);
+
+		[CCode (cname = "Item")]
+		public abstract int item (
+			void* index,
+			FolderItem ppid
+		);
+
+		[CCode (cname = "_NewEnum")]
+		public abstract int __new_enum (
+			IUnknown ppunk
+		);
+
+	}
+
+	[CCode (cname = "FolderItemVerb", ref_function = "", unref_function = "")]
+	public interface FolderItemVerb : IDispatch {
+		[CCode (cname = "get_Application")]
+		public abstract int get_application (
+			void* ppid
+		);
+
+		[CCode (cname = "get_Parent")]
+		public abstract int get_parent (
+			void* ppid
+		);
+
+		[CCode (cname = "get_Name")]
+		public abstract int get_name (
+			out void* pbs
+		);
+
+		[CCode (cname = "DoIt")]
+		public abstract int do_it (
+		);
+
+	}
+
+	[CCode (cname = "FolderItemVerbs", ref_function = "", unref_function = "")]
+	public interface FolderItemVerbs : IDispatch {
+		[CCode (cname = "get_Count")]
+		public abstract int get_count (
+			out int pl_count
+		);
+
+		[CCode (cname = "get_Application")]
+		public abstract int get_application (
+			void* ppid
+		);
+
+		[CCode (cname = "get_Parent")]
+		public abstract int get_parent (
+			void* ppid
+		);
+
+		[CCode (cname = "Item")]
+		public abstract int item (
+			void* index,
+			FolderItemVerb ppid
+		);
+
+		[CCode (cname = "_NewEnum")]
+		public abstract int __new_enum (
+			IUnknown ppunk
+		);
+
+	}
+
+	[CCode (cname = "Folder", ref_function = "", unref_function = "")]
+	public interface Folder : IDispatch {
+		[CCode (cname = "get_Title")]
+		public abstract int get_title (
+			out void* pbs
+		);
+
+		[CCode (cname = "get_Application")]
+		public abstract int get_application (
+			void* ppid
+		);
+
+		[CCode (cname = "get_Parent")]
+		public abstract int get_parent (
+			void* ppid
+		);
+
+		[CCode (cname = "get_ParentFolder")]
+		public abstract int get_parent_folder (
+			Folder ppsf
+		);
+
+		[CCode (cname = "Items")]
+		public abstract int items (
+			FolderItems ppid
+		);
+
+		[CCode (cname = "ParseName")]
+		public abstract int parse_name (
+			void* b_name,
+			FolderItem ppid
+		);
+
+		[CCode (cname = "NewFolder")]
+		public abstract int new_folder (
+			void* b_name,
+			void* v_options
+		);
+
+		[CCode (cname = "MoveHere")]
+		public abstract int move_here (
+			void* v_item,
+			void* v_options
+		);
+
+		[CCode (cname = "CopyHere")]
+		public abstract int copy_here (
+			void* v_item,
+			void* v_options
+		);
+
+		[CCode (cname = "GetDetailsOf")]
+		public abstract int get_details_of (
+			void* v_item,
+			int i_column,
+			out void* pbs
+		);
+
+	}
+
+	[CCode (cname = "Folder2", ref_function = "", unref_function = "")]
+	public interface Folder2 : Folder {
+		[CCode (cname = "get_Self")]
+		public abstract int get_self (
+			FolderItem ppfi
+		);
+
+		[CCode (cname = "get_OfflineStatus")]
+		public abstract int get_offline_status (
+			out int pul
+		);
+
+		[CCode (cname = "Synchronize")]
+		public abstract int synchronize (
+		);
+
+		[CCode (cname = "get_HaveToShowWebViewBarricade")]
+		public abstract int get_have_to_show_web_view_barricade (
+			out void* pb_have_to_show_web_view_barricade
+		);
+
+		[CCode (cname = "DismissedWebViewBarricade")]
+		public abstract int dismissed_web_view_barricade (
+		);
+
+	}
+
+	[CCode (cname = "Folder3", ref_function = "", unref_function = "")]
+	public interface Folder3 : Folder2 {
+		[CCode (cname = "get_ShowWebViewBarricade")]
+		public abstract int get_show_web_view_barricade (
+			out void* pb_show_web_view_barricade
+		);
+
+		[CCode (cname = "put_ShowWebViewBarricade")]
+		public abstract int put_show_web_view_barricade (
+			void* b_show_web_view_barricade
+		);
+
+	}
+
+	[CCode (cname = "FolderItem2", ref_function = "", unref_function = "")]
+	public interface FolderItem2 : FolderItem {
+		[CCode (cname = "InvokeVerbEx")]
+		public abstract int invoke_verb_ex (
+			void* v_verb,
+			void* v_args
+		);
+
+		[CCode (cname = "ExtendedProperty")]
+		public abstract int extended_property (
+			void* bstr_prop_name,
+			out void* pv_ret
+		);
+
+	}
+
+	[CCode (cname = "FolderItems2", ref_function = "", unref_function = "")]
+	public interface FolderItems2 : FolderItems {
+		[CCode (cname = "InvokeVerbEx")]
+		public abstract int invoke_verb_ex (
+			void* v_verb,
+			void* v_args
+		);
+
+	}
+
+	[CCode (cname = "FolderItems3", ref_function = "", unref_function = "")]
+	public interface FolderItems3 : FolderItems2 {
+		[CCode (cname = "Filter")]
+		public abstract int filter (
+			int grf_flags,
+			void* bstr_file_spec
+		);
+
+		[CCode (cname = "get_Verbs")]
+		public abstract int get_verbs (
+			FolderItemVerbs ppfic
+		);
+
+	}
+
+	[CCode (cname = "IShellLinkDual", ref_function = "", unref_function = "")]
+	public interface IShellLinkDual : IDispatch {
+		[CCode (cname = "get_Path")]
+		public abstract int get_path (
+			out void* pbs
+		);
+
+		[CCode (cname = "put_Path")]
+		public abstract int put_path (
+			void* bs
+		);
+
+		[CCode (cname = "get_Description")]
+		public abstract int get_description (
+			out void* pbs
+		);
+
+		[CCode (cname = "put_Description")]
+		public abstract int put_description (
+			void* bs
+		);
+
+		[CCode (cname = "get_WorkingDirectory")]
+		public abstract int get_working_directory (
+			out void* pbs
+		);
+
+		[CCode (cname = "put_WorkingDirectory")]
+		public abstract int put_working_directory (
+			void* bs
+		);
+
+		[CCode (cname = "get_Arguments")]
+		public abstract int get_arguments (
+			out void* pbs
+		);
+
+		[CCode (cname = "put_Arguments")]
+		public abstract int put_arguments (
+			void* bs
+		);
+
+		[CCode (cname = "get_Hotkey")]
+		public abstract int get_hotkey (
+			out int pi_hk
+		);
+
+		[CCode (cname = "put_Hotkey")]
+		public abstract int put_hotkey (
+			int i_hk
+		);
+
+		[CCode (cname = "get_ShowCommand")]
+		public abstract int get_show_command (
+			out int pi_show_command
+		);
+
+		[CCode (cname = "put_ShowCommand")]
+		public abstract int put_show_command (
+			int i_show_command
+		);
+
+		[CCode (cname = "Resolve")]
+		public abstract int resolve (
+			int f_flags
+		);
+
+		[CCode (cname = "GetIconLocation")]
+		public abstract int get_icon_location (
+			out void* pbs,
+			out int pi_icon
+		);
+
+		[CCode (cname = "SetIconLocation")]
+		public abstract int set_icon_location (
+			void* bs,
+			int i_icon
+		);
+
+		[CCode (cname = "Save")]
+		public abstract int save (
+			void* v_where
+		);
+
+	}
+
+	[CCode (cname = "IShellLinkDual2", ref_function = "", unref_function = "")]
+	public interface IShellLinkDual2 : IShellLinkDual {
+		[CCode (cname = "get_Target")]
+		public abstract int get_target (
+			FolderItem ppfi
+		);
+
+	}
+
+	[CCode (cname = "IShellFolderViewDual", ref_function = "", unref_function = "")]
+	public interface IShellFolderViewDual : IDispatch {
+		[CCode (cname = "get_Application")]
+		public abstract int get_application (
+			void* ppid
+		);
+
+		[CCode (cname = "get_Parent")]
+		public abstract int get_parent (
+			void* ppid
+		);
+
+		[CCode (cname = "get_Folder")]
+		public abstract int get_folder (
+			Folder ppid
+		);
+
+		[CCode (cname = "SelectedItems")]
+		public abstract int selected_items (
+			FolderItems ppid
+		);
+
+		[CCode (cname = "get_FocusedItem")]
+		public abstract int get_focused_item (
+			FolderItem ppid
+		);
+
+		[CCode (cname = "SelectItem")]
+		public abstract int select_item (
+			void* pvfi,
+			int dw_flags
+		);
+
+		[CCode (cname = "PopupItemMenu")]
+		public abstract int popup_item_menu (
+			FolderItem pfi,
+			void* vx,
+			void* vy,
+			out void* pbs
+		);
+
+		[CCode (cname = "get_Script")]
+		public abstract int get_script (
+			void* pp_disp
+		);
+
+		[CCode (cname = "get_ViewOptions")]
+		public abstract int get_view_options (
+			out int pl_view_options
+		);
+
+	}
+
+	[CCode (cname = "IShellFolderViewDual2", ref_function = "", unref_function = "")]
+	public interface IShellFolderViewDual2 : IShellFolderViewDual {
+		[CCode (cname = "get_CurrentViewMode")]
+		public abstract int get_current_view_mode (
+			out uint p_view_mode
+		);
+
+		[CCode (cname = "put_CurrentViewMode")]
+		public abstract int put_current_view_mode (
+			uint view_mode
+		);
+
+		[CCode (cname = "SelectItemRelative")]
+		public abstract int select_item_relative (
+			int i_relative
+		);
+
+	}
+
+	[CCode (cname = "IShellFolderViewDual3", ref_function = "", unref_function = "")]
+	public interface IShellFolderViewDual3 : IShellFolderViewDual2 {
+		[CCode (cname = "get_GroupBy")]
+		public abstract int get_group_by (
+			out void* pbstr_group_by
+		);
+
+		[CCode (cname = "put_GroupBy")]
+		public abstract int put_group_by (
+			void* bstr_group_by
+		);
+
+		[CCode (cname = "get_FolderFlags")]
+		public abstract int get_folder_flags (
+			out uint pdw_flags
+		);
+
+		[CCode (cname = "put_FolderFlags")]
+		public abstract int put_folder_flags (
+			uint dw_flags
+		);
+
+		[CCode (cname = "get_SortColumns")]
+		public abstract int get_sort_columns (
+			out void* pbstr_sort_columns
+		);
+
+		[CCode (cname = "put_SortColumns")]
+		public abstract int put_sort_columns (
+			void* bstr_sort_columns
+		);
+
+		[CCode (cname = "put_IconSize")]
+		public abstract int put_icon_size (
+			int i_icon_size
+		);
+
+		[CCode (cname = "get_IconSize")]
+		public abstract int get_icon_size (
+			out int pi_icon_size
+		);
+
+		[CCode (cname = "FilterView")]
+		public abstract int filter_view (
+			void* bstr_filter_text
+		);
+
+	}
+
+	[CCode (cname = "IShellDispatch", ref_function = "", unref_function = "")]
+	public interface IShellDispatch : IDispatch {
+		[CCode (cname = "get_Application")]
+		public abstract int get_application (
+			void* ppid
+		);
+
+		[CCode (cname = "get_Parent")]
+		public abstract int get_parent (
+			void* ppid
+		);
+
+		[CCode (cname = "NameSpace")]
+		public abstract int name_space (
+			void* v_dir,
+			Folder ppsdf
+		);
+
+		[CCode (cname = "BrowseForFolder")]
+		public abstract int browse_for_folder (
+			int hwnd,
+			void* title,
+			int options,
+			void* root_folder,
+			Folder ppsdf
+		);
+
+		[CCode (cname = "Windows")]
+		public abstract int windows (
+			void* ppid
+		);
+
+		[CCode (cname = "Open")]
+		public abstract int open (
+			void* v_dir
+		);
+
+		[CCode (cname = "Explore")]
+		public abstract int explore (
+			void* v_dir
+		);
+
+		[CCode (cname = "MinimizeAll")]
+		public abstract int minimize_all (
+		);
+
+		[CCode (cname = "UndoMinimizeALL")]
+		public abstract int undo_minimize_all (
+		);
+
+		[CCode (cname = "FileRun")]
+		public abstract int file_run (
+		);
+
+		[CCode (cname = "CascadeWindows")]
+		public abstract int cascade_windows (
+		);
+
+		[CCode (cname = "TileVertically")]
+		public abstract int tile_vertically (
+		);
+
+		[CCode (cname = "TileHorizontally")]
+		public abstract int tile_horizontally (
+		);
+
+		[CCode (cname = "ShutdownWindows")]
+		public abstract int shutdown_windows (
+		);
+
+		[CCode (cname = "Suspend")]
+		public abstract int suspend (
+		);
+
+		[CCode (cname = "EjectPC")]
+		public abstract int eject_pc (
+		);
+
+		[CCode (cname = "SetTime")]
+		public abstract int set_time (
+		);
+
+		[CCode (cname = "TrayProperties")]
+		public abstract int tray_properties (
+		);
+
+		[CCode (cname = "Help")]
+		public abstract int help (
+		);
+
+		[CCode (cname = "FindFiles")]
+		public abstract int find_files (
+		);
+
+		[CCode (cname = "FindComputer")]
+		public abstract int find_computer (
+		);
+
+		[CCode (cname = "RefreshMenu")]
+		public abstract int refresh_menu (
+		);
+
+		[CCode (cname = "ControlPanelItem")]
+		public abstract int control_panel_item (
+			void* bstr_dir
+		);
+
+	}
+
+	[CCode (cname = "IShellDispatch2", ref_function = "", unref_function = "")]
+	public interface IShellDispatch2 : IShellDispatch {
+		[CCode (cname = "IsRestricted")]
+		public abstract int is_restricted (
+			void* group,
+			void* restriction,
+			out int pl_restrict_value
+		);
+
+		[CCode (cname = "ShellExecute")]
+		public abstract int shell_execute (
+			void* file,
+			void* v_args,
+			void* v_dir,
+			void* v_operation,
+			void* v_show
+		);
+
+		[CCode (cname = "FindPrinter")]
+		public abstract int find_printer (
+			void* name,
+			void* location,
+			void* model
+		);
+
+		[CCode (cname = "GetSystemInformation")]
+		public abstract int get_system_information (
+			void* name,
+			out void* pv
+		);
+
+		[CCode (cname = "ServiceStart")]
+		public abstract int service_start (
+			void* service_name,
+			void* persistent,
+			out void* p_success
+		);
+
+		[CCode (cname = "ServiceStop")]
+		public abstract int service_stop (
+			void* service_name,
+			void* persistent,
+			out void* p_success
+		);
+
+		[CCode (cname = "IsServiceRunning")]
+		public abstract int is_service_running (
+			void* service_name,
+			out void* p_running
+		);
+
+		[CCode (cname = "CanStartStopService")]
+		public abstract int can_start_stop_service (
+			void* service_name,
+			out void* p_can_start_stop
+		);
+
+		[CCode (cname = "ShowBrowserBar")]
+		public abstract int show_browser_bar (
+			void* bstr_clsid,
+			void* b_show,
+			out void* p_success
+		);
+
+	}
+
+	[CCode (cname = "IShellDispatch3", ref_function = "", unref_function = "")]
+	public interface IShellDispatch3 : IShellDispatch2 {
+		[CCode (cname = "AddToRecent")]
+		public abstract int add_to_recent (
+			void* var_file,
+			void* bstr_category
+		);
+
+	}
+
+	[CCode (cname = "IShellDispatch4", ref_function = "", unref_function = "")]
+	public interface IShellDispatch4 : IShellDispatch3 {
+		[CCode (cname = "WindowsSecurity")]
+		public abstract int windows_security (
+		);
+
+		[CCode (cname = "ToggleDesktop")]
+		public abstract int toggle_desktop (
+		);
+
+		[CCode (cname = "ExplorerPolicy")]
+		public abstract int explorer_policy (
+			void* bstr_policy_name,
+			out void* p_value
+		);
+
+		[CCode (cname = "GetSetting")]
+		public abstract int get_setting (
+			int l_setting,
+			out void* p_result
+		);
+
+	}
+
+	[CCode (cname = "IShellDispatch5", ref_function = "", unref_function = "")]
+	public interface IShellDispatch5 : IShellDispatch4 {
+		[CCode (cname = "WindowSwitcher")]
+		public abstract int window_switcher (
+		);
+
+	}
+
+	[CCode (cname = "IShellDispatch6", ref_function = "", unref_function = "")]
+	public interface IShellDispatch6 : IShellDispatch5 {
+		[CCode (cname = "SearchCommand")]
+		public abstract int search_command (
+		);
+
+	}
+
+	[CCode (cname = "IFileSearchBand", ref_function = "", unref_function = "")]
+	public interface IFileSearchBand : IDispatch {
+		[CCode (cname = "SetFocus")]
+		public abstract int set_focus (
+		);
+
+		[CCode (cname = "SetSearchParameters")]
+		public abstract int set_search_parameters (
+			void* pbstr_search_id,
+			void* b_nav_to_results,
+			void* pvar_scope,
+			void* pvar_query_file
+		);
+
+		[CCode (cname = "get_SearchID")]
+		public abstract int get_search_id (
+			out void* pbstr_search_id
+		);
+
+		[CCode (cname = "get_Scope")]
+		public abstract int get_scope (
+			out void* pvar_scope
+		);
+
+		[CCode (cname = "get_QueryFile")]
+		public abstract int get_query_file (
+			out void* pvar_file
+		);
+
+	}
+
+	[CCode (cname = "IWebWizardHost", ref_function = "", unref_function = "")]
+	public interface IWebWizardHost : IDispatch {
+		[CCode (cname = "FinalBack")]
+		public abstract int final_back (
+		);
+
+		[CCode (cname = "FinalNext")]
+		public abstract int final_next (
+		);
+
+		[CCode (cname = "Cancel")]
+		public abstract int cancel (
+		);
+
+		[CCode (cname = "put_Caption")]
+		public abstract int put_caption (
+			void* bstr_caption
+		);
+
+		[CCode (cname = "get_Caption")]
+		public abstract int get_caption (
+			out void* pbstr_caption
+		);
+
+		[CCode (cname = "put_Property")]
+		public abstract int put_property (
+			void* bstr_property_name,
+			void* pv_property
+		);
+
+		[CCode (cname = "get_Property")]
+		public abstract int get_property (
+			void* bstr_property_name,
+			out void* pv_property
+		);
+
+		[CCode (cname = "SetWizardButtons")]
+		public abstract int set_wizard_buttons (
+			void* vf_enable_back,
+			void* vf_enable_next,
+			void* vf_last_page
+		);
+
+		[CCode (cname = "SetHeaderText")]
+		public abstract int set_header_text (
+			void* bstr_header_title,
+			void* bstr_header_subtitle
+		);
+
+	}
+
+	[CCode (cname = "IWebWizardHost2", ref_function = "", unref_function = "")]
+	public interface IWebWizardHost2 : IWebWizardHost {
+		[CCode (cname = "SignString")]
+		public abstract int sign_string (
+			void* value,
+			out void* signed_value
+		);
+
+	}
+
+	[CCode (cname = "INewWDEvents", ref_function = "", unref_function = "")]
+	public interface INewWDEvents : IWebWizardHost {
+		[CCode (cname = "PassportAuthenticate")]
+		public abstract int passport_authenticate (
+			void* bstr_sign_in_url,
+			out void* pvf_authenitcated
+		);
+
+	}
+
+	[CCode (cname = "IAutoComplete", ref_function = "", unref_function = "")]
+	public interface IAutoComplete : IUnknown {
+		[CCode (cname = "Init")]
+		public abstract int init (
+			[CCode (type_id = "HWND")] void* hwnd_edit,
+			IUnknown punk_acl,
+			[CCode (type_id = "LPCWSTR")] uint16* pwsz_reg_key_path,
+			[CCode (type_id = "LPCWSTR")] uint16* pwsz_quick_complete
+		);
+
+		[CCode (cname = "Enable")]
+		public abstract int enable (
+			int f_enable
+		);
+
+	}
+
+	[CCode (cname = "IAutoComplete2", ref_function = "", unref_function = "")]
+	public interface IAutoComplete2 : IAutoComplete {
+		[CCode (cname = "SetOptions")]
+		public abstract int set_options (
+			uint dw_flag
+		);
+
+		[CCode (cname = "GetOptions")]
+		public abstract int get_options (
+			out uint pdw_flag
+		);
+
+	}
+
+	[CCode (cname = "IEnumACString", ref_function = "", unref_function = "")]
+	public interface IEnumACString : IEnumString {
+		[CCode (cname = "NextItem")]
+		public abstract int next_item (
+			void* psz_url,
+			uint cch_max,
+			out uint pul_sort_index
+		);
+
+		[CCode (cname = "SetEnumOptions")]
+		public abstract int set_enum_options (
+			uint dw_options
+		);
+
+		[CCode (cname = "GetEnumOptions")]
+		public abstract int get_enum_options (
+			out uint pdw_options
+		);
+
+	}
+
+	[CCode (cname = "IDataObjectAsyncCapability", ref_function = "", unref_function = "")]
+	public interface IDataObjectAsyncCapability : IUnknown {
+		[CCode (cname = "SetAsyncMode")]
+		public abstract int set_async_mode (
+			int f_do_op_async
+		);
+
+		[CCode (cname = "GetAsyncMode")]
+		public abstract int get_async_mode (
+			out int pf_is_op_async
+		);
+
+		[CCode (cname = "StartOperation")]
+		public abstract int start_operation (
+			IBindCtx pbc_reserved
+		);
+
+		[CCode (cname = "InOperation")]
+		public abstract int in_operation (
+			out int pf_in_async_op
+		);
+
+		[CCode (cname = "EndOperation")]
+		public abstract int end_operation (
+			int h_result,
+			IBindCtx pbc_reserved,
+			uint dw_effects
+		);
+
+	}
+
+	[CCode (cname = "IExtractIconW", ref_function = "", unref_function = "")]
+	public interface IExtractIconW : IUnknown {
+		[CCode (cname = "GetIconLocation")]
+		public abstract int get_icon_location (
+			uint u_flags,
+			void* psz_icon_file,
+			uint cch_max,
+			out int pi_index,
+			out uint pw_flags
+		);
+
+		[CCode (cname = "Extract")]
+		public abstract int extract (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_file,
+			uint n_icon_index,
+			out void* phicon_large,
+			out void* phicon_small,
+			uint n_icon_size
+		);
+
+	}
+
+	[CCode (cname = "IShellIconOverlayManager", ref_function = "", unref_function = "")]
+	public interface IShellIconOverlayManager : IUnknown {
+		[CCode (cname = "GetFileOverlayInfo")]
+		public abstract int get_file_overlay_info (
+			[CCode (type_id = "LPCWSTR")] uint16* pwsz_path,
+			uint dw_attrib,
+			out int p_index,
+			uint dwflags
+		);
+
+		[CCode (cname = "GetReservedOverlayInfo")]
+		public abstract int get_reserved_overlay_info (
+			[CCode (type_id = "LPCWSTR")] uint16* pwsz_path,
+			uint dw_attrib,
+			out int p_index,
+			uint dwflags,
+			int i_reserved_id
+		);
+
+		[CCode (cname = "RefreshOverlayImages")]
+		public abstract int refresh_overlay_images (
+			uint dw_flags
+		);
+
+		[CCode (cname = "LoadNonloadedOverlayIdentifiers")]
+		public abstract int load_nonloaded_overlay_identifiers (
+		);
+
+		[CCode (cname = "OverlayIndexFromImageIndex")]
+		public abstract int overlay_index_from_image_index (
+			int i_image,
+			out int pi_index,
+			int f_add
+		);
+
+	}
+
+	[CCode (cname = "IShellIconOverlay", ref_function = "", unref_function = "")]
+	public interface IShellIconOverlay : IUnknown {
+		[CCode (cname = "GetOverlayIndex")]
+		public abstract int get_overlay_index (
+			void* pidl,
+			out int p_index
+		);
+
+		[CCode (cname = "GetOverlayIconIndex")]
+		public abstract int get_overlay_icon_index (
+			void* pidl,
+			out int p_icon_index
+		);
+
+	}
+
+	[CCode (cname = "IURLSearchHook", ref_function = "", unref_function = "")]
+	public interface IURLSearchHook : IUnknown {
+		[CCode (cname = "Translate")]
+		public abstract int translate (
+			void* pwsz_search_url,
+			uint cch_buffer_size
+		);
+
+	}
+
+	[CCode (cname = "ISearchContext", ref_function = "", unref_function = "")]
+	public interface ISearchContext : IUnknown {
+		[CCode (cname = "GetSearchUrl")]
+		public abstract int get_search_url (
+			out void* pbstr_search_url
+		);
+
+		[CCode (cname = "GetSearchText")]
+		public abstract int get_search_text (
+			out void* pbstr_search_text
+		);
+
+		[CCode (cname = "GetSearchStyle")]
+		public abstract int get_search_style (
+			out uint pdw_search_style
+		);
+
+	}
+
+	[CCode (cname = "IURLSearchHook2", ref_function = "", unref_function = "")]
+	public interface IURLSearchHook2 : IURLSearchHook {
+		[CCode (cname = "TranslateWithSearchContext")]
+		public abstract int translate_with_search_context (
+			void* pwsz_search_url,
+			uint cch_buffer_size,
+			ISearchContext p_search_context
+		);
+
+	}
+
+	[CCode (cname = "IShellDetails", ref_function = "", unref_function = "")]
+	public interface IShellDetails : IUnknown {
+		[CCode (cname = "GetDetailsOf")]
+		public abstract int get_details_of (
+			void* pidl,
+			uint i_column,
+			out void* p_details
+		);
+
+		[CCode (cname = "ColumnClick")]
+		public abstract int column_click (
+			uint i_column
+		);
+
+	}
+
+	[CCode (cname = "IObjMgr", ref_function = "", unref_function = "")]
+	public interface IObjMgr : IUnknown {
+		[CCode (cname = "Append")]
+		public abstract int append (
+			IUnknown punk
+		);
+
+		[CCode (cname = "Remove")]
+		public abstract int remove (
+			IUnknown punk
+		);
+
+	}
+
+	[CCode (cname = "IACList", ref_function = "", unref_function = "")]
+	public interface IACList : IUnknown {
+		[CCode (cname = "Expand")]
+		public abstract int expand (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_expand
+		);
+
+	}
+
+	[CCode (cname = "IACList2", ref_function = "", unref_function = "")]
+	public interface IACList2 : IACList {
+		[CCode (cname = "SetOptions")]
+		public abstract int set_options (
+			uint dw_flag
+		);
+
+		[CCode (cname = "GetOptions")]
+		public abstract int get_options (
+			out uint pdw_flag
+		);
+
+	}
+
+	[CCode (cname = "IProgressDialog", ref_function = "", unref_function = "")]
+	public interface IProgressDialog : IUnknown {
+		[CCode (cname = "StartProgressDialog")]
+		public abstract int start_progress_dialog (
+			[CCode (type_id = "HWND")] void* hwnd_parent,
+			IUnknown punk_enable_modless,
+			uint dw_flags,
+			void* pv_resevered
+		);
+
+		[CCode (cname = "StopProgressDialog")]
+		public abstract int stop_progress_dialog (
+		);
+
+		[CCode (cname = "SetTitle")]
+		public abstract int set_title (
+			[CCode (type_id = "LPCWSTR")] uint16* pwz_title
+		);
+
+		[CCode (cname = "SetAnimation")]
+		public abstract int set_animation (
+			[CCode (type_id = "HINSTANCE")] void* h_inst_animation,
+			uint id_animation
+		);
+
+		[CCode (cname = "HasUserCancelled")]
+		public abstract int has_user_cancelled (
+		);
+
+		[CCode (cname = "SetProgress")]
+		public abstract int set_progress (
+			uint dw_completed,
+			uint dw_total
+		);
+
+		[CCode (cname = "SetProgress64")]
+		public abstract int set_progress64 (
+			ulong ull_completed,
+			ulong ull_total
+		);
+
+		[CCode (cname = "SetLine")]
+		public abstract int set_line (
+			uint dw_line_num,
+			[CCode (type_id = "LPCWSTR")] uint16* pwz_string,
+			int f_compact_path,
+			void* pv_resevered
+		);
+
+		[CCode (cname = "SetCancelMsg")]
+		public abstract int set_cancel_msg (
+			[CCode (type_id = "LPCWSTR")] uint16* pwz_cancel_msg,
+			void* pv_resevered
+		);
+
+		[CCode (cname = "Timer")]
+		public abstract int timer (
+			uint dw_timer_action,
+			void* pv_resevered
+		);
+
+	}
+
+	[CCode (cname = "IDockingWindowSite", ref_function = "", unref_function = "")]
+	public interface IDockingWindowSite : IOleWindow {
+		[CCode (cname = "GetBorderDW")]
+		public abstract int get_border_dw (
+			IUnknown punk_obj,
+			out Win32.Foundation.Rect prc_border
+		);
+
+		[CCode (cname = "RequestBorderSpaceDW")]
+		public abstract int request_border_space_dw (
+			IUnknown punk_obj,
+			ref Win32.Foundation.Rect pbw
+		);
+
+		[CCode (cname = "SetBorderSpaceDW")]
+		public abstract int set_border_space_dw (
+			IUnknown punk_obj,
+			ref Win32.Foundation.Rect pbw
+		);
+
+	}
+
+	[CCode (cname = "IShellChangeNotify", ref_function = "", unref_function = "")]
+	public interface IShellChangeNotify : IUnknown {
+		[CCode (cname = "OnChange")]
+		public abstract int on_change (
+			int l_event,
+			void* pidl1,
+			void* pidl2
+		);
+
+	}
+
+	[CCode (cname = "IQueryInfo", ref_function = "", unref_function = "")]
+	public interface IQueryInfo : IUnknown {
+		[CCode (cname = "GetInfoTip")]
+		public abstract int get_info_tip (
+			QITIPFFLAGS dw_flags,
+			out uint16* ppwsz_tip
+		);
+
+		[CCode (cname = "GetInfoFlags")]
+		public abstract int get_info_flags (
+			out uint pdw_flags
+		);
+
+	}
+
+	[CCode (cname = "IShellFolderViewCB", ref_function = "", unref_function = "")]
+	public interface IShellFolderViewCB : IUnknown {
+		[CCode (cname = "MessageSFVCB")]
+		public abstract int message_sfvcb (
+			SFVMMESSAGEId u_msg,
+			ulong w_param,
+			int64 l_param
+		);
+
+	}
+
+	[CCode (cname = "IShellFolderView", ref_function = "", unref_function = "")]
+	public interface IShellFolderView : IUnknown {
+		[CCode (cname = "Rearrange")]
+		public abstract int rearrange (
+			int64 l_param_sort
+		);
+
+		[CCode (cname = "GetArrangeParam")]
+		public abstract int get_arrange_param (
+			out int64 pl_param_sort
+		);
+
+		[CCode (cname = "ArrangeGrid")]
+		public abstract int arrange_grid (
+		);
+
+		[CCode (cname = "AutoArrange")]
+		public abstract int auto_arrange (
+		);
+
+		[CCode (cname = "GetAutoArrange")]
+		public abstract int get_auto_arrange (
+		);
+
+		[CCode (cname = "AddObject")]
+		public abstract int add_object (
+			void* pidl,
+			out uint pu_item
+		);
+
+		[CCode (cname = "GetObject")]
+		public abstract int get_object (
+			out out void* ppidl,
+			uint u_item
+		);
+
+		[CCode (cname = "RemoveObject")]
+		public abstract int remove_object (
+			void* pidl,
+			out uint pu_item
+		);
+
+		[CCode (cname = "GetObjectCount")]
+		public abstract int get_object_count (
+			out uint pu_count
+		);
+
+		[CCode (cname = "SetObjectCount")]
+		public abstract int set_object_count (
+			uint u_count,
+			uint dw_flags
+		);
+
+		[CCode (cname = "UpdateObject")]
+		public abstract int update_object (
+			void* pidl_old,
+			void* pidl_new,
+			out uint pu_item
+		);
+
+		[CCode (cname = "RefreshObject")]
+		public abstract int refresh_object (
+			void* pidl,
+			out uint pu_item
+		);
+
+		[CCode (cname = "SetRedraw")]
+		public abstract int set_redraw (
+			int b_redraw
+		);
+
+		[CCode (cname = "GetSelectedCount")]
+		public abstract int get_selected_count (
+			out uint pu_selected
+		);
+
+		[CCode (cname = "GetSelectedObjects")]
+		public abstract int get_selected_objects (
+			out out void** pppidl,
+			out uint pu_items
+		);
+
+		[CCode (cname = "IsDropOnSource")]
+		public abstract int is_drop_on_source (
+			IDropTarget p_drop_target
+		);
+
+		[CCode (cname = "GetDragPoint")]
+		public abstract int get_drag_point (
+			out Win32.Foundation.Point ppt
+		);
+
+		[CCode (cname = "GetDropPoint")]
+		public abstract int get_drop_point (
+			out Win32.Foundation.Point ppt
+		);
+
+		[CCode (cname = "MoveIcons")]
+		public abstract int move_icons (
+			IDataObject p_data_object
+		);
+
+		[CCode (cname = "SetItemPos")]
+		public abstract int set_item_pos (
+			void* pidl,
+			ref Win32.Foundation.Point ppt
+		);
+
+		[CCode (cname = "IsBkDropTarget")]
+		public abstract int is_bk_drop_target (
+			IDropTarget p_drop_target
+		);
+
+		[CCode (cname = "SetClipboard")]
+		public abstract int set_clipboard (
+			int b_move
+		);
+
+		[CCode (cname = "SetPoints")]
+		public abstract int set_points (
+			IDataObject p_data_object
+		);
+
+		[CCode (cname = "GetItemSpacing")]
+		public abstract int get_item_spacing (
+			out void* p_spacing
+		);
+
+		[CCode (cname = "SetCallback")]
+		public abstract int set_callback (
+			IShellFolderViewCB p_new_cb,
+			IShellFolderViewCB pp_old_cb
+		);
+
+		[CCode (cname = "Select")]
+		public abstract int select (
+			SFVSSELECT dw_flags
+		);
+
+		[CCode (cname = "QuerySupport")]
+		public abstract int query_support (
+			out uint pdw_support
+		);
+
+		[CCode (cname = "SetAutomationObject")]
+		public abstract int set_automation_object (
+			IDispatch pdisp
+		);
+
+	}
+
+	[CCode (cname = "INamedPropertyBag", ref_function = "", unref_function = "")]
+	public interface INamedPropertyBag : IUnknown {
+		[CCode (cname = "ReadPropertyNPB")]
+		public abstract int read_property_npb (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_bagname,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_prop_name,
+			out void* p_var
+		);
+
+		[CCode (cname = "WritePropertyNPB")]
+		public abstract int write_property_npb (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_bagname,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_prop_name,
+			void* p_var
+		);
+
+		[CCode (cname = "RemovePropertyNPB")]
+		public abstract int remove_property_npb (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_bagname,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_prop_name
+		);
+
+	}
+
+	[CCode (cname = "INewShortcutHookW", ref_function = "", unref_function = "")]
+	public interface INewShortcutHookW : IUnknown {
+		[CCode (cname = "SetReferent")]
+		public abstract int set_referent (
+			[CCode (type_id = "LPCWSTR")] uint16* pcsz_referent,
+			[CCode (type_id = "HWND")] void* hwnd
+		);
+
+		[CCode (cname = "GetReferent")]
+		public abstract int get_referent (
+			void* psz_referent,
+			int cch_referent
+		);
+
+		[CCode (cname = "SetFolder")]
+		public abstract int set_folder (
+			[CCode (type_id = "LPCWSTR")] uint16* pcsz_folder
+		);
+
+		[CCode (cname = "GetFolder")]
+		public abstract int get_folder (
+			void* psz_folder,
+			int cch_folder
+		);
+
+		[CCode (cname = "GetName")]
+		public abstract int get_name (
+			void* psz_name,
+			int cch_name
+		);
+
+		[CCode (cname = "GetExtension")]
+		public abstract int get_extension (
+			void* psz_extension,
+			int cch_extension
+		);
+
+	}
+
+	[CCode (cname = "ICopyHookW", ref_function = "", unref_function = "")]
+	public interface ICopyHookW : IUnknown {
+		[CCode (cname = "CopyCallback")]
+		public abstract uint copy_callback (
+			[CCode (type_id = "HWND")] void* hwnd,
+			uint w_func,
+			uint w_flags,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_src_file,
+			uint dw_src_attribs,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_dest_file,
+			uint dw_dest_attribs
+		);
+
+	}
+
+	[CCode (cname = "ICurrentWorkingDirectory", ref_function = "", unref_function = "")]
+	public interface ICurrentWorkingDirectory : IUnknown {
+		[CCode (cname = "GetDirectory")]
+		public abstract int get_directory (
+			void* pwz_path,
+			uint cch_size
+		);
+
+		[CCode (cname = "SetDirectory")]
+		public abstract int set_directory (
+			[CCode (type_id = "LPCWSTR")] uint16* pwz_path
+		);
+
+	}
+
+	[CCode (cname = "IDockingWindowFrame", ref_function = "", unref_function = "")]
+	public interface IDockingWindowFrame : IOleWindow {
+		[CCode (cname = "AddToolbar")]
+		public abstract int add_toolbar (
+			IUnknown punk_src,
+			[CCode (type_id = "LPCWSTR")] uint16* pwsz_item,
+			uint dw_add_flags
+		);
+
+		[CCode (cname = "RemoveToolbar")]
+		public abstract int remove_toolbar (
+			IUnknown punk_src,
+			uint dw_remove_flags
+		);
+
+		[CCode (cname = "FindToolbar")]
+		public abstract int find_toolbar (
+			[CCode (type_id = "LPCWSTR")] uint16* pwsz_item,
+			void* riid,
+			out out void* ppv
+		);
+
+	}
+
+	[CCode (cname = "IThumbnailCapture", ref_function = "", unref_function = "")]
+	public interface IThumbnailCapture : IUnknown {
+		[CCode (cname = "CaptureThumbnail")]
+		public abstract int capture_thumbnail (
+			ref Win32.Foundation.Size p_max_size,
+			IUnknown p_htmldoc2,
+			out void* phbm_thumbnail
+		);
+
+	}
+
+	[CCode (cname = "IShellFolderBand", ref_function = "", unref_function = "")]
+	public interface IShellFolderBand : IUnknown {
+		[CCode (cname = "InitializeSFB")]
+		public abstract int initialize_sfb (
+			IShellFolder psf,
+			void* pidl
+		);
+
+		[CCode (cname = "SetBandInfoSFB")]
+		public abstract int set_band_info_sfb (
+			void* pbi
+		);
+
+		[CCode (cname = "GetBandInfoSFB")]
+		public abstract int get_band_info_sfb (
+			out void* pbi
+		);
+
+	}
+
+	[CCode (cname = "IDeskBarClient", ref_function = "", unref_function = "")]
+	public interface IDeskBarClient : IOleWindow {
+		[CCode (cname = "SetDeskBarSite")]
+		public abstract int set_desk_bar_site (
+			IUnknown punk_site
+		);
+
+		[CCode (cname = "SetModeDBC")]
+		public abstract int set_mode_dbc (
+			uint dw_mode
+		);
+
+		[CCode (cname = "UIActivateDBC")]
+		public abstract int uiactivate_dbc (
+			uint dw_state
+		);
+
+		[CCode (cname = "GetSize")]
+		public abstract int get_size (
+			uint dw_which,
+			out Win32.Foundation.Rect prc
+		);
+
+	}
+
+	[CCode (cname = "IColumnProvider", ref_function = "", unref_function = "")]
+	public interface IColumnProvider : IUnknown {
+		[CCode (cname = "Initialize")]
+		public abstract int initialize (
+			void* psci
+		);
+
+		[CCode (cname = "GetColumnInfo")]
+		public abstract int get_column_info (
+			uint dw_index,
+			out SHCOLUMNINFO psci
+		);
+
+		[CCode (cname = "GetItemData")]
+		public abstract int get_item_data (
+			void* pscid,
+			void* pscd,
+			out void* pvar_data
+		);
+
+	}
+
+	[CCode (cname = "IDocViewSite", ref_function = "", unref_function = "")]
+	public interface IDocViewSite : IUnknown {
+		[CCode (cname = "OnSetTitle")]
+		public abstract int on_set_title (
+			void* pv_title
+		);
+
+	}
+
+	[CCode (cname = "IInitializeObject", ref_function = "", unref_function = "")]
+	public interface IInitializeObject : IUnknown {
+		[CCode (cname = "Initialize")]
+		public abstract int initialize (
+		);
+
+	}
+
+	[CCode (cname = "IBanneredBar", ref_function = "", unref_function = "")]
+	public interface IBanneredBar : IUnknown {
+		[CCode (cname = "SetIconSize")]
+		public abstract int set_icon_size (
+			uint i_icon
+		);
+
+		[CCode (cname = "GetIconSize")]
+		public abstract int get_icon_size (
+			out uint pi_icon
+		);
+
+		[CCode (cname = "SetBitmap")]
+		public abstract int set_bitmap (
+			void* h_bitmap
+		);
+
+		[CCode (cname = "GetBitmap")]
+		public abstract int get_bitmap (
+			out void* ph_bitmap
+		);
+
+	}
+
+	[CCode (cname = "IQueryAssociations", ref_function = "", unref_function = "")]
+	public interface IQueryAssociations : IUnknown {
+		[CCode (cname = "Init")]
+		public abstract int init (
+			uint flags,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_assoc,
+			void* hk_progid,
+			[CCode (type_id = "HWND")] void* hwnd
+		);
+
+		[CCode (cname = "GetString")]
+		public abstract int get_string (
+			uint flags,
+			void* str,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_extra,
+			void* psz_out,
+			out uint pcch_out
+		);
+
+		[CCode (cname = "GetKey")]
+		public abstract int get_key (
+			uint flags,
+			void* key,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_extra,
+			out void* phkey_out
+		);
+
+		[CCode (cname = "GetData")]
+		public abstract int get_data (
+			uint flags,
+			void* data,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_extra,
+			out void* pv_out,
+			out uint pcb_out
+		);
+
+		[CCode (cname = "GetEnum")]
+		public abstract int get_enum (
+			uint flags,
+			void* assocenum,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_extra,
+			void* riid,
+			out out void* ppv_out
+		);
+
+	}
+
+	[CCode (cname = "IShellApp", ref_function = "", unref_function = "")]
+	public interface IShellApp : IUnknown {
+		[CCode (cname = "GetAppInfo")]
+		public abstract int get_app_info (
+			out void* pai
+		);
+
+		[CCode (cname = "GetPossibleActions")]
+		public abstract int get_possible_actions (
+			out uint pdw_actions
+		);
+
+		[CCode (cname = "GetSlowAppInfo")]
+		public abstract int get_slow_app_info (
+			out SLOWAPPINFO psaid
+		);
+
+		[CCode (cname = "GetCachedSlowAppInfo")]
+		public abstract int get_cached_slow_app_info (
+			out SLOWAPPINFO psaid
+		);
+
+		[CCode (cname = "IsInstalled")]
+		public abstract int is_installed (
+		);
+
+	}
+
+	[CCode (cname = "IPublishedApp", ref_function = "", unref_function = "")]
+	public interface IPublishedApp : IShellApp {
+		[CCode (cname = "Install")]
+		public abstract int install (
+			void* pst_install
+		);
+
+		[CCode (cname = "GetPublishedAppInfo")]
+		public abstract int get_published_app_info (
+			out PUBAPPINFO ppai
+		);
+
+		[CCode (cname = "Unschedule")]
+		public abstract int unschedule (
+		);
+
+	}
+
+	[CCode (cname = "IPublishedApp2", ref_function = "", unref_function = "")]
+	public interface IPublishedApp2 : IPublishedApp {
+		[CCode (cname = "Install2")]
+		public abstract int install2 (
+			void* pst_install,
+			[CCode (type_id = "HWND")] void* hwnd_parent
+		);
+
+	}
+
+	[CCode (cname = "IEnumPublishedApps", ref_function = "", unref_function = "")]
+	public interface IEnumPublishedApps : IUnknown {
+		[CCode (cname = "Next")]
+		public abstract int next (
+			IPublishedApp pia
+		);
+
+		[CCode (cname = "Reset")]
+		public abstract int reset (
+		);
+
+	}
+
+	[CCode (cname = "IAppPublisher", ref_function = "", unref_function = "")]
+	public interface IAppPublisher : IUnknown {
+		[CCode (cname = "GetNumberOfCategories")]
+		public abstract int get_number_of_categories (
+			out uint pdw_cat
+		);
+
+		[CCode (cname = "GetCategories")]
+		public abstract int get_categories (
+			out void* p_app_category_list
+		);
+
+		[CCode (cname = "GetNumberOfApps")]
+		public abstract int get_number_of_apps (
+			out uint pdw_apps
+		);
+
+		[CCode (cname = "EnumApps")]
+		public abstract int enum_apps (
+			void* p_app_category_id,
+			IEnumPublishedApps ppepa
+		);
+
+	}
+
+	[CCode (cname = "ICredentialProviderCredential", ref_function = "", unref_function = "")]
+	public interface ICredentialProviderCredential : IUnknown {
+		[CCode (cname = "Advise")]
+		public abstract int advise (
+			ICredentialProviderCredentialEvents pcpce
+		);
+
+		[CCode (cname = "UnAdvise")]
+		public abstract int un_advise (
+		);
+
+		[CCode (cname = "SetSelected")]
+		public abstract int set_selected (
+			out int pb_auto_logon
+		);
+
+		[CCode (cname = "SetDeselected")]
+		public abstract int set_deselected (
+		);
+
+		[CCode (cname = "GetFieldState")]
+		public abstract int get_field_state (
+			uint dw_field_id,
+			out CREDENTIALPROVIDERFIELDSTATE pcpfs,
+			out CREDENTIALPROVIDERFIELDINTERACTIVESTATE pcpfis
+		);
+
+		[CCode (cname = "GetStringValue")]
+		public abstract int get_string_value (
+			uint dw_field_id,
+			out uint16* ppsz
+		);
+
+		[CCode (cname = "GetBitmapValue")]
+		public abstract int get_bitmap_value (
+			uint dw_field_id,
+			out void* phbmp
+		);
+
+		[CCode (cname = "GetCheckboxValue")]
+		public abstract int get_checkbox_value (
+			uint dw_field_id,
+			out int pb_checked,
+			out uint16* ppsz_label
+		);
+
+		[CCode (cname = "GetSubmitButtonValue")]
+		public abstract int get_submit_button_value (
+			uint dw_field_id,
+			out uint pdw_adjacent_to
+		);
+
+		[CCode (cname = "GetComboBoxValueCount")]
+		public abstract int get_combo_box_value_count (
+			uint dw_field_id,
+			out uint pc_items,
+			out uint pdw_selected_item
+		);
+
+		[CCode (cname = "GetComboBoxValueAt")]
+		public abstract int get_combo_box_value_at (
+			uint dw_field_id,
+			uint dw_item,
+			out uint16* ppsz_item
+		);
+
+		[CCode (cname = "SetStringValue")]
+		public abstract int set_string_value (
+			uint dw_field_id,
+			[CCode (type_id = "LPCWSTR")] uint16* psz
+		);
+
+		[CCode (cname = "SetCheckboxValue")]
+		public abstract int set_checkbox_value (
+			uint dw_field_id,
+			int b_checked
+		);
+
+		[CCode (cname = "SetComboBoxSelectedValue")]
+		public abstract int set_combo_box_selected_value (
+			uint dw_field_id,
+			uint dw_selected_item
+		);
+
+		[CCode (cname = "CommandLinkClicked")]
+		public abstract int command_link_clicked (
+			uint dw_field_id
+		);
+
+		[CCode (cname = "GetSerialization")]
+		public abstract int get_serialization (
+			out CREDENTIALPROVIDERGetSERIALIZATIONRESPONSE pcpgsr,
+			out CREDENTIALPROVIDERCREDENTIALSERIALIZATION pcpcs,
+			out uint16* ppsz_optional_status_text,
+			out CREDENTIALPROVIDERSTATUSICON pcpsi_optional_status_icon
+		);
+
+		[CCode (cname = "ReportResult")]
+		public abstract int report_result (
+			void* nts_status,
+			void* nts_substatus,
+			out uint16* ppsz_optional_status_text,
+			out CREDENTIALPROVIDERSTATUSICON pcpsi_optional_status_icon
+		);
+
+	}
+
+	[CCode (cname = "IQueryContinueWithStatus", ref_function = "", unref_function = "")]
+	public interface IQueryContinueWithStatus : IQueryContinue {
+		[CCode (cname = "SetStatusMessage")]
+		public abstract int set_status_message (
+			[CCode (type_id = "LPCWSTR")] uint16* psz
+		);
+
+	}
+
+	[CCode (cname = "IConnectableCredentialProviderCredential", ref_function = "", unref_function = "")]
+	public interface IConnectableCredentialProviderCredential : ICredentialProviderCredential {
+		[CCode (cname = "Connect")]
+		public abstract int connect (
+			IQueryContinueWithStatus pqcws
+		);
+
+		[CCode (cname = "Disconnect")]
+		public abstract int disconnect (
+		);
+
+	}
+
+	[CCode (cname = "ICredentialProviderCredentialEvents", ref_function = "", unref_function = "")]
+	public interface ICredentialProviderCredentialEvents : IUnknown {
+		[CCode (cname = "SetFieldState")]
+		public abstract int set_field_state (
+			ICredentialProviderCredential pcpc,
+			uint dw_field_id,
+			CREDENTIALPROVIDERFIELDSTATE cpfs
+		);
+
+		[CCode (cname = "SetFieldInteractiveState")]
+		public abstract int set_field_interactive_state (
+			ICredentialProviderCredential pcpc,
+			uint dw_field_id,
+			CREDENTIALPROVIDERFIELDINTERACTIVESTATE cpfis
+		);
+
+		[CCode (cname = "SetFieldString")]
+		public abstract int set_field_string (
+			ICredentialProviderCredential pcpc,
+			uint dw_field_id,
+			[CCode (type_id = "LPCWSTR")] uint16* psz
+		);
+
+		[CCode (cname = "SetFieldCheckbox")]
+		public abstract int set_field_checkbox (
+			ICredentialProviderCredential pcpc,
+			uint dw_field_id,
+			int b_checked,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_label
+		);
+
+		[CCode (cname = "SetFieldBitmap")]
+		public abstract int set_field_bitmap (
+			ICredentialProviderCredential pcpc,
+			uint dw_field_id,
+			void* hbmp
+		);
+
+		[CCode (cname = "SetFieldComboBoxSelectedItem")]
+		public abstract int set_field_combo_box_selected_item (
+			ICredentialProviderCredential pcpc,
+			uint dw_field_id,
+			uint dw_selected_item
+		);
+
+		[CCode (cname = "DeleteFieldComboBoxItem")]
+		public abstract int delete_field_combo_box_item (
+			ICredentialProviderCredential pcpc,
+			uint dw_field_id,
+			uint dw_item
+		);
+
+		[CCode (cname = "AppendFieldComboBoxItem")]
+		public abstract int append_field_combo_box_item (
+			ICredentialProviderCredential pcpc,
+			uint dw_field_id,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_item
+		);
+
+		[CCode (cname = "SetFieldSubmitButton")]
+		public abstract int set_field_submit_button (
+			ICredentialProviderCredential pcpc,
+			uint dw_field_id,
+			uint dw_adjacent_to
+		);
+
+		[CCode (cname = "OnCreatingWindow")]
+		public abstract int on_creating_window (
+			out void* phwnd_owner
+		);
+
+	}
+
+	[CCode (cname = "ICredentialProvider", ref_function = "", unref_function = "")]
+	public interface ICredentialProvider : IUnknown {
+		[CCode (cname = "SetUsageScenario")]
+		public abstract int set_usage_scenario (
+			CREDENTIALPROVIDERUSAGESCENARIO cpus,
+			uint dw_flags
+		);
+
+		[CCode (cname = "SetSerialization")]
+		public abstract int set_serialization (
+			ref CREDENTIALPROVIDERCREDENTIALSERIALIZATION pcpcs
+		);
+
+		[CCode (cname = "Advise")]
+		public abstract int advise (
+			ICredentialProviderEvents pcpe,
+			void* up_advise_context
+		);
+
+		[CCode (cname = "UnAdvise")]
+		public abstract int un_advise (
+		);
+
+		[CCode (cname = "GetFieldDescriptorCount")]
+		public abstract int get_field_descriptor_count (
+			out uint pdw_count
+		);
+
+		[CCode (cname = "GetFieldDescriptorAt")]
+		public abstract int get_field_descriptor_at (
+			uint dw_index,
+			out out CREDENTIALPROVIDERFIELDDESCRIPTOR ppcpfd
+		);
+
+		[CCode (cname = "GetCredentialCount")]
+		public abstract int get_credential_count (
+			out uint pdw_count,
+			out uint pdw_default,
+			out int pb_auto_logon_with_default
+		);
+
+		[CCode (cname = "GetCredentialAt")]
+		public abstract int get_credential_at (
+			uint dw_index,
+			ICredentialProviderCredential ppcpc
+		);
+
+	}
+
+	[CCode (cname = "ICredentialProviderEvents", ref_function = "", unref_function = "")]
+	public interface ICredentialProviderEvents : IUnknown {
+		[CCode (cname = "CredentialsChanged")]
+		public abstract int credentials_changed (
+			void* up_advise_context
+		);
+
+	}
+
+	[CCode (cname = "ICredentialProviderFilter", ref_function = "", unref_function = "")]
+	public interface ICredentialProviderFilter : IUnknown {
+		[CCode (cname = "Filter")]
+		public abstract int filter (
+			CREDENTIALPROVIDERUSAGESCENARIO cpus,
+			uint dw_flags,
+			void* rgclsid_providers,
+			void* rgb_allow,
+			uint c_providers
+		);
+
+		[CCode (cname = "UpdateRemoteCredential")]
+		public abstract int update_remote_credential (
+			ref CREDENTIALPROVIDERCREDENTIALSERIALIZATION pcpcs_in,
+			out CREDENTIALPROVIDERCREDENTIALSERIALIZATION pcpcs_out
+		);
+
+	}
+
+	[CCode (cname = "ICredentialProviderCredential2", ref_function = "", unref_function = "")]
+	public interface ICredentialProviderCredential2 : ICredentialProviderCredential {
+		[CCode (cname = "GetUserSid")]
+		public abstract int get_user_sid (
+			out uint16* sid
+		);
+
+	}
+
+	[CCode (cname = "ICredentialProviderCredentialWithFieldOptions", ref_function = "", unref_function = "")]
+	public interface ICredentialProviderCredentialWithFieldOptions : IUnknown {
+		[CCode (cname = "GetFieldOptions")]
+		public abstract int get_field_options (
+			uint field_id,
+			out CREDENTIALPROVIDERCREDENTIALFIELDOPTIONS options
+		);
+
+	}
+
+	[CCode (cname = "ICredentialProviderCredentialEvents2", ref_function = "", unref_function = "")]
+	public interface ICredentialProviderCredentialEvents2 : ICredentialProviderCredentialEvents {
+		[CCode (cname = "BeginFieldUpdates")]
+		public abstract int begin_field_updates (
+		);
+
+		[CCode (cname = "EndFieldUpdates")]
+		public abstract int end_field_updates (
+		);
+
+		[CCode (cname = "SetFieldOptions")]
+		public abstract int set_field_options (
+			ICredentialProviderCredential credential,
+			uint field_id,
+			CREDENTIALPROVIDERCREDENTIALFIELDOPTIONS options
+		);
+
+	}
+
+	[CCode (cname = "ICredentialProviderUser", ref_function = "", unref_function = "")]
+	public interface ICredentialProviderUser : IUnknown {
+		[CCode (cname = "GetSid")]
+		public abstract int get_sid (
+			out uint16* sid
+		);
+
+		[CCode (cname = "GetProviderID")]
+		public abstract int get_provider_id (
+			out void* provider_id
+		);
+
+		[CCode (cname = "GetStringValue")]
+		public abstract int get_string_value (
+			void* key,
+			out uint16* string_value
+		);
+
+		[CCode (cname = "GetValue")]
+		public abstract int get_value (
+			void* key,
+			out void* value
+		);
+
+	}
+
+	[CCode (cname = "ICredentialProviderUserArray", ref_function = "", unref_function = "")]
+	public interface ICredentialProviderUserArray : IUnknown {
+		[CCode (cname = "SetProviderFilter")]
+		public abstract int set_provider_filter (
+			void* guid_provider_to_filter_to
+		);
+
+		[CCode (cname = "GetAccountOptions")]
+		public abstract int get_account_options (
+			out CREDENTIALPROVIDERACCOUNTOPTIONS credential_provider_account_options
+		);
+
+		[CCode (cname = "GetCount")]
+		public abstract int get_count (
+			out uint user_count
+		);
+
+		[CCode (cname = "GetAt")]
+		public abstract int get_at (
+			uint user_index,
+			ICredentialProviderUser user
+		);
+
+	}
+
+	[CCode (cname = "ICredentialProviderSetUserArray", ref_function = "", unref_function = "")]
+	public interface ICredentialProviderSetUserArray : IUnknown {
+		[CCode (cname = "SetUserArray")]
+		public abstract int set_user_array (
+			ICredentialProviderUserArray users
+		);
+
+	}
+
+	[CCode (cname = "ISyncMgrHandlerCollection", ref_function = "", unref_function = "")]
+	public interface ISyncMgrHandlerCollection : IUnknown {
+		[CCode (cname = "GetHandlerEnumerator")]
+		public abstract int get_handler_enumerator (
+			void* ppenum
+		);
+
+		[CCode (cname = "BindToHandler")]
+		public abstract int bind_to_handler (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_handler_id,
+			void* riid,
+			out out void* ppv
+		);
+
+	}
+
+	[CCode (cname = "ISyncMgrHandler", ref_function = "", unref_function = "")]
+	public interface ISyncMgrHandler : IUnknown {
+		[CCode (cname = "GetName")]
+		public abstract int get_name (
+			out uint16* ppsz_name
+		);
+
+		[CCode (cname = "GetHandlerInfo")]
+		public abstract int get_handler_info (
+			ISyncMgrHandlerInfo pp_handler_info
+		);
+
+		[CCode (cname = "GetObject")]
+		public abstract int get_object (
+			void* rguid_object_id,
+			void* riid,
+			out out void* ppv
+		);
+
+		[CCode (cname = "GetCapabilities")]
+		public abstract int get_capabilities (
+			out SYNCMGRHANDLERCAPABILITIES pm_capabilities
+		);
+
+		[CCode (cname = "GetPolicies")]
+		public abstract int get_policies (
+			out SYNCMGRHANDLERPOLICIES pm_policies
+		);
+
+		[CCode (cname = "Activate")]
+		public abstract int activate (
+			int f_activate
+		);
+
+		[CCode (cname = "Enable")]
+		public abstract int enable (
+			int f_enable
+		);
+
+		[CCode (cname = "Synchronize")]
+		public abstract int synchronize (
+			[CCode (type_id = "LPCWSTR")] void* ppsz_item_ids,
+			uint c_items,
+			[CCode (type_id = "HWND")] void* hwnd_owner,
+			ISyncMgrSessionCreator p_session_creator,
+			IUnknown punk
+		);
+
+	}
+
+	[CCode (cname = "ISyncMgrHandlerInfo", ref_function = "", unref_function = "")]
+	public interface ISyncMgrHandlerInfo : IUnknown {
+		[CCode (cname = "GetType")]
+		public abstract int get_type (
+			out SYNCMGRHANDLERTYPE pn_type
+		);
+
+		[CCode (cname = "GetTypeLabel")]
+		public abstract int get_type_label (
+			out uint16* ppsz_type_label
+		);
+
+		[CCode (cname = "GetComment")]
+		public abstract int get_comment (
+			out uint16* ppsz_comment
+		);
+
+		[CCode (cname = "GetLastSyncTime")]
+		public abstract int get_last_sync_time (
+			out void* pft_last_sync
+		);
+
+		[CCode (cname = "IsActive")]
+		public abstract int is_active (
+		);
+
+		[CCode (cname = "IsEnabled")]
+		public abstract int is_enabled (
+		);
+
+		[CCode (cname = "IsConnected")]
+		public abstract int is_connected (
+		);
+
+	}
+
+	[CCode (cname = "ISyncMgrSyncItemContainer", ref_function = "", unref_function = "")]
+	public interface ISyncMgrSyncItemContainer : IUnknown {
+		[CCode (cname = "GetSyncItem")]
+		public abstract int get_sync_item (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_item_id,
+			ISyncMgrSyncItem pp_item
+		);
+
+		[CCode (cname = "GetSyncItemEnumerator")]
+		public abstract int get_sync_item_enumerator (
+			IEnumSyncMgrSyncItems ppenum
+		);
+
+		[CCode (cname = "GetSyncItemCount")]
+		public abstract int get_sync_item_count (
+			out uint pc_items
+		);
+
+	}
+
+	[CCode (cname = "ISyncMgrSyncItem", ref_function = "", unref_function = "")]
+	public interface ISyncMgrSyncItem : IUnknown {
+		[CCode (cname = "GetItemID")]
+		public abstract int get_item_id (
+			out uint16* ppsz_item_id
+		);
+
+		[CCode (cname = "GetName")]
+		public abstract int get_name (
+			out uint16* ppsz_name
+		);
+
+		[CCode (cname = "GetItemInfo")]
+		public abstract int get_item_info (
+			ISyncMgrSyncItemInfo pp_item_info
+		);
+
+		[CCode (cname = "GetObject")]
+		public abstract int get_object (
+			void* rguid_object_id,
+			void* riid,
+			out out void* ppv
+		);
+
+		[CCode (cname = "GetCapabilities")]
+		public abstract int get_capabilities (
+			out SYNCMGRITEMCAPABILITIES pm_capabilities
+		);
+
+		[CCode (cname = "GetPolicies")]
+		public abstract int get_policies (
+			out SYNCMGRITEMPOLICIES pm_policies
+		);
+
+		[CCode (cname = "Enable")]
+		public abstract int enable (
+			int f_enable
+		);
+
+		[CCode (cname = "Delete")]
+		public abstract int delete (
+		);
+
+	}
+
+	[CCode (cname = "ISyncMgrSyncItemInfo", ref_function = "", unref_function = "")]
+	public interface ISyncMgrSyncItemInfo : IUnknown {
+		[CCode (cname = "GetTypeLabel")]
+		public abstract int get_type_label (
+			out uint16* ppsz_type_label
+		);
+
+		[CCode (cname = "GetComment")]
+		public abstract int get_comment (
+			out uint16* ppsz_comment
+		);
+
+		[CCode (cname = "GetLastSyncTime")]
+		public abstract int get_last_sync_time (
+			out void* pft_last_sync
+		);
+
+		[CCode (cname = "IsEnabled")]
+		public abstract int is_enabled (
+		);
+
+		[CCode (cname = "IsConnected")]
+		public abstract int is_connected (
+		);
+
+	}
+
+	[CCode (cname = "IEnumSyncMgrSyncItems", ref_function = "", unref_function = "")]
+	public interface IEnumSyncMgrSyncItems : IUnknown {
+		[CCode (cname = "Next")]
+		public abstract int next (
+			uint celt,
+			void* rgelt,
+			out uint pcelt_fetched
+		);
+
+		[CCode (cname = "Skip")]
+		public abstract int skip (
+			uint celt
+		);
+
+		[CCode (cname = "Reset")]
+		public abstract int reset (
+		);
+
+		[CCode (cname = "Clone")]
+		public abstract int clone (
+			IEnumSyncMgrSyncItems ppenum
+		);
+
+	}
+
+	[CCode (cname = "ISyncMgrSessionCreator", ref_function = "", unref_function = "")]
+	public interface ISyncMgrSessionCreator : IUnknown {
+		[CCode (cname = "CreateSession")]
+		public abstract int create_session (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_handler_id,
+			[CCode (type_id = "LPCWSTR")] void* ppsz_item_ids,
+			uint c_items,
+			ISyncMgrSyncCallback pp_callback
+		);
+
+	}
+
+	[CCode (cname = "ISyncMgrSyncCallback", ref_function = "", unref_function = "")]
+	public interface ISyncMgrSyncCallback : IUnknown {
+		[CCode (cname = "ReportProgress")]
+		public abstract int report_progress (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_item_id,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_progress_text,
+			SYNCMGRPROGRESSSTATUS n_status,
+			uint u_current_step,
+			uint u_max_step,
+			out SYNCMGRCANCELREQUEST pn_cancel_request
+		);
+
+		[CCode (cname = "SetHandlerProgressText")]
+		public abstract int set_handler_progress_text (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_progress_text,
+			out SYNCMGRCANCELREQUEST pn_cancel_request
+		);
+
+		[CCode (cname = "ReportEvent")]
+		public abstract int report_event (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_item_id,
+			SYNCMGREVENTLEVEL n_level,
+			SYNCMGREVENTFLAGS n_flags,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_name,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_description,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_link_text,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_link_reference,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_context,
+			out void* pguid_event_id
+		);
+
+		[CCode (cname = "CanContinue")]
+		public abstract int can_continue (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_item_id
+		);
+
+		[CCode (cname = "QueryForAdditionalItems")]
+		public abstract int query_for_additional_items (
+			void* ppenum_item_ids,
+			void* ppenum_punks
+		);
+
+		[CCode (cname = "AddItemToSession")]
+		public abstract int add_item_to_session (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_item_id
+		);
+
+		[CCode (cname = "AddIUnknownToSession")]
+		public abstract int add_iunknown_to_session (
+			IUnknown punk
+		);
+
+		[CCode (cname = "ProposeItem")]
+		public abstract int propose_item (
+			ISyncMgrSyncItem p_new_item
+		);
+
+		[CCode (cname = "CommitItem")]
+		public abstract int commit_item (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_item_id
+		);
+
+		[CCode (cname = "ReportManualSync")]
+		public abstract int report_manual_sync (
+		);
+
+	}
+
+	[CCode (cname = "ISyncMgrUIOperation", ref_function = "", unref_function = "")]
+	public interface ISyncMgrUIOperation : IUnknown {
+		[CCode (cname = "Run")]
+		public abstract int run (
+			[CCode (type_id = "HWND")] void* hwnd_owner
+		);
+
+	}
+
+	[CCode (cname = "ISyncMgrEventLinkUIOperation", ref_function = "", unref_function = "")]
+	public interface ISyncMgrEventLinkUIOperation : ISyncMgrUIOperation {
+		[CCode (cname = "Init")]
+		public abstract int init (
+			void* rguid_event_id,
+			ISyncMgrEvent p_event
+		);
+
+	}
+
+	[CCode (cname = "ISyncMgrScheduleWizardUIOperation", ref_function = "", unref_function = "")]
+	public interface ISyncMgrScheduleWizardUIOperation : ISyncMgrUIOperation {
+		[CCode (cname = "InitWizard")]
+		public abstract int init_wizard (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_handler_id
+		);
+
+	}
+
+	[CCode (cname = "ISyncMgrSyncResult", ref_function = "", unref_function = "")]
+	public interface ISyncMgrSyncResult : IUnknown {
+		[CCode (cname = "Result")]
+		public abstract int result (
+			SYNCMGRPROGRESSSTATUS n_status,
+			uint c_error,
+			uint c_conflicts
+		);
+
+	}
+
+	[CCode (cname = "ISyncMgrControl", ref_function = "", unref_function = "")]
+	public interface ISyncMgrControl : IUnknown {
+		[CCode (cname = "StartHandlerSync")]
+		public abstract int start_handler_sync (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_handler_id,
+			[CCode (type_id = "HWND")] void* hwnd_owner,
+			IUnknown punk,
+			SYNCMGRSYNCCONTROLFLAGS n_sync_control_flags,
+			ISyncMgrSyncResult p_result
+		);
+
+		[CCode (cname = "StartItemSync")]
+		public abstract int start_item_sync (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_handler_id,
+			[CCode (type_id = "LPCWSTR")] void* ppsz_item_ids,
+			uint c_items,
+			[CCode (type_id = "HWND")] void* hwnd_owner,
+			IUnknown punk,
+			SYNCMGRSYNCCONTROLFLAGS n_sync_control_flags,
+			ISyncMgrSyncResult p_result
+		);
+
+		[CCode (cname = "StartSyncAll")]
+		public abstract int start_sync_all (
+			[CCode (type_id = "HWND")] void* hwnd_owner
+		);
+
+		[CCode (cname = "StopHandlerSync")]
+		public abstract int stop_handler_sync (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_handler_id
+		);
+
+		[CCode (cname = "StopItemSync")]
+		public abstract int stop_item_sync (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_handler_id,
+			[CCode (type_id = "LPCWSTR")] void* ppsz_item_ids,
+			uint c_items
+		);
+
+		[CCode (cname = "StopSyncAll")]
+		public abstract int stop_sync_all (
+		);
+
+		[CCode (cname = "UpdateHandlerCollection")]
+		public abstract int update_handler_collection (
+			void* rclsid_collection_id,
+			SYNCMGRCONTROLFLAGS n_control_flags
+		);
+
+		[CCode (cname = "UpdateHandler")]
+		public abstract int update_handler (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_handler_id,
+			SYNCMGRCONTROLFLAGS n_control_flags
+		);
+
+		[CCode (cname = "UpdateItem")]
+		public abstract int update_item (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_handler_id,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_item_id,
+			SYNCMGRCONTROLFLAGS n_control_flags
+		);
+
+		[CCode (cname = "UpdateEvents")]
+		public abstract int update_events (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_handler_id,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_item_id,
+			SYNCMGRCONTROLFLAGS n_control_flags
+		);
+
+		[CCode (cname = "UpdateConflict")]
+		public abstract int update_conflict (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_handler_id,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_item_id,
+			ISyncMgrConflict p_conflict,
+			SYNCMGRUPDATEREASON n_reason
+		);
+
+		[CCode (cname = "UpdateConflicts")]
+		public abstract int update_conflicts (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_handler_id,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_item_id,
+			SYNCMGRCONTROLFLAGS n_control_flags
+		);
+
+		[CCode (cname = "ActivateHandler")]
+		public abstract int activate_handler (
+			int f_activate,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_handler_id,
+			[CCode (type_id = "HWND")] void* hwnd_owner,
+			SYNCMGRCONTROLFLAGS n_control_flags
+		);
+
+		[CCode (cname = "EnableHandler")]
+		public abstract int enable_handler (
+			int f_enable,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_handler_id,
+			[CCode (type_id = "HWND")] void* hwnd_owner,
+			SYNCMGRCONTROLFLAGS n_control_flags
+		);
+
+		[CCode (cname = "EnableItem")]
+		public abstract int enable_item (
+			int f_enable,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_handler_id,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_item_id,
+			[CCode (type_id = "HWND")] void* hwnd_owner,
+			SYNCMGRCONTROLFLAGS n_control_flags
+		);
+
+	}
+
+	[CCode (cname = "ISyncMgrEventStore", ref_function = "", unref_function = "")]
+	public interface ISyncMgrEventStore : IUnknown {
+		[CCode (cname = "GetEventEnumerator")]
+		public abstract int get_event_enumerator (
+			IEnumSyncMgrEvents ppenum
+		);
+
+		[CCode (cname = "GetEventCount")]
+		public abstract int get_event_count (
+			out uint pc_events
+		);
+
+		[CCode (cname = "GetEvent")]
+		public abstract int get_event (
+			void* rguid_event_id,
+			ISyncMgrEvent pp_event
+		);
+
+		[CCode (cname = "RemoveEvent")]
+		public abstract int remove_event (
+			void* pguid_event_ids,
+			uint c_events
+		);
+
+	}
+
+	[CCode (cname = "ISyncMgrEvent", ref_function = "", unref_function = "")]
+	public interface ISyncMgrEvent : IUnknown {
+		[CCode (cname = "GetEventID")]
+		public abstract int get_event_id (
+			out void* pguid_event_id
+		);
+
+		[CCode (cname = "GetHandlerID")]
+		public abstract int get_handler_id (
+			out uint16* ppsz_handler_id
+		);
+
+		[CCode (cname = "GetItemID")]
+		public abstract int get_item_id (
+			out uint16* ppsz_item_id
+		);
+
+		[CCode (cname = "GetLevel")]
+		public abstract int get_level (
+			out SYNCMGREVENTLEVEL pn_level
+		);
+
+		[CCode (cname = "GetFlags")]
+		public abstract int get_flags (
+			out SYNCMGREVENTFLAGS pn_flags
+		);
+
+		[CCode (cname = "GetTime")]
+		public abstract int get_time (
+			out void* pf_creation_time
+		);
+
+		[CCode (cname = "GetName")]
+		public abstract int get_name (
+			out uint16* ppsz_name
+		);
+
+		[CCode (cname = "GetDescription")]
+		public abstract int get_description (
+			out uint16* ppsz_description
+		);
+
+		[CCode (cname = "GetLinkText")]
+		public abstract int get_link_text (
+			out uint16* ppsz_link_text
+		);
+
+		[CCode (cname = "GetLinkReference")]
+		public abstract int get_link_reference (
+			out uint16* ppsz_link_reference
+		);
+
+		[CCode (cname = "GetContext")]
+		public abstract int get_context (
+			out uint16* ppsz_context
+		);
+
+	}
+
+	[CCode (cname = "IEnumSyncMgrEvents", ref_function = "", unref_function = "")]
+	public interface IEnumSyncMgrEvents : IUnknown {
+		[CCode (cname = "Next")]
+		public abstract int next (
+			uint celt,
+			void* rgelt,
+			out uint pcelt_fetched
+		);
+
+		[CCode (cname = "Skip")]
+		public abstract int skip (
+			uint celt
+		);
+
+		[CCode (cname = "Reset")]
+		public abstract int reset (
+		);
+
+		[CCode (cname = "Clone")]
+		public abstract int clone (
+			IEnumSyncMgrEvents ppenum
+		);
+
+	}
+
+	[CCode (cname = "ISyncMgrConflictStore", ref_function = "", unref_function = "")]
+	public interface ISyncMgrConflictStore : IUnknown {
+		[CCode (cname = "EnumConflicts")]
+		public abstract int enum_conflicts (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_handler_id,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_item_id,
+			IEnumSyncMgrConflict pp_enum
+		);
+
+		[CCode (cname = "BindToConflict")]
+		public abstract int bind_to_conflict (
+			ref SYNCMGRCONFLICTIdINFO p_conflict_id_info,
+			void* riid,
+			out out void* ppv
+		);
+
+		[CCode (cname = "RemoveConflicts")]
+		public abstract int remove_conflicts (
+			void* rg_conflict_id_info,
+			uint c_conflicts
+		);
+
+		[CCode (cname = "GetCount")]
+		public abstract int get_count (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_handler_id,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_item_id,
+			out uint pn_conflicts
+		);
+
+	}
+
+	[CCode (cname = "IEnumSyncMgrConflict", ref_function = "", unref_function = "")]
+	public interface IEnumSyncMgrConflict : IUnknown {
+		[CCode (cname = "Next")]
+		public abstract int next (
+			uint celt,
+			void* rgelt,
+			out uint pcelt_fetched
+		);
+
+		[CCode (cname = "Skip")]
+		public abstract int skip (
+			uint celt
+		);
+
+		[CCode (cname = "Reset")]
+		public abstract int reset (
+		);
+
+		[CCode (cname = "Clone")]
+		public abstract int clone (
+			IEnumSyncMgrConflict ppenum
+		);
+
+	}
+
+	[CCode (cname = "ISyncMgrConflict", ref_function = "", unref_function = "")]
+	public interface ISyncMgrConflict : IUnknown {
+		[CCode (cname = "GetProperty")]
+		public abstract int get_property (
+			void* propkey,
+			out void* ppropvar
+		);
+
+		[CCode (cname = "GetConflictIdInfo")]
+		public abstract int get_conflict_id_info (
+			out SYNCMGRCONFLICTIdINFO p_conflict_id_info
+		);
+
+		[CCode (cname = "GetItemsArray")]
+		public abstract int get_items_array (
+			ISyncMgrConflictItems pp_array
+		);
+
+		[CCode (cname = "Resolve")]
+		public abstract int resolve (
+			ISyncMgrConflictResolveInfo p_resolve_info
+		);
+
+		[CCode (cname = "GetResolutionHandler")]
+		public abstract int get_resolution_handler (
+			void* riid,
+			out out void* ppv_resolution_handler
+		);
+
+	}
+
+	[CCode (cname = "ISyncMgrResolutionHandler", ref_function = "", unref_function = "")]
+	public interface ISyncMgrResolutionHandler : IUnknown {
+		[CCode (cname = "QueryAbilities")]
+		public abstract int query_abilities (
+			out uint pdw_abilities
+		);
+
+		[CCode (cname = "KeepOther")]
+		public abstract int keep_other (
+			IShellItem psi_other,
+			out SYNCMGRRESOLUTIONFEEDBACK p_feedback
+		);
+
+		[CCode (cname = "KeepRecent")]
+		public abstract int keep_recent (
+			out SYNCMGRRESOLUTIONFEEDBACK p_feedback
+		);
+
+		[CCode (cname = "RemoveFromSyncSet")]
+		public abstract int remove_from_sync_set (
+			out SYNCMGRRESOLUTIONFEEDBACK p_feedback
+		);
+
+		[CCode (cname = "KeepItems")]
+		public abstract int keep_items (
+			ISyncMgrConflictResolutionItems p_array,
+			out SYNCMGRRESOLUTIONFEEDBACK p_feedback
+		);
+
+	}
+
+	[CCode (cname = "ISyncMgrConflictPresenter", ref_function = "", unref_function = "")]
+	public interface ISyncMgrConflictPresenter : IUnknown {
+		[CCode (cname = "PresentConflict")]
+		public abstract int present_conflict (
+			ISyncMgrConflict p_conflict,
+			ISyncMgrConflictResolveInfo p_resolve_info
+		);
+
+	}
+
+	[CCode (cname = "ISyncMgrConflictResolveInfo", ref_function = "", unref_function = "")]
+	public interface ISyncMgrConflictResolveInfo : IUnknown {
+		[CCode (cname = "GetIterationInfo")]
+		public abstract int get_iteration_info (
+			out uint pn_current_conflict,
+			out uint pc_conflicts,
+			out uint pc_remaining_for_apply_to_all
+		);
+
+		[CCode (cname = "GetPresenterNextStep")]
+		public abstract int get_presenter_next_step (
+			out SYNCMGRPRESENTERNEXTSTEP pn_presenter_next_step
+		);
+
+		[CCode (cname = "GetPresenterChoice")]
+		public abstract int get_presenter_choice (
+			out SYNCMGRPRESENTERCHOICE pn_presenter_choice,
+			out int pf_apply_to_all
+		);
+
+		[CCode (cname = "GetItemChoiceCount")]
+		public abstract int get_item_choice_count (
+			out uint pc_choices
+		);
+
+		[CCode (cname = "GetItemChoice")]
+		public abstract int get_item_choice (
+			uint i_choice,
+			out uint pi_choice_index
+		);
+
+		[CCode (cname = "SetPresenterNextStep")]
+		public abstract int set_presenter_next_step (
+			SYNCMGRPRESENTERNEXTSTEP n_presenter_next_step
+		);
+
+		[CCode (cname = "SetPresenterChoice")]
+		public abstract int set_presenter_choice (
+			SYNCMGRPRESENTERCHOICE n_presenter_choice,
+			int f_apply_to_all
+		);
+
+		[CCode (cname = "SetItemChoices")]
+		public abstract int set_item_choices (
+			out uint prgi_conflict_item_indexes,
+			uint c_choices
+		);
+
+	}
+
+	[CCode (cname = "ISyncMgrConflictFolder", ref_function = "", unref_function = "")]
+	public interface ISyncMgrConflictFolder : IUnknown {
+		[CCode (cname = "GetConflictIDList")]
+		public abstract int get_conflict_idlist (
+			ISyncMgrConflict p_conflict,
+			out out void* ppidl_conflict
+		);
+
+	}
+
+	[CCode (cname = "ISyncMgrConflictItems", ref_function = "", unref_function = "")]
+	public interface ISyncMgrConflictItems : IUnknown {
+		[CCode (cname = "GetCount")]
+		public abstract int get_count (
+			out uint p_count
+		);
+
+		[CCode (cname = "GetItem")]
+		public abstract int get_item (
+			uint i_index,
+			out CONFIRMCONFLICTITEM p_item_info
+		);
+
+	}
+
+	[CCode (cname = "ISyncMgrConflictResolutionItems", ref_function = "", unref_function = "")]
+	public interface ISyncMgrConflictResolutionItems : IUnknown {
+		[CCode (cname = "GetCount")]
+		public abstract int get_count (
+			out uint p_count
+		);
+
+		[CCode (cname = "GetItem")]
+		public abstract int get_item (
+			uint i_index,
+			out CONFIRMCONFLICTRESULTINFO p_item_info
+		);
+
+	}
+
+	[CCode (cname = "IInputPanelConfiguration", ref_function = "", unref_function = "")]
+	public interface IInputPanelConfiguration : IUnknown {
+		[CCode (cname = "EnableFocusTracking")]
+		public abstract int enable_focus_tracking (
+		);
+
+	}
+
+	[CCode (cname = "IInputPanelInvocationConfiguration", ref_function = "", unref_function = "")]
+	public interface IInputPanelInvocationConfiguration : IUnknown {
+		[CCode (cname = "RequireTouchInEditControl")]
+		public abstract int require_touch_in_edit_control (
+		);
+
+	}
+
+	[CCode (cname = "ISharedBitmap", ref_function = "", unref_function = "")]
+	public interface ISharedBitmap : IUnknown {
+		[CCode (cname = "GetSharedBitmap")]
+		public abstract int get_shared_bitmap (
+			out void* phbm
+		);
+
+		[CCode (cname = "GetSize")]
+		public abstract int get_size (
+			out Win32.Foundation.Size p_size
+		);
+
+		[CCode (cname = "GetFormat")]
+		public abstract int get_format (
+			out WtsALPHATYPE pat
+		);
+
+		[CCode (cname = "InitializeBitmap")]
+		public abstract int initialize_bitmap (
+			void* hbm,
+			WtsALPHATYPE wts_at
+		);
+
+		[CCode (cname = "Detach")]
+		public abstract int detach (
+			out void* phbm
+		);
+
+	}
+
+	[CCode (cname = "IThumbnailCache", ref_function = "", unref_function = "")]
+	public interface IThumbnailCache : IUnknown {
+		[CCode (cname = "GetThumbnail")]
+		public abstract int get_thumbnail (
+			IShellItem p_shell_item,
+			uint cxy_requested_thumb_size,
+			WtsFLAGS flags,
+			ISharedBitmap ppv_thumb,
+			out WtsCACHEFLAGS p_out_flags,
+			out WtsTHUMBNAILID p_thumbnail_id
+		);
+
+		[CCode (cname = "GetThumbnailByID")]
+		public abstract int get_thumbnail_by_id (
+			WtsTHUMBNAILID thumbnail_id,
+			uint cxy_requested_thumb_size,
+			ISharedBitmap ppv_thumb,
+			out WtsCACHEFLAGS p_out_flags
+		);
+
+	}
+
+	[CCode (cname = "IThumbnailProvider", ref_function = "", unref_function = "")]
+	public interface IThumbnailProvider : IUnknown {
+		[CCode (cname = "GetThumbnail")]
+		public abstract int get_thumbnail (
+			uint cx,
+			out void* phbmp,
+			out WtsALPHATYPE pdw_alpha
+		);
+
+	}
+
+	[CCode (cname = "IThumbnailSettings", ref_function = "", unref_function = "")]
+	public interface IThumbnailSettings : IUnknown {
+		[CCode (cname = "SetContext")]
+		public abstract int set_context (
+			WtsCONTEXTFLAGS dw_context
+		);
+
+	}
+
+	[CCode (cname = "IThumbnailCachePrimer", ref_function = "", unref_function = "")]
+	public interface IThumbnailCachePrimer : IUnknown {
+		[CCode (cname = "PageInThumbnail")]
+		public abstract int page_in_thumbnail (
+			IShellItem psi,
+			WtsFLAGS wts_flags,
+			uint cxy_requested_thumb_size
+		);
+
+	}
+
+	[CCode (cname = "IShellImageDataFactory", ref_function = "", unref_function = "")]
+	public interface IShellImageDataFactory : IUnknown {
+		[CCode (cname = "CreateIShellImageData")]
+		public abstract int create_ishell_image_data (
+			IShellImageData ppshimg
+		);
+
+		[CCode (cname = "CreateImageFromFile")]
+		public abstract int create_image_from_file (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_path,
+			IShellImageData ppshimg
+		);
+
+		[CCode (cname = "CreateImageFromStream")]
+		public abstract int create_image_from_stream (
+			IStream p_stream,
+			IShellImageData ppshimg
+		);
+
+		[CCode (cname = "GetDataFormatFromPath")]
+		public abstract int get_data_format_from_path (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_path,
+			out void* p_data_format
+		);
+
+	}
+
+	[CCode (cname = "IShellImageData", ref_function = "", unref_function = "")]
+	public interface IShellImageData : IUnknown {
+		[CCode (cname = "Decode")]
+		public abstract int decode (
+			uint dw_flags,
+			uint cx_desired,
+			uint cy_desired
+		);
+
+		[CCode (cname = "Draw")]
+		public abstract int draw (
+			void* hdc,
+			out Win32.Foundation.Rect prc_dest,
+			out Win32.Foundation.Rect prc_src
+		);
+
+		[CCode (cname = "NextFrame")]
+		public abstract int next_frame (
+		);
+
+		[CCode (cname = "NextPage")]
+		public abstract int next_page (
+		);
+
+		[CCode (cname = "PrevPage")]
+		public abstract int prev_page (
+		);
+
+		[CCode (cname = "IsTransparent")]
+		public abstract int is_transparent (
+		);
+
+		[CCode (cname = "IsAnimated")]
+		public abstract int is_animated (
+		);
+
+		[CCode (cname = "IsVector")]
+		public abstract int is_vector (
+		);
+
+		[CCode (cname = "IsMultipage")]
+		public abstract int is_multipage (
+		);
+
+		[CCode (cname = "IsEditable")]
+		public abstract int is_editable (
+		);
+
+		[CCode (cname = "IsPrintable")]
+		public abstract int is_printable (
+		);
+
+		[CCode (cname = "IsDecoded")]
+		public abstract int is_decoded (
+		);
+
+		[CCode (cname = "GetCurrentPage")]
+		public abstract int get_current_page (
+			out uint pn_page
+		);
+
+		[CCode (cname = "GetPageCount")]
+		public abstract int get_page_count (
+			out uint pc_pages
+		);
+
+		[CCode (cname = "SelectPage")]
+		public abstract int select_page (
+			uint i_page
+		);
+
+		[CCode (cname = "GetSize")]
+		public abstract int get_size (
+			out Win32.Foundation.Size p_size
+		);
+
+		[CCode (cname = "GetRawDataFormat")]
+		public abstract int get_raw_data_format (
+			out void* p_data_format
+		);
+
+		[CCode (cname = "GetPixelFormat")]
+		public abstract int get_pixel_format (
+			out uint p_format
+		);
+
+		[CCode (cname = "GetDelay")]
+		public abstract int get_delay (
+			out uint pdw_delay
+		);
+
+		[CCode (cname = "GetProperties")]
+		public abstract int get_properties (
+			uint dw_mode,
+			void* pp_prop_set
+		);
+
+		[CCode (cname = "Rotate")]
+		public abstract int rotate (
+			uint dw_angle
+		);
+
+		[CCode (cname = "Scale")]
+		public abstract int scale (
+			uint cx,
+			uint cy,
+			uint hints
+		);
+
+		[CCode (cname = "DiscardEdit")]
+		public abstract int discard_edit (
+		);
+
+		[CCode (cname = "SetEncoderParams")]
+		public abstract int set_encoder_params (
+			IPropertyBag pbag_enc
+		);
+
+		[CCode (cname = "DisplayName")]
+		public abstract int display_name (
+			[CCode (type_id = "LPCWSTR")] uint16* wsz_name,
+			uint cch
+		);
+
+		[CCode (cname = "GetResolution")]
+		public abstract int get_resolution (
+			out uint pu_resolution_x,
+			out uint pu_resolution_y
+		);
+
+		[CCode (cname = "GetEncoderParams")]
+		public abstract int get_encoder_params (
+			out void* pguid_fmt,
+			out out void* pp_enc_params
+		);
+
+		[CCode (cname = "RegisterAbort")]
+		public abstract int register_abort (
+			IShellImageDataAbort p_abort,
+			IShellImageDataAbort pp_abort_prev
+		);
+
+		[CCode (cname = "CloneFrame")]
+		public abstract int clone_frame (
+			out out void* pp_img
+		);
+
+		[CCode (cname = "ReplaceFrame")]
+		public abstract int replace_frame (
+			out void* p_img
+		);
+
+	}
+
+	[CCode (cname = "IShellImageDataAbort", ref_function = "", unref_function = "")]
+	public interface IShellImageDataAbort : IUnknown {
+		[CCode (cname = "QueryAbort")]
+		public abstract int query_abort (
+		);
+
+	}
+
+	[CCode (cname = "IStorageProviderPropertyHandler", ref_function = "", unref_function = "")]
+	public interface IStorageProviderPropertyHandler : IUnknown {
+		[CCode (cname = "RetrieveProperties")]
+		public abstract int retrieve_properties (
+			void* properties_to_retrieve,
+			uint properties_to_retrieve_count,
+			void* retrieved_properties
+		);
+
+		[CCode (cname = "SaveProperties")]
+		public abstract int save_properties (
+			IPropertyStore properties_to_save
+		);
+
+	}
+
+	[CCode (cname = "IStorageProviderHandler", ref_function = "", unref_function = "")]
+	public interface IStorageProviderHandler : IUnknown {
+		[CCode (cname = "GetPropertyHandlerFromPath")]
+		public abstract int get_property_handler_from_path (
+			[CCode (type_id = "LPCWSTR")] uint16* path,
+			IStorageProviderPropertyHandler property_handler
+		);
+
+		[CCode (cname = "GetPropertyHandlerFromUri")]
+		public abstract int get_property_handler_from_uri (
+			[CCode (type_id = "LPCWSTR")] uint16* uri,
+			IStorageProviderPropertyHandler property_handler
+		);
+
+		[CCode (cname = "GetPropertyHandlerFromFileId")]
+		public abstract int get_property_handler_from_file_id (
+			[CCode (type_id = "LPCWSTR")] uint16* file_id,
+			IStorageProviderPropertyHandler property_handler
+		);
+
+	}
+
+	[CCode (cname = "ISyncMgrSynchronizeCallback", ref_function = "", unref_function = "")]
+	public interface ISyncMgrSynchronizeCallback : IUnknown {
+		[CCode (cname = "ShowPropertiesCompleted")]
+		public abstract int show_properties_completed (
+			int hr
+		);
+
+		[CCode (cname = "PrepareForSyncCompleted")]
+		public abstract int prepare_for_sync_completed (
+			int hr
+		);
+
+		[CCode (cname = "SynchronizeCompleted")]
+		public abstract int synchronize_completed (
+			int hr
+		);
+
+		[CCode (cname = "ShowErrorCompleted")]
+		public abstract int show_error_completed (
+			int hr,
+			uint c_items,
+			void* p_item_ids
+		);
+
+		[CCode (cname = "EnableModeless")]
+		public abstract int enable_modeless (
+			int f_enable
+		);
+
+		[CCode (cname = "Progress")]
+		public abstract int progress (
+			void* item_id,
+			void* p_sync_progress_item
+		);
+
+		[CCode (cname = "LogError")]
+		public abstract int log_error (
+			uint dw_error_level,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_error_text,
+			ref SYNCMGRLOGERRORINFO p_sync_log_error
+		);
+
+		[CCode (cname = "DeleteLogError")]
+		public abstract int delete_log_error (
+			void* error_id,
+			uint dw_reserved
+		);
+
+		[CCode (cname = "EstablishConnection")]
+		public abstract int establish_connection (
+			[CCode (type_id = "LPCWSTR")] uint16* pwsz_connection,
+			uint dw_reserved
+		);
+
+	}
+
+	[CCode (cname = "ISyncMgrEnumItems", ref_function = "", unref_function = "")]
+	public interface ISyncMgrEnumItems : IUnknown {
+		[CCode (cname = "Next")]
+		public abstract int next (
+			uint celt,
+			void* rgelt,
+			out uint pcelt_fetched
+		);
+
+		[CCode (cname = "Skip")]
+		public abstract int skip (
+			uint celt
+		);
+
+		[CCode (cname = "Reset")]
+		public abstract int reset (
+		);
+
+		[CCode (cname = "Clone")]
+		public abstract int clone (
+			ISyncMgrEnumItems ppenum
+		);
+
+	}
+
+	[CCode (cname = "ISyncMgrSynchronize", ref_function = "", unref_function = "")]
+	public interface ISyncMgrSynchronize : IUnknown {
+		[CCode (cname = "Initialize")]
+		public abstract int initialize (
+			uint dw_reserved,
+			uint dw_sync_mgr_flags,
+			uint cb_cookie,
+			void* lp_cookie
+		);
+
+		[CCode (cname = "GetHandlerInfo")]
+		public abstract int get_handler_info (
+			out out SYNCMGRHANDLERINFO pp_sync_mgr_handler_info
+		);
+
+		[CCode (cname = "EnumSyncMgrItems")]
+		public abstract int enum_sync_mgr_items (
+			ISyncMgrEnumItems pp_sync_mgr_enum_items
+		);
+
+		[CCode (cname = "GetItemObject")]
+		public abstract int get_item_object (
+			void* item_id,
+			void* riid,
+			out out void* ppv
+		);
+
+		[CCode (cname = "ShowProperties")]
+		public abstract int show_properties (
+			[CCode (type_id = "HWND")] void* h_wnd_parent,
+			void* item_id
+		);
+
+		[CCode (cname = "SetProgressCallback")]
+		public abstract int set_progress_callback (
+			ISyncMgrSynchronizeCallback lp_call_back
+		);
+
+		[CCode (cname = "PrepareForSync")]
+		public abstract int prepare_for_sync (
+			uint cb_num_items,
+			void* p_item_ids,
+			[CCode (type_id = "HWND")] void* h_wnd_parent,
+			uint dw_reserved
+		);
+
+		[CCode (cname = "Synchronize")]
+		public abstract int synchronize (
+			[CCode (type_id = "HWND")] void* h_wnd_parent
+		);
+
+		[CCode (cname = "SetItemStatus")]
+		public abstract int set_item_status (
+			void* p_item_id,
+			uint dw_sync_mgr_status
+		);
+
+		[CCode (cname = "ShowError")]
+		public abstract int show_error (
+			[CCode (type_id = "HWND")] void* h_wnd_parent,
+			void* error_id
+		);
+
+	}
+
+	[CCode (cname = "ISyncMgrSynchronizeInvoke", ref_function = "", unref_function = "")]
+	public interface ISyncMgrSynchronizeInvoke : IUnknown {
+		[CCode (cname = "UpdateItems")]
+		public abstract int update_items (
+			uint dw_invoke_flags,
+			void* clsid,
+			uint cb_cookie,
+			void* p_cookie
+		);
+
+		[CCode (cname = "UpdateAll")]
+		public abstract int update_all (
+		);
+
+	}
+
+	[CCode (cname = "ISyncMgrRegister", ref_function = "", unref_function = "")]
+	public interface ISyncMgrRegister : IUnknown {
+		[CCode (cname = "RegisterSyncMgrHandler")]
+		public abstract int register_sync_mgr_handler (
+			void* clsid_handler,
+			[CCode (type_id = "LPCWSTR")] uint16* pwsz_description,
+			uint dw_sync_mgr_register_flags
+		);
+
+		[CCode (cname = "UnregisterSyncMgrHandler")]
+		public abstract int unregister_sync_mgr_handler (
+			void* clsid_handler,
+			uint dw_reserved
+		);
+
+		[CCode (cname = "GetHandlerRegistrationInfo")]
+		public abstract int get_handler_registration_info (
+			void* clsid_handler,
+			out uint pdw_sync_mgr_register_flags
+		);
+
+	}
+
+	[CCode (cname = "IThumbnailStreamCache", ref_function = "", unref_function = "")]
+	public interface IThumbnailStreamCache : IUnknown {
+		[CCode (cname = "GetThumbnailStream")]
+		public abstract int get_thumbnail_stream (
+			[CCode (type_id = "LPCWSTR")] uint16* path,
+			ulong cache_id,
+			void* options,
+			uint requested_thumbnail_size,
+			out Win32.Foundation.Size thumbnail_size,
+			void* thumbnail_stream
+		);
+
+		[CCode (cname = "SetThumbnailStream")]
+		public abstract int set_thumbnail_stream (
+			[CCode (type_id = "LPCWSTR")] uint16* path,
+			ulong cache_id,
+			Win32.Foundation.Size thumbnail_size,
+			IStream thumbnail_stream
+		);
+
+	}
+
+	[CCode (cname = "ITravelLogEntry", ref_function = "", unref_function = "")]
+	public interface ITravelLogEntry : IUnknown {
+		[CCode (cname = "GetTitle")]
+		public abstract int get_title (
+			out uint16* ppsz_title
+		);
+
+		[CCode (cname = "GetURL")]
+		public abstract int get_url (
+			out uint16* ppsz_url
+		);
+
+	}
+
+	[CCode (cname = "ITravelLogClient", ref_function = "", unref_function = "")]
+	public interface ITravelLogClient : IUnknown {
+		[CCode (cname = "FindWindowByIndex")]
+		public abstract int find_window_by_index (
+			uint dw_id,
+			IUnknown ppunk
+		);
+
+		[CCode (cname = "GetWindowData")]
+		public abstract int get_window_data (
+			IStream p_stream,
+			out void* p_win_data
+		);
+
+		[CCode (cname = "LoadHistoryPosition")]
+		public abstract int load_history_position (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_url_location,
+			uint dw_position
+		);
+
+	}
+
+	[CCode (cname = "IEnumTravelLogEntry", ref_function = "", unref_function = "")]
+	public interface IEnumTravelLogEntry : IUnknown {
+		[CCode (cname = "Next")]
+		public abstract int next (
+			uint c_elt,
+			void* rg_elt,
+			out uint pc_elt_fetched
+		);
+
+		[CCode (cname = "Skip")]
+		public abstract int skip (
+			uint c_elt
+		);
+
+		[CCode (cname = "Reset")]
+		public abstract int reset (
+		);
+
+		[CCode (cname = "Clone")]
+		public abstract int clone (
+			IEnumTravelLogEntry pp_enum
+		);
+
+	}
+
+	[CCode (cname = "ITravelLogStg", ref_function = "", unref_function = "")]
+	public interface ITravelLogStg : IUnknown {
+		[CCode (cname = "CreateEntry")]
+		public abstract int create_entry (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_url,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_title,
+			ITravelLogEntry ptle_relative_to,
+			int f_prepend,
+			ITravelLogEntry pptle
+		);
+
+		[CCode (cname = "TravelTo")]
+		public abstract int travel_to (
+			ITravelLogEntry ptle
+		);
+
+		[CCode (cname = "EnumEntries")]
+		public abstract int enum_entries (
+			void* flags,
+			IEnumTravelLogEntry ppenum
+		);
+
+		[CCode (cname = "FindEntries")]
+		public abstract int find_entries (
+			void* flags,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_url,
+			IEnumTravelLogEntry ppenum
+		);
+
+		[CCode (cname = "GetCount")]
+		public abstract int get_count (
+			void* flags,
+			out uint pc_entries
+		);
+
+		[CCode (cname = "RemoveEntry")]
+		public abstract int remove_entry (
+			ITravelLogEntry ptle
+		);
+
+		[CCode (cname = "GetRelativeEntry")]
+		public abstract int get_relative_entry (
+			int i_offset,
+			ITravelLogEntry ptle
+		);
+
+	}
+
+	[CCode (cname = "IHlink", ref_function = "", unref_function = "")]
+	public interface IHlink : IUnknown {
+		[CCode (cname = "SetHlinkSite")]
+		public abstract int set_hlink_site (
+			IHlinkSite pihl_site,
+			uint dw_site_data
+		);
+
+		[CCode (cname = "GetHlinkSite")]
+		public abstract int get_hlink_site (
+			IHlinkSite ppihl_site,
+			out uint pdw_site_data
+		);
+
+		[CCode (cname = "SetMonikerReference")]
+		public abstract int set_moniker_reference (
+			uint grf_hlsetf,
+			IMoniker pimk_target,
+			[CCode (type_id = "LPCWSTR")] uint16* pwz_location
+		);
+
+		[CCode (cname = "GetMonikerReference")]
+		public abstract int get_moniker_reference (
+			uint dw_which_ref,
+			void* ppimk_target,
+			out uint16* ppwz_location
+		);
+
+		[CCode (cname = "SetStringReference")]
+		public abstract int set_string_reference (
+			uint grf_hlsetf,
+			[CCode (type_id = "LPCWSTR")] uint16* pwz_target,
+			[CCode (type_id = "LPCWSTR")] uint16* pwz_location
+		);
+
+		[CCode (cname = "GetStringReference")]
+		public abstract int get_string_reference (
+			uint dw_which_ref,
+			out uint16* ppwz_target,
+			out uint16* ppwz_location
+		);
+
+		[CCode (cname = "SetFriendlyName")]
+		public abstract int set_friendly_name (
+			[CCode (type_id = "LPCWSTR")] uint16* pwz_friendly_name
+		);
+
+		[CCode (cname = "GetFriendlyName")]
+		public abstract int get_friendly_name (
+			uint grf_hlfnamef,
+			out uint16* ppwz_friendly_name
+		);
+
+		[CCode (cname = "SetTargetFrameName")]
+		public abstract int set_target_frame_name (
+			[CCode (type_id = "LPCWSTR")] uint16* pwz_target_frame_name
+		);
+
+		[CCode (cname = "GetTargetFrameName")]
+		public abstract int get_target_frame_name (
+			out uint16* ppwz_target_frame_name
+		);
+
+		[CCode (cname = "GetMiscStatus")]
+		public abstract int get_misc_status (
+			out uint pdw_status
+		);
+
+		[CCode (cname = "Navigate")]
+		public abstract int navigate (
+			uint grf_hlnf,
+			IBindCtx pibc,
+			IBindStatusCallback pibsc,
+			IHlinkBrowseContext pihlbc
+		);
+
+		[CCode (cname = "SetAdditionalParams")]
+		public abstract int set_additional_params (
+			[CCode (type_id = "LPCWSTR")] uint16* pwz_additional_params
+		);
+
+		[CCode (cname = "GetAdditionalParams")]
+		public abstract int get_additional_params (
+			out uint16* ppwz_additional_params
+		);
+
+	}
+
+	[CCode (cname = "IHlinkSite", ref_function = "", unref_function = "")]
+	public interface IHlinkSite : IUnknown {
+		[CCode (cname = "QueryService")]
+		public abstract int query_service (
+			uint dw_site_data,
+			void* guid_service,
+			void* riid,
+			IUnknown ppiunk
+		);
+
+		[CCode (cname = "GetMoniker")]
+		public abstract int get_moniker (
+			uint dw_site_data,
+			uint dw_assign,
+			uint dw_which,
+			void* ppimk
+		);
+
+		[CCode (cname = "ReadyToNavigate")]
+		public abstract int ready_to_navigate (
+			uint dw_site_data,
+			uint dw_reserved
+		);
+
+		[CCode (cname = "OnNavigationComplete")]
+		public abstract int on_navigation_complete (
+			uint dw_site_data,
+			uint dwreserved,
+			int hr_error,
+			[CCode (type_id = "LPCWSTR")] uint16* pwz_error
+		);
+
+	}
+
+	[CCode (cname = "IHlinkTarget", ref_function = "", unref_function = "")]
+	public interface IHlinkTarget : IUnknown {
+		[CCode (cname = "SetBrowseContext")]
+		public abstract int set_browse_context (
+			IHlinkBrowseContext pihlbc
+		);
+
+		[CCode (cname = "GetBrowseContext")]
+		public abstract int get_browse_context (
+			IHlinkBrowseContext ppihlbc
+		);
+
+		[CCode (cname = "Navigate")]
+		public abstract int navigate (
+			uint grf_hlnf,
+			[CCode (type_id = "LPCWSTR")] uint16* pwz_jump_location
+		);
+
+		[CCode (cname = "GetMoniker")]
+		public abstract int get_moniker (
+			[CCode (type_id = "LPCWSTR")] uint16* pwz_location,
+			uint dw_assign,
+			void* ppimk_location
+		);
+
+		[CCode (cname = "GetFriendlyName")]
+		public abstract int get_friendly_name (
+			[CCode (type_id = "LPCWSTR")] uint16* pwz_location,
+			out uint16* ppwz_friendly_name
+		);
+
+	}
+
+	[CCode (cname = "IHlinkFrame", ref_function = "", unref_function = "")]
+	public interface IHlinkFrame : IUnknown {
+		[CCode (cname = "SetBrowseContext")]
+		public abstract int set_browse_context (
+			IHlinkBrowseContext pihlbc
+		);
+
+		[CCode (cname = "GetBrowseContext")]
+		public abstract int get_browse_context (
+			IHlinkBrowseContext ppihlbc
+		);
+
+		[CCode (cname = "Navigate")]
+		public abstract int navigate (
+			uint grf_hlnf,
+			IBindCtx pbc,
+			IBindStatusCallback pibsc,
+			IHlink pihl_navigate
+		);
+
+		[CCode (cname = "OnNavigate")]
+		public abstract int on_navigate (
+			uint grf_hlnf,
+			IMoniker pimk_target,
+			[CCode (type_id = "LPCWSTR")] uint16* pwz_location,
+			[CCode (type_id = "LPCWSTR")] uint16* pwz_friendly_name,
+			uint dwreserved
+		);
+
+		[CCode (cname = "UpdateHlink")]
+		public abstract int update_hlink (
+			uint u_hlid,
+			IMoniker pimk_target,
+			[CCode (type_id = "LPCWSTR")] uint16* pwz_location,
+			[CCode (type_id = "LPCWSTR")] uint16* pwz_friendly_name
+		);
+
+	}
+
+	[CCode (cname = "IEnumHLITEM", ref_function = "", unref_function = "")]
+	public interface IEnumHLITEM : IUnknown {
+		[CCode (cname = "Next")]
+		public abstract int next (
+			uint celt,
+			out void* rgelt,
+			out uint pcelt_fetched
+		);
+
+		[CCode (cname = "Skip")]
+		public abstract int skip (
+			uint celt
+		);
+
+		[CCode (cname = "Reset")]
+		public abstract int reset (
+		);
+
+		[CCode (cname = "Clone")]
+		public abstract int clone (
+			IEnumHLITEM ppienumhlitem
+		);
+
+	}
+
+	[CCode (cname = "IHlinkBrowseContext", ref_function = "", unref_function = "")]
+	public interface IHlinkBrowseContext : IUnknown {
+		[CCode (cname = "Register")]
+		public abstract int register (
+			uint reserved,
+			IUnknown piunk,
+			IMoniker pimk,
+			out uint pdw_register
+		);
+
+		[CCode (cname = "GetObject")]
+		public abstract int get_object (
+			IMoniker pimk,
+			int f_bind_if_root_registered,
+			IUnknown ppiunk
+		);
+
+		[CCode (cname = "Revoke")]
+		public abstract int revoke (
+			uint dw_register
+		);
+
+		[CCode (cname = "SetBrowseWindowInfo")]
+		public abstract int set_browse_window_info (
+			void* phlbwi
+		);
+
+		[CCode (cname = "GetBrowseWindowInfo")]
+		public abstract int get_browse_window_info (
+			out void* phlbwi
+		);
+
+		[CCode (cname = "SetInitialHlink")]
+		public abstract int set_initial_hlink (
+			IMoniker pimk_target,
+			[CCode (type_id = "LPCWSTR")] uint16* pwz_location,
+			[CCode (type_id = "LPCWSTR")] uint16* pwz_friendly_name
+		);
+
+		[CCode (cname = "OnNavigateHlink")]
+		public abstract int on_navigate_hlink (
+			uint grf_hlnf,
+			IMoniker pimk_target,
+			[CCode (type_id = "LPCWSTR")] uint16* pwz_location,
+			[CCode (type_id = "LPCWSTR")] uint16* pwz_friendly_name,
+			out uint pu_hlid
+		);
+
+		[CCode (cname = "UpdateHlink")]
+		public abstract int update_hlink (
+			uint u_hlid,
+			IMoniker pimk_target,
+			[CCode (type_id = "LPCWSTR")] uint16* pwz_location,
+			[CCode (type_id = "LPCWSTR")] uint16* pwz_friendly_name
+		);
+
+		[CCode (cname = "EnumNavigationStack")]
+		public abstract int enum_navigation_stack (
+			uint dw_reserved,
+			uint grf_hlfnamef,
+			IEnumHLITEM ppienumhlitem
+		);
+
+		[CCode (cname = "QueryHlink")]
+		public abstract int query_hlink (
+			uint grf_hlqf,
+			uint u_hlid
+		);
+
+		[CCode (cname = "GetHlink")]
+		public abstract int get_hlink (
+			uint u_hlid,
+			IHlink ppihl
+		);
+
+		[CCode (cname = "SetCurrentHlink")]
+		public abstract int set_current_hlink (
+			uint u_hlid
+		);
+
+		[CCode (cname = "Clone")]
+		public abstract int clone (
+			IUnknown piunk_outer,
+			void* riid,
+			IUnknown ppiunk_obj
+		);
+
+		[CCode (cname = "Close")]
+		public abstract int close (
+			uint reserved
+		);
+
+	}
+
+	[CCode (cname = "IExtensionServices", ref_function = "", unref_function = "")]
+	public interface IExtensionServices : IUnknown {
+		[CCode (cname = "SetAdditionalHeaders")]
+		public abstract int set_additional_headers (
+			[CCode (type_id = "LPCWSTR")] uint16* pwz_additional_headers
+		);
+
+		[CCode (cname = "SetAuthenticateData")]
+		public abstract int set_authenticate_data (
+			[CCode (type_id = "HWND")] void* phwnd,
+			[CCode (type_id = "LPCWSTR")] uint16* pwz_username,
+			[CCode (type_id = "LPCWSTR")] uint16* pwz_password
+		);
+
+	}
+
+	[CCode (cname = "ITravelEntry", ref_function = "", unref_function = "")]
+	public interface ITravelEntry : IUnknown {
+		[CCode (cname = "Invoke")]
+		public abstract int invoke (
+			IUnknown punk
+		);
+
+		[CCode (cname = "Update")]
+		public abstract int update (
+			IUnknown punk,
+			int f_is_local_anchor
+		);
+
+		[CCode (cname = "GetPidl")]
+		public abstract int get_pidl (
+			out out void* ppidl
+		);
+
+	}
+
+	[CCode (cname = "ITravelLog", ref_function = "", unref_function = "")]
+	public interface ITravelLog : IUnknown {
+		[CCode (cname = "AddEntry")]
+		public abstract int add_entry (
+			IUnknown punk,
+			int f_is_local_anchor
+		);
+
+		[CCode (cname = "UpdateEntry")]
+		public abstract int update_entry (
+			IUnknown punk,
+			int f_is_local_anchor
+		);
+
+		[CCode (cname = "UpdateExternal")]
+		public abstract int update_external (
+			IUnknown punk,
+			IUnknown punk_hlbrowse_context
+		);
+
+		[CCode (cname = "Travel")]
+		public abstract int travel (
+			IUnknown punk,
+			int i_offset
+		);
+
+		[CCode (cname = "GetTravelEntry")]
+		public abstract int get_travel_entry (
+			IUnknown punk,
+			int i_offset,
+			ITravelEntry ppte
+		);
+
+		[CCode (cname = "FindTravelEntry")]
+		public abstract int find_travel_entry (
+			IUnknown punk,
+			void* pidl,
+			ITravelEntry ppte
+		);
+
+		[CCode (cname = "GetToolTipText")]
+		public abstract int get_tool_tip_text (
+			IUnknown punk,
+			int i_offset,
+			int ids_template,
+			void* pwz_text,
+			uint cch_text
+		);
+
+		[CCode (cname = "InsertMenuEntries")]
+		public abstract int insert_menu_entries (
+			IUnknown punk,
+			[CCode (type_id = "HMENU")] void* hmenu,
+			int n_pos,
+			int id_first,
+			int id_last,
+			uint dw_flags
+		);
+
+		[CCode (cname = "Clone")]
+		public abstract int clone (
+			ITravelLog pptl
+		);
+
+		[CCode (cname = "CountEntries")]
+		public abstract uint count_entries (
+			IUnknown punk
+		);
+
+		[CCode (cname = "Revert")]
+		public abstract int revert (
+		);
+
+	}
+
+	[CCode (cname = "CIE4ConnectionPoint", ref_function = "", unref_function = "")]
+	public interface CIE4ConnectionPoint : IConnectionPoint {
+		[CCode (cname = "DoInvokeIE4")]
+		public abstract int do_invoke_ie4 (
+			out int pf,
+			out out void* ppv,
+			int dispid,
+			out void* pdispparams
+		);
+
+		[CCode (cname = "DoInvokePIDLIE4")]
+		public abstract int do_invoke_pidlie4 (
+			int dispid,
+			out void* pidl,
+			int f_can_cancel
+		);
+
+	}
+
+	[CCode (cname = "IExpDispSupportXP", ref_function = "", unref_function = "")]
+	public interface IExpDispSupportXP : IUnknown {
+		[CCode (cname = "FindCIE4ConnectionPoint")]
+		public abstract int find_cie4connection_point (
+			void* riid,
+			CIE4ConnectionPoint ppccp
+		);
+
+		[CCode (cname = "OnTranslateAccelerator")]
+		public abstract int on_translate_accelerator (
+			ref Win32.Ui.WindowsAndMessaging.Msg p_msg,
+			uint grf_modifiers
+		);
+
+		[CCode (cname = "OnInvoke")]
+		public abstract int on_invoke (
+			int dispid_member,
+			void* iid,
+			uint lcid,
+			ushort w_flags,
+			void* pdispparams,
+			out void* p_var_result,
+			out Win32.System.Com.EXCEPINFO pexcepinfo,
+			out uint pu_arg_err
+		);
+
+	}
+
+	[CCode (cname = "IExpDispSupport", ref_function = "", unref_function = "")]
+	public interface IExpDispSupport : IUnknown {
+		[CCode (cname = "FindConnectionPoint")]
+		public abstract int find_connection_point (
+			void* riid,
+			void* ppccp
+		);
+
+		[CCode (cname = "OnTranslateAccelerator")]
+		public abstract int on_translate_accelerator (
+			ref Win32.Ui.WindowsAndMessaging.Msg p_msg,
+			uint grf_modifiers
+		);
+
+		[CCode (cname = "OnInvoke")]
+		public abstract int on_invoke (
+			int dispid_member,
+			void* iid,
+			uint lcid,
+			ushort w_flags,
+			void* pdispparams,
+			out void* p_var_result,
+			out Win32.System.Com.EXCEPINFO pexcepinfo,
+			out uint pu_arg_err
+		);
+
+	}
+
+	[CCode (cname = "IBrowserService", ref_function = "", unref_function = "")]
+	public interface IBrowserService : IUnknown {
+		[CCode (cname = "GetParentSite")]
+		public abstract int get_parent_site (
+			void* ppipsite
+		);
+
+		[CCode (cname = "SetTitle")]
+		public abstract int set_title (
+			IShellView psv,
+			[CCode (type_id = "LPCWSTR")] uint16* psz_name
+		);
+
+		[CCode (cname = "GetTitle")]
+		public abstract int get_title (
+			IShellView psv,
+			void* psz_name,
+			uint cch_name
+		);
+
+		[CCode (cname = "GetOleObject")]
+		public abstract int get_ole_object (
+			void* ppobjv
+		);
+
+		[CCode (cname = "GetTravelLog")]
+		public abstract int get_travel_log (
+			ITravelLog pptl
+		);
+
+		[CCode (cname = "ShowControlWindow")]
+		public abstract int show_control_window (
+			uint id,
+			int f_show
+		);
+
+		[CCode (cname = "IsControlWindowShown")]
+		public abstract int is_control_window_shown (
+			uint id,
+			out int pf_shown
+		);
+
+		[CCode (cname = "IEGetDisplayName")]
+		public abstract int ieget_display_name (
+			void* pidl,
+			[CCode (type_id = "LPCWSTR")] uint16* pwsz_name,
+			uint u_flags
+		);
+
+		[CCode (cname = "IEParseDisplayName")]
+		public abstract int ieparse_display_name (
+			uint ui_cp,
+			[CCode (type_id = "LPCWSTR")] uint16* pwsz_path,
+			out out void* ppidl_out
+		);
+
+		[CCode (cname = "DisplayParseError")]
+		public abstract int display_parse_error (
+			int hres,
+			[CCode (type_id = "LPCWSTR")] uint16* pwsz_path
+		);
+
+		[CCode (cname = "NavigateToPidl")]
+		public abstract int navigate_to_pidl (
+			void* pidl,
+			uint grf_hlnf
+		);
+
+		[CCode (cname = "SetNavigateState")]
+		public abstract int set_navigate_state (
+			void* bnstate
+		);
+
+		[CCode (cname = "GetNavigateState")]
+		public abstract int get_navigate_state (
+			out void* pbnstate
+		);
+
+		[CCode (cname = "NotifyRedirect")]
+		public abstract int notify_redirect (
+			IShellView psv,
+			void* pidl,
+			out int pf_did_browse
+		);
+
+		[CCode (cname = "UpdateWindowList")]
+		public abstract int update_window_list (
+		);
+
+		[CCode (cname = "UpdateBackForwardState")]
+		public abstract int update_back_forward_state (
+		);
+
+		[CCode (cname = "SetFlags")]
+		public abstract int set_flags (
+			uint dw_flags,
+			uint dw_flag_mask
+		);
+
+		[CCode (cname = "GetFlags")]
+		public abstract int get_flags (
+			out uint pdw_flags
+		);
+
+		[CCode (cname = "CanNavigateNow")]
+		public abstract int can_navigate_now (
+		);
+
+		[CCode (cname = "GetPidl")]
+		public abstract int get_pidl (
+			out out void* ppidl
+		);
+
+		[CCode (cname = "SetReferrer")]
+		public abstract int set_referrer (
+			void* pidl
+		);
+
+		[CCode (cname = "GetBrowserIndex")]
+		public abstract uint get_browser_index (
+		);
+
+		[CCode (cname = "GetBrowserByIndex")]
+		public abstract int get_browser_by_index (
+			uint dw_id,
+			IUnknown ppunk
+		);
+
+		[CCode (cname = "GetHistoryObject")]
+		public abstract int get_history_object (
+			void* ppole,
+			void* pstm,
+			void* ppbc
+		);
+
+		[CCode (cname = "SetHistoryObject")]
+		public abstract int set_history_object (
+			IOleObject pole,
+			int f_is_local_anchor
+		);
+
+		[CCode (cname = "CacheOLEServer")]
+		public abstract int cache_oleserver (
+			IOleObject pole
+		);
+
+		[CCode (cname = "GetSetCodePage")]
+		public abstract int get_set_code_page (
+			void* pvar_in,
+			out void* pvar_out
+		);
+
+		[CCode (cname = "OnHttpEquiv")]
+		public abstract int on_http_equiv (
+			IShellView psv,
+			int f_done,
+			void* pvararg_in,
+			out void* pvararg_out
+		);
+
+		[CCode (cname = "GetPalette")]
+		public abstract int get_palette (
+			out void* hpal
+		);
+
+		[CCode (cname = "RegisterWindow")]
+		public abstract int register_window (
+			int f_force_register,
+			int swc
+		);
+
+	}
+
+	[CCode (cname = "IShellService", ref_function = "", unref_function = "")]
+	public interface IShellService : IUnknown {
+		[CCode (cname = "SetOwner")]
+		public abstract int set_owner (
+			IUnknown punk_owner
+		);
+
+	}
+
+	[CCode (cname = "IBrowserService2", ref_function = "", unref_function = "")]
+	public interface IBrowserService2 : IBrowserService {
+		[CCode (cname = "WndProcBS")]
+		public abstract int64 wnd_proc_bs (
+			[CCode (type_id = "HWND")] void* hwnd,
+			uint u_msg,
+			ulong w_param,
+			int64 l_param
+		);
+
+		[CCode (cname = "SetAsDefFolderSettings")]
+		public abstract int set_as_def_folder_settings (
+		);
+
+		[CCode (cname = "GetViewRect")]
+		public abstract int get_view_rect (
+			out Win32.Foundation.Rect prc
+		);
+
+		[CCode (cname = "OnSize")]
+		public abstract int on_size (
+			ulong w_param
+		);
+
+		[CCode (cname = "OnCreate")]
+		public abstract int on_create (
+			void* pcs
+		);
+
+		[CCode (cname = "OnCommand")]
+		public abstract int64 on_command (
+			ulong w_param,
+			int64 l_param
+		);
+
+		[CCode (cname = "OnDestroy")]
+		public abstract int on_destroy (
+		);
+
+		[CCode (cname = "OnNotify")]
+		public abstract int64 on_notify (
+			void* pnm
+		);
+
+		[CCode (cname = "OnSetFocus")]
+		public abstract int on_set_focus (
+		);
+
+		[CCode (cname = "OnFrameWindowActivateBS")]
+		public abstract int on_frame_window_activate_bs (
+			int f_active
+		);
+
+		[CCode (cname = "ReleaseShellView")]
+		public abstract int release_shell_view (
+		);
+
+		[CCode (cname = "ActivatePendingView")]
+		public abstract int activate_pending_view (
+		);
+
+		[CCode (cname = "CreateViewWindow")]
+		public abstract int create_view_window (
+			IShellView psv_new,
+			IShellView psv_old,
+			ref Win32.Foundation.Rect prc_view,
+			out void* phwnd
+		);
+
+		[CCode (cname = "CreateBrowserPropSheetExt")]
+		public abstract int create_browser_prop_sheet_ext (
+			void* riid,
+			out out void* ppv
+		);
+
+		[CCode (cname = "GetViewWindow")]
+		public abstract int get_view_window (
+			out void* phwnd_view
+		);
+
+		[CCode (cname = "GetBaseBrowserData")]
+		public abstract int get_base_browser_data (
+			out out void* pbbd
+		);
+
+		[CCode (cname = "PutBaseBrowserData")]
+		public abstract void** put_base_browser_data (
+		);
+
+		[CCode (cname = "InitializeTravelLog")]
+		public abstract int initialize_travel_log (
+			ITravelLog ptl,
+			uint dw
+		);
+
+		[CCode (cname = "SetTopBrowser")]
+		public abstract int set_top_browser (
+		);
+
+		[CCode (cname = "Offline")]
+		public abstract int offline (
+			int i_cmd
+		);
+
+		[CCode (cname = "AllowViewResize")]
+		public abstract int allow_view_resize (
+			int f
+		);
+
+		[CCode (cname = "SetActivateState")]
+		public abstract int set_activate_state (
+			uint u
+		);
+
+		[CCode (cname = "UpdateSecureLockIcon")]
+		public abstract int update_secure_lock_icon (
+			int e_secure_lock
+		);
+
+		[CCode (cname = "InitializeDownloadManager")]
+		public abstract int initialize_download_manager (
+		);
+
+		[CCode (cname = "InitializeTransitionSite")]
+		public abstract int initialize_transition_site (
+		);
+
+		[CCode (cname = "_Initialize")]
+		public abstract int __initialize (
+			[CCode (type_id = "HWND")] void* hwnd,
+			IUnknown pauto
+		);
+
+		[CCode (cname = "_CancelPendingNavigationAsync")]
+		public abstract int __cancel_pending_navigation_async (
+		);
+
+		[CCode (cname = "_CancelPendingView")]
+		public abstract int __cancel_pending_view (
+		);
+
+		[CCode (cname = "_MaySaveChanges")]
+		public abstract int __may_save_changes (
+		);
+
+		[CCode (cname = "_PauseOrResumeView")]
+		public abstract int __pause_or_resume_view (
+			int f_paused
+		);
+
+		[CCode (cname = "_DisableModeless")]
+		public abstract int __disable_modeless (
+		);
+
+		[CCode (cname = "_NavigateToPidl2")]
+		public abstract int __navigate_to_pidl2 (
+			void* pidl,
+			uint grf_hlnf,
+			uint dw_flags
+		);
+
+		[CCode (cname = "_TryShell2Rename")]
+		public abstract int __try_shell2rename (
+			IShellView psv,
+			void* pidl_new
+		);
+
+		[CCode (cname = "_SwitchActivationNow")]
+		public abstract int __switch_activation_now (
+		);
+
+		[CCode (cname = "_ExecChildren")]
+		public abstract int __exec_children (
+			IUnknown punk_bar,
+			int f_broadcast,
+			void* pguid_cmd_group,
+			uint n_cmd_id,
+			uint n_cmdexecopt,
+			void* pvararg_in,
+			out void* pvararg_out
+		);
+
+		[CCode (cname = "_SendChildren")]
+		public abstract int __send_children (
+			[CCode (type_id = "HWND")] void* hwnd_bar,
+			int f_broadcast,
+			uint u_msg,
+			ulong w_param,
+			int64 l_param
+		);
+
+		[CCode (cname = "GetFolderSetData")]
+		public abstract int get_folder_set_data (
+			out void* pfsd
+		);
+
+		[CCode (cname = "_OnFocusChange")]
+		public abstract int __on_focus_change (
+			uint itb
+		);
+
+		[CCode (cname = "v_ShowHideChildWindows")]
+		public abstract int v__show_hide_child_windows (
+			int f_child_only
+		);
+
+		[CCode (cname = "_get_itbLastFocus")]
+		public abstract uint _get_itb_last_focus (
+		);
+
+		[CCode (cname = "_put_itbLastFocus")]
+		public abstract int _put_itb_last_focus (
+			uint itb_last_focus
+		);
+
+		[CCode (cname = "_UIActivateView")]
+		public abstract int __uiactivate_view (
+			uint u_state
+		);
+
+		[CCode (cname = "_GetViewBorderRect")]
+		public abstract int __get_view_border_rect (
+			out Win32.Foundation.Rect prc
+		);
+
+		[CCode (cname = "_UpdateViewRectSize")]
+		public abstract int __update_view_rect_size (
+		);
+
+		[CCode (cname = "_ResizeNextBorder")]
+		public abstract int __resize_next_border (
+			uint itb
+		);
+
+		[CCode (cname = "_ResizeView")]
+		public abstract int __resize_view (
+		);
+
+		[CCode (cname = "_GetEffectiveClientArea")]
+		public abstract int __get_effective_client_area (
+			out Win32.Foundation.Rect lprect_border,
+			void* hmon
+		);
+
+		[CCode (cname = "v_GetViewStream")]
+		public abstract IStream v__get_view_stream (
+			out void* pidl,
+			uint grf_mode,
+			[CCode (type_id = "LPCWSTR")] uint16* pwsz_name
+		);
+
+		[CCode (cname = "ForwardViewMsg")]
+		public abstract int64 forward_view_msg (
+			uint u_msg,
+			ulong w_param,
+			int64 l_param
+		);
+
+		[CCode (cname = "SetAcceleratorMenu")]
+		public abstract int set_accelerator_menu (
+			void* hacc
+		);
+
+		[CCode (cname = "_GetToolbarCount")]
+		public abstract int __get_toolbar_count (
+		);
+
+		[CCode (cname = "_GetToolbarItem")]
+		public abstract void** __get_toolbar_item (
+			int itb
+		);
+
+		[CCode (cname = "_SaveToolbars")]
+		public abstract int __save_toolbars (
+			IStream pstm
+		);
+
+		[CCode (cname = "_LoadToolbars")]
+		public abstract int __load_toolbars (
+			IStream pstm
+		);
+
+		[CCode (cname = "_CloseAndReleaseToolbars")]
+		public abstract int __close_and_release_toolbars (
+			int f_close
+		);
+
+		[CCode (cname = "v_MayGetNextToolbarFocus")]
+		public abstract int v__may_get_next_toolbar_focus (
+			ref Win32.Ui.WindowsAndMessaging.Msg lp_msg,
+			uint itb_next,
+			int citb,
+			out out void* pptbi,
+			out void* phwnd
+		);
+
+		[CCode (cname = "_ResizeNextBorderHelper")]
+		public abstract int __resize_next_border_helper (
+			uint itb,
+			int b_use_hmonitor
+		);
+
+		[CCode (cname = "_FindTBar")]
+		public abstract uint __find_tbar (
+			IUnknown punk_src
+		);
+
+		[CCode (cname = "_SetFocus")]
+		public abstract int __set_focus (
+			void* ptbi,
+			[CCode (type_id = "HWND")] void* hwnd,
+			ref Win32.Ui.WindowsAndMessaging.Msg lp_msg
+		);
+
+		[CCode (cname = "v_MayTranslateAccelerator")]
+		public abstract int v__may_translate_accelerator (
+			out Win32.Ui.WindowsAndMessaging.Msg pmsg
+		);
+
+		[CCode (cname = "_GetBorderDWHelper")]
+		public abstract int __get_border_dwhelper (
+			IUnknown punk_src,
+			out Win32.Foundation.Rect lprect_border,
+			int b_use_hmonitor
+		);
+
+		[CCode (cname = "v_CheckZoneCrossing")]
+		public abstract int v__check_zone_crossing (
+			void* pidl
+		);
+
+	}
+
+	[CCode (cname = "IBrowserService3", ref_function = "", unref_function = "")]
+	public interface IBrowserService3 : IBrowserService2 {
+		[CCode (cname = "_PositionViewWindow")]
+		public abstract int __position_view_window (
+			[CCode (type_id = "HWND")] void* hwnd,
+			ref Win32.Foundation.Rect prc
+		);
+
+		[CCode (cname = "IEParseDisplayNameEx")]
+		public abstract int ieparse_display_name_ex (
+			uint ui_cp,
+			[CCode (type_id = "LPCWSTR")] uint16* pwsz_path,
+			uint dw_flags,
+			out out void* ppidl_out
+		);
+
+	}
+
+	[CCode (cname = "IBrowserService4", ref_function = "", unref_function = "")]
+	public interface IBrowserService4 : IBrowserService3 {
+		[CCode (cname = "ActivateView")]
+		public abstract int activate_view (
+			int f_pending_view
+		);
+
+		[CCode (cname = "SaveViewState")]
+		public abstract int save_view_state (
+		);
+
+		[CCode (cname = "_ResizeAllBorders")]
+		public abstract int __resize_all_borders (
+		);
+
+	}
+
+	[CCode (cname = "ITrackShellMenu", ref_function = "", unref_function = "")]
+	public interface ITrackShellMenu : IShellMenu {
+		[CCode (cname = "SetObscured")]
+		public abstract int set_obscured (
+			[CCode (type_id = "HWND")] void* hwnd_tb,
+			IUnknown punk_band,
+			uint dw_smset_flags
+		);
+
+		[CCode (cname = "Popup")]
+		public abstract int popup (
+			[CCode (type_id = "HWND")] void* hwnd,
+			out void* ppt,
+			out void* prc_exclude,
+			int dw_flags
+		);
+
+	}
+
+	[CCode (cname = "ITranscodeImage", ref_function = "", unref_function = "")]
+	public interface ITranscodeImage : IUnknown {
+		[CCode (cname = "TranscodeImage")]
+		public abstract int transcode_image (
+			IShellItem p_shell_item,
+			uint ui_max_width,
+			uint ui_max_height,
+			uint flags,
+			IStream pv_image,
+			out uint pui_width,
+			out uint pui_height
+		);
+
+	}
+
+	[CCode (cname = "IUniformResourceLocatorW", ref_function = "", unref_function = "")]
+	public interface IUniformResourceLocatorW : IUnknown {
+		[CCode (cname = "SetURL")]
+		public abstract int set_url (
+			[CCode (type_id = "LPCWSTR")] uint16* pcsz_url,
+			uint dw_in_flags
+		);
+
+		[CCode (cname = "GetURL")]
+		public abstract int get_url (
+			out uint16* ppsz_url
+		);
+
+		[CCode (cname = "InvokeCommand")]
+		public abstract int invoke_command (
+			out void* purlici
+		);
+
+	}
+
+	[CCode (cname = "IInputPaneAnimationCoordinator", ref_function = "", unref_function = "")]
+	public interface IInputPaneAnimationCoordinator : IUnknown {
+		[CCode (cname = "AddAnimation")]
+		public abstract int add_animation (
+			IUnknown device,
+			IDCompositionAnimation animation
+		);
+
+	}
+
 	[CCode (cname = "LoadUserProfileW")]
 	public extern int load_user_profile (
 		void* h_token,
@@ -9471,7 +22322,7 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "CreateProfile")]
-	public extern void* create_profile (
+	public extern int create_profile (
 		[CCode (type_id = "LPCWSTR")] uint16* psz_user_sid,
 		[CCode (type_id = "LPCWSTR")] uint16* psz_user_name,
 		void* psz_profile_path,
@@ -9564,40 +22415,40 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "SHCreateItemFromIDList")]
-	public extern void* shcreate_item_from_idlist (
+	public extern int shcreate_item_from_idlist (
 		void* pidl,
 		void* riid,
 		out void** ppv
 	);
 
 	[CCode (cname = "SHCreateItemFromParsingName")]
-	public extern void* shcreate_item_from_parsing_name (
+	public extern int shcreate_item_from_parsing_name (
 		[CCode (type_id = "LPCWSTR")] uint16* psz_path,
-		void* pbc,
+		IBindCtx pbc,
 		void* riid,
 		out void** ppv
 	);
 
 	[CCode (cname = "SHCreateItemWithParent")]
-	public extern void* shcreate_item_with_parent (
+	public extern int shcreate_item_with_parent (
 		void* pidl_parent,
-		void* psf_parent,
+		IShellFolder psf_parent,
 		void* pidl,
 		void* riid,
 		out void** ppv_item
 	);
 
 	[CCode (cname = "SHCreateItemFromRelativeName")]
-	public extern void* shcreate_item_from_relative_name (
-		void* psi_parent,
+	public extern int shcreate_item_from_relative_name (
+		IShellItem psi_parent,
 		[CCode (type_id = "LPCWSTR")] uint16* psz_name,
-		void* pbc,
+		IBindCtx pbc,
 		void* riid,
 		out void** ppv
 	);
 
 	[CCode (cname = "SHCreateItemInKnownFolder")]
-	public extern void* shcreate_item_in_known_folder (
+	public extern int shcreate_item_in_known_folder (
 		void* kfid,
 		uint dw_kfflags,
 		[CCode (type_id = "LPCWSTR")] uint16* psz_item,
@@ -9606,102 +22457,102 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "SHGetIDListFromObject")]
-	public extern void* shget_idlist_from_object (
-		void* punk,
+	public extern int shget_idlist_from_object (
+		IUnknown punk,
 		out void** ppidl
 	);
 
 	[CCode (cname = "SHGetItemFromObject")]
-	public extern void* shget_item_from_object (
-		void* punk,
+	public extern int shget_item_from_object (
+		IUnknown punk,
 		void* riid,
 		out void** ppv
 	);
 
 	[CCode (cname = "SHGetNameFromIDList")]
-	public extern void* shget_name_from_idlist (
+	public extern int shget_name_from_idlist (
 		void* pidl,
 		void* sigdn_name,
 		[CCode (type_id = "LPCWSTR")] out uint16* ppsz_name
 	);
 
 	[CCode (cname = "SHGetItemFromDataObject")]
-	public extern void* shget_item_from_data_object (
-		void* pdtobj,
+	public extern int shget_item_from_data_object (
+		IDataObject pdtobj,
 		DATAOBJGetITEMFLAGS dw_flags,
 		void* riid,
 		out void** ppv
 	);
 
 	[CCode (cname = "SHCreateShellItemArray")]
-	public extern void* shcreate_shell_item_array (
+	public extern int shcreate_shell_item_array (
 		void* pidl_parent,
-		void* psf,
+		IShellFolder psf,
 		uint cidl,
 		void* ppidl,
-		out void* ppsi_item_array
+		out IShellItemArray ppsi_item_array
 	);
 
 	[CCode (cname = "SHCreateShellItemArrayFromDataObject")]
-	public extern void* shcreate_shell_item_array_from_data_object (
-		void* pdo,
+	public extern int shcreate_shell_item_array_from_data_object (
+		IDataObject pdo,
 		void* riid,
 		out void** ppv
 	);
 
 	[CCode (cname = "SHCreateShellItemArrayFromIDLists")]
-	public extern void* shcreate_shell_item_array_from_idlists (
+	public extern int shcreate_shell_item_array_from_idlists (
 		uint cidl,
 		void* rgpidl,
-		out void* ppsi_item_array
+		out IShellItemArray ppsi_item_array
 	);
 
 	[CCode (cname = "SHCreateShellItemArrayFromShellItem")]
-	public extern void* shcreate_shell_item_array_from_shell_item (
-		void* psi,
+	public extern int shcreate_shell_item_array_from_shell_item (
+		IShellItem psi,
 		void* riid,
 		out void** ppv
 	);
 
 	[CCode (cname = "SHCreateAssociationRegistration")]
-	public extern void* shcreate_association_registration (
+	public extern int shcreate_association_registration (
 		void* riid,
 		out void** ppv
 	);
 
 	[CCode (cname = "SHCreateDefaultExtractIcon")]
-	public extern void* shcreate_default_extract_icon (
+	public extern int shcreate_default_extract_icon (
 		void* riid,
 		out void** ppv
 	);
 
 	[CCode (cname = "SetCurrentProcessExplicitAppUserModelID")]
-	public extern void* set_current_process_explicit_app_user_model_id (
+	public extern int set_current_process_explicit_app_user_model_id (
 		[CCode (type_id = "LPCWSTR")] uint16* app_id
 	);
 
 	[CCode (cname = "GetCurrentProcessExplicitAppUserModelID")]
-	public extern void* get_current_process_explicit_app_user_model_id (
+	public extern int get_current_process_explicit_app_user_model_id (
 		[CCode (type_id = "LPCWSTR")] out uint16* app_id
 	);
 
 	[CCode (cname = "SHGetTemporaryPropertyForItem")]
-	public extern void* shget_temporary_property_for_item (
-		void* psi,
+	public extern int shget_temporary_property_for_item (
+		IShellItem psi,
 		void* propkey,
 		out void* ppropvar
 	);
 
 	[CCode (cname = "SHSetTemporaryPropertyForItem")]
-	public extern void* shset_temporary_property_for_item (
-		void* psi,
+	public extern int shset_temporary_property_for_item (
+		IShellItem psi,
 		void* propkey,
 		void* propvar
 	);
 
 	[CCode (cname = "SHShowManageLibraryUI")]
-	public extern void* shshow_manage_library_ui (
-		void* psi_library,
+	public extern int shshow_manage_library_ui (
+		IShellItem psi_library,
 		[CCode (type_id = "HWND")] void* hwnd_owner,
 		[CCode (type_id = "LPCWSTR")] uint16* psz_title,
 		[CCode (type_id = "LPCWSTR")] uint16* psz_instruction,
@@ -9709,19 +22560,19 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "SHResolveLibrary")]
-	public extern void* shresolve_library (
-		void* psi_library
+	public extern int shresolve_library (
+		IShellItem psi_library
 	);
 
 	[CCode (cname = "SHAssocEnumHandlers")]
-	public extern void* shassoc_enum_handlers (
+	public extern int shassoc_enum_handlers (
 		[CCode (type_id = "LPCWSTR")] uint16* psz_extra,
 		ASSOCFILTER af_filter,
-		out void* pp_enum_handler
+		out IEnumAssocHandlers pp_enum_handler
 	);
 
 	[CCode (cname = "SHAssocEnumHandlersForProtocolByApplication")]
-	public extern void* shassoc_enum_handlers_for_protocol_by_application (
+	public extern int shassoc_enum_handlers_for_protocol_by_application (
 		[CCode (type_id = "LPCWSTR")] uint16* protocol,
 		void* riid,
 		out void** enum_handlers
@@ -9782,22 +22633,22 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "SHCreateDefaultPropertiesOp")]
-	public extern void* shcreate_default_properties_op (
-		void* psi,
-		out void* pp_file_op
+	public extern int shcreate_default_properties_op (
+		IShellItem psi,
+		out IFileOperation pp_file_op
 	);
 
 	[CCode (cname = "SHSetDefaultProperties")]
-	public extern void* shset_default_properties (
+	public extern int shset_default_properties (
 		[CCode (type_id = "HWND")] void* hwnd,
-		void* psi,
+		IShellItem psi,
 		uint dw_file_op_flags,
-		void* pfops
+		IFileOperationProgressSink pfops
 	);
 
 	[CCode (cname = "SHGetMalloc")]
-	public extern void* shget_malloc (
-		out void* pp_malloc
+	public extern int shget_malloc (
+		out IMalloc pp_malloc
 	);
 
 	[CCode (cname = "SHAlloc")]
@@ -9877,14 +22728,14 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "ILSaveToStream")]
-	public extern void* ilsave_to_stream (
-		void* pstm,
+	public extern int ilsave_to_stream (
+		IStream pstm,
 		void* pidl
 	);
 
 	[CCode (cname = "ILLoadFromStreamEx")]
-	public extern void* ilload_from_stream_ex (
-		void* pstm,
+	public extern int ilload_from_stream_ex (
+		IStream pstm,
 		out void** pidl
 	);
 
@@ -9894,7 +22745,7 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "SHILCreateFromPath")]
-	public extern void* shilcreate_from_path (
+	public extern int shilcreate_from_path (
 		[CCode (type_id = "LPCWSTR")] uint16* psz_path,
 		out void** ppidl,
 		ref uint rgf_in_out
@@ -9935,7 +22786,7 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "SHOpenFolderAndSelectItems")]
-	public extern void* shopen_folder_and_select_items (
+	public extern int shopen_folder_and_select_items (
 		void* pidl_folder,
 		uint cidl,
 		void* apidl,
@@ -9943,15 +22794,15 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "SHCreateShellItem")]
-	public extern void* shcreate_shell_item (
+	public extern int shcreate_shell_item (
 		void* pidl_parent,
-		void* psf_parent,
+		IShellFolder psf_parent,
 		void* pidl,
-		out void* ppsi
+		out IShellItem ppsi
 	);
 
 	[CCode (cname = "SHGetSpecialFolderLocation")]
-	public extern void* shget_special_folder_location (
+	public extern int shget_special_folder_location (
 		[CCode (type_id = "HWND")] void* hwnd,
 		int csidl,
 		out void** ppidl
@@ -9977,7 +22828,7 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "SHGetFolderPathW")]
-	public extern void* shget_folder_path (
+	public extern int shget_folder_path (
 		[CCode (type_id = "HWND")] void* hwnd,
 		int csidl,
 		void* h_token,
@@ -9986,7 +22837,7 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "SHGetFolderLocation")]
-	public extern void* shget_folder_location (
+	public extern int shget_folder_location (
 		[CCode (type_id = "HWND")] void* hwnd,
 		int csidl,
 		void* h_token,
@@ -9995,7 +22846,7 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "SHSetFolderPathW")]
-	public extern void* shset_folder_path (
+	public extern int shset_folder_path (
 		int csidl,
 		void* h_token,
 		uint dw_flags,
@@ -10003,7 +22854,7 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "SHGetFolderPathAndSubDirW")]
-	public extern void* shget_folder_path_and_sub_dir (
+	public extern int shget_folder_path_and_sub_dir (
 		[CCode (type_id = "HWND")] void* hwnd,
 		int csidl,
 		void* h_token,
@@ -10013,7 +22864,7 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "SHGetKnownFolderIDList")]
-	public extern void* shget_known_folder_idlist (
+	public extern int shget_known_folder_idlist (
 		void* rfid,
 		uint dw_flags,
 		void* h_token,
@@ -10021,7 +22872,7 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "SHSetKnownFolderPath")]
-	public extern void* shset_known_folder_path (
+	public extern int shset_known_folder_path (
 		void* rfid,
 		uint dw_flags,
 		void* h_token,
@@ -10029,7 +22880,7 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "SHGetKnownFolderPath")]
-	public extern void* shget_known_folder_path (
+	public extern int shget_known_folder_path (
 		void* rfid,
 		uint dw_flags,
 		void* h_token,
@@ -10037,7 +22888,7 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "SHGetKnownFolderItem")]
-	public extern void* shget_known_folder_item (
+	public extern int shget_known_folder_item (
 		void* rfid,
 		KNOWNFOLDERFLAG flags,
 		void* h_token,
@@ -10046,7 +22897,7 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "SHGetSetFolderCustomSettings")]
-	public extern void* shget_set_folder_custom_settings (
+	public extern int shget_set_folder_custom_settings (
 		out void* pfcs,
 		[CCode (type_id = "LPCWSTR")] uint16* psz_path,
 		uint dw_read_write
@@ -10058,13 +22909,13 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "SHLoadInProc")]
-	public extern void* shload_in_proc (
+	public extern int shload_in_proc (
 		void* rclsid
 	);
 
 	[CCode (cname = "SHGetDesktopFolder")]
-	public extern void* shget_desktop_folder (
-		out void* ppshf
+	public extern int shget_desktop_folder (
+		out IShellFolder ppshf
 	);
 
 	[CCode (cname = "SHChangeNotify")]
@@ -10123,20 +22974,20 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "SHGetRealIDL")]
-	public extern void* shget_real_idl (
-		void* psf,
+	public extern int shget_real_idl (
+		IShellFolder psf,
 		void* pidl_simple,
 		out void** ppidl_real
 	);
 
 	[CCode (cname = "SHGetInstanceExplorer")]
-	public extern void* shget_instance_explorer (
-		out void* ppunk
+	public extern int shget_instance_explorer (
+		out IUnknown ppunk
 	);
 
 	[CCode (cname = "SHGetDataFromIDListW")]
-	public extern void* shget_data_from_idlist (
-		void* psf,
+	public extern int shget_data_from_idlist (
+		IShellFolder psf,
 		void* pidl,
 		SHGDFILFORMAT n_format,
 		out void* pv,
@@ -10159,44 +23010,44 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "SHCoCreateInstance")]
-	public extern void* shco_create_instance (
+	public extern int shco_create_instance (
 		[CCode (type_id = "LPCWSTR")] uint16* psz_clsid,
 		void* pclsid,
-		void* p_unk_outer,
+		IUnknown p_unk_outer,
 		void* riid,
 		out void** ppv
 	);
 
 	[CCode (cname = "SHCreateDataObject")]
-	public extern void* shcreate_data_object (
+	public extern int shcreate_data_object (
 		void* pidl_folder,
 		uint cidl,
 		void* apidl,
-		void* pdt_inner,
+		IDataObject pdt_inner,
 		void* riid,
 		out void** ppv
 	);
 
 	[CCode (cname = "CIDLData_CreateFromIDArray")]
-	public extern void* cidldata__create_from_idarray (
+	public extern int cidldata__create_from_idarray (
 		void* pidl_folder,
 		uint cidl,
 		void* apidl,
-		out void* ppdtobj
+		out IDataObject ppdtobj
 	);
 
 	[CCode (cname = "SHCreateStdEnumFmtEtc")]
-	public extern void* shcreate_std_enum_fmt_etc (
+	public extern int shcreate_std_enum_fmt_etc (
 		uint cfmt,
 		void* afmt,
-		out void* ppenum_format_etc
+		out IEnumFORMATETC ppenum_format_etc
 	);
 
 	[CCode (cname = "SHDoDragDrop")]
-	public extern void* shdo_drag_drop (
+	public extern int shdo_drag_drop (
 		[CCode (type_id = "HWND")] void* hwnd,
-		void* pdata,
-		void* pdsrc,
+		IDataObject pdata,
+		IDropSource pdsrc,
 		void* dw_effect,
 		out void* pdw_effect
 	);
@@ -10217,7 +23068,7 @@ namespace Win32.Ui.Shell {
 	public extern int dad__drag_enter_ex2 (
 		[CCode (type_id = "HWND")] void* hwnd_target,
 		Win32.Foundation.Point pt_start,
-		void* pdt_object
+		IDataObject pdt_object
 	);
 
 	[CCode (cname = "DAD_ShowDragImage")]
@@ -10353,7 +23204,7 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "OpenRegStream")]
-	public extern void* open_reg_stream (
+	public extern IStream open_reg_stream (
 		void* hkey,
 		[CCode (type_id = "LPCWSTR")] uint16* psz_subkey,
 		[CCode (type_id = "LPCWSTR")] uint16* psz_value,
@@ -10395,8 +23246,8 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "AssocGetDetailsOfPropKey")]
-	public extern void* assoc_get_details_of_prop_key (
-		void* psf,
+	public extern int assoc_get_details_of_prop_key (
+		IShellFolder psf,
 		void* pidl,
 		void* pkey,
 		out void* pv,
@@ -10404,14 +23255,14 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "SHStartNetConnectionDialogW")]
-	public extern void* shstart_net_connection_dialog (
+	public extern int shstart_net_connection_dialog (
 		[CCode (type_id = "HWND")] void* hwnd,
 		[CCode (type_id = "LPCWSTR")] uint16* psz_remote_name,
 		uint dw_type
 	);
 
 	[CCode (cname = "SHDefExtractIconW")]
-	public extern void* shdef_extract_icon (
+	public extern int shdef_extract_icon (
 		[CCode (type_id = "LPCWSTR")] uint16* psz_icon_file,
 		int i_index,
 		uint u_flags,
@@ -10421,7 +23272,7 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "SHOpenWithDialog")]
-	public extern void* shopen_with_dialog (
+	public extern int shopen_with_dialog (
 		[CCode (type_id = "HWND")] void* hwnd_parent,
 		ref OPENASINFO poainfo
 	);
@@ -10448,7 +23299,7 @@ namespace Win32.Ui.Shell {
 
 	[CCode (cname = "SHSetInstanceExplorer")]
 	public extern void* shset_instance_explorer (
-		void* punk
+		IUnknown punk
 	);
 
 	[CCode (cname = "IsUserAnAdmin")]
@@ -10463,33 +23314,33 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "SHCreateShellFolderView")]
-	public extern void* shcreate_shell_folder_view (
+	public extern int shcreate_shell_folder_view (
 		ref SfvCREATE pcsfv,
-		out void* ppsv
+		out IShellView ppsv
 	);
 
 	[CCode (cname = "CDefFolderMenu_Create2")]
-	public extern void* cdef_folder_menu__create2 (
+	public extern int cdef_folder_menu__create2 (
 		void* pidl_folder,
 		[CCode (type_id = "HWND")] void* hwnd,
 		uint cidl,
 		void* apidl,
-		void* psf,
+		IShellFolder psf,
 		LPFNDFMCALLBACK pfn,
 		uint n_keys,
 		void* ahkeys,
-		out void* ppcm
+		out IContextMenu ppcm
 	);
 
 	[CCode (cname = "SHCreateDefaultContextMenu")]
-	public extern void* shcreate_default_context_menu (
+	public extern int shcreate_default_context_menu (
 		void* pdcm,
 		void* riid,
 		out void** ppv
 	);
 
 	[CCode (cname = "SHFind_InitMenuPopup")]
-	public extern void* shfind__init_menu_popup (
+	public extern IContextMenu shfind__init_menu_popup (
 		[CCode (type_id = "HMENU")] void* hmenu,
 		[CCode (type_id = "HWND")] void* hwnd_owner,
 		uint id_cmd_first,
@@ -10497,9 +23348,9 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "SHCreateShellFolderViewEx")]
-	public extern void* shcreate_shell_folder_view_ex (
+	public extern int shcreate_shell_folder_view_ex (
 		void* pcsfv,
-		out void* ppsv
+		out IShellView ppsv
 	);
 
 	[CCode (cname = "SHGetSetSettings")]
@@ -10516,7 +23367,7 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "SHBindToParent")]
-	public extern void* shbind_to_parent (
+	public extern int shbind_to_parent (
 		void* pidl,
 		void* riid,
 		out void** ppv,
@@ -10524,8 +23375,8 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "SHBindToFolderIDListParent")]
-	public extern void* shbind_to_folder_idlist_parent (
-		void* psf_root,
+	public extern int shbind_to_folder_idlist_parent (
+		IShellFolder psf_root,
 		void* pidl,
 		void* riid,
 		out void** ppv,
@@ -10533,43 +23384,43 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "SHBindToFolderIDListParentEx")]
-	public extern void* shbind_to_folder_idlist_parent_ex (
-		void* psf_root,
+	public extern int shbind_to_folder_idlist_parent_ex (
+		IShellFolder psf_root,
 		void* pidl,
-		void* ppbc,
+		IBindCtx ppbc,
 		void* riid,
 		out void** ppv,
 		out void** ppidl_last
 	);
 
 	[CCode (cname = "SHBindToObject")]
-	public extern void* shbind_to_object (
-		void* psf,
+	public extern int shbind_to_object (
+		IShellFolder psf,
 		void* pidl,
-		void* pbc,
+		IBindCtx pbc,
 		void* riid,
 		out void** ppv
 	);
 
 	[CCode (cname = "SHParseDisplayName")]
-	public extern void* shparse_display_name (
+	public extern int shparse_display_name (
 		[CCode (type_id = "LPCWSTR")] uint16* psz_name,
-		void* pbc,
+		IBindCtx pbc,
 		out void** ppidl,
 		uint sfgao_in,
 		out uint psfgao_out
 	);
 
 	[CCode (cname = "SHPathPrepareForWriteW")]
-	public extern void* shpath_prepare_for_write (
+	public extern int shpath_prepare_for_write (
 		[CCode (type_id = "HWND")] void* hwnd,
-		void* punk_enable_modless,
+		IUnknown punk_enable_modless,
 		[CCode (type_id = "LPCWSTR")] uint16* psz_path,
 		uint dw_flags
 	);
 
 	[CCode (cname = "SHCreateFileExtractIconW")]
-	public extern void* shcreate_file_extract_icon (
+	public extern int shcreate_file_extract_icon (
 		[CCode (type_id = "LPCWSTR")] uint16* psz_file,
 		uint dw_file_attributes,
 		void* riid,
@@ -10577,14 +23428,14 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "SHLimitInputEdit")]
-	public extern void* shlimit_input_edit (
+	public extern int shlimit_input_edit (
 		[CCode (type_id = "HWND")] void* hwnd_edit,
-		void* psf
+		IShellFolder psf
 	);
 
 	[CCode (cname = "SHGetAttributesFromDataObject")]
-	public extern void* shget_attributes_from_data_object (
-		void* pdo,
+	public extern int shget_attributes_from_data_object (
+		IDataObject pdo,
 		uint dw_attribute_mask,
 		out uint pdw_attributes,
 		out uint pc_items
@@ -10592,13 +23443,13 @@ namespace Win32.Ui.Shell {
 
 	[CCode (cname = "SHMapPIDLToSystemImageListIndex")]
 	public extern int shmap_pidlto_system_image_list_index (
-		void* pshf,
+		IShellFolder pshf,
 		void* pidl,
 		out int pi_index_sel
 	);
 
 	[CCode (cname = "SHCLSIDFromString")]
-	public extern void* shclsidfrom_string (
+	public extern int shclsidfrom_string (
 		[CCode (type_id = "LPCWSTR")] uint16* psz,
 		out void* pclsid
 	);
@@ -10612,8 +23463,8 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "StgMakeUniqueName")]
-	public extern void* stg_make_unique_name (
-		void* pstg_parent,
+	public extern int stg_make_unique_name (
+		IStorage pstg_parent,
 		[CCode (type_id = "LPCWSTR")] uint16* psz_file_spec,
 		uint grf_mode,
 		void* riid,
@@ -10649,8 +23500,8 @@ namespace Win32.Ui.Shell {
 		void* ahkeys,
 		uint ckeys,
 		void* pclsid_default,
-		void* pdtobj,
-		void* psb,
+		IDataObject pdtobj,
+		IShellBrowser psb,
 		[CCode (type_id = "LPCWSTR")] uint16* p_start_page
 	);
 
@@ -10663,14 +23514,14 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "SHMultiFileProperties")]
-	public extern void* shmulti_file_properties (
-		void* pdtobj,
+	public extern int shmulti_file_properties (
+		IDataObject pdtobj,
 		uint dw_flags
 	);
 
 	[CCode (cname = "SHCreateQueryCancelAutoPlayMoniker")]
-	public extern void* shcreate_query_cancel_auto_play_moniker (
-		out void* ppmoniker
+	public extern int shcreate_query_cancel_auto_play_moniker (
+		out IMoniker ppmoniker
 	);
 
 	[CCode (cname = "ImportPrivacySettings")]
@@ -10686,7 +23537,7 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "RegisterScaleChangeNotifications")]
-	public extern void* register_scale_change_notifications (
+	public extern int register_scale_change_notifications (
 		DISPLAYDEVICETYPE display_device,
 		[CCode (type_id = "HWND")] void* hwnd_notify,
 		uint u_msg_notify,
@@ -10694,25 +23545,25 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "RevokeScaleChangeNotifications")]
-	public extern void* revoke_scale_change_notifications (
+	public extern int revoke_scale_change_notifications (
 		DISPLAYDEVICETYPE display_device,
 		uint dw_cookie
 	);
 
 	[CCode (cname = "GetScaleFactorForMonitor")]
-	public extern void* get_scale_factor_for_monitor (
+	public extern int get_scale_factor_for_monitor (
 		void* h_mon,
 		out Win32.Ui.Shell.Common.DEVICESCALEFACTOR p_scale
 	);
 
 	[CCode (cname = "RegisterScaleChangeEvent")]
-	public extern void* register_scale_change_event (
+	public extern int register_scale_change_event (
 		void* h_event,
 		out void* pdw_cookie
 	);
 
 	[CCode (cname = "UnregisterScaleChangeEvent")]
-	public extern void* unregister_scale_change_event (
+	public extern int unregister_scale_change_event (
 		void* dw_cookie
 	);
 
@@ -10847,7 +23698,7 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "SHEvaluateSystemCommandTemplate")]
-	public extern void* shevaluate_system_command_template (
+	public extern int shevaluate_system_command_template (
 		[CCode (type_id = "LPCWSTR")] uint16* psz_cmd_template,
 		[CCode (type_id = "LPCWSTR")] out uint16* ppsz_application,
 		[CCode (type_id = "LPCWSTR")] out uint16* ppsz_command_line,
@@ -10855,7 +23706,7 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "AssocCreateForClasses")]
-	public extern void* assoc_create_for_classes (
+	public extern int assoc_create_for_classes (
 		void* rg_classes,
 		uint c_classes,
 		void* riid,
@@ -10863,20 +23714,20 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "SHQueryRecycleBinW")]
-	public extern void* shquery_recycle_bin (
+	public extern int shquery_recycle_bin (
 		[CCode (type_id = "LPCWSTR")] uint16* psz_root_path,
 		ref SHQUERYRBINFO p_shquery_rbinfo
 	);
 
 	[CCode (cname = "SHEmptyRecycleBinW")]
-	public extern void* shempty_recycle_bin (
+	public extern int shempty_recycle_bin (
 		[CCode (type_id = "HWND")] void* hwnd,
 		[CCode (type_id = "LPCWSTR")] uint16* psz_root_path,
 		uint dw_flags
 	);
 
 	[CCode (cname = "SHQueryUserNotificationState")]
-	public extern void* shquery_user_notification_state (
+	public extern int shquery_user_notification_state (
 		out QUERYUSERNOTIFICATIONSTATE pquns
 	);
 
@@ -10887,7 +23738,7 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "Shell_NotifyIconGetRect")]
-	public extern void* shell__notify_icon_get_rect (
+	public extern int shell__notify_icon_get_rect (
 		void* identifier,
 		out Win32.Foundation.Rect icon_location
 	);
@@ -10902,7 +23753,7 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "SHGetStockIconInfo")]
-	public extern void* shget_stock_icon_info (
+	public extern int shget_stock_icon_info (
 		void* siid,
 		uint u_flags,
 		ref SHSTOCKICONINFO psii
@@ -10935,29 +23786,29 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "SHLoadNonloadedIconOverlayIdentifiers")]
-	public extern void* shload_nonloaded_icon_overlay_identifiers (
+	public extern int shload_nonloaded_icon_overlay_identifiers (
 	);
 
 	[CCode (cname = "SHIsFileAvailableOffline")]
-	public extern void* shis_file_available_offline (
+	public extern int shis_file_available_offline (
 		[CCode (type_id = "LPCWSTR")] uint16* pwsz_path,
 		out uint pdw_status
 	);
 
 	[CCode (cname = "SHSetLocalizedName")]
-	public extern void* shset_localized_name (
+	public extern int shset_localized_name (
 		[CCode (type_id = "LPCWSTR")] uint16* psz_path,
 		[CCode (type_id = "LPCWSTR")] uint16* psz_res_module,
 		int ids_res
 	);
 
 	[CCode (cname = "SHRemoveLocalizedName")]
-	public extern void* shremove_localized_name (
+	public extern int shremove_localized_name (
 		[CCode (type_id = "LPCWSTR")] uint16* psz_path
 	);
 
 	[CCode (cname = "SHGetLocalizedName")]
-	public extern void* shget_localized_name (
+	public extern int shget_localized_name (
 		[CCode (type_id = "LPCWSTR")] uint16* psz_path,
 		void* psz_res_module,
 		uint cch,
@@ -10979,7 +23830,7 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "SHEnumerateUnreadMailAccountsW")]
-	public extern void* shenumerate_unread_mail_accounts (
+	public extern int shenumerate_unread_mail_accounts (
 		void* h_key_user,
 		uint dw_index,
 		void* psz_mail_address,
@@ -10987,7 +23838,7 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "SHGetUnreadMailCountW")]
-	public extern void* shget_unread_mail_count (
+	public extern int shget_unread_mail_count (
 		void* h_key_user,
 		[CCode (type_id = "LPCWSTR")] uint16* psz_mail_address,
 		out uint pdw_count,
@@ -10997,7 +23848,7 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "SHSetUnreadMailCountW")]
-	public extern void* shset_unread_mail_count (
+	public extern int shset_unread_mail_count (
 		[CCode (type_id = "LPCWSTR")] uint16* psz_mail_address,
 		uint dw_count,
 		[CCode (type_id = "LPCWSTR")] uint16* psz_shell_execute_command
@@ -11010,7 +23861,7 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "SHGetImageList")]
-	public extern void* shget_image_list (
+	public extern int shget_image_list (
 		int i_image_list,
 		void* riid,
 		out void** ppv_obj
@@ -11021,7 +23872,7 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "SHGetDriveMedia")]
-	public extern void* shget_drive_media (
+	public extern int shget_drive_media (
 		[CCode (type_id = "LPCWSTR")] uint16* psz_drive,
 		out uint pdw_media_content
 	);
@@ -11084,7 +23935,7 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "StrFormatByteSizeEx")]
-	public extern void* str_format_byte_size_ex (
+	public extern int str_format_byte_size_ex (
 		ulong ull,
 		SFBSFLAGS flags,
 		void* psz_buf,
@@ -11272,14 +24123,14 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "StrRetToStrW")]
-	public extern void* str_ret_to_str (
+	public extern int str_ret_to_str (
 		out void* pstr,
 		void* pidl,
 		[CCode (type_id = "LPCWSTR")] out uint16* ppsz
 	);
 
 	[CCode (cname = "StrRetToBufW")]
-	public extern void* str_ret_to_buf (
+	public extern int str_ret_to_buf (
 		out void* pstr,
 		void* pidl,
 		void* psz_buf,
@@ -11287,7 +24138,7 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "SHStrDupW")]
-	public extern void* shstr_dup (
+	public extern int shstr_dup (
 		[CCode (type_id = "LPCWSTR")] uint16* psz,
 		[CCode (type_id = "LPCWSTR")] out uint16* ppwsz
 	);
@@ -11307,14 +24158,14 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "StrRetToBSTR")]
-	public extern void* str_ret_to_bstr (
+	public extern int str_ret_to_bstr (
 		out void* pstr,
 		void* pidl,
 		out void* pbstr
 	);
 
 	[CCode (cname = "SHLoadIndirectString")]
-	public extern void* shload_indirect_string (
+	public extern int shload_indirect_string (
 		[CCode (type_id = "LPCWSTR")] uint16* psz_source,
 		void* psz_out_buf,
 		uint cch_out_buf,
@@ -11551,7 +24402,7 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "PathMatchSpecExW")]
-	public extern void* path_match_spec_ex (
+	public extern int path_match_spec_ex (
 		[CCode (type_id = "LPCWSTR")] uint16* psz_file,
 		[CCode (type_id = "LPCWSTR")] uint16* psz_spec,
 		uint dw_flags
@@ -11677,7 +24528,7 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "UrlCombineW")]
-	public extern void* url_combine (
+	public extern int url_combine (
 		[CCode (type_id = "LPCWSTR")] uint16* psz_base,
 		[CCode (type_id = "LPCWSTR")] uint16* psz_relative,
 		void* psz_combined,
@@ -11686,7 +24537,7 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "UrlCanonicalizeW")]
-	public extern void* url_canonicalize (
+	public extern int url_canonicalize (
 		[CCode (type_id = "LPCWSTR")] uint16* psz_url,
 		void* psz_canonicalized,
 		ref uint pcch_canonicalized,
@@ -11715,7 +24566,7 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "UrlUnescapeW")]
-	public extern void* url_unescape (
+	public extern int url_unescape (
 		[CCode (type_id = "LPCWSTR")] uint16* psz_url,
 		void* psz_unescaped,
 		ref uint pcch_unescaped,
@@ -11723,7 +24574,7 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "UrlEscapeW")]
-	public extern void* url_escape (
+	public extern int url_escape (
 		[CCode (type_id = "LPCWSTR")] uint16* psz_url,
 		void* psz_escaped,
 		ref uint pcch_escaped,
@@ -11731,7 +24582,7 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "UrlCreateFromPathW")]
-	public extern void* url_create_from_path (
+	public extern int url_create_from_path (
 		[CCode (type_id = "LPCWSTR")] uint16* psz_path,
 		void* psz_url,
 		ref uint pcch_url,
@@ -11739,7 +24590,7 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "PathCreateFromUrlW")]
-	public extern void* path_create_from_url (
+	public extern int path_create_from_url (
 		[CCode (type_id = "LPCWSTR")] uint16* psz_url,
 		void* psz_path,
 		ref uint pcch_path,
@@ -11747,21 +24598,21 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "PathCreateFromUrlAlloc")]
-	public extern void* path_create_from_url_alloc (
+	public extern int path_create_from_url_alloc (
 		[CCode (type_id = "LPCWSTR")] uint16* psz_in,
 		[CCode (type_id = "LPCWSTR")] out uint16* ppsz_out,
 		uint dw_flags
 	);
 
 	[CCode (cname = "UrlHashW")]
-	public extern void* url_hash (
+	public extern int url_hash (
 		[CCode (type_id = "LPCWSTR")] uint16* psz_url,
 		out void* pb_hash,
 		uint cb_hash
 	);
 
 	[CCode (cname = "UrlGetPartW")]
-	public extern void* url_get_part (
+	public extern int url_get_part (
 		[CCode (type_id = "LPCWSTR")] uint16* psz_in,
 		void* psz_out,
 		ref uint pcch_out,
@@ -11770,7 +24621,7 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "UrlApplySchemeW")]
-	public extern void* url_apply_scheme (
+	public extern int url_apply_scheme (
 		[CCode (type_id = "LPCWSTR")] uint16* psz_in,
 		void* psz_out,
 		ref uint pcch_out,
@@ -11778,7 +24629,7 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "HashData")]
-	public extern void* hash_data (
+	public extern int hash_data (
 		void* pb_data,
 		uint cb_data,
 		out void* pb_hash,
@@ -11786,14 +24637,14 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "UrlFixupW")]
-	public extern void* url_fixup (
+	public extern int url_fixup (
 		[CCode (type_id = "LPCWSTR")] uint16* pcsz_url,
 		void* psz_translated_url,
 		uint cch_max
 	);
 
 	[CCode (cname = "ParseURLW")]
-	public extern void* parse_url (
+	public extern int parse_url (
 		[CCode (type_id = "LPCWSTR")] uint16* pcsz_url,
 		out void* ppu
 	);
@@ -12055,14 +24906,14 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "AssocCreate")]
-	public extern void* assoc_create (
+	public extern int assoc_create (
 		void* clsid,
 		void* riid,
 		out void** ppv
 	);
 
 	[CCode (cname = "AssocQueryStringW")]
-	public extern void* assoc_query_string (
+	public extern int assoc_query_string (
 		uint flags,
 		void* str,
 		[CCode (type_id = "LPCWSTR")] uint16* psz_assoc,
@@ -12072,7 +24923,7 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "AssocQueryStringByKeyW")]
-	public extern void* assoc_query_string_by_key (
+	public extern int assoc_query_string_by_key (
 		uint flags,
 		void* str,
 		void* hk_assoc,
@@ -12082,7 +24933,7 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "AssocQueryKeyW")]
-	public extern void* assoc_query_key (
+	public extern int assoc_query_key (
 		uint flags,
 		void* key,
 		[CCode (type_id = "LPCWSTR")] uint16* psz_assoc,
@@ -12096,7 +24947,7 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "AssocGetPerceivedType")]
-	public extern void* assoc_get_perceived_type (
+	public extern int assoc_get_perceived_type (
 		[CCode (type_id = "LPCWSTR")] uint16* psz_ext,
 		out void* ptype,
 		out uint pflag,
@@ -12104,7 +24955,7 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "SHOpenRegStreamW")]
-	public extern void* shopen_reg_stream (
+	public extern IStream shopen_reg_stream (
 		void* hkey,
 		[CCode (type_id = "LPCWSTR")] uint16* psz_subkey,
 		[CCode (type_id = "LPCWSTR")] uint16* psz_value,
@@ -12112,7 +24963,7 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "SHOpenRegStream2W")]
-	public extern void* shopen_reg_stream2 (
+	public extern IStream shopen_reg_stream2 (
 		void* hkey,
 		[CCode (type_id = "LPCWSTR")] uint16* psz_subkey,
 		[CCode (type_id = "LPCWSTR")] uint16* psz_value,
@@ -12120,38 +24971,38 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "SHCreateStreamOnFileW")]
-	public extern void* shcreate_stream_on_file (
+	public extern int shcreate_stream_on_file (
 		[CCode (type_id = "LPCWSTR")] uint16* psz_file,
 		uint grf_mode,
-		out void* ppstm
+		out IStream ppstm
 	);
 
 	[CCode (cname = "SHCreateStreamOnFileEx")]
-	public extern void* shcreate_stream_on_file_ex (
+	public extern int shcreate_stream_on_file_ex (
 		[CCode (type_id = "LPCWSTR")] uint16* psz_file,
 		uint grf_mode,
 		uint dw_attributes,
 		int f_create,
-		void* pstm_template,
-		out void* ppstm
+		IStream pstm_template,
+		out IStream ppstm
 	);
 
 	[CCode (cname = "SHCreateMemStream")]
-	public extern void* shcreate_mem_stream (
+	public extern IStream shcreate_mem_stream (
 		void* p_init,
 		uint cb_init
 	);
 
 	[CCode (cname = "GetAcceptLanguagesW")]
-	public extern void* get_accept_languages (
+	public extern int get_accept_languages (
 		void* psz_languages,
 		ref uint pcch_languages
 	);
 
 	[CCode (cname = "IUnknown_Set")]
 	public extern void* iunknown__set (
-		out void* ppunk,
-		void* punk
+		ref IUnknown ppunk,
+		IUnknown punk
 	);
 
 	[CCode (cname = "IUnknown_AtomicRelease")]
@@ -12160,100 +25011,100 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "IUnknown_GetWindow")]
-	public extern void* iunknown__get_window (
-		void* punk,
+	public extern int iunknown__get_window (
+		IUnknown punk,
 		[CCode (type_id = "HWND")] out void* phwnd
 	);
 
 	[CCode (cname = "IUnknown_SetSite")]
-	public extern void* iunknown__set_site (
-		void* punk,
-		void* punk_site
+	public extern int iunknown__set_site (
+		IUnknown punk,
+		IUnknown punk_site
 	);
 
 	[CCode (cname = "IUnknown_GetSite")]
-	public extern void* iunknown__get_site (
-		void* punk,
+	public extern int iunknown__get_site (
+		IUnknown punk,
 		void* riid,
 		out void** ppv
 	);
 
 	[CCode (cname = "IUnknown_QueryService")]
-	public extern void* iunknown__query_service (
-		void* punk,
+	public extern int iunknown__query_service (
+		IUnknown punk,
 		void* guid_service,
 		void* riid,
 		out void** ppv_out
 	);
 
 	[CCode (cname = "IStream_Read")]
-	public extern void* istream__read (
-		void* pstm,
+	public extern int istream__read (
+		IStream pstm,
 		out void* pv,
 		uint cb
 	);
 
 	[CCode (cname = "IStream_Write")]
-	public extern void* istream__write (
-		void* pstm,
+	public extern int istream__write (
+		IStream pstm,
 		void* pv,
 		uint cb
 	);
 
 	[CCode (cname = "IStream_Reset")]
-	public extern void* istream__reset (
-		void* pstm
+	public extern int istream__reset (
+		IStream pstm
 	);
 
 	[CCode (cname = "IStream_Size")]
-	public extern void* istream__size (
-		void* pstm,
+	public extern int istream__size (
+		IStream pstm,
 		out void* pui
 	);
 
 	[CCode (cname = "ConnectToConnectionPoint")]
-	public extern void* connect_to_connection_point (
-		void* punk,
+	public extern int connect_to_connection_point (
+		IUnknown punk,
 		void* riid_event,
 		int f_connect,
-		void* punk_target,
+		IUnknown punk_target,
 		out uint pdw_cookie,
-		out void* ppcp_out
+		out IConnectionPoint ppcp_out
 	);
 
 	[CCode (cname = "IStream_ReadPidl")]
-	public extern void* istream__read_pidl (
-		void* pstm,
+	public extern int istream__read_pidl (
+		IStream pstm,
 		out void** ppidl_out
 	);
 
 	[CCode (cname = "IStream_WritePidl")]
-	public extern void* istream__write_pidl (
-		void* pstm,
+	public extern int istream__write_pidl (
+		IStream pstm,
 		void* pidl_write
 	);
 
 	[CCode (cname = "IStream_ReadStr")]
-	public extern void* istream__read_str (
-		void* pstm,
+	public extern int istream__read_str (
+		IStream pstm,
 		[CCode (type_id = "LPCWSTR")] out uint16* ppsz
 	);
 
 	[CCode (cname = "IStream_WriteStr")]
-	public extern void* istream__write_str (
-		void* pstm,
+	public extern int istream__write_str (
+		IStream pstm,
 		[CCode (type_id = "LPCWSTR")] uint16* psz
 	);
 
 	[CCode (cname = "IStream_Copy")]
-	public extern void* istream__copy (
-		void* pstm_from,
-		void* pstm_to,
+	public extern int istream__copy (
+		IStream pstm_from,
+		IStream pstm_to,
 		uint cb
 	);
 
 	[CCode (cname = "SHGetViewStatePropertyBag")]
-	public extern void* shget_view_state_property_bag (
+	public extern int shget_view_state_property_bag (
 		void* pidl,
 		[CCode (type_id = "LPCWSTR")] uint16* psz_bag_name,
 		uint dw_flags,
@@ -12347,7 +25198,7 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "QISearch")]
-	public extern void* qisearch (
+	public extern int qisearch (
 		out void* that,
 		void* pqit,
 		void* riid,
@@ -12366,36 +25217,36 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "SHGetInverseCMAP")]
-	public extern void* shget_inverse_cmap (
+	public extern int shget_inverse_cmap (
 		out void* pb_map,
 		uint cb_map
 	);
 
 	[CCode (cname = "SHAutoComplete")]
-	public extern void* shauto_complete (
+	public extern int shauto_complete (
 		[CCode (type_id = "HWND")] void* hwnd_edit,
 		SHELLAUTOCOMPLETEFLAGS dw_flags
 	);
 
 	[CCode (cname = "SHCreateThreadRef")]
-	public extern void* shcreate_thread_ref (
+	public extern int shcreate_thread_ref (
 		ref int pc_ref,
-		out void* ppunk
+		out IUnknown ppunk
 	);
 
 	[CCode (cname = "SHSetThreadRef")]
-	public extern void* shset_thread_ref (
-		void* punk
+	public extern int shset_thread_ref (
+		IUnknown punk
 	);
 
 	[CCode (cname = "SHGetThreadRef")]
-	public extern void* shget_thread_ref (
-		out void* ppunk
+	public extern int shget_thread_ref (
+		out IUnknown ppunk
 	);
 
 	[CCode (cname = "SHSkipJunction")]
 	public extern int shskip_junction (
-		void* pbc,
+		IBindCtx pbc,
 		void* pclsid
 	);
 
@@ -12417,7 +25268,7 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "SHReleaseThreadRef")]
-	public extern void* shrelease_thread_ref (
+	public extern int shrelease_thread_ref (
 	);
 
 	[CCode (cname = "SHCreateShellPalette")]
@@ -12452,184 +25303,184 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "HlinkCreateFromMoniker")]
-	public extern void* hlink_create_from_moniker (
-		void* pimk_trgt,
+	public extern int hlink_create_from_moniker (
+		IMoniker pimk_trgt,
 		[CCode (type_id = "LPCWSTR")] uint16* pwz_location,
 		[CCode (type_id = "LPCWSTR")] uint16* pwz_friendly_name,
-		void* pihlsite,
+		IHlinkSite pihlsite,
 		uint dw_site_data,
-		void* piunk_outer,
+		IUnknown piunk_outer,
 		void* riid,
 		out void** ppv_obj
 	);
 
 	[CCode (cname = "HlinkCreateFromString")]
-	public extern void* hlink_create_from_string (
+	public extern int hlink_create_from_string (
 		[CCode (type_id = "LPCWSTR")] uint16* pwz_target,
 		[CCode (type_id = "LPCWSTR")] uint16* pwz_location,
 		[CCode (type_id = "LPCWSTR")] uint16* pwz_friendly_name,
-		void* pihlsite,
+		IHlinkSite pihlsite,
 		uint dw_site_data,
-		void* piunk_outer,
+		IUnknown piunk_outer,
 		void* riid,
 		out void** ppv_obj
 	);
 
 	[CCode (cname = "HlinkCreateFromData")]
-	public extern void* hlink_create_from_data (
-		void* pi_data_obj,
-		void* pihlsite,
+	public extern int hlink_create_from_data (
+		IDataObject pi_data_obj,
+		IHlinkSite pihlsite,
 		uint dw_site_data,
-		void* piunk_outer,
+		IUnknown piunk_outer,
 		void* riid,
 		out void** ppv_obj
 	);
 
 	[CCode (cname = "HlinkQueryCreateFromData")]
-	public extern void* hlink_query_create_from_data (
-		void* pi_data_obj
+	public extern int hlink_query_create_from_data (
+		IDataObject pi_data_obj
 	);
 
 	[CCode (cname = "HlinkClone")]
-	public extern void* hlink_clone (
-		void* pihl,
+	public extern int hlink_clone (
+		IHlink pihl,
 		void* riid,
-		void* pihlsite_for_clone,
+		IHlinkSite pihlsite_for_clone,
 		uint dw_site_data,
 		out void** ppv_obj
 	);
 
 	[CCode (cname = "HlinkCreateBrowseContext")]
-	public extern void* hlink_create_browse_context (
-		void* piunk_outer,
+	public extern int hlink_create_browse_context (
+		IUnknown piunk_outer,
 		void* riid,
 		out void** ppv_obj
 	);
 
 	[CCode (cname = "HlinkNavigateToStringReference")]
-	public extern void* hlink_navigate_to_string_reference (
+	public extern int hlink_navigate_to_string_reference (
 		[CCode (type_id = "LPCWSTR")] uint16* pwz_target,
 		[CCode (type_id = "LPCWSTR")] uint16* pwz_location,
-		void* pihlsite,
+		IHlinkSite pihlsite,
 		uint dw_site_data,
-		void* pihlframe,
+		IHlinkFrame pihlframe,
 		uint grf_hlnf,
-		void* pibc,
-		void* pibsc,
-		void* pihlbc
+		IBindCtx pibc,
+		IBindStatusCallback pibsc,
+		IHlinkBrowseContext pihlbc
 	);
 
 	[CCode (cname = "HlinkNavigate")]
-	public extern void* hlink_navigate (
-		void* pihl,
-		void* pihlframe,
+	public extern int hlink_navigate (
+		IHlink pihl,
+		IHlinkFrame pihlframe,
 		uint grf_hlnf,
-		void* pbc,
-		void* pibsc,
-		void* pihlbc
+		IBindCtx pbc,
+		IBindStatusCallback pibsc,
+		IHlinkBrowseContext pihlbc
 	);
 
 	[CCode (cname = "HlinkOnNavigate")]
-	public extern void* hlink_on_navigate (
-		void* pihlframe,
-		void* pihlbc,
+	public extern int hlink_on_navigate (
+		IHlinkFrame pihlframe,
+		IHlinkBrowseContext pihlbc,
 		uint grf_hlnf,
-		void* pimk_target,
+		IMoniker pimk_target,
 		[CCode (type_id = "LPCWSTR")] uint16* pwz_location,
 		[CCode (type_id = "LPCWSTR")] uint16* pwz_friendly_name,
 		ref uint pu_hlid
 	);
 
 	[CCode (cname = "HlinkUpdateStackItem")]
-	public extern void* hlink_update_stack_item (
-		void* pihlframe,
-		void* pihlbc,
+	public extern int hlink_update_stack_item (
+		IHlinkFrame pihlframe,
+		IHlinkBrowseContext pihlbc,
 		uint u_hlid,
-		void* pimk_trgt,
+		IMoniker pimk_trgt,
 		[CCode (type_id = "LPCWSTR")] uint16* pwz_location,
 		[CCode (type_id = "LPCWSTR")] uint16* pwz_friendly_name
 	);
 
 	[CCode (cname = "HlinkOnRenameDocument")]
-	public extern void* hlink_on_rename_document (
+	public extern int hlink_on_rename_document (
 		uint dw_reserved,
-		void* pihlbc,
-		void* pimk_old,
-		void* pimk_new
+		IHlinkBrowseContext pihlbc,
+		IMoniker pimk_old,
+		IMoniker pimk_new
 	);
 
 	[CCode (cname = "HlinkResolveMonikerForData")]
-	public extern void* hlink_resolve_moniker_for_data (
-		void* pimk_reference,
+	public extern int hlink_resolve_moniker_for_data (
+		IMoniker pimk_reference,
 		uint reserved,
-		void* pibc,
+		IBindCtx pibc,
 		uint c_fmtetc,
 		out void* rg_fmtetc,
-		void* pibsc,
-		void* pimk_base
+		IBindStatusCallback pibsc,
+		IMoniker pimk_base
 	);
 
 	[CCode (cname = "HlinkResolveStringForData")]
-	public extern void* hlink_resolve_string_for_data (
+	public extern int hlink_resolve_string_for_data (
 		[CCode (type_id = "LPCWSTR")] uint16* pwz_reference,
 		uint reserved,
-		void* pibc,
+		IBindCtx pibc,
 		uint c_fmtetc,
 		out void* rg_fmtetc,
-		void* pibsc,
-		void* pimk_base
+		IBindStatusCallback pibsc,
+		IMoniker pimk_base
 	);
 
 	[CCode (cname = "HlinkParseDisplayName")]
-	public extern void* hlink_parse_display_name (
-		void* pibc,
+	public extern int hlink_parse_display_name (
+		IBindCtx pibc,
 		[CCode (type_id = "LPCWSTR")] uint16* pwz_display_name,
 		int f_no_force_abs,
 		ref uint pcch_eaten,
-		out void* ppimk
+		out IMoniker ppimk
 	);
 
 	[CCode (cname = "HlinkCreateExtensionServices")]
-	public extern void* hlink_create_extension_services (
+	public extern int hlink_create_extension_services (
 		[CCode (type_id = "LPCWSTR")] uint16* pwz_additional_headers,
 		[CCode (type_id = "HWND")] void* phwnd,
 		[CCode (type_id = "LPCWSTR")] uint16* psz_username,
 		[CCode (type_id = "LPCWSTR")] uint16* psz_password,
-		void* piunk_outer,
+		IUnknown piunk_outer,
 		void* riid,
 		out void** ppv_obj
 	);
 
 	[CCode (cname = "HlinkPreprocessMoniker")]
-	public extern void* hlink_preprocess_moniker (
-		void* pibc,
-		void* pimk_in,
-		out void* ppimk_out
+	public extern int hlink_preprocess_moniker (
+		IBindCtx pibc,
+		IMoniker pimk_in,
+		out IMoniker ppimk_out
 	);
 
 	[CCode (cname = "OleSaveToStreamEx")]
-	public extern void* ole_save_to_stream_ex (
-		void* piunk,
-		void* pistm,
+	public extern int ole_save_to_stream_ex (
+		IUnknown piunk,
+		IStream pistm,
 		int f_clear_dirty
 	);
 
 	[CCode (cname = "HlinkSetSpecialReference")]
-	public extern void* hlink_set_special_reference (
+	public extern int hlink_set_special_reference (
 		uint u_reference,
 		[CCode (type_id = "LPCWSTR")] uint16* pwz_reference
 	);
 
 	[CCode (cname = "HlinkGetSpecialReference")]
-	public extern void* hlink_get_special_reference (
+	public extern int hlink_get_special_reference (
 		uint u_reference,
 		[CCode (type_id = "LPCWSTR")] out uint16* ppwz_reference
 	);
 
 	[CCode (cname = "HlinkCreateShortcut")]
-	public extern void* hlink_create_shortcut (
+	public extern int hlink_create_shortcut (
 		uint grf_hlshortcutf,
-		void* pihl,
+		IHlink pihl,
 		[CCode (type_id = "LPCWSTR")] uint16* pwz_dir,
 		[CCode (type_id = "LPCWSTR")] uint16* pwz_file_name,
 		[CCode (type_id = "LPCWSTR")] out uint16* ppwz_shortcut_file,
@@ -12637,9 +25488,9 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "HlinkCreateShortcutFromMoniker")]
-	public extern void* hlink_create_shortcut_from_moniker (
+	public extern int hlink_create_shortcut_from_moniker (
 		uint grf_hlshortcutf,
-		void* pimk_target,
+		IMoniker pimk_target,
 		[CCode (type_id = "LPCWSTR")] uint16* pwz_location,
 		[CCode (type_id = "LPCWSTR")] uint16* pwz_dir,
 		[CCode (type_id = "LPCWSTR")] uint16* pwz_file_name,
@@ -12648,7 +25499,7 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "HlinkCreateShortcutFromString")]
-	public extern void* hlink_create_shortcut_from_string (
+	public extern int hlink_create_shortcut_from_string (
 		uint grf_hlshortcutf,
 		[CCode (type_id = "LPCWSTR")] uint16* pwz_target,
 		[CCode (type_id = "LPCWSTR")] uint16* pwz_location,
@@ -12659,43 +25510,43 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "HlinkResolveShortcut")]
-	public extern void* hlink_resolve_shortcut (
+	public extern int hlink_resolve_shortcut (
 		[CCode (type_id = "LPCWSTR")] uint16* pwz_shortcut_file_name,
-		void* pihlsite,
+		IHlinkSite pihlsite,
 		uint dw_site_data,
-		void* piunk_outer,
+		IUnknown piunk_outer,
 		void* riid,
 		out void** ppv_obj
 	);
 
 	[CCode (cname = "HlinkResolveShortcutToMoniker")]
-	public extern void* hlink_resolve_shortcut_to_moniker (
+	public extern int hlink_resolve_shortcut_to_moniker (
 		[CCode (type_id = "LPCWSTR")] uint16* pwz_shortcut_file_name,
-		out void* ppimk_target,
+		out IMoniker ppimk_target,
 		[CCode (type_id = "LPCWSTR")] out uint16* ppwz_location
 	);
 
 	[CCode (cname = "HlinkResolveShortcutToString")]
-	public extern void* hlink_resolve_shortcut_to_string (
+	public extern int hlink_resolve_shortcut_to_string (
 		[CCode (type_id = "LPCWSTR")] uint16* pwz_shortcut_file_name,
 		[CCode (type_id = "LPCWSTR")] out uint16* ppwz_target,
 		[CCode (type_id = "LPCWSTR")] out uint16* ppwz_location
 	);
 
 	[CCode (cname = "HlinkIsShortcut")]
-	public extern void* hlink_is_shortcut (
+	public extern int hlink_is_shortcut (
 		[CCode (type_id = "LPCWSTR")] uint16* pwz_file_name
 	);
 
 	[CCode (cname = "HlinkGetValueFromParams")]
-	public extern void* hlink_get_value_from_params (
+	public extern int hlink_get_value_from_params (
 		[CCode (type_id = "LPCWSTR")] uint16* pwz_params,
 		[CCode (type_id = "LPCWSTR")] uint16* pwz_name,
 		[CCode (type_id = "LPCWSTR")] out uint16* ppwz_value
 	);
 
 	[CCode (cname = "HlinkTranslateURL")]
-	public extern void* hlink_translate_url (
+	public extern int hlink_translate_url (
 		[CCode (type_id = "LPCWSTR")] uint16* pwz_url,
 		uint grf_flags,
 		[CCode (type_id = "LPCWSTR")] out uint16* ppwz_translated_url
@@ -12713,7 +25564,7 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "PathCchAddBackslashEx")]
-	public extern void* path_cch_add_backslash_ex (
+	public extern int path_cch_add_backslash_ex (
 		void* psz_path,
 		void* cch_path,
 		[CCode (type_id = "LPCWSTR")] out uint16* ppsz_end,
@@ -12721,13 +25572,13 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "PathCchAddBackslash")]
-	public extern void* path_cch_add_backslash (
+	public extern int path_cch_add_backslash (
 		void* psz_path,
 		void* cch_path
 	);
 
 	[CCode (cname = "PathCchRemoveBackslashEx")]
-	public extern void* path_cch_remove_backslash_ex (
+	public extern int path_cch_remove_backslash_ex (
 		[CCode (type_id = "LPCWSTR")] uint16* psz_path,
 		void* cch_path,
 		[CCode (type_id = "LPCWSTR")] out uint16* ppsz_end,
@@ -12735,58 +25586,58 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "PathCchRemoveBackslash")]
-	public extern void* path_cch_remove_backslash (
+	public extern int path_cch_remove_backslash (
 		void* psz_path,
 		void* cch_path
 	);
 
 	[CCode (cname = "PathCchSkipRoot")]
-	public extern void* path_cch_skip_root (
+	public extern int path_cch_skip_root (
 		[CCode (type_id = "LPCWSTR")] uint16* psz_path,
 		[CCode (type_id = "LPCWSTR")] out uint16* ppsz_root_end
 	);
 
 	[CCode (cname = "PathCchStripToRoot")]
-	public extern void* path_cch_strip_to_root (
+	public extern int path_cch_strip_to_root (
 		[CCode (type_id = "LPCWSTR")] uint16* psz_path,
 		void* cch_path
 	);
 
 	[CCode (cname = "PathCchRemoveFileSpec")]
-	public extern void* path_cch_remove_file_spec (
+	public extern int path_cch_remove_file_spec (
 		[CCode (type_id = "LPCWSTR")] uint16* psz_path,
 		void* cch_path
 	);
 
 	[CCode (cname = "PathCchFindExtension")]
-	public extern void* path_cch_find_extension (
+	public extern int path_cch_find_extension (
 		[CCode (type_id = "LPCWSTR")] uint16* psz_path,
 		void* cch_path,
 		[CCode (type_id = "LPCWSTR")] out uint16* ppsz_ext
 	);
 
 	[CCode (cname = "PathCchAddExtension")]
-	public extern void* path_cch_add_extension (
+	public extern int path_cch_add_extension (
 		void* psz_path,
 		void* cch_path,
 		[CCode (type_id = "LPCWSTR")] uint16* psz_ext
 	);
 
 	[CCode (cname = "PathCchRenameExtension")]
-	public extern void* path_cch_rename_extension (
+	public extern int path_cch_rename_extension (
 		void* psz_path,
 		void* cch_path,
 		[CCode (type_id = "LPCWSTR")] uint16* psz_ext
 	);
 
 	[CCode (cname = "PathCchRemoveExtension")]
-	public extern void* path_cch_remove_extension (
+	public extern int path_cch_remove_extension (
 		[CCode (type_id = "LPCWSTR")] uint16* psz_path,
 		void* cch_path
 	);
 
 	[CCode (cname = "PathCchCanonicalizeEx")]
-	public extern void* path_cch_canonicalize_ex (
+	public extern int path_cch_canonicalize_ex (
 		void* psz_path_out,
 		void* cch_path_out,
 		[CCode (type_id = "LPCWSTR")] uint16* psz_path_in,
@@ -12794,14 +25645,14 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "PathCchCanonicalize")]
-	public extern void* path_cch_canonicalize (
+	public extern int path_cch_canonicalize (
 		void* psz_path_out,
 		void* cch_path_out,
 		[CCode (type_id = "LPCWSTR")] uint16* psz_path_in
 	);
 
 	[CCode (cname = "PathCchCombineEx")]
-	public extern void* path_cch_combine_ex (
+	public extern int path_cch_combine_ex (
 		void* psz_path_out,
 		void* cch_path_out,
 		[CCode (type_id = "LPCWSTR")] uint16* psz_path_in,
@@ -12810,7 +25661,7 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "PathCchCombine")]
-	public extern void* path_cch_combine (
+	public extern int path_cch_combine (
 		void* psz_path_out,
 		void* cch_path_out,
 		[CCode (type_id = "LPCWSTR")] uint16* psz_path_in,
@@ -12818,7 +25669,7 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "PathCchAppendEx")]
-	public extern void* path_cch_append_ex (
+	public extern int path_cch_append_ex (
 		void* psz_path,
 		void* cch_path,
 		[CCode (type_id = "LPCWSTR")] uint16* psz_more,
@@ -12826,20 +25677,20 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "PathCchAppend")]
-	public extern void* path_cch_append (
+	public extern int path_cch_append (
 		void* psz_path,
 		void* cch_path,
 		[CCode (type_id = "LPCWSTR")] uint16* psz_more
 	);
 
 	[CCode (cname = "PathCchStripPrefix")]
-	public extern void* path_cch_strip_prefix (
+	public extern int path_cch_strip_prefix (
 		void* psz_path,
 		void* cch_path
 	);
 
 	[CCode (cname = "PathAllocCombine")]
-	public extern void* path_alloc_combine (
+	public extern int path_alloc_combine (
 		[CCode (type_id = "LPCWSTR")] uint16* psz_path_in,
 		[CCode (type_id = "LPCWSTR")] uint16* psz_more,
 		PATHCCHOPTIONS dw_flags,
@@ -12847,7 +25698,7 @@ namespace Win32.Ui.Shell {
 	);
 
 	[CCode (cname = "PathAllocCanonicalize")]
-	public extern void* path_alloc_canonicalize (
+	public extern int path_alloc_canonicalize (
 		[CCode (type_id = "LPCWSTR")] uint16* psz_path_in,
 		PATHCCHOPTIONS dw_flags,
 		[CCode (type_id = "LPCWSTR")] out uint16* ppsz_path_out

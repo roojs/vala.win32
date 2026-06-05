@@ -2421,11 +2421,11 @@ namespace Win32.Ui.Accessibility {
 	public delegate int64 LPFNLRESULTFROMOBJECT (
 		void* riid,
 		ulong w_param,
-		void* punk
+		IUnknown punk
 	);
 
 	[CCode (cname = "LPFNOBJECTFROMLRESULT", has_target = false)]
-	public delegate void* LPFNOBJECTFROMLRESULT (
+	public delegate int LPFNOBJECTFROMLRESULT (
 		int64 l_result,
 		void* riid,
 		ulong w_param,
@@ -2433,7 +2433,7 @@ namespace Win32.Ui.Accessibility {
 	);
 
 	[CCode (cname = "LPFNACCESSIBLEOBJECTFROMWINDOW", has_target = false)]
-	public delegate void* LPFNACCESSIBLEOBJECTFROMWINDO (
+	public delegate int LPFNACCESSIBLEOBJECTFROMWINDO (
 		[CCode (type_id = "HWND")] void* hwnd,
 		uint dw_id,
 		void* riid,
@@ -2441,14 +2441,14 @@ namespace Win32.Ui.Accessibility {
 	);
 
 	[CCode (cname = "LPFNACCESSIBLEOBJECTFROMPOINT", has_target = false)]
-	public delegate void* LPFNACCESSIBLEOBJECTFROMPOINT (
+	public delegate int LPFNACCESSIBLEOBJECTFROMPOINT (
 		Win32.Foundation.Point pt_screen,
-		out void* ppacc,
+		out IAccessible ppacc,
 		out void* pvar_child
 	);
 
 	[CCode (cname = "LPFNCREATESTDACCESSIBLEOBJECT", has_target = false)]
-	public delegate void* LPFNCREATESTDACCESSIBLEOBJECT (
+	public delegate int LPFNCREATESTDACCESSIBLEOBJECT (
 		[CCode (type_id = "HWND")] void* hwnd,
 		int id_object,
 		void* riid,
@@ -2456,8 +2456,8 @@ namespace Win32.Ui.Accessibility {
 	);
 
 	[CCode (cname = "LPFNACCESSIBLECHILDREN", has_target = false)]
-	public delegate void* LPFNACCESSIBLECHILDREN (
-		void* pacc_container,
+	public delegate int LPFNACCESSIBLECHILDREN (
+		IAccessible pacc_container,
 		int i_child_start,
 		int c_children,
 		out void* rgvar_children,
@@ -2557,7 +2557,7 @@ namespace Win32.Ui.Accessibility {
 		public void** pMethods;
 		public uint cEvents;
 		public void** pEvents;
-		public void* pPatternHandler;
+		public IUIAutomationPatternHandler pPatternHandler;
 	}
 
 	[CCode (cname = "ExtendedProperty")]
@@ -2741,15 +2741,4644 @@ namespace Win32.Ui.Accessibility {
 		public uint dwFlags;
 	}
 
+	[CCode (cheader_filename = "objbase.h", cname = "IUnknown", ref_function = "", unref_function = "")]
+	public interface IUnknown {
+		[CCode (cname = "QueryInterface")]
+		public abstract int query_interface (void* riid, void** ppv_object);
+
+		[CCode (cname = "AddRef")]
+		public abstract uint add_ref ();
+
+		[CCode (cname = "Release")]
+		public abstract uint release ();
+	}
+
+	[CCode (cname = "IRicheditWindowlessAccessibility", ref_function = "", unref_function = "")]
+	public interface IRicheditWindowlessAccessibility : IUnknown {
+		[CCode (cname = "CreateProvider")]
+		public abstract int create_provider (
+			IRawElementProviderWindowlessSite p_site,
+			IRawElementProviderSimple pp_provider
+		);
+
+	}
+
+	[CCode (cname = "IRichEditUiaInformation", ref_function = "", unref_function = "")]
+	public interface IRichEditUiaInformation : IUnknown {
+		[CCode (cname = "GetBoundaryRectangle")]
+		public abstract int get_boundary_rectangle (
+			out void* p_uia_rect
+		);
+
+		[CCode (cname = "IsVisible")]
+		public abstract int is_visible (
+		);
+
+	}
+
+	[CCode (cname = "IAccessible", ref_function = "", unref_function = "")]
+	public interface IAccessible : IDispatch {
+		[CCode (cname = "get_accParent")]
+		public abstract int get_acc_parent (
+			void* ppdisp_parent
+		);
+
+		[CCode (cname = "get_accChildCount")]
+		public abstract int get_acc_child_count (
+			out int pcount_children
+		);
+
+		[CCode (cname = "get_accChild")]
+		public abstract int get_acc_child (
+			void* var_child,
+			void* ppdisp_child
+		);
+
+		[CCode (cname = "get_accName")]
+		public abstract int get_acc_name (
+			void* var_child,
+			out void* psz_name
+		);
+
+		[CCode (cname = "get_accValue")]
+		public abstract int get_acc_value (
+			void* var_child,
+			out void* psz_value
+		);
+
+		[CCode (cname = "get_accDescription")]
+		public abstract int get_acc_description (
+			void* var_child,
+			out void* psz_description
+		);
+
+		[CCode (cname = "get_accRole")]
+		public abstract int get_acc_role (
+			void* var_child,
+			out void* pvar_role
+		);
+
+		[CCode (cname = "get_accState")]
+		public abstract int get_acc_state (
+			void* var_child,
+			out void* pvar_state
+		);
+
+		[CCode (cname = "get_accHelp")]
+		public abstract int get_acc_help (
+			void* var_child,
+			out void* psz_help
+		);
+
+		[CCode (cname = "get_accHelpTopic")]
+		public abstract int get_acc_help_topic (
+			out void* psz_help_file,
+			void* var_child,
+			out int pid_topic
+		);
+
+		[CCode (cname = "get_accKeyboardShortcut")]
+		public abstract int get_acc_keyboard_shortcut (
+			void* var_child,
+			out void* psz_keyboard_shortcut
+		);
+
+		[CCode (cname = "get_accFocus")]
+		public abstract int get_acc_focus (
+			out void* pvar_child
+		);
+
+		[CCode (cname = "get_accSelection")]
+		public abstract int get_acc_selection (
+			out void* pvar_children
+		);
+
+		[CCode (cname = "get_accDefaultAction")]
+		public abstract int get_acc_default_action (
+			void* var_child,
+			out void* psz_default_action
+		);
+
+		[CCode (cname = "accSelect")]
+		public abstract int acc_select (
+			int flags_select,
+			void* var_child
+		);
+
+		[CCode (cname = "accLocation")]
+		public abstract int acc_location (
+			out int px_left,
+			out int py_top,
+			out int pcx_width,
+			out int pcy_height,
+			void* var_child
+		);
+
+		[CCode (cname = "accNavigate")]
+		public abstract int acc_navigate (
+			int nav_dir,
+			void* var_start,
+			out void* pvar_end_up_at
+		);
+
+		[CCode (cname = "accHitTest")]
+		public abstract int acc_hit_test (
+			int x_left,
+			int y_top,
+			out void* pvar_child
+		);
+
+		[CCode (cname = "accDoDefaultAction")]
+		public abstract int acc_do_default_action (
+			void* var_child
+		);
+
+		[CCode (cname = "put_accName")]
+		public abstract int put_acc_name (
+			void* var_child,
+			void* sz_name
+		);
+
+		[CCode (cname = "put_accValue")]
+		public abstract int put_acc_value (
+			void* var_child,
+			void* sz_value
+		);
+
+	}
+
+	[CCode (cname = "IAccessibleHandler", ref_function = "", unref_function = "")]
+	public interface IAccessibleHandler : IUnknown {
+		[CCode (cname = "AccessibleObjectFromID")]
+		public abstract int accessible_object_from_id (
+			int hwnd,
+			int l_object_id,
+			IAccessible p_iaccessible
+		);
+
+	}
+
+	[CCode (cname = "IAccessibleWindowlessSite", ref_function = "", unref_function = "")]
+	public interface IAccessibleWindowlessSite : IUnknown {
+		[CCode (cname = "AcquireObjectIdRange")]
+		public abstract int acquire_object_id_range (
+			int range_size,
+			IAccessibleHandler p_range_owner,
+			out int p_range_base
+		);
+
+		[CCode (cname = "ReleaseObjectIdRange")]
+		public abstract int release_object_id_range (
+			int range_base,
+			IAccessibleHandler p_range_owner
+		);
+
+		[CCode (cname = "QueryObjectIdRanges")]
+		public abstract int query_object_id_ranges (
+			IAccessibleHandler p_ranges_owner,
+			out out void* psa_ranges
+		);
+
+		[CCode (cname = "GetParentAccessible")]
+		public abstract int get_parent_accessible (
+			IAccessible pp_parent
+		);
+
+	}
+
+	[CCode (cname = "IAccIdentity", ref_function = "", unref_function = "")]
+	public interface IAccIdentity : IUnknown {
+		[CCode (cname = "GetIdentityString")]
+		public abstract int get_identity_string (
+			uint dw_idchild,
+			void* pp_idstring,
+			out uint pdw_idstring_len
+		);
+
+	}
+
+	[CCode (cname = "IAccPropServer", ref_function = "", unref_function = "")]
+	public interface IAccPropServer : IUnknown {
+		[CCode (cname = "GetPropValue")]
+		public abstract int get_prop_value (
+			void* p_idstring,
+			uint dw_idstring_len,
+			void* id_prop,
+			out void* pvar_value,
+			out int pf_has_prop
+		);
+
+	}
+
+	[CCode (cname = "IAccPropServices", ref_function = "", unref_function = "")]
+	public interface IAccPropServices : IUnknown {
+		[CCode (cname = "SetPropValue")]
+		public abstract int set_prop_value (
+			void* p_idstring,
+			uint dw_idstring_len,
+			void* id_prop,
+			void* var
+		);
+
+		[CCode (cname = "SetPropServer")]
+		public abstract int set_prop_server (
+			void* p_idstring,
+			uint dw_idstring_len,
+			void* pa_props,
+			int c_props,
+			IAccPropServer p_server,
+			void* anno_scope
+		);
+
+		[CCode (cname = "ClearProps")]
+		public abstract int clear_props (
+			void* p_idstring,
+			uint dw_idstring_len,
+			void* pa_props,
+			int c_props
+		);
+
+		[CCode (cname = "SetHwndProp")]
+		public abstract int set_hwnd_prop (
+			[CCode (type_id = "HWND")] void* hwnd,
+			uint id_object,
+			uint id_child,
+			void* id_prop,
+			void* var
+		);
+
+		[CCode (cname = "SetHwndPropStr")]
+		public abstract int set_hwnd_prop_str (
+			[CCode (type_id = "HWND")] void* hwnd,
+			uint id_object,
+			uint id_child,
+			void* id_prop,
+			[CCode (type_id = "LPCWSTR")] uint16* str
+		);
+
+		[CCode (cname = "SetHwndPropServer")]
+		public abstract int set_hwnd_prop_server (
+			[CCode (type_id = "HWND")] void* hwnd,
+			uint id_object,
+			uint id_child,
+			void* pa_props,
+			int c_props,
+			IAccPropServer p_server,
+			void* anno_scope
+		);
+
+		[CCode (cname = "ClearHwndProps")]
+		public abstract int clear_hwnd_props (
+			[CCode (type_id = "HWND")] void* hwnd,
+			uint id_object,
+			uint id_child,
+			void* pa_props,
+			int c_props
+		);
+
+		[CCode (cname = "ComposeHwndIdentityString")]
+		public abstract int compose_hwnd_identity_string (
+			[CCode (type_id = "HWND")] void* hwnd,
+			uint id_object,
+			uint id_child,
+			void* pp_idstring,
+			out uint pdw_idstring_len
+		);
+
+		[CCode (cname = "DecomposeHwndIdentityString")]
+		public abstract int decompose_hwnd_identity_string (
+			void* p_idstring,
+			uint dw_idstring_len,
+			out void* phwnd,
+			out uint pid_object,
+			out uint pid_child
+		);
+
+		[CCode (cname = "SetHmenuProp")]
+		public abstract int set_hmenu_prop (
+			[CCode (type_id = "HMENU")] void* hmenu,
+			uint id_child,
+			void* id_prop,
+			void* var
+		);
+
+		[CCode (cname = "SetHmenuPropStr")]
+		public abstract int set_hmenu_prop_str (
+			[CCode (type_id = "HMENU")] void* hmenu,
+			uint id_child,
+			void* id_prop,
+			[CCode (type_id = "LPCWSTR")] uint16* str
+		);
+
+		[CCode (cname = "SetHmenuPropServer")]
+		public abstract int set_hmenu_prop_server (
+			[CCode (type_id = "HMENU")] void* hmenu,
+			uint id_child,
+			void* pa_props,
+			int c_props,
+			IAccPropServer p_server,
+			void* anno_scope
+		);
+
+		[CCode (cname = "ClearHmenuProps")]
+		public abstract int clear_hmenu_props (
+			[CCode (type_id = "HMENU")] void* hmenu,
+			uint id_child,
+			void* pa_props,
+			int c_props
+		);
+
+		[CCode (cname = "ComposeHmenuIdentityString")]
+		public abstract int compose_hmenu_identity_string (
+			[CCode (type_id = "HMENU")] void* hmenu,
+			uint id_child,
+			void* pp_idstring,
+			out uint pdw_idstring_len
+		);
+
+		[CCode (cname = "DecomposeHmenuIdentityString")]
+		public abstract int decompose_hmenu_identity_string (
+			void* p_idstring,
+			uint dw_idstring_len,
+			out void* phmenu,
+			out uint pid_child
+		);
+
+	}
+
+	[CCode (cname = "IRawElementProviderSimple", ref_function = "", unref_function = "")]
+	public interface IRawElementProviderSimple : IUnknown {
+		[CCode (cname = "get_ProviderOptions")]
+		public abstract int get_provider_options (
+			out void* p_ret_val
+		);
+
+		[CCode (cname = "GetPatternProvider")]
+		public abstract int get_pattern_provider (
+			int pattern_id,
+			IUnknown p_ret_val
+		);
+
+		[CCode (cname = "GetPropertyValue")]
+		public abstract int get_property_value (
+			int property_id,
+			out void* p_ret_val
+		);
+
+		[CCode (cname = "get_HostRawElementProvider")]
+		public abstract int get_host_raw_element_provider (
+			IRawElementProviderSimple p_ret_val
+		);
+
+	}
+
+	[CCode (cname = "IAccessibleEx", ref_function = "", unref_function = "")]
+	public interface IAccessibleEx : IUnknown {
+		[CCode (cname = "GetObjectForChild")]
+		public abstract int get_object_for_child (
+			int id_child,
+			IAccessibleEx p_ret_val
+		);
+
+		[CCode (cname = "GetIAccessiblePair")]
+		public abstract int get_iaccessible_pair (
+			IAccessible pp_acc,
+			out int pid_child
+		);
+
+		[CCode (cname = "GetRuntimeId")]
+		public abstract int get_runtime_id (
+			out out void* p_ret_val
+		);
+
+		[CCode (cname = "ConvertReturnedElement")]
+		public abstract int convert_returned_element (
+			IRawElementProviderSimple p_in,
+			IAccessibleEx pp_ret_val_out
+		);
+
+	}
+
+	[CCode (cname = "IRawElementProviderSimple2", ref_function = "", unref_function = "")]
+	public interface IRawElementProviderSimple2 : IRawElementProviderSimple {
+		[CCode (cname = "ShowContextMenu")]
+		public abstract int show_context_menu (
+		);
+
+	}
+
+	[CCode (cname = "IRawElementProviderSimple3", ref_function = "", unref_function = "")]
+	public interface IRawElementProviderSimple3 : IRawElementProviderSimple2 {
+		[CCode (cname = "GetMetadataValue")]
+		public abstract int get_metadata_value (
+			int target_id,
+			int metadata_id,
+			out void* return_val
+		);
+
+	}
+
+	[CCode (cname = "IRawElementProviderFragmentRoot", ref_function = "", unref_function = "")]
+	public interface IRawElementProviderFragmentRoot : IUnknown {
+		[CCode (cname = "ElementProviderFromPoint")]
+		public abstract int element_provider_from_point (
+			void* x,
+			void* y,
+			IRawElementProviderFragment p_ret_val
+		);
+
+		[CCode (cname = "GetFocus")]
+		public abstract int get_focus (
+			IRawElementProviderFragment p_ret_val
+		);
+
+	}
+
+	[CCode (cname = "IRawElementProviderFragment", ref_function = "", unref_function = "")]
+	public interface IRawElementProviderFragment : IUnknown {
+		[CCode (cname = "Navigate")]
+		public abstract int navigate (
+			void* direction,
+			IRawElementProviderFragment p_ret_val
+		);
+
+		[CCode (cname = "GetRuntimeId")]
+		public abstract int get_runtime_id (
+			out out void* p_ret_val
+		);
+
+		[CCode (cname = "get_BoundingRectangle")]
+		public abstract int get_bounding_rectangle (
+			out void* p_ret_val
+		);
+
+		[CCode (cname = "GetEmbeddedFragmentRoots")]
+		public abstract int get_embedded_fragment_roots (
+			out out void* p_ret_val
+		);
+
+		[CCode (cname = "SetFocus")]
+		public abstract int set_focus (
+		);
+
+		[CCode (cname = "get_FragmentRoot")]
+		public abstract int get_fragment_root (
+			IRawElementProviderFragmentRoot p_ret_val
+		);
+
+	}
+
+	[CCode (cname = "IRawElementProviderAdviseEvents", ref_function = "", unref_function = "")]
+	public interface IRawElementProviderAdviseEvents : IUnknown {
+		[CCode (cname = "AdviseEventAdded")]
+		public abstract int advise_event_added (
+			int event_id,
+			void* property_ids
+		);
+
+		[CCode (cname = "AdviseEventRemoved")]
+		public abstract int advise_event_removed (
+			int event_id,
+			void* property_ids
+		);
+
+	}
+
+	[CCode (cname = "IRawElementProviderHwndOverride", ref_function = "", unref_function = "")]
+	public interface IRawElementProviderHwndOverride : IUnknown {
+		[CCode (cname = "GetOverrideProviderForHwnd")]
+		public abstract int get_override_provider_for_hwnd (
+			[CCode (type_id = "HWND")] void* hwnd,
+			IRawElementProviderSimple p_ret_val
+		);
+
+	}
+
+	[CCode (cname = "IProxyProviderWinEventSink", ref_function = "", unref_function = "")]
+	public interface IProxyProviderWinEventSink : IUnknown {
+		[CCode (cname = "AddAutomationPropertyChangedEvent")]
+		public abstract int add_automation_property_changed_event (
+			IRawElementProviderSimple p_provider,
+			int id,
+			void* new_value
+		);
+
+		[CCode (cname = "AddAutomationEvent")]
+		public abstract int add_automation_event (
+			IRawElementProviderSimple p_provider,
+			int id
+		);
+
+		[CCode (cname = "AddStructureChangedEvent")]
+		public abstract int add_structure_changed_event (
+			IRawElementProviderSimple p_provider,
+			void* structure_change_type,
+			void* runtime_id
+		);
+
+	}
+
+	[CCode (cname = "IProxyProviderWinEventHandler", ref_function = "", unref_function = "")]
+	public interface IProxyProviderWinEventHandler : IUnknown {
+		[CCode (cname = "RespondToWinEvent")]
+		public abstract int respond_to_win_event (
+			uint id_win_event,
+			[CCode (type_id = "HWND")] void* hwnd,
+			int id_object,
+			int id_child,
+			IProxyProviderWinEventSink p_sink
+		);
+
+	}
+
+	[CCode (cname = "IRawElementProviderWindowlessSite", ref_function = "", unref_function = "")]
+	public interface IRawElementProviderWindowlessSite : IUnknown {
+		[CCode (cname = "GetAdjacentFragment")]
+		public abstract int get_adjacent_fragment (
+			void* direction,
+			IRawElementProviderFragment pp_parent
+		);
+
+		[CCode (cname = "GetRuntimeIdPrefix")]
+		public abstract int get_runtime_id_prefix (
+			out out void* p_ret_val
+		);
+
+	}
+
+	[CCode (cname = "IAccessibleHostingElementProviders", ref_function = "", unref_function = "")]
+	public interface IAccessibleHostingElementProviders : IUnknown {
+		[CCode (cname = "GetEmbeddedFragmentRoots")]
+		public abstract int get_embedded_fragment_roots (
+			out out void* p_ret_val
+		);
+
+		[CCode (cname = "GetObjectIdForProvider")]
+		public abstract int get_object_id_for_provider (
+			IRawElementProviderSimple p_provider,
+			out int pid_object
+		);
+
+	}
+
+	[CCode (cname = "IRawElementProviderHostingAccessibles", ref_function = "", unref_function = "")]
+	public interface IRawElementProviderHostingAccessibles : IUnknown {
+		[CCode (cname = "GetEmbeddedAccessibles")]
+		public abstract int get_embedded_accessibles (
+			out out void* p_ret_val
+		);
+
+	}
+
+	[CCode (cname = "IDockProvider", ref_function = "", unref_function = "")]
+	public interface IDockProvider : IUnknown {
+		[CCode (cname = "SetDockPosition")]
+		public abstract int set_dock_position (
+			void* dock_position
+		);
+
+		[CCode (cname = "get_DockPosition")]
+		public abstract int get_dock_position (
+			out void* p_ret_val
+		);
+
+	}
+
+	[CCode (cname = "IExpandCollapseProvider", ref_function = "", unref_function = "")]
+	public interface IExpandCollapseProvider : IUnknown {
+		[CCode (cname = "Expand")]
+		public abstract int expand (
+		);
+
+		[CCode (cname = "Collapse")]
+		public abstract int collapse (
+		);
+
+		[CCode (cname = "get_ExpandCollapseState")]
+		public abstract int get_expand_collapse_state (
+			out void* p_ret_val
+		);
+
+	}
+
+	[CCode (cname = "IGridProvider", ref_function = "", unref_function = "")]
+	public interface IGridProvider : IUnknown {
+		[CCode (cname = "GetItem")]
+		public abstract int get_item (
+			int row,
+			int column,
+			IRawElementProviderSimple p_ret_val
+		);
+
+		[CCode (cname = "get_RowCount")]
+		public abstract int get_row_count (
+			out int p_ret_val
+		);
+
+		[CCode (cname = "get_ColumnCount")]
+		public abstract int get_column_count (
+			out int p_ret_val
+		);
+
+	}
+
+	[CCode (cname = "IGridItemProvider", ref_function = "", unref_function = "")]
+	public interface IGridItemProvider : IUnknown {
+		[CCode (cname = "get_Row")]
+		public abstract int get_row (
+			out int p_ret_val
+		);
+
+		[CCode (cname = "get_Column")]
+		public abstract int get_column (
+			out int p_ret_val
+		);
+
+		[CCode (cname = "get_RowSpan")]
+		public abstract int get_row_span (
+			out int p_ret_val
+		);
+
+		[CCode (cname = "get_ColumnSpan")]
+		public abstract int get_column_span (
+			out int p_ret_val
+		);
+
+		[CCode (cname = "get_ContainingGrid")]
+		public abstract int get_containing_grid (
+			IRawElementProviderSimple p_ret_val
+		);
+
+	}
+
+	[CCode (cname = "IInvokeProvider", ref_function = "", unref_function = "")]
+	public interface IInvokeProvider : IUnknown {
+		[CCode (cname = "Invoke")]
+		public abstract int invoke (
+		);
+
+	}
+
+	[CCode (cname = "IMultipleViewProvider", ref_function = "", unref_function = "")]
+	public interface IMultipleViewProvider : IUnknown {
+		[CCode (cname = "GetViewName")]
+		public abstract int get_view_name (
+			int view_id,
+			out void* p_ret_val
+		);
+
+		[CCode (cname = "SetCurrentView")]
+		public abstract int set_current_view (
+			int view_id
+		);
+
+		[CCode (cname = "get_CurrentView")]
+		public abstract int get_current_view (
+			out int p_ret_val
+		);
+
+		[CCode (cname = "GetSupportedViews")]
+		public abstract int get_supported_views (
+			out out void* p_ret_val
+		);
+
+	}
+
+	[CCode (cname = "IRangeValueProvider", ref_function = "", unref_function = "")]
+	public interface IRangeValueProvider : IUnknown {
+		[CCode (cname = "SetValue")]
+		public abstract int set_value (
+			void* val
+		);
+
+		[CCode (cname = "get_Value")]
+		public abstract int get_value (
+			out void* p_ret_val
+		);
+
+		[CCode (cname = "get_IsReadOnly")]
+		public abstract int get_is_read_only (
+			out int p_ret_val
+		);
+
+		[CCode (cname = "get_Maximum")]
+		public abstract int get_maximum (
+			out void* p_ret_val
+		);
+
+		[CCode (cname = "get_Minimum")]
+		public abstract int get_minimum (
+			out void* p_ret_val
+		);
+
+		[CCode (cname = "get_LargeChange")]
+		public abstract int get_large_change (
+			out void* p_ret_val
+		);
+
+		[CCode (cname = "get_SmallChange")]
+		public abstract int get_small_change (
+			out void* p_ret_val
+		);
+
+	}
+
+	[CCode (cname = "IScrollItemProvider", ref_function = "", unref_function = "")]
+	public interface IScrollItemProvider : IUnknown {
+		[CCode (cname = "ScrollIntoView")]
+		public abstract int scroll_into_view (
+		);
+
+	}
+
+	[CCode (cname = "ISelectionProvider", ref_function = "", unref_function = "")]
+	public interface ISelectionProvider : IUnknown {
+		[CCode (cname = "GetSelection")]
+		public abstract int get_selection (
+			out out void* p_ret_val
+		);
+
+		[CCode (cname = "get_CanSelectMultiple")]
+		public abstract int get_can_select_multiple (
+			out int p_ret_val
+		);
+
+		[CCode (cname = "get_IsSelectionRequired")]
+		public abstract int get_is_selection_required (
+			out int p_ret_val
+		);
+
+	}
+
+	[CCode (cname = "ISelectionProvider2", ref_function = "", unref_function = "")]
+	public interface ISelectionProvider2 : ISelectionProvider {
+		[CCode (cname = "get_FirstSelectedItem")]
+		public abstract int get_first_selected_item (
+			IRawElementProviderSimple ret_val
+		);
+
+		[CCode (cname = "get_LastSelectedItem")]
+		public abstract int get_last_selected_item (
+			IRawElementProviderSimple ret_val
+		);
+
+		[CCode (cname = "get_CurrentSelectedItem")]
+		public abstract int get_current_selected_item (
+			IRawElementProviderSimple ret_val
+		);
+
+		[CCode (cname = "get_ItemCount")]
+		public abstract int get_item_count (
+			out int ret_val
+		);
+
+	}
+
+	[CCode (cname = "IScrollProvider", ref_function = "", unref_function = "")]
+	public interface IScrollProvider : IUnknown {
+		[CCode (cname = "Scroll")]
+		public abstract int scroll (
+			void* horizontal_amount,
+			void* vertical_amount
+		);
+
+		[CCode (cname = "SetScrollPercent")]
+		public abstract int set_scroll_percent (
+			void* horizontal_percent,
+			void* vertical_percent
+		);
+
+		[CCode (cname = "get_HorizontalScrollPercent")]
+		public abstract int get_horizontal_scroll_percent (
+			out void* p_ret_val
+		);
+
+		[CCode (cname = "get_VerticalScrollPercent")]
+		public abstract int get_vertical_scroll_percent (
+			out void* p_ret_val
+		);
+
+		[CCode (cname = "get_HorizontalViewSize")]
+		public abstract int get_horizontal_view_size (
+			out void* p_ret_val
+		);
+
+		[CCode (cname = "get_VerticalViewSize")]
+		public abstract int get_vertical_view_size (
+			out void* p_ret_val
+		);
+
+		[CCode (cname = "get_HorizontallyScrollable")]
+		public abstract int get_horizontally_scrollable (
+			out int p_ret_val
+		);
+
+		[CCode (cname = "get_VerticallyScrollable")]
+		public abstract int get_vertically_scrollable (
+			out int p_ret_val
+		);
+
+	}
+
+	[CCode (cname = "ISelectionItemProvider", ref_function = "", unref_function = "")]
+	public interface ISelectionItemProvider : IUnknown {
+		[CCode (cname = "Select")]
+		public abstract int select (
+		);
+
+		[CCode (cname = "AddToSelection")]
+		public abstract int add_to_selection (
+		);
+
+		[CCode (cname = "RemoveFromSelection")]
+		public abstract int remove_from_selection (
+		);
+
+		[CCode (cname = "get_IsSelected")]
+		public abstract int get_is_selected (
+			out int p_ret_val
+		);
+
+		[CCode (cname = "get_SelectionContainer")]
+		public abstract int get_selection_container (
+			IRawElementProviderSimple p_ret_val
+		);
+
+	}
+
+	[CCode (cname = "ISynchronizedInputProvider", ref_function = "", unref_function = "")]
+	public interface ISynchronizedInputProvider : IUnknown {
+		[CCode (cname = "StartListening")]
+		public abstract int start_listening (
+			void* input_type
+		);
+
+		[CCode (cname = "Cancel")]
+		public abstract int cancel (
+		);
+
+	}
+
+	[CCode (cname = "ITableProvider", ref_function = "", unref_function = "")]
+	public interface ITableProvider : IUnknown {
+		[CCode (cname = "GetRowHeaders")]
+		public abstract int get_row_headers (
+			out out void* p_ret_val
+		);
+
+		[CCode (cname = "GetColumnHeaders")]
+		public abstract int get_column_headers (
+			out out void* p_ret_val
+		);
+
+		[CCode (cname = "get_RowOrColumnMajor")]
+		public abstract int get_row_or_column_major (
+			out void* p_ret_val
+		);
+
+	}
+
+	[CCode (cname = "ITableItemProvider", ref_function = "", unref_function = "")]
+	public interface ITableItemProvider : IUnknown {
+		[CCode (cname = "GetRowHeaderItems")]
+		public abstract int get_row_header_items (
+			out out void* p_ret_val
+		);
+
+		[CCode (cname = "GetColumnHeaderItems")]
+		public abstract int get_column_header_items (
+			out out void* p_ret_val
+		);
+
+	}
+
+	[CCode (cname = "IToggleProvider", ref_function = "", unref_function = "")]
+	public interface IToggleProvider : IUnknown {
+		[CCode (cname = "Toggle")]
+		public abstract int toggle (
+		);
+
+		[CCode (cname = "get_ToggleState")]
+		public abstract int get_toggle_state (
+			out void* p_ret_val
+		);
+
+	}
+
+	[CCode (cname = "ITransformProvider", ref_function = "", unref_function = "")]
+	public interface ITransformProvider : IUnknown {
+		[CCode (cname = "Move")]
+		public abstract int move (
+			void* x,
+			void* y
+		);
+
+		[CCode (cname = "Resize")]
+		public abstract int resize (
+			void* width,
+			void* height
+		);
+
+		[CCode (cname = "Rotate")]
+		public abstract int rotate (
+			void* degrees
+		);
+
+		[CCode (cname = "get_CanMove")]
+		public abstract int get_can_move (
+			out int p_ret_val
+		);
+
+		[CCode (cname = "get_CanResize")]
+		public abstract int get_can_resize (
+			out int p_ret_val
+		);
+
+		[CCode (cname = "get_CanRotate")]
+		public abstract int get_can_rotate (
+			out int p_ret_val
+		);
+
+	}
+
+	[CCode (cname = "IValueProvider", ref_function = "", unref_function = "")]
+	public interface IValueProvider : IUnknown {
+		[CCode (cname = "SetValue")]
+		public abstract int set_value (
+			[CCode (type_id = "LPCWSTR")] uint16* val
+		);
+
+		[CCode (cname = "get_Value")]
+		public abstract int get_value (
+			out void* p_ret_val
+		);
+
+		[CCode (cname = "get_IsReadOnly")]
+		public abstract int get_is_read_only (
+			out int p_ret_val
+		);
+
+	}
+
+	[CCode (cname = "IWindowProvider", ref_function = "", unref_function = "")]
+	public interface IWindowProvider : IUnknown {
+		[CCode (cname = "SetVisualState")]
+		public abstract int set_visual_state (
+			void* state
+		);
+
+		[CCode (cname = "Close")]
+		public abstract int close (
+		);
+
+		[CCode (cname = "WaitForInputIdle")]
+		public abstract int wait_for_input_idle (
+			int milliseconds,
+			out int p_ret_val
+		);
+
+		[CCode (cname = "get_CanMaximize")]
+		public abstract int get_can_maximize (
+			out int p_ret_val
+		);
+
+		[CCode (cname = "get_CanMinimize")]
+		public abstract int get_can_minimize (
+			out int p_ret_val
+		);
+
+		[CCode (cname = "get_IsModal")]
+		public abstract int get_is_modal (
+			out int p_ret_val
+		);
+
+		[CCode (cname = "get_WindowVisualState")]
+		public abstract int get_window_visual_state (
+			out void* p_ret_val
+		);
+
+		[CCode (cname = "get_WindowInteractionState")]
+		public abstract int get_window_interaction_state (
+			out void* p_ret_val
+		);
+
+		[CCode (cname = "get_IsTopmost")]
+		public abstract int get_is_topmost (
+			out int p_ret_val
+		);
+
+	}
+
+	[CCode (cname = "ILegacyIAccessibleProvider", ref_function = "", unref_function = "")]
+	public interface ILegacyIAccessibleProvider : IUnknown {
+		[CCode (cname = "Select")]
+		public abstract int select (
+			int flags_select
+		);
+
+		[CCode (cname = "DoDefaultAction")]
+		public abstract int do_default_action (
+		);
+
+		[CCode (cname = "SetValue")]
+		public abstract int set_value (
+			[CCode (type_id = "LPCWSTR")] uint16* sz_value
+		);
+
+		[CCode (cname = "GetIAccessible")]
+		public abstract int get_iaccessible (
+			IAccessible pp_accessible
+		);
+
+		[CCode (cname = "get_ChildId")]
+		public abstract int get_child_id (
+			out int p_ret_val
+		);
+
+		[CCode (cname = "get_Name")]
+		public abstract int get_name (
+			out void* psz_name
+		);
+
+		[CCode (cname = "get_Value")]
+		public abstract int get_value (
+			out void* psz_value
+		);
+
+		[CCode (cname = "get_Description")]
+		public abstract int get_description (
+			out void* psz_description
+		);
+
+		[CCode (cname = "get_Role")]
+		public abstract int get_role (
+			out uint pdw_role
+		);
+
+		[CCode (cname = "get_State")]
+		public abstract int get_state (
+			out uint pdw_state
+		);
+
+		[CCode (cname = "get_Help")]
+		public abstract int get_help (
+			out void* psz_help
+		);
+
+		[CCode (cname = "get_KeyboardShortcut")]
+		public abstract int get_keyboard_shortcut (
+			out void* psz_keyboard_shortcut
+		);
+
+		[CCode (cname = "GetSelection")]
+		public abstract int get_selection (
+			out out void* pvar_selected_children
+		);
+
+		[CCode (cname = "get_DefaultAction")]
+		public abstract int get_default_action (
+			out void* psz_default_action
+		);
+
+	}
+
+	[CCode (cname = "IItemContainerProvider", ref_function = "", unref_function = "")]
+	public interface IItemContainerProvider : IUnknown {
+		[CCode (cname = "FindItemByProperty")]
+		public abstract int find_item_by_property (
+			IRawElementProviderSimple p_start_after,
+			int property_id,
+			void* value,
+			IRawElementProviderSimple p_found
+		);
+
+	}
+
+	[CCode (cname = "IVirtualizedItemProvider", ref_function = "", unref_function = "")]
+	public interface IVirtualizedItemProvider : IUnknown {
+		[CCode (cname = "Realize")]
+		public abstract int realize (
+		);
+
+	}
+
+	[CCode (cname = "IObjectModelProvider", ref_function = "", unref_function = "")]
+	public interface IObjectModelProvider : IUnknown {
+		[CCode (cname = "GetUnderlyingObjectModel")]
+		public abstract int get_underlying_object_model (
+			IUnknown pp_unknown
+		);
+
+	}
+
+	[CCode (cname = "IAnnotationProvider", ref_function = "", unref_function = "")]
+	public interface IAnnotationProvider : IUnknown {
+		[CCode (cname = "get_AnnotationTypeId")]
+		public abstract int get_annotation_type_id (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_AnnotationTypeName")]
+		public abstract int get_annotation_type_name (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_Author")]
+		public abstract int get_author (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_DateTime")]
+		public abstract int get_date_time (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_Target")]
+		public abstract int get_target (
+			IRawElementProviderSimple ret_val
+		);
+
+	}
+
+	[CCode (cname = "IStylesProvider", ref_function = "", unref_function = "")]
+	public interface IStylesProvider : IUnknown {
+		[CCode (cname = "get_StyleId")]
+		public abstract int get_style_id (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_StyleName")]
+		public abstract int get_style_name (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_FillColor")]
+		public abstract int get_fill_color (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_FillPatternStyle")]
+		public abstract int get_fill_pattern_style (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_Shape")]
+		public abstract int get_shape (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_FillPatternColor")]
+		public abstract int get_fill_pattern_color (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_ExtendedProperties")]
+		public abstract int get_extended_properties (
+			out void* ret_val
+		);
+
+	}
+
+	[CCode (cname = "ISpreadsheetProvider", ref_function = "", unref_function = "")]
+	public interface ISpreadsheetProvider : IUnknown {
+		[CCode (cname = "GetItemByName")]
+		public abstract int get_item_by_name (
+			[CCode (type_id = "LPCWSTR")] uint16* name,
+			IRawElementProviderSimple p_ret_val
+		);
+
+	}
+
+	[CCode (cname = "ISpreadsheetItemProvider", ref_function = "", unref_function = "")]
+	public interface ISpreadsheetItemProvider : IUnknown {
+		[CCode (cname = "get_Formula")]
+		public abstract int get_formula (
+			out void* p_ret_val
+		);
+
+		[CCode (cname = "GetAnnotationObjects")]
+		public abstract int get_annotation_objects (
+			out out void* p_ret_val
+		);
+
+		[CCode (cname = "GetAnnotationTypes")]
+		public abstract int get_annotation_types (
+			out out void* p_ret_val
+		);
+
+	}
+
+	[CCode (cname = "ITransformProvider2", ref_function = "", unref_function = "")]
+	public interface ITransformProvider2 : ITransformProvider {
+		[CCode (cname = "Zoom")]
+		public abstract int zoom (
+			void* zoom
+		);
+
+		[CCode (cname = "get_CanZoom")]
+		public abstract int get_can_zoom (
+			out int p_ret_val
+		);
+
+		[CCode (cname = "get_ZoomLevel")]
+		public abstract int get_zoom_level (
+			out void* p_ret_val
+		);
+
+		[CCode (cname = "get_ZoomMinimum")]
+		public abstract int get_zoom_minimum (
+			out void* p_ret_val
+		);
+
+		[CCode (cname = "get_ZoomMaximum")]
+		public abstract int get_zoom_maximum (
+			out void* p_ret_val
+		);
+
+		[CCode (cname = "ZoomByUnit")]
+		public abstract int zoom_by_unit (
+			void* zoom_unit
+		);
+
+	}
+
+	[CCode (cname = "IDragProvider", ref_function = "", unref_function = "")]
+	public interface IDragProvider : IUnknown {
+		[CCode (cname = "get_IsGrabbed")]
+		public abstract int get_is_grabbed (
+			out int p_ret_val
+		);
+
+		[CCode (cname = "get_DropEffect")]
+		public abstract int get_drop_effect (
+			out void* p_ret_val
+		);
+
+		[CCode (cname = "get_DropEffects")]
+		public abstract int get_drop_effects (
+			out out void* p_ret_val
+		);
+
+		[CCode (cname = "GetGrabbedItems")]
+		public abstract int get_grabbed_items (
+			out out void* p_ret_val
+		);
+
+	}
+
+	[CCode (cname = "IDropTargetProvider", ref_function = "", unref_function = "")]
+	public interface IDropTargetProvider : IUnknown {
+		[CCode (cname = "get_DropTargetEffect")]
+		public abstract int get_drop_target_effect (
+			out void* p_ret_val
+		);
+
+		[CCode (cname = "get_DropTargetEffects")]
+		public abstract int get_drop_target_effects (
+			out out void* p_ret_val
+		);
+
+	}
+
+	[CCode (cname = "ITextRangeProvider", ref_function = "", unref_function = "")]
+	public interface ITextRangeProvider : IUnknown {
+		[CCode (cname = "Clone")]
+		public abstract int clone (
+			ITextRangeProvider p_ret_val
+		);
+
+		[CCode (cname = "Compare")]
+		public abstract int compare (
+			ITextRangeProvider range,
+			out int p_ret_val
+		);
+
+		[CCode (cname = "CompareEndpoints")]
+		public abstract int compare_endpoints (
+			void* endpoint,
+			ITextRangeProvider target_range,
+			void* target_endpoint,
+			out int p_ret_val
+		);
+
+		[CCode (cname = "ExpandToEnclosingUnit")]
+		public abstract int expand_to_enclosing_unit (
+			void* unit
+		);
+
+		[CCode (cname = "FindAttribute")]
+		public abstract int find_attribute (
+			int attribute_id,
+			void* val,
+			int backward,
+			ITextRangeProvider p_ret_val
+		);
+
+		[CCode (cname = "FindText")]
+		public abstract int find_text (
+			void* text,
+			int backward,
+			int ignore_case,
+			ITextRangeProvider p_ret_val
+		);
+
+		[CCode (cname = "GetAttributeValue")]
+		public abstract int get_attribute_value (
+			int attribute_id,
+			out void* p_ret_val
+		);
+
+		[CCode (cname = "GetBoundingRectangles")]
+		public abstract int get_bounding_rectangles (
+			out out void* p_ret_val
+		);
+
+		[CCode (cname = "GetEnclosingElement")]
+		public abstract int get_enclosing_element (
+			IRawElementProviderSimple p_ret_val
+		);
+
+		[CCode (cname = "GetText")]
+		public abstract int get_text (
+			int max_length,
+			out void* p_ret_val
+		);
+
+		[CCode (cname = "Move")]
+		public abstract int move (
+			void* unit,
+			int count,
+			out int p_ret_val
+		);
+
+		[CCode (cname = "MoveEndpointByUnit")]
+		public abstract int move_endpoint_by_unit (
+			void* endpoint,
+			void* unit,
+			int count,
+			out int p_ret_val
+		);
+
+		[CCode (cname = "MoveEndpointByRange")]
+		public abstract int move_endpoint_by_range (
+			void* endpoint,
+			ITextRangeProvider target_range,
+			void* target_endpoint
+		);
+
+		[CCode (cname = "Select")]
+		public abstract int select (
+		);
+
+		[CCode (cname = "AddToSelection")]
+		public abstract int add_to_selection (
+		);
+
+		[CCode (cname = "RemoveFromSelection")]
+		public abstract int remove_from_selection (
+		);
+
+		[CCode (cname = "ScrollIntoView")]
+		public abstract int scroll_into_view (
+			int align_to_top
+		);
+
+		[CCode (cname = "GetChildren")]
+		public abstract int get_children (
+			out out void* p_ret_val
+		);
+
+	}
+
+	[CCode (cname = "ITextProvider", ref_function = "", unref_function = "")]
+	public interface ITextProvider : IUnknown {
+		[CCode (cname = "GetSelection")]
+		public abstract int get_selection (
+			out out void* p_ret_val
+		);
+
+		[CCode (cname = "GetVisibleRanges")]
+		public abstract int get_visible_ranges (
+			out out void* p_ret_val
+		);
+
+		[CCode (cname = "RangeFromChild")]
+		public abstract int range_from_child (
+			IRawElementProviderSimple child_element,
+			ITextRangeProvider p_ret_val
+		);
+
+		[CCode (cname = "RangeFromPoint")]
+		public abstract int range_from_point (
+			void* point,
+			ITextRangeProvider p_ret_val
+		);
+
+		[CCode (cname = "get_DocumentRange")]
+		public abstract int get_document_range (
+			ITextRangeProvider p_ret_val
+		);
+
+		[CCode (cname = "get_SupportedTextSelection")]
+		public abstract int get_supported_text_selection (
+			out void* p_ret_val
+		);
+
+	}
+
+	[CCode (cname = "ITextProvider2", ref_function = "", unref_function = "")]
+	public interface ITextProvider2 : ITextProvider {
+		[CCode (cname = "RangeFromAnnotation")]
+		public abstract int range_from_annotation (
+			IRawElementProviderSimple annotation_element,
+			ITextRangeProvider p_ret_val
+		);
+
+		[CCode (cname = "GetCaretRange")]
+		public abstract int get_caret_range (
+			out int is_active,
+			ITextRangeProvider p_ret_val
+		);
+
+	}
+
+	[CCode (cname = "ITextEditProvider", ref_function = "", unref_function = "")]
+	public interface ITextEditProvider : ITextProvider {
+		[CCode (cname = "GetActiveComposition")]
+		public abstract int get_active_composition (
+			ITextRangeProvider p_ret_val
+		);
+
+		[CCode (cname = "GetConversionTarget")]
+		public abstract int get_conversion_target (
+			ITextRangeProvider p_ret_val
+		);
+
+	}
+
+	[CCode (cname = "ITextRangeProvider2", ref_function = "", unref_function = "")]
+	public interface ITextRangeProvider2 : ITextRangeProvider {
+		[CCode (cname = "ShowContextMenu")]
+		public abstract int show_context_menu (
+		);
+
+	}
+
+	[CCode (cname = "ITextChildProvider", ref_function = "", unref_function = "")]
+	public interface ITextChildProvider : IUnknown {
+		[CCode (cname = "get_TextContainer")]
+		public abstract int get_text_container (
+			IRawElementProviderSimple p_ret_val
+		);
+
+		[CCode (cname = "get_TextRange")]
+		public abstract int get_text_range (
+			ITextRangeProvider p_ret_val
+		);
+
+	}
+
+	[CCode (cname = "ICustomNavigationProvider", ref_function = "", unref_function = "")]
+	public interface ICustomNavigationProvider : IUnknown {
+		[CCode (cname = "Navigate")]
+		public abstract int navigate (
+			void* direction,
+			IRawElementProviderSimple p_ret_val
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomationPatternInstance", ref_function = "", unref_function = "")]
+	public interface IUIAutomationPatternInstance : IUnknown {
+		[CCode (cname = "GetProperty")]
+		public abstract int get_property (
+			uint index,
+			int cached,
+			void* type,
+			out void* p_ptr
+		);
+
+		[CCode (cname = "CallMethod")]
+		public abstract int call_method (
+			uint index,
+			void* p_params,
+			uint c_params
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomationPatternHandler", ref_function = "", unref_function = "")]
+	public interface IUIAutomationPatternHandler : IUnknown {
+		[CCode (cname = "CreateClientWrapper")]
+		public abstract int create_client_wrapper (
+			IUIAutomationPatternInstance p_pattern_instance,
+			IUnknown p_client_wrapper
+		);
+
+		[CCode (cname = "Dispatch")]
+		public abstract int dispatch (
+			IUnknown p_target,
+			uint index,
+			void* p_params,
+			uint c_params
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomationRegistrar", ref_function = "", unref_function = "")]
+	public interface IUIAutomationRegistrar : IUnknown {
+		[CCode (cname = "RegisterProperty")]
+		public abstract int register_property (
+			void* property,
+			out int property_id
+		);
+
+		[CCode (cname = "RegisterEvent")]
+		public abstract int register_event (
+			void* event,
+			out int event_id
+		);
+
+		[CCode (cname = "RegisterPattern")]
+		public abstract int register_pattern (
+			void* pattern,
+			out int p_pattern_id,
+			out int p_pattern_available_property_id,
+			uint property_id_count,
+			void* p_property_ids,
+			uint event_id_count,
+			void* p_event_ids
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomationElement", ref_function = "", unref_function = "")]
+	public interface IUIAutomationElement : IUnknown {
+		[CCode (cname = "SetFocus")]
+		public abstract int set_focus (
+		);
+
+		[CCode (cname = "GetRuntimeId")]
+		public abstract int get_runtime_id (
+			out out void* runtime_id
+		);
+
+		[CCode (cname = "FindFirst")]
+		public abstract int find_first (
+			void* scope,
+			IUIAutomationCondition condition,
+			IUIAutomationElement found
+		);
+
+		[CCode (cname = "FindAll")]
+		public abstract int find_all (
+			void* scope,
+			IUIAutomationCondition condition,
+			IUIAutomationElementArray found
+		);
+
+		[CCode (cname = "FindFirstBuildCache")]
+		public abstract int find_first_build_cache (
+			void* scope,
+			IUIAutomationCondition condition,
+			IUIAutomationCacheRequest cache_request,
+			IUIAutomationElement found
+		);
+
+		[CCode (cname = "FindAllBuildCache")]
+		public abstract int find_all_build_cache (
+			void* scope,
+			IUIAutomationCondition condition,
+			IUIAutomationCacheRequest cache_request,
+			IUIAutomationElementArray found
+		);
+
+		[CCode (cname = "BuildUpdatedCache")]
+		public abstract int build_updated_cache (
+			IUIAutomationCacheRequest cache_request,
+			IUIAutomationElement updated_element
+		);
+
+		[CCode (cname = "GetCurrentPropertyValue")]
+		public abstract int get_current_property_value (
+			int property_id,
+			out void* ret_val
+		);
+
+		[CCode (cname = "GetCurrentPropertyValueEx")]
+		public abstract int get_current_property_value_ex (
+			int property_id,
+			int ignore_default_value,
+			out void* ret_val
+		);
+
+		[CCode (cname = "GetCachedPropertyValue")]
+		public abstract int get_cached_property_value (
+			int property_id,
+			out void* ret_val
+		);
+
+		[CCode (cname = "GetCachedPropertyValueEx")]
+		public abstract int get_cached_property_value_ex (
+			int property_id,
+			int ignore_default_value,
+			out void* ret_val
+		);
+
+		[CCode (cname = "GetCurrentPatternAs")]
+		public abstract int get_current_pattern_as (
+			int pattern_id,
+			void* riid,
+			out out void* pattern_object
+		);
+
+		[CCode (cname = "GetCachedPatternAs")]
+		public abstract int get_cached_pattern_as (
+			int pattern_id,
+			void* riid,
+			out out void* pattern_object
+		);
+
+		[CCode (cname = "GetCurrentPattern")]
+		public abstract int get_current_pattern (
+			int pattern_id,
+			IUnknown pattern_object
+		);
+
+		[CCode (cname = "GetCachedPattern")]
+		public abstract int get_cached_pattern (
+			int pattern_id,
+			IUnknown pattern_object
+		);
+
+		[CCode (cname = "GetCachedParent")]
+		public abstract int get_cached_parent (
+			IUIAutomationElement parent
+		);
+
+		[CCode (cname = "GetCachedChildren")]
+		public abstract int get_cached_children (
+			IUIAutomationElementArray children
+		);
+
+		[CCode (cname = "get_CurrentProcessId")]
+		public abstract int get_current_process_id (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CurrentControlType")]
+		public abstract int get_current_control_type (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CurrentLocalizedControlType")]
+		public abstract int get_current_localized_control_type (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CurrentName")]
+		public abstract int get_current_name (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CurrentAcceleratorKey")]
+		public abstract int get_current_accelerator_key (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CurrentAccessKey")]
+		public abstract int get_current_access_key (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CurrentHasKeyboardFocus")]
+		public abstract int get_current_has_keyboard_focus (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CurrentIsKeyboardFocusable")]
+		public abstract int get_current_is_keyboard_focusable (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CurrentIsEnabled")]
+		public abstract int get_current_is_enabled (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CurrentAutomationId")]
+		public abstract int get_current_automation_id (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CurrentClassName")]
+		public abstract int get_current_class_name (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CurrentHelpText")]
+		public abstract int get_current_help_text (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CurrentCulture")]
+		public abstract int get_current_culture (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CurrentIsControlElement")]
+		public abstract int get_current_is_control_element (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CurrentIsContentElement")]
+		public abstract int get_current_is_content_element (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CurrentIsPassword")]
+		public abstract int get_current_is_password (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CurrentNativeWindowHandle")]
+		public abstract int get_current_native_window_handle (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CurrentItemType")]
+		public abstract int get_current_item_type (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CurrentIsOffscreen")]
+		public abstract int get_current_is_offscreen (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CurrentOrientation")]
+		public abstract int get_current_orientation (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CurrentFrameworkId")]
+		public abstract int get_current_framework_id (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CurrentIsRequiredForForm")]
+		public abstract int get_current_is_required_for_form (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CurrentItemStatus")]
+		public abstract int get_current_item_status (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CurrentBoundingRectangle")]
+		public abstract int get_current_bounding_rectangle (
+			out Win32.Foundation.Rect ret_val
+		);
+
+		[CCode (cname = "get_CurrentLabeledBy")]
+		public abstract int get_current_labeled_by (
+			IUIAutomationElement ret_val
+		);
+
+		[CCode (cname = "get_CurrentAriaRole")]
+		public abstract int get_current_aria_role (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CurrentAriaProperties")]
+		public abstract int get_current_aria_properties (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CurrentIsDataValidForForm")]
+		public abstract int get_current_is_data_valid_for_form (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CurrentControllerFor")]
+		public abstract int get_current_controller_for (
+			IUIAutomationElementArray ret_val
+		);
+
+		[CCode (cname = "get_CurrentDescribedBy")]
+		public abstract int get_current_described_by (
+			IUIAutomationElementArray ret_val
+		);
+
+		[CCode (cname = "get_CurrentFlowsTo")]
+		public abstract int get_current_flows_to (
+			IUIAutomationElementArray ret_val
+		);
+
+		[CCode (cname = "get_CurrentProviderDescription")]
+		public abstract int get_current_provider_description (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CachedProcessId")]
+		public abstract int get_cached_process_id (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CachedControlType")]
+		public abstract int get_cached_control_type (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CachedLocalizedControlType")]
+		public abstract int get_cached_localized_control_type (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CachedName")]
+		public abstract int get_cached_name (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CachedAcceleratorKey")]
+		public abstract int get_cached_accelerator_key (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CachedAccessKey")]
+		public abstract int get_cached_access_key (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CachedHasKeyboardFocus")]
+		public abstract int get_cached_has_keyboard_focus (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CachedIsKeyboardFocusable")]
+		public abstract int get_cached_is_keyboard_focusable (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CachedIsEnabled")]
+		public abstract int get_cached_is_enabled (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CachedAutomationId")]
+		public abstract int get_cached_automation_id (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CachedClassName")]
+		public abstract int get_cached_class_name (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CachedHelpText")]
+		public abstract int get_cached_help_text (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CachedCulture")]
+		public abstract int get_cached_culture (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CachedIsControlElement")]
+		public abstract int get_cached_is_control_element (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CachedIsContentElement")]
+		public abstract int get_cached_is_content_element (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CachedIsPassword")]
+		public abstract int get_cached_is_password (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CachedNativeWindowHandle")]
+		public abstract int get_cached_native_window_handle (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CachedItemType")]
+		public abstract int get_cached_item_type (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CachedIsOffscreen")]
+		public abstract int get_cached_is_offscreen (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CachedOrientation")]
+		public abstract int get_cached_orientation (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CachedFrameworkId")]
+		public abstract int get_cached_framework_id (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CachedIsRequiredForForm")]
+		public abstract int get_cached_is_required_for_form (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CachedItemStatus")]
+		public abstract int get_cached_item_status (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CachedBoundingRectangle")]
+		public abstract int get_cached_bounding_rectangle (
+			out Win32.Foundation.Rect ret_val
+		);
+
+		[CCode (cname = "get_CachedLabeledBy")]
+		public abstract int get_cached_labeled_by (
+			IUIAutomationElement ret_val
+		);
+
+		[CCode (cname = "get_CachedAriaRole")]
+		public abstract int get_cached_aria_role (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CachedAriaProperties")]
+		public abstract int get_cached_aria_properties (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CachedIsDataValidForForm")]
+		public abstract int get_cached_is_data_valid_for_form (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CachedControllerFor")]
+		public abstract int get_cached_controller_for (
+			IUIAutomationElementArray ret_val
+		);
+
+		[CCode (cname = "get_CachedDescribedBy")]
+		public abstract int get_cached_described_by (
+			IUIAutomationElementArray ret_val
+		);
+
+		[CCode (cname = "get_CachedFlowsTo")]
+		public abstract int get_cached_flows_to (
+			IUIAutomationElementArray ret_val
+		);
+
+		[CCode (cname = "get_CachedProviderDescription")]
+		public abstract int get_cached_provider_description (
+			out void* ret_val
+		);
+
+		[CCode (cname = "GetClickablePoint")]
+		public abstract int get_clickable_point (
+			out Win32.Foundation.Point clickable,
+			out int got_clickable
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomationElementArray", ref_function = "", unref_function = "")]
+	public interface IUIAutomationElementArray : IUnknown {
+		[CCode (cname = "get_Length")]
+		public abstract int get_length (
+			out int length
+		);
+
+		[CCode (cname = "GetElement")]
+		public abstract int get_element (
+			int index,
+			IUIAutomationElement element
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomationCondition", ref_function = "", unref_function = "")]
+	public interface IUIAutomationCondition : IUnknown {
+	}
+
+	[CCode (cname = "IUIAutomationBoolCondition", ref_function = "", unref_function = "")]
+	public interface IUIAutomationBoolCondition : IUIAutomationCondition {
+		[CCode (cname = "get_BooleanValue")]
+		public abstract int get_boolean_value (
+			out int bool_val
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomationPropertyCondition", ref_function = "", unref_function = "")]
+	public interface IUIAutomationPropertyCondition : IUIAutomationCondition {
+		[CCode (cname = "get_PropertyId")]
+		public abstract int get_property_id (
+			out int property_id
+		);
+
+		[CCode (cname = "get_PropertyValue")]
+		public abstract int get_property_value (
+			out void* property_value
+		);
+
+		[CCode (cname = "get_PropertyConditionFlags")]
+		public abstract int get_property_condition_flags (
+			out void* flags
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomationAndCondition", ref_function = "", unref_function = "")]
+	public interface IUIAutomationAndCondition : IUIAutomationCondition {
+		[CCode (cname = "get_ChildCount")]
+		public abstract int get_child_count (
+			out int child_count
+		);
+
+		[CCode (cname = "GetChildrenAsNativeArray")]
+		public abstract int get_children_as_native_array (
+			void* child_array,
+			out int child_array_count
+		);
+
+		[CCode (cname = "GetChildren")]
+		public abstract int get_children (
+			out out void* child_array
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomationOrCondition", ref_function = "", unref_function = "")]
+	public interface IUIAutomationOrCondition : IUIAutomationCondition {
+		[CCode (cname = "get_ChildCount")]
+		public abstract int get_child_count (
+			out int child_count
+		);
+
+		[CCode (cname = "GetChildrenAsNativeArray")]
+		public abstract int get_children_as_native_array (
+			void* child_array,
+			out int child_array_count
+		);
+
+		[CCode (cname = "GetChildren")]
+		public abstract int get_children (
+			out out void* child_array
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomationNotCondition", ref_function = "", unref_function = "")]
+	public interface IUIAutomationNotCondition : IUIAutomationCondition {
+		[CCode (cname = "GetChild")]
+		public abstract int get_child (
+			IUIAutomationCondition condition
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomationCacheRequest", ref_function = "", unref_function = "")]
+	public interface IUIAutomationCacheRequest : IUnknown {
+		[CCode (cname = "AddProperty")]
+		public abstract int add_property (
+			int property_id
+		);
+
+		[CCode (cname = "AddPattern")]
+		public abstract int add_pattern (
+			int pattern_id
+		);
+
+		[CCode (cname = "Clone")]
+		public abstract int clone (
+			IUIAutomationCacheRequest cloned_request
+		);
+
+		[CCode (cname = "get_TreeScope")]
+		public abstract int get_tree_scope (
+			out void* scope
+		);
+
+		[CCode (cname = "put_TreeScope")]
+		public abstract int put_tree_scope (
+			void* scope
+		);
+
+		[CCode (cname = "get_TreeFilter")]
+		public abstract int get_tree_filter (
+			IUIAutomationCondition filter
+		);
+
+		[CCode (cname = "put_TreeFilter")]
+		public abstract int put_tree_filter (
+			IUIAutomationCondition filter
+		);
+
+		[CCode (cname = "get_AutomationElementMode")]
+		public abstract int get_automation_element_mode (
+			out void* mode
+		);
+
+		[CCode (cname = "put_AutomationElementMode")]
+		public abstract int put_automation_element_mode (
+			void* mode
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomationTreeWalker", ref_function = "", unref_function = "")]
+	public interface IUIAutomationTreeWalker : IUnknown {
+		[CCode (cname = "GetParentElement")]
+		public abstract int get_parent_element (
+			IUIAutomationElement element,
+			IUIAutomationElement parent
+		);
+
+		[CCode (cname = "GetFirstChildElement")]
+		public abstract int get_first_child_element (
+			IUIAutomationElement element,
+			IUIAutomationElement first
+		);
+
+		[CCode (cname = "GetLastChildElement")]
+		public abstract int get_last_child_element (
+			IUIAutomationElement element,
+			IUIAutomationElement last
+		);
+
+		[CCode (cname = "GetNextSiblingElement")]
+		public abstract int get_next_sibling_element (
+			IUIAutomationElement element,
+			IUIAutomationElement next
+		);
+
+		[CCode (cname = "GetPreviousSiblingElement")]
+		public abstract int get_previous_sibling_element (
+			IUIAutomationElement element,
+			IUIAutomationElement previous
+		);
+
+		[CCode (cname = "NormalizeElement")]
+		public abstract int normalize_element (
+			IUIAutomationElement element,
+			IUIAutomationElement normalized
+		);
+
+		[CCode (cname = "GetParentElementBuildCache")]
+		public abstract int get_parent_element_build_cache (
+			IUIAutomationElement element,
+			IUIAutomationCacheRequest cache_request,
+			IUIAutomationElement parent
+		);
+
+		[CCode (cname = "GetFirstChildElementBuildCache")]
+		public abstract int get_first_child_element_build_cache (
+			IUIAutomationElement element,
+			IUIAutomationCacheRequest cache_request,
+			IUIAutomationElement first
+		);
+
+		[CCode (cname = "GetLastChildElementBuildCache")]
+		public abstract int get_last_child_element_build_cache (
+			IUIAutomationElement element,
+			IUIAutomationCacheRequest cache_request,
+			IUIAutomationElement last
+		);
+
+		[CCode (cname = "GetNextSiblingElementBuildCache")]
+		public abstract int get_next_sibling_element_build_cache (
+			IUIAutomationElement element,
+			IUIAutomationCacheRequest cache_request,
+			IUIAutomationElement next
+		);
+
+		[CCode (cname = "GetPreviousSiblingElementBuildCache")]
+		public abstract int get_previous_sibling_element_build_cache (
+			IUIAutomationElement element,
+			IUIAutomationCacheRequest cache_request,
+			IUIAutomationElement previous
+		);
+
+		[CCode (cname = "NormalizeElementBuildCache")]
+		public abstract int normalize_element_build_cache (
+			IUIAutomationElement element,
+			IUIAutomationCacheRequest cache_request,
+			IUIAutomationElement normalized
+		);
+
+		[CCode (cname = "get_Condition")]
+		public abstract int get_condition (
+			IUIAutomationCondition condition
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomationEventHandler", ref_function = "", unref_function = "")]
+	public interface IUIAutomationEventHandler : IUnknown {
+		[CCode (cname = "HandleAutomationEvent")]
+		public abstract int handle_automation_event (
+			IUIAutomationElement sender,
+			int event_id
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomationPropertyChangedEventHandler", ref_function = "", unref_function = "")]
+	public interface IUIAutomationPropertyChangedEventHandler : IUnknown {
+		[CCode (cname = "HandlePropertyChangedEvent")]
+		public abstract int handle_property_changed_event (
+			IUIAutomationElement sender,
+			int property_id,
+			void* new_value
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomationStructureChangedEventHandler", ref_function = "", unref_function = "")]
+	public interface IUIAutomationStructureChangedEventHandler : IUnknown {
+		[CCode (cname = "HandleStructureChangedEvent")]
+		public abstract int handle_structure_changed_event (
+			IUIAutomationElement sender,
+			void* change_type,
+			void* runtime_id
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomationFocusChangedEventHandler", ref_function = "", unref_function = "")]
+	public interface IUIAutomationFocusChangedEventHandler : IUnknown {
+		[CCode (cname = "HandleFocusChangedEvent")]
+		public abstract int handle_focus_changed_event (
+			IUIAutomationElement sender
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomationTextEditTextChangedEventHandler", ref_function = "", unref_function = "")]
+	public interface IUIAutomationTextEditTextChangedEventHandler : IUnknown {
+		[CCode (cname = "HandleTextEditTextChangedEvent")]
+		public abstract int handle_text_edit_text_changed_event (
+			IUIAutomationElement sender,
+			void* text_edit_change_type,
+			void* event_strings
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomationChangesEventHandler", ref_function = "", unref_function = "")]
+	public interface IUIAutomationChangesEventHandler : IUnknown {
+		[CCode (cname = "HandleChangesEvent")]
+		public abstract int handle_changes_event (
+			IUIAutomationElement sender,
+			void* uia_changes,
+			int changes_count
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomationNotificationEventHandler", ref_function = "", unref_function = "")]
+	public interface IUIAutomationNotificationEventHandler : IUnknown {
+		[CCode (cname = "HandleNotificationEvent")]
+		public abstract int handle_notification_event (
+			IUIAutomationElement sender,
+			void* notification_kind,
+			void* notification_processing,
+			void* display_string,
+			void* activity_id
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomationInvokePattern", ref_function = "", unref_function = "")]
+	public interface IUIAutomationInvokePattern : IUnknown {
+		[CCode (cname = "Invoke")]
+		public abstract int invoke (
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomationDockPattern", ref_function = "", unref_function = "")]
+	public interface IUIAutomationDockPattern : IUnknown {
+		[CCode (cname = "SetDockPosition")]
+		public abstract int set_dock_position (
+			void* dock_pos
+		);
+
+		[CCode (cname = "get_CurrentDockPosition")]
+		public abstract int get_current_dock_position (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CachedDockPosition")]
+		public abstract int get_cached_dock_position (
+			out void* ret_val
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomationExpandCollapsePattern", ref_function = "", unref_function = "")]
+	public interface IUIAutomationExpandCollapsePattern : IUnknown {
+		[CCode (cname = "Expand")]
+		public abstract int expand (
+		);
+
+		[CCode (cname = "Collapse")]
+		public abstract int collapse (
+		);
+
+		[CCode (cname = "get_CurrentExpandCollapseState")]
+		public abstract int get_current_expand_collapse_state (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CachedExpandCollapseState")]
+		public abstract int get_cached_expand_collapse_state (
+			out void* ret_val
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomationGridPattern", ref_function = "", unref_function = "")]
+	public interface IUIAutomationGridPattern : IUnknown {
+		[CCode (cname = "GetItem")]
+		public abstract int get_item (
+			int row,
+			int column,
+			IUIAutomationElement element
+		);
+
+		[CCode (cname = "get_CurrentRowCount")]
+		public abstract int get_current_row_count (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CurrentColumnCount")]
+		public abstract int get_current_column_count (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CachedRowCount")]
+		public abstract int get_cached_row_count (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CachedColumnCount")]
+		public abstract int get_cached_column_count (
+			out int ret_val
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomationGridItemPattern", ref_function = "", unref_function = "")]
+	public interface IUIAutomationGridItemPattern : IUnknown {
+		[CCode (cname = "get_CurrentContainingGrid")]
+		public abstract int get_current_containing_grid (
+			IUIAutomationElement ret_val
+		);
+
+		[CCode (cname = "get_CurrentRow")]
+		public abstract int get_current_row (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CurrentColumn")]
+		public abstract int get_current_column (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CurrentRowSpan")]
+		public abstract int get_current_row_span (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CurrentColumnSpan")]
+		public abstract int get_current_column_span (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CachedContainingGrid")]
+		public abstract int get_cached_containing_grid (
+			IUIAutomationElement ret_val
+		);
+
+		[CCode (cname = "get_CachedRow")]
+		public abstract int get_cached_row (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CachedColumn")]
+		public abstract int get_cached_column (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CachedRowSpan")]
+		public abstract int get_cached_row_span (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CachedColumnSpan")]
+		public abstract int get_cached_column_span (
+			out int ret_val
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomationMultipleViewPattern", ref_function = "", unref_function = "")]
+	public interface IUIAutomationMultipleViewPattern : IUnknown {
+		[CCode (cname = "GetViewName")]
+		public abstract int get_view_name (
+			int view,
+			out void* name
+		);
+
+		[CCode (cname = "SetCurrentView")]
+		public abstract int set_current_view (
+			int view
+		);
+
+		[CCode (cname = "get_CurrentCurrentView")]
+		public abstract int get_current_current_view (
+			out int ret_val
+		);
+
+		[CCode (cname = "GetCurrentSupportedViews")]
+		public abstract int get_current_supported_views (
+			out out void* ret_val
+		);
+
+		[CCode (cname = "get_CachedCurrentView")]
+		public abstract int get_cached_current_view (
+			out int ret_val
+		);
+
+		[CCode (cname = "GetCachedSupportedViews")]
+		public abstract int get_cached_supported_views (
+			out out void* ret_val
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomationObjectModelPattern", ref_function = "", unref_function = "")]
+	public interface IUIAutomationObjectModelPattern : IUnknown {
+		[CCode (cname = "GetUnderlyingObjectModel")]
+		public abstract int get_underlying_object_model (
+			IUnknown ret_val
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomationRangeValuePattern", ref_function = "", unref_function = "")]
+	public interface IUIAutomationRangeValuePattern : IUnknown {
+		[CCode (cname = "SetValue")]
+		public abstract int set_value (
+			void* val
+		);
+
+		[CCode (cname = "get_CurrentValue")]
+		public abstract int get_current_value (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CurrentIsReadOnly")]
+		public abstract int get_current_is_read_only (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CurrentMaximum")]
+		public abstract int get_current_maximum (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CurrentMinimum")]
+		public abstract int get_current_minimum (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CurrentLargeChange")]
+		public abstract int get_current_large_change (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CurrentSmallChange")]
+		public abstract int get_current_small_change (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CachedValue")]
+		public abstract int get_cached_value (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CachedIsReadOnly")]
+		public abstract int get_cached_is_read_only (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CachedMaximum")]
+		public abstract int get_cached_maximum (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CachedMinimum")]
+		public abstract int get_cached_minimum (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CachedLargeChange")]
+		public abstract int get_cached_large_change (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CachedSmallChange")]
+		public abstract int get_cached_small_change (
+			out void* ret_val
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomationScrollPattern", ref_function = "", unref_function = "")]
+	public interface IUIAutomationScrollPattern : IUnknown {
+		[CCode (cname = "Scroll")]
+		public abstract int scroll (
+			void* horizontal_amount,
+			void* vertical_amount
+		);
+
+		[CCode (cname = "SetScrollPercent")]
+		public abstract int set_scroll_percent (
+			void* horizontal_percent,
+			void* vertical_percent
+		);
+
+		[CCode (cname = "get_CurrentHorizontalScrollPercent")]
+		public abstract int get_current_horizontal_scroll_percent (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CurrentVerticalScrollPercent")]
+		public abstract int get_current_vertical_scroll_percent (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CurrentHorizontalViewSize")]
+		public abstract int get_current_horizontal_view_size (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CurrentVerticalViewSize")]
+		public abstract int get_current_vertical_view_size (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CurrentHorizontallyScrollable")]
+		public abstract int get_current_horizontally_scrollable (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CurrentVerticallyScrollable")]
+		public abstract int get_current_vertically_scrollable (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CachedHorizontalScrollPercent")]
+		public abstract int get_cached_horizontal_scroll_percent (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CachedVerticalScrollPercent")]
+		public abstract int get_cached_vertical_scroll_percent (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CachedHorizontalViewSize")]
+		public abstract int get_cached_horizontal_view_size (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CachedVerticalViewSize")]
+		public abstract int get_cached_vertical_view_size (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CachedHorizontallyScrollable")]
+		public abstract int get_cached_horizontally_scrollable (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CachedVerticallyScrollable")]
+		public abstract int get_cached_vertically_scrollable (
+			out int ret_val
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomationScrollItemPattern", ref_function = "", unref_function = "")]
+	public interface IUIAutomationScrollItemPattern : IUnknown {
+		[CCode (cname = "ScrollIntoView")]
+		public abstract int scroll_into_view (
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomationSelectionPattern", ref_function = "", unref_function = "")]
+	public interface IUIAutomationSelectionPattern : IUnknown {
+		[CCode (cname = "GetCurrentSelection")]
+		public abstract int get_current_selection (
+			IUIAutomationElementArray ret_val
+		);
+
+		[CCode (cname = "get_CurrentCanSelectMultiple")]
+		public abstract int get_current_can_select_multiple (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CurrentIsSelectionRequired")]
+		public abstract int get_current_is_selection_required (
+			out int ret_val
+		);
+
+		[CCode (cname = "GetCachedSelection")]
+		public abstract int get_cached_selection (
+			IUIAutomationElementArray ret_val
+		);
+
+		[CCode (cname = "get_CachedCanSelectMultiple")]
+		public abstract int get_cached_can_select_multiple (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CachedIsSelectionRequired")]
+		public abstract int get_cached_is_selection_required (
+			out int ret_val
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomationSelectionPattern2", ref_function = "", unref_function = "")]
+	public interface IUIAutomationSelectionPattern2 : IUIAutomationSelectionPattern {
+		[CCode (cname = "get_CurrentFirstSelectedItem")]
+		public abstract int get_current_first_selected_item (
+			IUIAutomationElement ret_val
+		);
+
+		[CCode (cname = "get_CurrentLastSelectedItem")]
+		public abstract int get_current_last_selected_item (
+			IUIAutomationElement ret_val
+		);
+
+		[CCode (cname = "get_CurrentCurrentSelectedItem")]
+		public abstract int get_current_current_selected_item (
+			IUIAutomationElement ret_val
+		);
+
+		[CCode (cname = "get_CurrentItemCount")]
+		public abstract int get_current_item_count (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CachedFirstSelectedItem")]
+		public abstract int get_cached_first_selected_item (
+			IUIAutomationElement ret_val
+		);
+
+		[CCode (cname = "get_CachedLastSelectedItem")]
+		public abstract int get_cached_last_selected_item (
+			IUIAutomationElement ret_val
+		);
+
+		[CCode (cname = "get_CachedCurrentSelectedItem")]
+		public abstract int get_cached_current_selected_item (
+			IUIAutomationElement ret_val
+		);
+
+		[CCode (cname = "get_CachedItemCount")]
+		public abstract int get_cached_item_count (
+			out int ret_val
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomationSelectionItemPattern", ref_function = "", unref_function = "")]
+	public interface IUIAutomationSelectionItemPattern : IUnknown {
+		[CCode (cname = "Select")]
+		public abstract int select (
+		);
+
+		[CCode (cname = "AddToSelection")]
+		public abstract int add_to_selection (
+		);
+
+		[CCode (cname = "RemoveFromSelection")]
+		public abstract int remove_from_selection (
+		);
+
+		[CCode (cname = "get_CurrentIsSelected")]
+		public abstract int get_current_is_selected (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CurrentSelectionContainer")]
+		public abstract int get_current_selection_container (
+			IUIAutomationElement ret_val
+		);
+
+		[CCode (cname = "get_CachedIsSelected")]
+		public abstract int get_cached_is_selected (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CachedSelectionContainer")]
+		public abstract int get_cached_selection_container (
+			IUIAutomationElement ret_val
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomationSynchronizedInputPattern", ref_function = "", unref_function = "")]
+	public interface IUIAutomationSynchronizedInputPattern : IUnknown {
+		[CCode (cname = "StartListening")]
+		public abstract int start_listening (
+			void* input_type
+		);
+
+		[CCode (cname = "Cancel")]
+		public abstract int cancel (
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomationTablePattern", ref_function = "", unref_function = "")]
+	public interface IUIAutomationTablePattern : IUnknown {
+		[CCode (cname = "GetCurrentRowHeaders")]
+		public abstract int get_current_row_headers (
+			IUIAutomationElementArray ret_val
+		);
+
+		[CCode (cname = "GetCurrentColumnHeaders")]
+		public abstract int get_current_column_headers (
+			IUIAutomationElementArray ret_val
+		);
+
+		[CCode (cname = "get_CurrentRowOrColumnMajor")]
+		public abstract int get_current_row_or_column_major (
+			out void* ret_val
+		);
+
+		[CCode (cname = "GetCachedRowHeaders")]
+		public abstract int get_cached_row_headers (
+			IUIAutomationElementArray ret_val
+		);
+
+		[CCode (cname = "GetCachedColumnHeaders")]
+		public abstract int get_cached_column_headers (
+			IUIAutomationElementArray ret_val
+		);
+
+		[CCode (cname = "get_CachedRowOrColumnMajor")]
+		public abstract int get_cached_row_or_column_major (
+			out void* ret_val
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomationTableItemPattern", ref_function = "", unref_function = "")]
+	public interface IUIAutomationTableItemPattern : IUnknown {
+		[CCode (cname = "GetCurrentRowHeaderItems")]
+		public abstract int get_current_row_header_items (
+			IUIAutomationElementArray ret_val
+		);
+
+		[CCode (cname = "GetCurrentColumnHeaderItems")]
+		public abstract int get_current_column_header_items (
+			IUIAutomationElementArray ret_val
+		);
+
+		[CCode (cname = "GetCachedRowHeaderItems")]
+		public abstract int get_cached_row_header_items (
+			IUIAutomationElementArray ret_val
+		);
+
+		[CCode (cname = "GetCachedColumnHeaderItems")]
+		public abstract int get_cached_column_header_items (
+			IUIAutomationElementArray ret_val
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomationTogglePattern", ref_function = "", unref_function = "")]
+	public interface IUIAutomationTogglePattern : IUnknown {
+		[CCode (cname = "Toggle")]
+		public abstract int toggle (
+		);
+
+		[CCode (cname = "get_CurrentToggleState")]
+		public abstract int get_current_toggle_state (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CachedToggleState")]
+		public abstract int get_cached_toggle_state (
+			out void* ret_val
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomationTransformPattern", ref_function = "", unref_function = "")]
+	public interface IUIAutomationTransformPattern : IUnknown {
+		[CCode (cname = "Move")]
+		public abstract int move (
+			void* x,
+			void* y
+		);
+
+		[CCode (cname = "Resize")]
+		public abstract int resize (
+			void* width,
+			void* height
+		);
+
+		[CCode (cname = "Rotate")]
+		public abstract int rotate (
+			void* degrees
+		);
+
+		[CCode (cname = "get_CurrentCanMove")]
+		public abstract int get_current_can_move (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CurrentCanResize")]
+		public abstract int get_current_can_resize (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CurrentCanRotate")]
+		public abstract int get_current_can_rotate (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CachedCanMove")]
+		public abstract int get_cached_can_move (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CachedCanResize")]
+		public abstract int get_cached_can_resize (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CachedCanRotate")]
+		public abstract int get_cached_can_rotate (
+			out int ret_val
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomationValuePattern", ref_function = "", unref_function = "")]
+	public interface IUIAutomationValuePattern : IUnknown {
+		[CCode (cname = "SetValue")]
+		public abstract int set_value (
+			void* val
+		);
+
+		[CCode (cname = "get_CurrentValue")]
+		public abstract int get_current_value (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CurrentIsReadOnly")]
+		public abstract int get_current_is_read_only (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CachedValue")]
+		public abstract int get_cached_value (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CachedIsReadOnly")]
+		public abstract int get_cached_is_read_only (
+			out int ret_val
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomationWindowPattern", ref_function = "", unref_function = "")]
+	public interface IUIAutomationWindowPattern : IUnknown {
+		[CCode (cname = "Close")]
+		public abstract int close (
+		);
+
+		[CCode (cname = "WaitForInputIdle")]
+		public abstract int wait_for_input_idle (
+			int milliseconds,
+			out int success
+		);
+
+		[CCode (cname = "SetWindowVisualState")]
+		public abstract int set_window_visual_state (
+			void* state
+		);
+
+		[CCode (cname = "get_CurrentCanMaximize")]
+		public abstract int get_current_can_maximize (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CurrentCanMinimize")]
+		public abstract int get_current_can_minimize (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CurrentIsModal")]
+		public abstract int get_current_is_modal (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CurrentIsTopmost")]
+		public abstract int get_current_is_topmost (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CurrentWindowVisualState")]
+		public abstract int get_current_window_visual_state (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CurrentWindowInteractionState")]
+		public abstract int get_current_window_interaction_state (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CachedCanMaximize")]
+		public abstract int get_cached_can_maximize (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CachedCanMinimize")]
+		public abstract int get_cached_can_minimize (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CachedIsModal")]
+		public abstract int get_cached_is_modal (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CachedIsTopmost")]
+		public abstract int get_cached_is_topmost (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CachedWindowVisualState")]
+		public abstract int get_cached_window_visual_state (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CachedWindowInteractionState")]
+		public abstract int get_cached_window_interaction_state (
+			out void* ret_val
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomationTextRange", ref_function = "", unref_function = "")]
+	public interface IUIAutomationTextRange : IUnknown {
+		[CCode (cname = "Clone")]
+		public abstract int clone (
+			IUIAutomationTextRange cloned_range
+		);
+
+		[CCode (cname = "Compare")]
+		public abstract int compare (
+			IUIAutomationTextRange range,
+			out int are_same
+		);
+
+		[CCode (cname = "CompareEndpoints")]
+		public abstract int compare_endpoints (
+			void* src_end_point,
+			IUIAutomationTextRange range,
+			void* target_end_point,
+			out int comp_value
+		);
+
+		[CCode (cname = "ExpandToEnclosingUnit")]
+		public abstract int expand_to_enclosing_unit (
+			void* text_unit
+		);
+
+		[CCode (cname = "FindAttribute")]
+		public abstract int find_attribute (
+			int attr,
+			void* val,
+			int backward,
+			IUIAutomationTextRange found
+		);
+
+		[CCode (cname = "FindText")]
+		public abstract int find_text (
+			void* text,
+			int backward,
+			int ignore_case,
+			IUIAutomationTextRange found
+		);
+
+		[CCode (cname = "GetAttributeValue")]
+		public abstract int get_attribute_value (
+			int attr,
+			out void* value
+		);
+
+		[CCode (cname = "GetBoundingRectangles")]
+		public abstract int get_bounding_rectangles (
+			out out void* bounding_rects
+		);
+
+		[CCode (cname = "GetEnclosingElement")]
+		public abstract int get_enclosing_element (
+			IUIAutomationElement enclosing_element
+		);
+
+		[CCode (cname = "GetText")]
+		public abstract int get_text (
+			int max_length,
+			out void* text
+		);
+
+		[CCode (cname = "Move")]
+		public abstract int move (
+			void* unit,
+			int count,
+			out int moved
+		);
+
+		[CCode (cname = "MoveEndpointByUnit")]
+		public abstract int move_endpoint_by_unit (
+			void* endpoint,
+			void* unit,
+			int count,
+			out int moved
+		);
+
+		[CCode (cname = "MoveEndpointByRange")]
+		public abstract int move_endpoint_by_range (
+			void* src_end_point,
+			IUIAutomationTextRange range,
+			void* target_end_point
+		);
+
+		[CCode (cname = "Select")]
+		public abstract int select (
+		);
+
+		[CCode (cname = "AddToSelection")]
+		public abstract int add_to_selection (
+		);
+
+		[CCode (cname = "RemoveFromSelection")]
+		public abstract int remove_from_selection (
+		);
+
+		[CCode (cname = "ScrollIntoView")]
+		public abstract int scroll_into_view (
+			int align_to_top
+		);
+
+		[CCode (cname = "GetChildren")]
+		public abstract int get_children (
+			IUIAutomationElementArray children
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomationTextRange2", ref_function = "", unref_function = "")]
+	public interface IUIAutomationTextRange2 : IUIAutomationTextRange {
+		[CCode (cname = "ShowContextMenu")]
+		public abstract int show_context_menu (
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomationTextRange3", ref_function = "", unref_function = "")]
+	public interface IUIAutomationTextRange3 : IUIAutomationTextRange2 {
+		[CCode (cname = "GetEnclosingElementBuildCache")]
+		public abstract int get_enclosing_element_build_cache (
+			IUIAutomationCacheRequest cache_request,
+			IUIAutomationElement enclosing_element
+		);
+
+		[CCode (cname = "GetChildrenBuildCache")]
+		public abstract int get_children_build_cache (
+			IUIAutomationCacheRequest cache_request,
+			IUIAutomationElementArray children
+		);
+
+		[CCode (cname = "GetAttributeValues")]
+		public abstract int get_attribute_values (
+			void* attribute_ids,
+			int attribute_id_count,
+			out out void* attribute_values
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomationTextRangeArray", ref_function = "", unref_function = "")]
+	public interface IUIAutomationTextRangeArray : IUnknown {
+		[CCode (cname = "get_Length")]
+		public abstract int get_length (
+			out int length
+		);
+
+		[CCode (cname = "GetElement")]
+		public abstract int get_element (
+			int index,
+			IUIAutomationTextRange element
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomationTextPattern", ref_function = "", unref_function = "")]
+	public interface IUIAutomationTextPattern : IUnknown {
+		[CCode (cname = "RangeFromPoint")]
+		public abstract int range_from_point (
+			Win32.Foundation.Point pt,
+			IUIAutomationTextRange range
+		);
+
+		[CCode (cname = "RangeFromChild")]
+		public abstract int range_from_child (
+			IUIAutomationElement child,
+			IUIAutomationTextRange range
+		);
+
+		[CCode (cname = "GetSelection")]
+		public abstract int get_selection (
+			IUIAutomationTextRangeArray ranges
+		);
+
+		[CCode (cname = "GetVisibleRanges")]
+		public abstract int get_visible_ranges (
+			IUIAutomationTextRangeArray ranges
+		);
+
+		[CCode (cname = "get_DocumentRange")]
+		public abstract int get_document_range (
+			IUIAutomationTextRange range
+		);
+
+		[CCode (cname = "get_SupportedTextSelection")]
+		public abstract int get_supported_text_selection (
+			out void* supported_text_selection
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomationTextPattern2", ref_function = "", unref_function = "")]
+	public interface IUIAutomationTextPattern2 : IUIAutomationTextPattern {
+		[CCode (cname = "RangeFromAnnotation")]
+		public abstract int range_from_annotation (
+			IUIAutomationElement annotation,
+			IUIAutomationTextRange range
+		);
+
+		[CCode (cname = "GetCaretRange")]
+		public abstract int get_caret_range (
+			out int is_active,
+			IUIAutomationTextRange range
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomationTextEditPattern", ref_function = "", unref_function = "")]
+	public interface IUIAutomationTextEditPattern : IUIAutomationTextPattern {
+		[CCode (cname = "GetActiveComposition")]
+		public abstract int get_active_composition (
+			IUIAutomationTextRange range
+		);
+
+		[CCode (cname = "GetConversionTarget")]
+		public abstract int get_conversion_target (
+			IUIAutomationTextRange range
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomationCustomNavigationPattern", ref_function = "", unref_function = "")]
+	public interface IUIAutomationCustomNavigationPattern : IUnknown {
+		[CCode (cname = "Navigate")]
+		public abstract int navigate (
+			void* direction,
+			IUIAutomationElement p_ret_val
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomationActiveTextPositionChangedEventHandler", ref_function = "", unref_function = "")]
+	public interface IUIAutomationActiveTextPositionChangedEventHandler : IUnknown {
+		[CCode (cname = "HandleActiveTextPositionChangedEvent")]
+		public abstract int handle_active_text_position_changed_event (
+			IUIAutomationElement sender,
+			IUIAutomationTextRange range
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomationLegacyIAccessiblePattern", ref_function = "", unref_function = "")]
+	public interface IUIAutomationLegacyIAccessiblePattern : IUnknown {
+		[CCode (cname = "Select")]
+		public abstract int select (
+			int flags_select
+		);
+
+		[CCode (cname = "DoDefaultAction")]
+		public abstract int do_default_action (
+		);
+
+		[CCode (cname = "SetValue")]
+		public abstract int set_value (
+			[CCode (type_id = "LPCWSTR")] uint16* sz_value
+		);
+
+		[CCode (cname = "get_CurrentChildId")]
+		public abstract int get_current_child_id (
+			out int p_ret_val
+		);
+
+		[CCode (cname = "get_CurrentName")]
+		public abstract int get_current_name (
+			out void* psz_name
+		);
+
+		[CCode (cname = "get_CurrentValue")]
+		public abstract int get_current_value (
+			out void* psz_value
+		);
+
+		[CCode (cname = "get_CurrentDescription")]
+		public abstract int get_current_description (
+			out void* psz_description
+		);
+
+		[CCode (cname = "get_CurrentRole")]
+		public abstract int get_current_role (
+			out uint pdw_role
+		);
+
+		[CCode (cname = "get_CurrentState")]
+		public abstract int get_current_state (
+			out uint pdw_state
+		);
+
+		[CCode (cname = "get_CurrentHelp")]
+		public abstract int get_current_help (
+			out void* psz_help
+		);
+
+		[CCode (cname = "get_CurrentKeyboardShortcut")]
+		public abstract int get_current_keyboard_shortcut (
+			out void* psz_keyboard_shortcut
+		);
+
+		[CCode (cname = "GetCurrentSelection")]
+		public abstract int get_current_selection (
+			IUIAutomationElementArray pvar_selected_children
+		);
+
+		[CCode (cname = "get_CurrentDefaultAction")]
+		public abstract int get_current_default_action (
+			out void* psz_default_action
+		);
+
+		[CCode (cname = "get_CachedChildId")]
+		public abstract int get_cached_child_id (
+			out int p_ret_val
+		);
+
+		[CCode (cname = "get_CachedName")]
+		public abstract int get_cached_name (
+			out void* psz_name
+		);
+
+		[CCode (cname = "get_CachedValue")]
+		public abstract int get_cached_value (
+			out void* psz_value
+		);
+
+		[CCode (cname = "get_CachedDescription")]
+		public abstract int get_cached_description (
+			out void* psz_description
+		);
+
+		[CCode (cname = "get_CachedRole")]
+		public abstract int get_cached_role (
+			out uint pdw_role
+		);
+
+		[CCode (cname = "get_CachedState")]
+		public abstract int get_cached_state (
+			out uint pdw_state
+		);
+
+		[CCode (cname = "get_CachedHelp")]
+		public abstract int get_cached_help (
+			out void* psz_help
+		);
+
+		[CCode (cname = "get_CachedKeyboardShortcut")]
+		public abstract int get_cached_keyboard_shortcut (
+			out void* psz_keyboard_shortcut
+		);
+
+		[CCode (cname = "GetCachedSelection")]
+		public abstract int get_cached_selection (
+			IUIAutomationElementArray pvar_selected_children
+		);
+
+		[CCode (cname = "get_CachedDefaultAction")]
+		public abstract int get_cached_default_action (
+			out void* psz_default_action
+		);
+
+		[CCode (cname = "GetIAccessible")]
+		public abstract int get_iaccessible (
+			IAccessible pp_accessible
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomationItemContainerPattern", ref_function = "", unref_function = "")]
+	public interface IUIAutomationItemContainerPattern : IUnknown {
+		[CCode (cname = "FindItemByProperty")]
+		public abstract int find_item_by_property (
+			IUIAutomationElement p_start_after,
+			int property_id,
+			void* value,
+			IUIAutomationElement p_found
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomationVirtualizedItemPattern", ref_function = "", unref_function = "")]
+	public interface IUIAutomationVirtualizedItemPattern : IUnknown {
+		[CCode (cname = "Realize")]
+		public abstract int realize (
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomationAnnotationPattern", ref_function = "", unref_function = "")]
+	public interface IUIAutomationAnnotationPattern : IUnknown {
+		[CCode (cname = "get_CurrentAnnotationTypeId")]
+		public abstract int get_current_annotation_type_id (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CurrentAnnotationTypeName")]
+		public abstract int get_current_annotation_type_name (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CurrentAuthor")]
+		public abstract int get_current_author (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CurrentDateTime")]
+		public abstract int get_current_date_time (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CurrentTarget")]
+		public abstract int get_current_target (
+			IUIAutomationElement ret_val
+		);
+
+		[CCode (cname = "get_CachedAnnotationTypeId")]
+		public abstract int get_cached_annotation_type_id (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CachedAnnotationTypeName")]
+		public abstract int get_cached_annotation_type_name (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CachedAuthor")]
+		public abstract int get_cached_author (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CachedDateTime")]
+		public abstract int get_cached_date_time (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CachedTarget")]
+		public abstract int get_cached_target (
+			IUIAutomationElement ret_val
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomationStylesPattern", ref_function = "", unref_function = "")]
+	public interface IUIAutomationStylesPattern : IUnknown {
+		[CCode (cname = "get_CurrentStyleId")]
+		public abstract int get_current_style_id (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CurrentStyleName")]
+		public abstract int get_current_style_name (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CurrentFillColor")]
+		public abstract int get_current_fill_color (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CurrentFillPatternStyle")]
+		public abstract int get_current_fill_pattern_style (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CurrentShape")]
+		public abstract int get_current_shape (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CurrentFillPatternColor")]
+		public abstract int get_current_fill_pattern_color (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CurrentExtendedProperties")]
+		public abstract int get_current_extended_properties (
+			out void* ret_val
+		);
+
+		[CCode (cname = "GetCurrentExtendedPropertiesAsArray")]
+		public abstract int get_current_extended_properties_as_array (
+			out out void* property_array,
+			out int property_count
+		);
+
+		[CCode (cname = "get_CachedStyleId")]
+		public abstract int get_cached_style_id (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CachedStyleName")]
+		public abstract int get_cached_style_name (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CachedFillColor")]
+		public abstract int get_cached_fill_color (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CachedFillPatternStyle")]
+		public abstract int get_cached_fill_pattern_style (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CachedShape")]
+		public abstract int get_cached_shape (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CachedFillPatternColor")]
+		public abstract int get_cached_fill_pattern_color (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CachedExtendedProperties")]
+		public abstract int get_cached_extended_properties (
+			out void* ret_val
+		);
+
+		[CCode (cname = "GetCachedExtendedPropertiesAsArray")]
+		public abstract int get_cached_extended_properties_as_array (
+			out out void* property_array,
+			out int property_count
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomationSpreadsheetPattern", ref_function = "", unref_function = "")]
+	public interface IUIAutomationSpreadsheetPattern : IUnknown {
+		[CCode (cname = "GetItemByName")]
+		public abstract int get_item_by_name (
+			void* name,
+			IUIAutomationElement element
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomationSpreadsheetItemPattern", ref_function = "", unref_function = "")]
+	public interface IUIAutomationSpreadsheetItemPattern : IUnknown {
+		[CCode (cname = "get_CurrentFormula")]
+		public abstract int get_current_formula (
+			out void* ret_val
+		);
+
+		[CCode (cname = "GetCurrentAnnotationObjects")]
+		public abstract int get_current_annotation_objects (
+			IUIAutomationElementArray ret_val
+		);
+
+		[CCode (cname = "GetCurrentAnnotationTypes")]
+		public abstract int get_current_annotation_types (
+			out out void* ret_val
+		);
+
+		[CCode (cname = "get_CachedFormula")]
+		public abstract int get_cached_formula (
+			out void* ret_val
+		);
+
+		[CCode (cname = "GetCachedAnnotationObjects")]
+		public abstract int get_cached_annotation_objects (
+			IUIAutomationElementArray ret_val
+		);
+
+		[CCode (cname = "GetCachedAnnotationTypes")]
+		public abstract int get_cached_annotation_types (
+			out out void* ret_val
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomationTransformPattern2", ref_function = "", unref_function = "")]
+	public interface IUIAutomationTransformPattern2 : IUIAutomationTransformPattern {
+		[CCode (cname = "Zoom")]
+		public abstract int zoom (
+			void* zoom_value
+		);
+
+		[CCode (cname = "ZoomByUnit")]
+		public abstract int zoom_by_unit (
+			void* zoom_unit
+		);
+
+		[CCode (cname = "get_CurrentCanZoom")]
+		public abstract int get_current_can_zoom (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CachedCanZoom")]
+		public abstract int get_cached_can_zoom (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CurrentZoomLevel")]
+		public abstract int get_current_zoom_level (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CachedZoomLevel")]
+		public abstract int get_cached_zoom_level (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CurrentZoomMinimum")]
+		public abstract int get_current_zoom_minimum (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CachedZoomMinimum")]
+		public abstract int get_cached_zoom_minimum (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CurrentZoomMaximum")]
+		public abstract int get_current_zoom_maximum (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CachedZoomMaximum")]
+		public abstract int get_cached_zoom_maximum (
+			out void* ret_val
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomationTextChildPattern", ref_function = "", unref_function = "")]
+	public interface IUIAutomationTextChildPattern : IUnknown {
+		[CCode (cname = "get_TextContainer")]
+		public abstract int get_text_container (
+			IUIAutomationElement container
+		);
+
+		[CCode (cname = "get_TextRange")]
+		public abstract int get_text_range (
+			IUIAutomationTextRange range
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomationDragPattern", ref_function = "", unref_function = "")]
+	public interface IUIAutomationDragPattern : IUnknown {
+		[CCode (cname = "get_CurrentIsGrabbed")]
+		public abstract int get_current_is_grabbed (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CachedIsGrabbed")]
+		public abstract int get_cached_is_grabbed (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CurrentDropEffect")]
+		public abstract int get_current_drop_effect (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CachedDropEffect")]
+		public abstract int get_cached_drop_effect (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CurrentDropEffects")]
+		public abstract int get_current_drop_effects (
+			out out void* ret_val
+		);
+
+		[CCode (cname = "get_CachedDropEffects")]
+		public abstract int get_cached_drop_effects (
+			out out void* ret_val
+		);
+
+		[CCode (cname = "GetCurrentGrabbedItems")]
+		public abstract int get_current_grabbed_items (
+			IUIAutomationElementArray ret_val
+		);
+
+		[CCode (cname = "GetCachedGrabbedItems")]
+		public abstract int get_cached_grabbed_items (
+			IUIAutomationElementArray ret_val
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomationDropTargetPattern", ref_function = "", unref_function = "")]
+	public interface IUIAutomationDropTargetPattern : IUnknown {
+		[CCode (cname = "get_CurrentDropTargetEffect")]
+		public abstract int get_current_drop_target_effect (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CachedDropTargetEffect")]
+		public abstract int get_cached_drop_target_effect (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CurrentDropTargetEffects")]
+		public abstract int get_current_drop_target_effects (
+			out out void* ret_val
+		);
+
+		[CCode (cname = "get_CachedDropTargetEffects")]
+		public abstract int get_cached_drop_target_effects (
+			out out void* ret_val
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomationElement2", ref_function = "", unref_function = "")]
+	public interface IUIAutomationElement2 : IUIAutomationElement {
+		[CCode (cname = "get_CurrentOptimizeForVisualContent")]
+		public abstract int get_current_optimize_for_visual_content (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CachedOptimizeForVisualContent")]
+		public abstract int get_cached_optimize_for_visual_content (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CurrentLiveSetting")]
+		public abstract int get_current_live_setting (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CachedLiveSetting")]
+		public abstract int get_cached_live_setting (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CurrentFlowsFrom")]
+		public abstract int get_current_flows_from (
+			IUIAutomationElementArray ret_val
+		);
+
+		[CCode (cname = "get_CachedFlowsFrom")]
+		public abstract int get_cached_flows_from (
+			IUIAutomationElementArray ret_val
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomationElement3", ref_function = "", unref_function = "")]
+	public interface IUIAutomationElement3 : IUIAutomationElement2 {
+		[CCode (cname = "ShowContextMenu")]
+		public abstract int show_context_menu (
+		);
+
+		[CCode (cname = "get_CurrentIsPeripheral")]
+		public abstract int get_current_is_peripheral (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CachedIsPeripheral")]
+		public abstract int get_cached_is_peripheral (
+			out int ret_val
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomationElement4", ref_function = "", unref_function = "")]
+	public interface IUIAutomationElement4 : IUIAutomationElement3 {
+		[CCode (cname = "get_CurrentPositionInSet")]
+		public abstract int get_current_position_in_set (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CurrentSizeOfSet")]
+		public abstract int get_current_size_of_set (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CurrentLevel")]
+		public abstract int get_current_level (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CurrentAnnotationTypes")]
+		public abstract int get_current_annotation_types (
+			out out void* ret_val
+		);
+
+		[CCode (cname = "get_CurrentAnnotationObjects")]
+		public abstract int get_current_annotation_objects (
+			IUIAutomationElementArray ret_val
+		);
+
+		[CCode (cname = "get_CachedPositionInSet")]
+		public abstract int get_cached_position_in_set (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CachedSizeOfSet")]
+		public abstract int get_cached_size_of_set (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CachedLevel")]
+		public abstract int get_cached_level (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CachedAnnotationTypes")]
+		public abstract int get_cached_annotation_types (
+			out out void* ret_val
+		);
+
+		[CCode (cname = "get_CachedAnnotationObjects")]
+		public abstract int get_cached_annotation_objects (
+			IUIAutomationElementArray ret_val
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomationElement5", ref_function = "", unref_function = "")]
+	public interface IUIAutomationElement5 : IUIAutomationElement4 {
+		[CCode (cname = "get_CurrentLandmarkType")]
+		public abstract int get_current_landmark_type (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CurrentLocalizedLandmarkType")]
+		public abstract int get_current_localized_landmark_type (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CachedLandmarkType")]
+		public abstract int get_cached_landmark_type (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CachedLocalizedLandmarkType")]
+		public abstract int get_cached_localized_landmark_type (
+			out void* ret_val
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomationElement6", ref_function = "", unref_function = "")]
+	public interface IUIAutomationElement6 : IUIAutomationElement5 {
+		[CCode (cname = "get_CurrentFullDescription")]
+		public abstract int get_current_full_description (
+			out void* ret_val
+		);
+
+		[CCode (cname = "get_CachedFullDescription")]
+		public abstract int get_cached_full_description (
+			out void* ret_val
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomationElement7", ref_function = "", unref_function = "")]
+	public interface IUIAutomationElement7 : IUIAutomationElement6 {
+		[CCode (cname = "FindFirstWithOptions")]
+		public abstract int find_first_with_options (
+			void* scope,
+			IUIAutomationCondition condition,
+			void* traversal_options,
+			IUIAutomationElement root,
+			IUIAutomationElement found
+		);
+
+		[CCode (cname = "FindAllWithOptions")]
+		public abstract int find_all_with_options (
+			void* scope,
+			IUIAutomationCondition condition,
+			void* traversal_options,
+			IUIAutomationElement root,
+			IUIAutomationElementArray found
+		);
+
+		[CCode (cname = "FindFirstWithOptionsBuildCache")]
+		public abstract int find_first_with_options_build_cache (
+			void* scope,
+			IUIAutomationCondition condition,
+			IUIAutomationCacheRequest cache_request,
+			void* traversal_options,
+			IUIAutomationElement root,
+			IUIAutomationElement found
+		);
+
+		[CCode (cname = "FindAllWithOptionsBuildCache")]
+		public abstract int find_all_with_options_build_cache (
+			void* scope,
+			IUIAutomationCondition condition,
+			IUIAutomationCacheRequest cache_request,
+			void* traversal_options,
+			IUIAutomationElement root,
+			IUIAutomationElementArray found
+		);
+
+		[CCode (cname = "GetCurrentMetadataValue")]
+		public abstract int get_current_metadata_value (
+			int target_id,
+			int metadata_id,
+			out void* return_val
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomationElement8", ref_function = "", unref_function = "")]
+	public interface IUIAutomationElement8 : IUIAutomationElement7 {
+		[CCode (cname = "get_CurrentHeadingLevel")]
+		public abstract int get_current_heading_level (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CachedHeadingLevel")]
+		public abstract int get_cached_heading_level (
+			out int ret_val
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomationElement9", ref_function = "", unref_function = "")]
+	public interface IUIAutomationElement9 : IUIAutomationElement8 {
+		[CCode (cname = "get_CurrentIsDialog")]
+		public abstract int get_current_is_dialog (
+			out int ret_val
+		);
+
+		[CCode (cname = "get_CachedIsDialog")]
+		public abstract int get_cached_is_dialog (
+			out int ret_val
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomationProxyFactory", ref_function = "", unref_function = "")]
+	public interface IUIAutomationProxyFactory : IUnknown {
+		[CCode (cname = "CreateProvider")]
+		public abstract int create_provider (
+			[CCode (type_id = "HWND")] void* hwnd,
+			int id_object,
+			int id_child,
+			IRawElementProviderSimple provider
+		);
+
+		[CCode (cname = "get_ProxyFactoryId")]
+		public abstract int get_proxy_factory_id (
+			out void* factory_id
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomationProxyFactoryEntry", ref_function = "", unref_function = "")]
+	public interface IUIAutomationProxyFactoryEntry : IUnknown {
+		[CCode (cname = "get_ProxyFactory")]
+		public abstract int get_proxy_factory (
+			IUIAutomationProxyFactory factory
+		);
+
+		[CCode (cname = "get_ClassName")]
+		public abstract int get_class_name (
+			out void* class_name
+		);
+
+		[CCode (cname = "get_ImageName")]
+		public abstract int get_image_name (
+			out void* image_name
+		);
+
+		[CCode (cname = "get_AllowSubstringMatch")]
+		public abstract int get_allow_substring_match (
+			out int allow_substring_match
+		);
+
+		[CCode (cname = "get_CanCheckBaseClass")]
+		public abstract int get_can_check_base_class (
+			out int can_check_base_class
+		);
+
+		[CCode (cname = "get_NeedsAdviseEvents")]
+		public abstract int get_needs_advise_events (
+			out int advise_events
+		);
+
+		[CCode (cname = "put_ClassName")]
+		public abstract int put_class_name (
+			[CCode (type_id = "LPCWSTR")] uint16* class_name
+		);
+
+		[CCode (cname = "put_ImageName")]
+		public abstract int put_image_name (
+			[CCode (type_id = "LPCWSTR")] uint16* image_name
+		);
+
+		[CCode (cname = "put_AllowSubstringMatch")]
+		public abstract int put_allow_substring_match (
+			int allow_substring_match
+		);
+
+		[CCode (cname = "put_CanCheckBaseClass")]
+		public abstract int put_can_check_base_class (
+			int can_check_base_class
+		);
+
+		[CCode (cname = "put_NeedsAdviseEvents")]
+		public abstract int put_needs_advise_events (
+			int advise_events
+		);
+
+		[CCode (cname = "SetWinEventsForAutomationEvent")]
+		public abstract int set_win_events_for_automation_event (
+			int event_id,
+			int property_id,
+			void* win_events
+		);
+
+		[CCode (cname = "GetWinEventsForAutomationEvent")]
+		public abstract int get_win_events_for_automation_event (
+			int event_id,
+			int property_id,
+			out out void* win_events
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomationProxyFactoryMapping", ref_function = "", unref_function = "")]
+	public interface IUIAutomationProxyFactoryMapping : IUnknown {
+		[CCode (cname = "get_Count")]
+		public abstract int get_count (
+			out uint count
+		);
+
+		[CCode (cname = "GetTable")]
+		public abstract int get_table (
+			out out void* table
+		);
+
+		[CCode (cname = "GetEntry")]
+		public abstract int get_entry (
+			uint index,
+			IUIAutomationProxyFactoryEntry entry
+		);
+
+		[CCode (cname = "SetTable")]
+		public abstract int set_table (
+			void* factory_list
+		);
+
+		[CCode (cname = "InsertEntries")]
+		public abstract int insert_entries (
+			uint before,
+			void* factory_list
+		);
+
+		[CCode (cname = "InsertEntry")]
+		public abstract int insert_entry (
+			uint before,
+			IUIAutomationProxyFactoryEntry factory
+		);
+
+		[CCode (cname = "RemoveEntry")]
+		public abstract int remove_entry (
+			uint index
+		);
+
+		[CCode (cname = "ClearTable")]
+		public abstract int clear_table (
+		);
+
+		[CCode (cname = "RestoreDefaultTable")]
+		public abstract int restore_default_table (
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomationEventHandlerGroup", ref_function = "", unref_function = "")]
+	public interface IUIAutomationEventHandlerGroup : IUnknown {
+		[CCode (cname = "AddActiveTextPositionChangedEventHandler")]
+		public abstract int add_active_text_position_changed_event_handler (
+			void* scope,
+			IUIAutomationCacheRequest cache_request,
+			IUIAutomationActiveTextPositionChangedEventHandler handler
+		);
+
+		[CCode (cname = "AddAutomationEventHandler")]
+		public abstract int add_automation_event_handler (
+			int event_id,
+			void* scope,
+			IUIAutomationCacheRequest cache_request,
+			IUIAutomationEventHandler handler
+		);
+
+		[CCode (cname = "AddChangesEventHandler")]
+		public abstract int add_changes_event_handler (
+			void* scope,
+			void* change_types,
+			int changes_count,
+			IUIAutomationCacheRequest cache_request,
+			IUIAutomationChangesEventHandler handler
+		);
+
+		[CCode (cname = "AddNotificationEventHandler")]
+		public abstract int add_notification_event_handler (
+			void* scope,
+			IUIAutomationCacheRequest cache_request,
+			IUIAutomationNotificationEventHandler handler
+		);
+
+		[CCode (cname = "AddPropertyChangedEventHandler")]
+		public abstract int add_property_changed_event_handler (
+			void* scope,
+			IUIAutomationCacheRequest cache_request,
+			IUIAutomationPropertyChangedEventHandler handler,
+			void* property_array,
+			int property_count
+		);
+
+		[CCode (cname = "AddStructureChangedEventHandler")]
+		public abstract int add_structure_changed_event_handler (
+			void* scope,
+			IUIAutomationCacheRequest cache_request,
+			IUIAutomationStructureChangedEventHandler handler
+		);
+
+		[CCode (cname = "AddTextEditTextChangedEventHandler")]
+		public abstract int add_text_edit_text_changed_event_handler (
+			void* scope,
+			void* text_edit_change_type,
+			IUIAutomationCacheRequest cache_request,
+			IUIAutomationTextEditTextChangedEventHandler handler
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomation", ref_function = "", unref_function = "")]
+	public interface IUIAutomation : IUnknown {
+		[CCode (cname = "CompareElements")]
+		public abstract int compare_elements (
+			IUIAutomationElement el1,
+			IUIAutomationElement el2,
+			out int are_same
+		);
+
+		[CCode (cname = "CompareRuntimeIds")]
+		public abstract int compare_runtime_ids (
+			void* runtime_id1,
+			void* runtime_id2,
+			out int are_same
+		);
+
+		[CCode (cname = "GetRootElement")]
+		public abstract int get_root_element (
+			IUIAutomationElement root
+		);
+
+		[CCode (cname = "ElementFromHandle")]
+		public abstract int element_from_handle (
+			[CCode (type_id = "HWND")] void* hwnd,
+			IUIAutomationElement element
+		);
+
+		[CCode (cname = "ElementFromPoint")]
+		public abstract int element_from_point (
+			Win32.Foundation.Point pt,
+			IUIAutomationElement element
+		);
+
+		[CCode (cname = "GetFocusedElement")]
+		public abstract int get_focused_element (
+			IUIAutomationElement element
+		);
+
+		[CCode (cname = "GetRootElementBuildCache")]
+		public abstract int get_root_element_build_cache (
+			IUIAutomationCacheRequest cache_request,
+			IUIAutomationElement root
+		);
+
+		[CCode (cname = "ElementFromHandleBuildCache")]
+		public abstract int element_from_handle_build_cache (
+			[CCode (type_id = "HWND")] void* hwnd,
+			IUIAutomationCacheRequest cache_request,
+			IUIAutomationElement element
+		);
+
+		[CCode (cname = "ElementFromPointBuildCache")]
+		public abstract int element_from_point_build_cache (
+			Win32.Foundation.Point pt,
+			IUIAutomationCacheRequest cache_request,
+			IUIAutomationElement element
+		);
+
+		[CCode (cname = "GetFocusedElementBuildCache")]
+		public abstract int get_focused_element_build_cache (
+			IUIAutomationCacheRequest cache_request,
+			IUIAutomationElement element
+		);
+
+		[CCode (cname = "CreateTreeWalker")]
+		public abstract int create_tree_walker (
+			IUIAutomationCondition p_condition,
+			IUIAutomationTreeWalker walker
+		);
+
+		[CCode (cname = "get_ControlViewWalker")]
+		public abstract int get_control_view_walker (
+			IUIAutomationTreeWalker walker
+		);
+
+		[CCode (cname = "get_ContentViewWalker")]
+		public abstract int get_content_view_walker (
+			IUIAutomationTreeWalker walker
+		);
+
+		[CCode (cname = "get_RawViewWalker")]
+		public abstract int get_raw_view_walker (
+			IUIAutomationTreeWalker walker
+		);
+
+		[CCode (cname = "get_RawViewCondition")]
+		public abstract int get_raw_view_condition (
+			IUIAutomationCondition condition
+		);
+
+		[CCode (cname = "get_ControlViewCondition")]
+		public abstract int get_control_view_condition (
+			IUIAutomationCondition condition
+		);
+
+		[CCode (cname = "get_ContentViewCondition")]
+		public abstract int get_content_view_condition (
+			IUIAutomationCondition condition
+		);
+
+		[CCode (cname = "CreateCacheRequest")]
+		public abstract int create_cache_request (
+			IUIAutomationCacheRequest cache_request
+		);
+
+		[CCode (cname = "CreateTrueCondition")]
+		public abstract int create_true_condition (
+			IUIAutomationCondition new_condition
+		);
+
+		[CCode (cname = "CreateFalseCondition")]
+		public abstract int create_false_condition (
+			IUIAutomationCondition new_condition
+		);
+
+		[CCode (cname = "CreatePropertyCondition")]
+		public abstract int create_property_condition (
+			int property_id,
+			void* value,
+			IUIAutomationCondition new_condition
+		);
+
+		[CCode (cname = "CreatePropertyConditionEx")]
+		public abstract int create_property_condition_ex (
+			int property_id,
+			void* value,
+			void* flags,
+			IUIAutomationCondition new_condition
+		);
+
+		[CCode (cname = "CreateAndCondition")]
+		public abstract int create_and_condition (
+			IUIAutomationCondition condition1,
+			IUIAutomationCondition condition2,
+			IUIAutomationCondition new_condition
+		);
+
+		[CCode (cname = "CreateAndConditionFromArray")]
+		public abstract int create_and_condition_from_array (
+			void* conditions,
+			IUIAutomationCondition new_condition
+		);
+
+		[CCode (cname = "CreateAndConditionFromNativeArray")]
+		public abstract int create_and_condition_from_native_array (
+			void* conditions,
+			int condition_count,
+			IUIAutomationCondition new_condition
+		);
+
+		[CCode (cname = "CreateOrCondition")]
+		public abstract int create_or_condition (
+			IUIAutomationCondition condition1,
+			IUIAutomationCondition condition2,
+			IUIAutomationCondition new_condition
+		);
+
+		[CCode (cname = "CreateOrConditionFromArray")]
+		public abstract int create_or_condition_from_array (
+			void* conditions,
+			IUIAutomationCondition new_condition
+		);
+
+		[CCode (cname = "CreateOrConditionFromNativeArray")]
+		public abstract int create_or_condition_from_native_array (
+			void* conditions,
+			int condition_count,
+			IUIAutomationCondition new_condition
+		);
+
+		[CCode (cname = "CreateNotCondition")]
+		public abstract int create_not_condition (
+			IUIAutomationCondition condition,
+			IUIAutomationCondition new_condition
+		);
+
+		[CCode (cname = "AddAutomationEventHandler")]
+		public abstract int add_automation_event_handler (
+			int event_id,
+			IUIAutomationElement element,
+			void* scope,
+			IUIAutomationCacheRequest cache_request,
+			IUIAutomationEventHandler handler
+		);
+
+		[CCode (cname = "RemoveAutomationEventHandler")]
+		public abstract int remove_automation_event_handler (
+			int event_id,
+			IUIAutomationElement element,
+			IUIAutomationEventHandler handler
+		);
+
+		[CCode (cname = "AddPropertyChangedEventHandlerNativeArray")]
+		public abstract int add_property_changed_event_handler_native_array (
+			IUIAutomationElement element,
+			void* scope,
+			IUIAutomationCacheRequest cache_request,
+			IUIAutomationPropertyChangedEventHandler handler,
+			void* property_array,
+			int property_count
+		);
+
+		[CCode (cname = "AddPropertyChangedEventHandler")]
+		public abstract int add_property_changed_event_handler (
+			IUIAutomationElement element,
+			void* scope,
+			IUIAutomationCacheRequest cache_request,
+			IUIAutomationPropertyChangedEventHandler handler,
+			void* property_array
+		);
+
+		[CCode (cname = "RemovePropertyChangedEventHandler")]
+		public abstract int remove_property_changed_event_handler (
+			IUIAutomationElement element,
+			IUIAutomationPropertyChangedEventHandler handler
+		);
+
+		[CCode (cname = "AddStructureChangedEventHandler")]
+		public abstract int add_structure_changed_event_handler (
+			IUIAutomationElement element,
+			void* scope,
+			IUIAutomationCacheRequest cache_request,
+			IUIAutomationStructureChangedEventHandler handler
+		);
+
+		[CCode (cname = "RemoveStructureChangedEventHandler")]
+		public abstract int remove_structure_changed_event_handler (
+			IUIAutomationElement element,
+			IUIAutomationStructureChangedEventHandler handler
+		);
+
+		[CCode (cname = "AddFocusChangedEventHandler")]
+		public abstract int add_focus_changed_event_handler (
+			IUIAutomationCacheRequest cache_request,
+			IUIAutomationFocusChangedEventHandler handler
+		);
+
+		[CCode (cname = "RemoveFocusChangedEventHandler")]
+		public abstract int remove_focus_changed_event_handler (
+			IUIAutomationFocusChangedEventHandler handler
+		);
+
+		[CCode (cname = "RemoveAllEventHandlers")]
+		public abstract int remove_all_event_handlers (
+		);
+
+		[CCode (cname = "IntNativeArrayToSafeArray")]
+		public abstract int int_native_array_to_safe_array (
+			void* array,
+			int array_count,
+			out out void* safe_array
+		);
+
+		[CCode (cname = "IntSafeArrayToNativeArray")]
+		public abstract int int_safe_array_to_native_array (
+			void* int_array,
+			void* array,
+			out int array_count
+		);
+
+		[CCode (cname = "RectToVariant")]
+		public abstract int rect_to_variant (
+			Win32.Foundation.Rect rc,
+			out void* var
+		);
+
+		[CCode (cname = "VariantToRect")]
+		public abstract int variant_to_rect (
+			void* var,
+			out Win32.Foundation.Rect rc
+		);
+
+		[CCode (cname = "SafeArrayToRectNativeArray")]
+		public abstract int safe_array_to_rect_native_array (
+			void* rects,
+			void* rect_array,
+			out int rect_array_count
+		);
+
+		[CCode (cname = "CreateProxyFactoryEntry")]
+		public abstract int create_proxy_factory_entry (
+			IUIAutomationProxyFactory factory,
+			IUIAutomationProxyFactoryEntry factory_entry
+		);
+
+		[CCode (cname = "get_ProxyFactoryMapping")]
+		public abstract int get_proxy_factory_mapping (
+			IUIAutomationProxyFactoryMapping factory_mapping
+		);
+
+		[CCode (cname = "GetPropertyProgrammaticName")]
+		public abstract int get_property_programmatic_name (
+			int property,
+			out void* name
+		);
+
+		[CCode (cname = "GetPatternProgrammaticName")]
+		public abstract int get_pattern_programmatic_name (
+			int pattern,
+			out void* name
+		);
+
+		[CCode (cname = "PollForPotentialSupportedPatterns")]
+		public abstract int poll_for_potential_supported_patterns (
+			IUIAutomationElement p_element,
+			out out void* pattern_ids,
+			out out void* pattern_names
+		);
+
+		[CCode (cname = "PollForPotentialSupportedProperties")]
+		public abstract int poll_for_potential_supported_properties (
+			IUIAutomationElement p_element,
+			out out void* property_ids,
+			out out void* property_names
+		);
+
+		[CCode (cname = "CheckNotSupported")]
+		public abstract int check_not_supported (
+			void* value,
+			out int is_not_supported
+		);
+
+		[CCode (cname = "get_ReservedNotSupportedValue")]
+		public abstract int get_reserved_not_supported_value (
+			IUnknown not_supported_value
+		);
+
+		[CCode (cname = "get_ReservedMixedAttributeValue")]
+		public abstract int get_reserved_mixed_attribute_value (
+			IUnknown mixed_attribute_value
+		);
+
+		[CCode (cname = "ElementFromIAccessible")]
+		public abstract int element_from_iaccessible (
+			IAccessible accessible,
+			int child_id,
+			IUIAutomationElement element
+		);
+
+		[CCode (cname = "ElementFromIAccessibleBuildCache")]
+		public abstract int element_from_iaccessible_build_cache (
+			IAccessible accessible,
+			int child_id,
+			IUIAutomationCacheRequest cache_request,
+			IUIAutomationElement element
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomation2", ref_function = "", unref_function = "")]
+	public interface IUIAutomation2 : IUIAutomation {
+		[CCode (cname = "get_AutoSetFocus")]
+		public abstract int get_auto_set_focus (
+			out int auto_set_focus
+		);
+
+		[CCode (cname = "put_AutoSetFocus")]
+		public abstract int put_auto_set_focus (
+			int auto_set_focus
+		);
+
+		[CCode (cname = "get_ConnectionTimeout")]
+		public abstract int get_connection_timeout (
+			out uint timeout
+		);
+
+		[CCode (cname = "put_ConnectionTimeout")]
+		public abstract int put_connection_timeout (
+			uint timeout
+		);
+
+		[CCode (cname = "get_TransactionTimeout")]
+		public abstract int get_transaction_timeout (
+			out uint timeout
+		);
+
+		[CCode (cname = "put_TransactionTimeout")]
+		public abstract int put_transaction_timeout (
+			uint timeout
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomation3", ref_function = "", unref_function = "")]
+	public interface IUIAutomation3 : IUIAutomation2 {
+		[CCode (cname = "AddTextEditTextChangedEventHandler")]
+		public abstract int add_text_edit_text_changed_event_handler (
+			IUIAutomationElement element,
+			void* scope,
+			void* text_edit_change_type,
+			IUIAutomationCacheRequest cache_request,
+			IUIAutomationTextEditTextChangedEventHandler handler
+		);
+
+		[CCode (cname = "RemoveTextEditTextChangedEventHandler")]
+		public abstract int remove_text_edit_text_changed_event_handler (
+			IUIAutomationElement element,
+			IUIAutomationTextEditTextChangedEventHandler handler
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomation4", ref_function = "", unref_function = "")]
+	public interface IUIAutomation4 : IUIAutomation3 {
+		[CCode (cname = "AddChangesEventHandler")]
+		public abstract int add_changes_event_handler (
+			IUIAutomationElement element,
+			void* scope,
+			void* change_types,
+			int changes_count,
+			IUIAutomationCacheRequest p_cache_request,
+			IUIAutomationChangesEventHandler handler
+		);
+
+		[CCode (cname = "RemoveChangesEventHandler")]
+		public abstract int remove_changes_event_handler (
+			IUIAutomationElement element,
+			IUIAutomationChangesEventHandler handler
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomation5", ref_function = "", unref_function = "")]
+	public interface IUIAutomation5 : IUIAutomation4 {
+		[CCode (cname = "AddNotificationEventHandler")]
+		public abstract int add_notification_event_handler (
+			IUIAutomationElement element,
+			void* scope,
+			IUIAutomationCacheRequest cache_request,
+			IUIAutomationNotificationEventHandler handler
+		);
+
+		[CCode (cname = "RemoveNotificationEventHandler")]
+		public abstract int remove_notification_event_handler (
+			IUIAutomationElement element,
+			IUIAutomationNotificationEventHandler handler
+		);
+
+	}
+
+	[CCode (cname = "IUIAutomation6", ref_function = "", unref_function = "")]
+	public interface IUIAutomation6 : IUIAutomation5 {
+		[CCode (cname = "CreateEventHandlerGroup")]
+		public abstract int create_event_handler_group (
+			IUIAutomationEventHandlerGroup handler_group
+		);
+
+		[CCode (cname = "AddEventHandlerGroup")]
+		public abstract int add_event_handler_group (
+			IUIAutomationElement element,
+			IUIAutomationEventHandlerGroup handler_group
+		);
+
+		[CCode (cname = "RemoveEventHandlerGroup")]
+		public abstract int remove_event_handler_group (
+			IUIAutomationElement element,
+			IUIAutomationEventHandlerGroup handler_group
+		);
+
+		[CCode (cname = "get_ConnectionRecoveryBehavior")]
+		public abstract int get_connection_recovery_behavior (
+			out void* connection_recovery_behavior_options
+		);
+
+		[CCode (cname = "put_ConnectionRecoveryBehavior")]
+		public abstract int put_connection_recovery_behavior (
+			void* connection_recovery_behavior_options
+		);
+
+		[CCode (cname = "get_CoalesceEvents")]
+		public abstract int get_coalesce_events (
+			out void* coalesce_events_options
+		);
+
+		[CCode (cname = "put_CoalesceEvents")]
+		public abstract int put_coalesce_events (
+			void* coalesce_events_options
+		);
+
+		[CCode (cname = "AddActiveTextPositionChangedEventHandler")]
+		public abstract int add_active_text_position_changed_event_handler (
+			IUIAutomationElement element,
+			void* scope,
+			IUIAutomationCacheRequest cache_request,
+			IUIAutomationActiveTextPositionChangedEventHandler handler
+		);
+
+		[CCode (cname = "RemoveActiveTextPositionChangedEventHandler")]
+		public abstract int remove_active_text_position_changed_event_handler (
+			IUIAutomationElement element,
+			IUIAutomationActiveTextPositionChangedEventHandler handler
+		);
+
+	}
+
 	[CCode (cname = "LresultFromObject")]
 	public extern int64 lresult_from_object (
 		void* riid,
 		ulong w_param,
-		void* punk
+		IUnknown punk
 	);
 
 	[CCode (cname = "ObjectFromLresult")]
-	public extern void* object_from_lresult (
+	public extern int object_from_lresult (
 		int64 l_result,
 		void* riid,
 		ulong w_param,
@@ -2757,13 +7386,13 @@ namespace Win32.Ui.Accessibility {
 	);
 
 	[CCode (cname = "WindowFromAccessibleObject")]
-	public extern void* window_from_accessible_object (
-		void* param0,
+	public extern int window_from_accessible_object (
+		IAccessible param0,
 		[CCode (type_id = "HWND")] out void* phwnd
 	);
 
 	[CCode (cname = "AccessibleObjectFromWindow")]
-	public extern void* accessible_object_from_window (
+	public extern int accessible_object_from_window (
 		[CCode (type_id = "HWND")] void* hwnd,
 		uint dw_id,
 		void* riid,
@@ -2771,24 +7400,24 @@ namespace Win32.Ui.Accessibility {
 	);
 
 	[CCode (cname = "AccessibleObjectFromEvent")]
-	public extern void* accessible_object_from_event (
+	public extern int accessible_object_from_event (
 		[CCode (type_id = "HWND")] void* hwnd,
 		uint dw_id,
 		uint dw_child_id,
-		out void* ppacc,
+		out IAccessible ppacc,
 		out void* pvar_child
 	);
 
 	[CCode (cname = "AccessibleObjectFromPoint")]
-	public extern void* accessible_object_from_point (
+	public extern int accessible_object_from_point (
 		Win32.Foundation.Point pt_screen,
-		out void* ppacc,
+		out IAccessible ppacc,
 		out void* pvar_child
 	);
 
 	[CCode (cname = "AccessibleChildren")]
-	public extern void* accessible_children (
-		void* pacc_container,
+	public extern int accessible_children (
+		IAccessible pacc_container,
 		int i_child_start,
 		int c_children,
 		void* rgvar_children,
@@ -2816,7 +7445,7 @@ namespace Win32.Ui.Accessibility {
 	);
 
 	[CCode (cname = "CreateStdAccessibleObject")]
-	public extern void* create_std_accessible_object (
+	public extern int create_std_accessible_object (
 		[CCode (type_id = "HWND")] void* hwnd,
 		int id_object,
 		void* riid,
@@ -2824,7 +7453,7 @@ namespace Win32.Ui.Accessibility {
 	);
 
 	[CCode (cname = "CreateStdAccessibleProxyW")]
-	public extern void* create_std_accessible_proxy (
+	public extern int create_std_accessible_proxy (
 		[CCode (type_id = "HWND")] void* hwnd,
 		[CCode (type_id = "LPCWSTR")] uint16* p_class_name,
 		int id_object,
@@ -2833,14 +7462,14 @@ namespace Win32.Ui.Accessibility {
 	);
 
 	[CCode (cname = "AccSetRunningUtilityState")]
-	public extern void* acc_set_running_utility_state (
+	public extern int acc_set_running_utility_state (
 		[CCode (type_id = "HWND")] void* hwnd_app,
 		uint dw_utility_state_mask,
 		AccUTILITYSTATEFLAGS dw_utility_state
 	);
 
 	[CCode (cname = "AccNotifyTouchInteraction")]
-	public extern void* acc_notify_touch_interaction (
+	public extern int acc_notify_touch_interaction (
 		[CCode (type_id = "HWND")] void* hwnd_app,
 		[CCode (type_id = "HWND")] void* hwnd_target,
 		Win32.Foundation.Point pt_target
@@ -2852,19 +7481,19 @@ namespace Win32.Ui.Accessibility {
 	);
 
 	[CCode (cname = "UiaHUiaNodeFromVariant")]
-	public extern void* uia_huia_node_from_variant (
+	public extern int uia_huia_node_from_variant (
 		out void* pvar,
 		out void* phnode
 	);
 
 	[CCode (cname = "UiaHPatternObjectFromVariant")]
-	public extern void* uia_hpattern_object_from_variant (
+	public extern int uia_hpattern_object_from_variant (
 		out void* pvar,
 		out void* phobj
 	);
 
 	[CCode (cname = "UiaHTextRangeFromVariant")]
-	public extern void* uia_htext_range_from_variant (
+	public extern int uia_htext_range_from_variant (
 		out void* pvar,
 		out void* phtextrange
 	);
@@ -2875,32 +7504,32 @@ namespace Win32.Ui.Accessibility {
 	);
 
 	[CCode (cname = "UiaGetPropertyValue")]
-	public extern void* uia_get_property_value (
+	public extern int uia_get_property_value (
 		void* hnode,
 		int property_id,
 		out void* p_value
 	);
 
 	[CCode (cname = "UiaGetPatternProvider")]
-	public extern void* uia_get_pattern_provider (
+	public extern int uia_get_pattern_provider (
 		void* hnode,
 		int pattern_id,
 		out void* phobj
 	);
 
 	[CCode (cname = "UiaGetRuntimeId")]
-	public extern void* uia_get_runtime_id (
+	public extern int uia_get_runtime_id (
 		void* hnode,
 		out void** pruntime_id
 	);
 
 	[CCode (cname = "UiaSetFocus")]
-	public extern void* uia_set_focus (
+	public extern int uia_set_focus (
 		void* hnode
 	);
 
 	[CCode (cname = "UiaNavigate")]
-	public extern void* uia_navigate (
+	public extern int uia_navigate (
 		void* hnode,
 		void* direction,
 		out void* p_condition,
@@ -2910,7 +7539,7 @@ namespace Win32.Ui.Accessibility {
 	);
 
 	[CCode (cname = "UiaGetUpdatedCache")]
-	public extern void* uia_get_updated_cache (
+	public extern int uia_get_updated_cache (
 		void* hnode,
 		out void* p_request,
 		void* normalize_state,
@@ -2920,7 +7549,7 @@ namespace Win32.Ui.Accessibility {
 	);
 
 	[CCode (cname = "UiaFind")]
-	public extern void* uia_find (
+	public extern int uia_find (
 		void* hnode,
 		out void* p_params,
 		out void* p_request,
@@ -2930,7 +7559,7 @@ namespace Win32.Ui.Accessibility {
 	);
 
 	[CCode (cname = "UiaNodeFromPoint")]
-	public extern void* uia_node_from_point (
+	public extern int uia_node_from_point (
 		void* x,
 		void* y,
 		out void* p_request,
@@ -2939,26 +7568,26 @@ namespace Win32.Ui.Accessibility {
 	);
 
 	[CCode (cname = "UiaNodeFromFocus")]
-	public extern void* uia_node_from_focus (
+	public extern int uia_node_from_focus (
 		out void* p_request,
 		out void** pp_requested_data,
 		out void* pp_tree_structure
 	);
 
 	[CCode (cname = "UiaNodeFromHandle")]
-	public extern void* uia_node_from_handle (
+	public extern int uia_node_from_handle (
 		[CCode (type_id = "HWND")] void* hwnd,
 		out void* phnode
 	);
 
 	[CCode (cname = "UiaNodeFromProvider")]
-	public extern void* uia_node_from_provider (
-		void* p_provider,
+	public extern int uia_node_from_provider (
+		IRawElementProviderSimple p_provider,
 		out void* phnode
 	);
 
 	[CCode (cname = "UiaGetRootNode")]
-	public extern void* uia_get_root_node (
+	public extern int uia_get_root_node (
 		out void* phnode
 	);
 
@@ -2974,13 +7603,13 @@ namespace Win32.Ui.Accessibility {
 	);
 
 	[CCode (cname = "UiaGetReservedNotSupportedValue")]
-	public extern void* uia_get_reserved_not_supported_value (
-		out void* punk_not_supported_value
+	public extern int uia_get_reserved_not_supported_value (
+		out IUnknown punk_not_supported_value
 	);
 
 	[CCode (cname = "UiaGetReservedMixedAttributeValue")]
-	public extern void* uia_get_reserved_mixed_attribute_value (
-		out void* punk_mixed_attribute_value
+	public extern int uia_get_reserved_mixed_attribute_value (
+		out IUnknown punk_mixed_attribute_value
 	);
 
 	[CCode (cname = "UiaClientsAreListening")]
@@ -2988,51 +7617,51 @@ namespace Win32.Ui.Accessibility {
 	);
 
 	[CCode (cname = "UiaRaiseAutomationPropertyChangedEvent")]
-	public extern void* uia_raise_automation_property_changed_event (
-		void* p_provider,
+	public extern int uia_raise_automation_property_changed_event (
+		IRawElementProviderSimple p_provider,
 		int id,
 		void* old_value,
 		void* new_value
 	);
 
 	[CCode (cname = "UiaRaiseAutomationEvent")]
-	public extern void* uia_raise_automation_event (
-		void* p_provider,
+	public extern int uia_raise_automation_event (
+		IRawElementProviderSimple p_provider,
 		int id
 	);
 
 	[CCode (cname = "UiaRaiseStructureChangedEvent")]
-	public extern void* uia_raise_structure_changed_event (
-		void* p_provider,
+	public extern int uia_raise_structure_changed_event (
+		IRawElementProviderSimple p_provider,
 		void* structure_change_type,
 		ref int p_runtime_id,
 		int c_runtime_id_len
 	);
 
 	[CCode (cname = "UiaRaiseAsyncContentLoadedEvent")]
-	public extern void* uia_raise_async_content_loaded_event (
-		void* p_provider,
+	public extern int uia_raise_async_content_loaded_event (
+		IRawElementProviderSimple p_provider,
 		void* async_content_loaded_state,
 		void* percent_complete
 	);
 
 	[CCode (cname = "UiaRaiseTextEditTextChangedEvent")]
-	public extern void* uia_raise_text_edit_text_changed_event (
-		void* p_provider,
+	public extern int uia_raise_text_edit_text_changed_event (
+		IRawElementProviderSimple p_provider,
 		void* text_edit_change_type,
 		out void* p_changed_data
 	);
 
 	[CCode (cname = "UiaRaiseChangesEvent")]
-	public extern void* uia_raise_changes_event (
-		void* p_provider,
+	public extern int uia_raise_changes_event (
+		IRawElementProviderSimple p_provider,
 		int event_id_count,
 		out void* p_uia_changes
 	);
 
 	[CCode (cname = "UiaRaiseNotificationEvent")]
-	public extern void* uia_raise_notification_event (
-		void* provider,
+	public extern int uia_raise_notification_event (
+		IRawElementProviderSimple provider,
 		void* notification_kind,
 		void* notification_processing,
 		void* display_string,
@@ -3040,13 +7669,13 @@ namespace Win32.Ui.Accessibility {
 	);
 
 	[CCode (cname = "UiaRaiseActiveTextPositionChangedEvent")]
-	public extern void* uia_raise_active_text_position_changed_event (
-		void* provider,
-		void* text_range
+	public extern int uia_raise_active_text_position_changed_event (
+		IRawElementProviderSimple provider,
+		ITextRangeProvider text_range
 	);
 
 	[CCode (cname = "UiaAddEvent")]
-	public extern void* uia_add_event (
+	public extern int uia_add_event (
 		void* hnode,
 		int event_id,
 		ref UiaEventCallback p_callback,
@@ -3058,40 +7687,40 @@ namespace Win32.Ui.Accessibility {
 	);
 
 	[CCode (cname = "UiaRemoveEvent")]
-	public extern void* uia_remove_event (
+	public extern int uia_remove_event (
 		void* h_event
 	);
 
 	[CCode (cname = "UiaEventAddWindow")]
-	public extern void* uia_event_add_window (
+	public extern int uia_event_add_window (
 		void* h_event,
 		[CCode (type_id = "HWND")] void* hwnd
 	);
 
 	[CCode (cname = "UiaEventRemoveWindow")]
-	public extern void* uia_event_remove_window (
+	public extern int uia_event_remove_window (
 		void* h_event,
 		[CCode (type_id = "HWND")] void* hwnd
 	);
 
 	[CCode (cname = "DockPattern_SetDockPosition")]
-	public extern void* dock_pattern__set_dock_position (
+	public extern int dock_pattern__set_dock_position (
 		void* hobj,
 		void* dock_position
 	);
 
 	[CCode (cname = "ExpandCollapsePattern_Collapse")]
-	public extern void* expand_collapse_pattern__collapse (
+	public extern int expand_collapse_pattern__collapse (
 		void* hobj
 	);
 
 	[CCode (cname = "ExpandCollapsePattern_Expand")]
-	public extern void* expand_collapse_pattern__expand (
+	public extern int expand_collapse_pattern__expand (
 		void* hobj
 	);
 
 	[CCode (cname = "GridPattern_GetItem")]
-	public extern void* grid_pattern__get_item (
+	public extern int grid_pattern__get_item (
 		void* hobj,
 		int row,
 		int column,
@@ -3099,165 +7728,165 @@ namespace Win32.Ui.Accessibility {
 	);
 
 	[CCode (cname = "InvokePattern_Invoke")]
-	public extern void* invoke_pattern__invoke (
+	public extern int invoke_pattern__invoke (
 		void* hobj
 	);
 
 	[CCode (cname = "MultipleViewPattern_GetViewName")]
-	public extern void* multiple_view_pattern__get_view_name (
+	public extern int multiple_view_pattern__get_view_name (
 		void* hobj,
 		int view_id,
 		out void* pp_str
 	);
 
 	[CCode (cname = "MultipleViewPattern_SetCurrentView")]
-	public extern void* multiple_view_pattern__set_current_view (
+	public extern int multiple_view_pattern__set_current_view (
 		void* hobj,
 		int view_id
 	);
 
 	[CCode (cname = "RangeValuePattern_SetValue")]
-	public extern void* range_value_pattern__set_value (
+	public extern int range_value_pattern__set_value (
 		void* hobj,
 		void* val
 	);
 
 	[CCode (cname = "ScrollItemPattern_ScrollIntoView")]
-	public extern void* scroll_item_pattern__scroll_into_view (
+	public extern int scroll_item_pattern__scroll_into_view (
 		void* hobj
 	);
 
 	[CCode (cname = "ScrollPattern_Scroll")]
-	public extern void* scroll_pattern__scroll (
+	public extern int scroll_pattern__scroll (
 		void* hobj,
 		void* horizontal_amount,
 		void* vertical_amount
 	);
 
 	[CCode (cname = "ScrollPattern_SetScrollPercent")]
-	public extern void* scroll_pattern__set_scroll_percent (
+	public extern int scroll_pattern__set_scroll_percent (
 		void* hobj,
 		void* horizontal_percent,
 		void* vertical_percent
 	);
 
 	[CCode (cname = "SelectionItemPattern_AddToSelection")]
-	public extern void* selection_item_pattern__add_to_selection (
+	public extern int selection_item_pattern__add_to_selection (
 		void* hobj
 	);
 
 	[CCode (cname = "SelectionItemPattern_RemoveFromSelection")]
-	public extern void* selection_item_pattern__remove_from_selection (
+	public extern int selection_item_pattern__remove_from_selection (
 		void* hobj
 	);
 
 	[CCode (cname = "SelectionItemPattern_Select")]
-	public extern void* selection_item_pattern__select (
+	public extern int selection_item_pattern__select (
 		void* hobj
 	);
 
 	[CCode (cname = "TogglePattern_Toggle")]
-	public extern void* toggle_pattern__toggle (
+	public extern int toggle_pattern__toggle (
 		void* hobj
 	);
 
 	[CCode (cname = "TransformPattern_Move")]
-	public extern void* transform_pattern__move (
+	public extern int transform_pattern__move (
 		void* hobj,
 		void* x,
 		void* y
 	);
 
 	[CCode (cname = "TransformPattern_Resize")]
-	public extern void* transform_pattern__resize (
+	public extern int transform_pattern__resize (
 		void* hobj,
 		void* width,
 		void* height
 	);
 
 	[CCode (cname = "TransformPattern_Rotate")]
-	public extern void* transform_pattern__rotate (
+	public extern int transform_pattern__rotate (
 		void* hobj,
 		void* degrees
 	);
 
 	[CCode (cname = "ValuePattern_SetValue")]
-	public extern void* value_pattern__set_value (
+	public extern int value_pattern__set_value (
 		void* hobj,
 		[CCode (type_id = "LPCWSTR")] uint16* p_val
 	);
 
 	[CCode (cname = "WindowPattern_Close")]
-	public extern void* window_pattern__close (
+	public extern int window_pattern__close (
 		void* hobj
 	);
 
 	[CCode (cname = "WindowPattern_SetWindowVisualState")]
-	public extern void* window_pattern__set_window_visual_state (
+	public extern int window_pattern__set_window_visual_state (
 		void* hobj,
 		void* state
 	);
 
 	[CCode (cname = "WindowPattern_WaitForInputIdle")]
-	public extern void* window_pattern__wait_for_input_idle (
+	public extern int window_pattern__wait_for_input_idle (
 		void* hobj,
 		int milliseconds,
 		ref int p_result
 	);
 
 	[CCode (cname = "TextPattern_GetSelection")]
-	public extern void* text_pattern__get_selection (
+	public extern int text_pattern__get_selection (
 		void* hobj,
 		out void** p_ret_val
 	);
 
 	[CCode (cname = "TextPattern_GetVisibleRanges")]
-	public extern void* text_pattern__get_visible_ranges (
+	public extern int text_pattern__get_visible_ranges (
 		void* hobj,
 		out void** p_ret_val
 	);
 
 	[CCode (cname = "TextPattern_RangeFromChild")]
-	public extern void* text_pattern__range_from_child (
+	public extern int text_pattern__range_from_child (
 		void* hobj,
 		void* hnode_child,
 		out void* p_ret_val
 	);
 
 	[CCode (cname = "TextPattern_RangeFromPoint")]
-	public extern void* text_pattern__range_from_point (
+	public extern int text_pattern__range_from_point (
 		void* hobj,
 		void* point,
 		out void* p_ret_val
 	);
 
 	[CCode (cname = "TextPattern_get_DocumentRange")]
-	public extern void* text_pattern_get__document_range (
+	public extern int text_pattern_get__document_range (
 		void* hobj,
 		out void* p_ret_val
 	);
 
 	[CCode (cname = "TextPattern_get_SupportedTextSelection")]
-	public extern void* text_pattern_get__supported_text_selection (
+	public extern int text_pattern_get__supported_text_selection (
 		void* hobj,
 		out void* p_ret_val
 	);
 
 	[CCode (cname = "TextRange_Clone")]
-	public extern void* text_range__clone (
+	public extern int text_range__clone (
 		void* hobj,
 		out void* p_ret_val
 	);
 
 	[CCode (cname = "TextRange_Compare")]
-	public extern void* text_range__compare (
+	public extern int text_range__compare (
 		void* hobj,
 		void* range,
 		ref int p_ret_val
 	);
 
 	[CCode (cname = "TextRange_CompareEndpoints")]
-	public extern void* text_range__compare_endpoints (
+	public extern int text_range__compare_endpoints (
 		void* hobj,
 		void* endpoint,
 		void* target_range,
@@ -3266,20 +7895,20 @@ namespace Win32.Ui.Accessibility {
 	);
 
 	[CCode (cname = "TextRange_ExpandToEnclosingUnit")]
-	public extern void* text_range__expand_to_enclosing_unit (
+	public extern int text_range__expand_to_enclosing_unit (
 		void* hobj,
 		void* unit
 	);
 
 	[CCode (cname = "TextRange_GetAttributeValue")]
-	public extern void* text_range__get_attribute_value (
+	public extern int text_range__get_attribute_value (
 		void* hobj,
 		int attribute_id,
 		out void* p_ret_val
 	);
 
 	[CCode (cname = "TextRange_FindAttribute")]
-	public extern void* text_range__find_attribute (
+	public extern int text_range__find_attribute (
 		void* hobj,
 		int attribute_id,
 		void* val,
@@ -3288,7 +7917,7 @@ namespace Win32.Ui.Accessibility {
 	);
 
 	[CCode (cname = "TextRange_FindText")]
-	public extern void* text_range__find_text (
+	public extern int text_range__find_text (
 		void* hobj,
 		void* text,
 		int backward,
@@ -3297,26 +7926,26 @@ namespace Win32.Ui.Accessibility {
 	);
 
 	[CCode (cname = "TextRange_GetBoundingRectangles")]
-	public extern void* text_range__get_bounding_rectangles (
+	public extern int text_range__get_bounding_rectangles (
 		void* hobj,
 		out void** p_ret_val
 	);
 
 	[CCode (cname = "TextRange_GetEnclosingElement")]
-	public extern void* text_range__get_enclosing_element (
+	public extern int text_range__get_enclosing_element (
 		void* hobj,
 		out void* p_ret_val
 	);
 
 	[CCode (cname = "TextRange_GetText")]
-	public extern void* text_range__get_text (
+	public extern int text_range__get_text (
 		void* hobj,
 		int max_length,
 		out void* p_ret_val
 	);
 
 	[CCode (cname = "TextRange_Move")]
-	public extern void* text_range__move (
+	public extern int text_range__move (
 		void* hobj,
 		void* unit,
 		int count,
@@ -3324,7 +7953,7 @@ namespace Win32.Ui.Accessibility {
 	);
 
 	[CCode (cname = "TextRange_MoveEndpointByUnit")]
-	public extern void* text_range__move_endpoint_by_unit (
+	public extern int text_range__move_endpoint_by_unit (
 		void* hobj,
 		void* endpoint,
 		void* unit,
@@ -3333,7 +7962,7 @@ namespace Win32.Ui.Accessibility {
 	);
 
 	[CCode (cname = "TextRange_MoveEndpointByRange")]
-	public extern void* text_range__move_endpoint_by_range (
+	public extern int text_range__move_endpoint_by_range (
 		void* hobj,
 		void* endpoint,
 		void* target_range,
@@ -3341,34 +7970,34 @@ namespace Win32.Ui.Accessibility {
 	);
 
 	[CCode (cname = "TextRange_Select")]
-	public extern void* text_range__select (
+	public extern int text_range__select (
 		void* hobj
 	);
 
 	[CCode (cname = "TextRange_AddToSelection")]
-	public extern void* text_range__add_to_selection (
+	public extern int text_range__add_to_selection (
 		void* hobj
 	);
 
 	[CCode (cname = "TextRange_RemoveFromSelection")]
-	public extern void* text_range__remove_from_selection (
+	public extern int text_range__remove_from_selection (
 		void* hobj
 	);
 
 	[CCode (cname = "TextRange_ScrollIntoView")]
-	public extern void* text_range__scroll_into_view (
+	public extern int text_range__scroll_into_view (
 		void* hobj,
 		int align_to_top
 	);
 
 	[CCode (cname = "TextRange_GetChildren")]
-	public extern void* text_range__get_children (
+	public extern int text_range__get_children (
 		void* hobj,
 		out void** p_ret_val
 	);
 
 	[CCode (cname = "ItemContainerPattern_FindItemByProperty")]
-	public extern void* item_container_pattern__find_item_by_property (
+	public extern int item_container_pattern__find_item_by_property (
 		void* hobj,
 		void* hnode_start_after,
 		int property_id,
@@ -3377,41 +8006,41 @@ namespace Win32.Ui.Accessibility {
 	);
 
 	[CCode (cname = "LegacyIAccessiblePattern_Select")]
-	public extern void* legacy_iaccessible_pattern__select (
+	public extern int legacy_iaccessible_pattern__select (
 		void* hobj,
 		int flags_select
 	);
 
 	[CCode (cname = "LegacyIAccessiblePattern_DoDefaultAction")]
-	public extern void* legacy_iaccessible_pattern__do_default_action (
+	public extern int legacy_iaccessible_pattern__do_default_action (
 		void* hobj
 	);
 
 	[CCode (cname = "LegacyIAccessiblePattern_SetValue")]
-	public extern void* legacy_iaccessible_pattern__set_value (
+	public extern int legacy_iaccessible_pattern__set_value (
 		void* hobj,
 		[CCode (type_id = "LPCWSTR")] uint16* sz_value
 	);
 
 	[CCode (cname = "LegacyIAccessiblePattern_GetIAccessible")]
-	public extern void* legacy_iaccessible_pattern__get_iaccessible (
+	public extern int legacy_iaccessible_pattern__get_iaccessible (
 		void* hobj,
-		out void* p_accessible
+		out IAccessible p_accessible
 	);
 
 	[CCode (cname = "SynchronizedInputPattern_StartListening")]
-	public extern void* synchronized_input_pattern__start_listening (
+	public extern int synchronized_input_pattern__start_listening (
 		void* hobj,
 		void* input_type
 	);
 
 	[CCode (cname = "SynchronizedInputPattern_Cancel")]
-	public extern void* synchronized_input_pattern__cancel (
+	public extern int synchronized_input_pattern__cancel (
 		void* hobj
 	);
 
 	[CCode (cname = "VirtualizedItemPattern_Realize")]
-	public extern void* virtualized_item_pattern__realize (
+	public extern int virtualized_item_pattern__realize (
 		void* hobj
 	);
 
@@ -3430,46 +8059,46 @@ namespace Win32.Ui.Accessibility {
 		[CCode (type_id = "HWND")] void* hwnd,
 		ulong w_param,
 		int64 l_param,
-		void* el
+		IRawElementProviderSimple el
 	);
 
 	[CCode (cname = "UiaHostProviderFromHwnd")]
-	public extern void* uia_host_provider_from_hwnd (
+	public extern int uia_host_provider_from_hwnd (
 		[CCode (type_id = "HWND")] void* hwnd,
-		out void* pp_provider
+		out IRawElementProviderSimple pp_provider
 	);
 
 	[CCode (cname = "UiaProviderForNonClient")]
-	public extern void* uia_provider_for_non_client (
+	public extern int uia_provider_for_non_client (
 		[CCode (type_id = "HWND")] void* hwnd,
 		int id_object,
 		int id_child,
-		out void* pp_provider
+		out IRawElementProviderSimple pp_provider
 	);
 
 	[CCode (cname = "UiaIAccessibleFromProvider")]
-	public extern void* uia_iaccessible_from_provider (
-		void* p_provider,
+	public extern int uia_iaccessible_from_provider (
+		IRawElementProviderSimple p_provider,
 		uint dw_flags,
-		out void* pp_accessible,
+		out IAccessible pp_accessible,
 		out void* pvar_child
 	);
 
 	[CCode (cname = "UiaProviderFromIAccessible")]
-	public extern void* uia_provider_from_iaccessible (
-		void* p_accessible,
+	public extern int uia_provider_from_iaccessible (
+		IAccessible p_accessible,
 		int id_child,
 		uint dw_flags,
-		out void* pp_provider
+		out IRawElementProviderSimple pp_provider
 	);
 
 	[CCode (cname = "UiaDisconnectAllProviders")]
-	public extern void* uia_disconnect_all_providers (
+	public extern int uia_disconnect_all_providers (
 	);
 
 	[CCode (cname = "UiaDisconnectProvider")]
-	public extern void* uia_disconnect_provider (
-		void* p_provider
+	public extern int uia_disconnect_provider (
+		IRawElementProviderSimple p_provider
 	);
 
 	[CCode (cname = "UiaHasServerSideProvider")]

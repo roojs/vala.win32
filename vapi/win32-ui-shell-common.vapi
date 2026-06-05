@@ -179,4 +179,55 @@ namespace Win32.Ui.Shell.Common {
 		public unowned uint16* pszSpec;
 	}
 
+	[CCode (cheader_filename = "objbase.h", cname = "IUnknown", ref_function = "", unref_function = "")]
+	public interface IUnknown {
+		[CCode (cname = "QueryInterface")]
+		public abstract int query_interface (void* riid, void** ppv_object);
+
+		[CCode (cname = "AddRef")]
+		public abstract uint add_ref ();
+
+		[CCode (cname = "Release")]
+		public abstract uint release ();
+	}
+
+	[CCode (cname = "IObjectArray", ref_function = "", unref_function = "")]
+	public interface IObjectArray : IUnknown {
+		[CCode (cname = "GetCount")]
+		public abstract int get_count (
+			out uint pc_objects
+		);
+
+		[CCode (cname = "GetAt")]
+		public abstract int get_at (
+			uint ui_index,
+			void* riid,
+			out out void* ppv
+		);
+
+	}
+
+	[CCode (cname = "IObjectCollection", ref_function = "", unref_function = "")]
+	public interface IObjectCollection : IObjectArray {
+		[CCode (cname = "AddObject")]
+		public abstract int add_object (
+			IUnknown punk
+		);
+
+		[CCode (cname = "AddFromArray")]
+		public abstract int add_from_array (
+			IObjectArray poa_source
+		);
+
+		[CCode (cname = "RemoveObjectAt")]
+		public abstract int remove_object_at (
+			uint ui_index
+		);
+
+		[CCode (cname = "Clear")]
+		public abstract int clear (
+		);
+
+	}
+
 }

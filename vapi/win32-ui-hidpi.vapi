@@ -231,18 +231,18 @@ namespace Win32.Ui.HiDpi {
 	);
 
 	[CCode (cname = "SetProcessDpiAwareness")]
-	public extern void* set_process_dpi_awareness (
+	public extern int set_process_dpi_awareness (
 		PROCESSDpiAWARENESS value
 	);
 
 	[CCode (cname = "GetProcessDpiAwareness")]
-	public extern void* get_process_dpi_awareness (
+	public extern int get_process_dpi_awareness (
 		void* hprocess,
 		out PROCESSDpiAWARENESS value
 	);
 
 	[CCode (cname = "GetDpiForMonitor")]
-	public extern void* get_dpi_for_monitor (
+	public extern int get_dpi_for_monitor (
 		void* hmonitor,
 		MONITORDpiTYPE dpi_type,
 		out uint dpi_x,

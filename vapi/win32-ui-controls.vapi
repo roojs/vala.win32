@@ -10087,7 +10087,7 @@ namespace Win32.Ui.Controls {
 	);
 
 	[CCode (cname = "PFTASKDIALOGCALLBACK", has_target = false)]
-	public delegate void* PFTASKDIALOGCALLBACK (
+	public delegate int PFTASKDIALOGCALLBACK (
 		[CCode (type_id = "HWND")] void* hwnd,
 		uint msg,
 		ulong w_param,
@@ -10122,9 +10122,9 @@ namespace Win32.Ui.Controls {
 	);
 
 	[CCode (cname = "PFNDPASTREAM", has_target = false)]
-	public delegate void* PFNDPASTREAM (
+	public delegate int PFNDPASTREAM (
 		ref DPASTREAMINFO pinfo,
-		void* pstream,
+		IStream pstream,
 		void* pv_inst_data
 	);
 
@@ -10317,7 +10317,7 @@ namespace Win32.Ui.Controls {
 		public int iItem;
 		public void** piid;
 		public void** pObject;
-		public void* hResult;
+		public int hResult;
 		public uint dwFlags;
 	}
 
@@ -11211,7 +11211,7 @@ namespace Win32.Ui.Controls {
 	public struct NMTVASYNCDRA {
 		public void* hdr;
 		public void** pimldp;
-		public void* hr;
+		public int hr;
 		public void* hItem;
 		public int64 lParam;
 		public uint dwRetFlags;
@@ -11790,6 +11790,291 @@ namespace Win32.Ui.Controls {
 		public POINTERDEVICECURSORTYPE cursor;
 	}
 
+	[CCode (cheader_filename = "objbase.h", cname = "IUnknown", ref_function = "", unref_function = "")]
+	public interface IUnknown {
+		[CCode (cname = "QueryInterface")]
+		public abstract int query_interface (void* riid, void** ppv_object);
+
+		[CCode (cname = "AddRef")]
+		public abstract uint add_ref ();
+
+		[CCode (cname = "Release")]
+		public abstract uint release ();
+	}
+
+	[CCode (cname = "IImageList", ref_function = "", unref_function = "")]
+	public interface IImageList : IUnknown {
+		[CCode (cname = "Add")]
+		public abstract int add (
+			void* hbm_image,
+			void* hbm_mask,
+			out int pi
+		);
+
+		[CCode (cname = "ReplaceIcon")]
+		public abstract int replace_icon (
+			int i,
+			[CCode (type_id = "HICON")] void* hicon,
+			out int pi
+		);
+
+		[CCode (cname = "SetOverlayImage")]
+		public abstract int set_overlay_image (
+			int i_image,
+			int i_overlay
+		);
+
+		[CCode (cname = "Replace")]
+		public abstract int replace (
+			int i,
+			void* hbm_image,
+			void* hbm_mask
+		);
+
+		[CCode (cname = "AddMasked")]
+		public abstract int add_masked (
+			void* hbm_image,
+			void* cr_mask,
+			out int pi
+		);
+
+		[CCode (cname = "Draw")]
+		public abstract int draw (
+			void* pimldp
+		);
+
+		[CCode (cname = "Remove")]
+		public abstract int remove (
+			int i
+		);
+
+		[CCode (cname = "GetIcon")]
+		public abstract int get_icon (
+			int i,
+			uint flags,
+			out void* picon
+		);
+
+		[CCode (cname = "GetImageInfo")]
+		public abstract int get_image_info (
+			int i,
+			out IMAGEINFO p_image_info
+		);
+
+		[CCode (cname = "Copy")]
+		public abstract int copy (
+			int i_dst,
+			IUnknown punk_src,
+			int i_src,
+			uint u_flags
+		);
+
+		[CCode (cname = "Merge")]
+		public abstract int merge (
+			int i1,
+			IUnknown punk2,
+			int i2,
+			int dx,
+			int dy,
+			void* riid,
+			out out void* ppv
+		);
+
+		[CCode (cname = "Clone")]
+		public abstract int clone (
+			void* riid,
+			out out void* ppv
+		);
+
+		[CCode (cname = "GetImageRect")]
+		public abstract int get_image_rect (
+			int i,
+			out Win32.Foundation.Rect prc
+		);
+
+		[CCode (cname = "GetIconSize")]
+		public abstract int get_icon_size (
+			out int cx,
+			out int cy
+		);
+
+		[CCode (cname = "SetIconSize")]
+		public abstract int set_icon_size (
+			int cx,
+			int cy
+		);
+
+		[CCode (cname = "GetImageCount")]
+		public abstract int get_image_count (
+			out int pi
+		);
+
+		[CCode (cname = "SetImageCount")]
+		public abstract int set_image_count (
+			uint u_new_count
+		);
+
+		[CCode (cname = "SetBkColor")]
+		public abstract int set_bk_color (
+			void* clr_bk,
+			out void* pclr
+		);
+
+		[CCode (cname = "GetBkColor")]
+		public abstract int get_bk_color (
+			out void* pclr
+		);
+
+		[CCode (cname = "BeginDrag")]
+		public abstract int begin_drag (
+			int i_track,
+			int dx_hotspot,
+			int dy_hotspot
+		);
+
+		[CCode (cname = "EndDrag")]
+		public abstract int end_drag (
+		);
+
+		[CCode (cname = "DragEnter")]
+		public abstract int drag_enter (
+			[CCode (type_id = "HWND")] void* hwnd_lock,
+			int x,
+			int y
+		);
+
+		[CCode (cname = "DragLeave")]
+		public abstract int drag_leave (
+			[CCode (type_id = "HWND")] void* hwnd_lock
+		);
+
+		[CCode (cname = "DragMove")]
+		public abstract int drag_move (
+			int x,
+			int y
+		);
+
+		[CCode (cname = "SetDragCursorImage")]
+		public abstract int set_drag_cursor_image (
+			IUnknown punk,
+			int i_drag,
+			int dx_hotspot,
+			int dy_hotspot
+		);
+
+		[CCode (cname = "DragShowNolock")]
+		public abstract int drag_show_nolock (
+			int f_show
+		);
+
+		[CCode (cname = "GetDragImage")]
+		public abstract int get_drag_image (
+			out Win32.Foundation.Point ppt,
+			out Win32.Foundation.Point ppt_hotspot,
+			void* riid,
+			out out void* ppv
+		);
+
+		[CCode (cname = "GetItemFlags")]
+		public abstract int get_item_flags (
+			int i,
+			out IMAGELISTITEMFLAGS dw_flags
+		);
+
+		[CCode (cname = "GetOverlayImage")]
+		public abstract int get_overlay_image (
+			int i_overlay,
+			out int pi_index
+		);
+
+	}
+
+	[CCode (cname = "IImageList2", ref_function = "", unref_function = "")]
+	public interface IImageList2 : IImageList {
+		[CCode (cname = "Resize")]
+		public abstract int resize (
+			int cx_new_icon_size,
+			int cy_new_icon_size
+		);
+
+		[CCode (cname = "GetOriginalSize")]
+		public abstract int get_original_size (
+			int i_image,
+			uint dw_flags,
+			out int pcx,
+			out int pcy
+		);
+
+		[CCode (cname = "SetOriginalSize")]
+		public abstract int set_original_size (
+			int i_image,
+			int cx,
+			int cy
+		);
+
+		[CCode (cname = "SetCallback")]
+		public abstract int set_callback (
+			IUnknown punk
+		);
+
+		[CCode (cname = "GetCallback")]
+		public abstract int get_callback (
+			void* riid,
+			out out void* ppv
+		);
+
+		[CCode (cname = "ForceImagePresent")]
+		public abstract int force_image_present (
+			int i_image,
+			uint dw_flags
+		);
+
+		[CCode (cname = "DiscardImages")]
+		public abstract int discard_images (
+			int i_first_image,
+			int i_last_image,
+			uint dw_flags
+		);
+
+		[CCode (cname = "PreloadImages")]
+		public abstract int preload_images (
+			void* pimldp
+		);
+
+		[CCode (cname = "GetStatistics")]
+		public abstract int get_statistics (
+			out void* pils
+		);
+
+		[CCode (cname = "Initialize")]
+		public abstract int initialize (
+			int cx,
+			int cy,
+			IMAGELISTCREATIONFLAGS flags,
+			int c_initial,
+			int c_grow
+		);
+
+		[CCode (cname = "Replace2")]
+		public abstract int replace2 (
+			int i,
+			void* hbm_image,
+			void* hbm_mask,
+			IUnknown punk,
+			uint dw_flags
+		);
+
+		[CCode (cname = "ReplaceFromImageList")]
+		public abstract int replace_from_image_list (
+			int i,
+			IImageList pil,
+			int i_src,
+			IUnknown punk,
+			uint dw_flags
+		);
+
+	}
+
 	[CCode (cname = "CreatePropertySheetPageW")]
 	public extern void* create_property_sheet_page (
 		out void* const_prop_sheet_page_pointer
@@ -11999,28 +12284,28 @@ namespace Win32.Ui.Controls {
 
 	[CCode (cname = "ImageList_Read")]
 	public extern void* image_list__read (
-		void* pstm
+		IStream pstm
 	);
 
 	[CCode (cname = "ImageList_Write")]
 	public extern int image_list__write (
 		void* himl,
-		void* pstm
+		IStream pstm
 	);
 
 	[CCode (cname = "ImageList_ReadEx")]
-	public extern void* image_list__read_ex (
+	public extern int image_list__read_ex (
 		uint dw_flags,
-		void* pstm,
+		IStream pstm,
 		void* riid,
 		out void** ppv
 	);
 
 	[CCode (cname = "ImageList_WriteEx")]
-	public extern void* image_list__write_ex (
+	public extern int image_list__write_ex (
 		void* himl,
 		uint dw_flags,
-		void* pstm
+		IStream pstm
 	);
 
 	[CCode (cname = "ImageList_GetIconSize")]
@@ -12060,7 +12345,7 @@ namespace Win32.Ui.Controls {
 	);
 
 	[CCode (cname = "HIMAGELIST_QueryInterface")]
-	public extern void* himagelist__query_interface (
+	public extern int himagelist__query_interface (
 		void* himl,
 		void* riid,
 		out void** ppv
@@ -12169,7 +12454,7 @@ namespace Win32.Ui.Controls {
 	);
 
 	[CCode (cname = "TaskDialogIndirect")]
-	public extern void* task_dialog_indirect (
+	public extern int task_dialog_indirect (
 		void* p_task_config,
 		out int pn_button,
 		out int pn_radio_button,
@@ -12177,7 +12462,7 @@ namespace Win32.Ui.Controls {
 	);
 
 	[CCode (cname = "TaskDialog")]
-	public extern void* task_dialog (
+	public extern int task_dialog (
 		[CCode (type_id = "HWND")] void* hwnd_owner,
 		[CCode (type_id = "HINSTANCE")] void* h_instance,
 		[CCode (type_id = "LPCWSTR")] uint16* psz_window_title,
@@ -12369,18 +12654,18 @@ namespace Win32.Ui.Controls {
 	);
 
 	[CCode (cname = "DPA_LoadStream")]
-	public extern void* dpa__load_stream (
+	public extern int dpa__load_stream (
 		out void* phdpa,
 		PFNDPASTREAM pfn,
-		void* pstream,
+		IStream pstream,
 		void* pv_inst_data
 	);
 
 	[CCode (cname = "DPA_SaveStream")]
-	public extern void* dpa__save_stream (
+	public extern int dpa__save_stream (
 		void* hdpa,
 		PFNDPASTREAM pfn,
-		void* pstream,
+		IStream pstream,
 		void* pv_inst_data
 	);
 
@@ -12491,12 +12776,12 @@ namespace Win32.Ui.Controls {
 	);
 
 	[CCode (cname = "UninitializeFlatSB")]
-	public extern void* uninitialize_flat_sb (
+	public extern int uninitialize_flat_sb (
 		[CCode (type_id = "HWND")] void* param0
 	);
 
 	[CCode (cname = "LoadIconMetric")]
-	public extern void* load_icon_metric (
+	public extern int load_icon_metric (
 		[CCode (type_id = "HINSTANCE")] void* hinst,
 		[CCode (type_id = "LPCWSTR")] uint16* psz_name,
 		LiMETRIC lims,
@@ -12504,7 +12789,7 @@ namespace Win32.Ui.Controls {
 	);
 
 	[CCode (cname = "LoadIconWithScaleDown")]
-	public extern void* load_icon_with_scale_down (
+	public extern int load_icon_with_scale_down (
 		[CCode (type_id = "HINSTANCE")] void* hinst,
 		[CCode (type_id = "LPCWSTR")] uint16* psz_name,
 		int cx,
@@ -12526,9 +12811,9 @@ namespace Win32.Ui.Controls {
 	);
 
 	[CCode (cname = "ImageList_CoCreateInstance")]
-	public extern void* image_list__co_create_instance (
+	public extern int image_list__co_create_instance (
 		void* rclsid,
-		void* punk_outer,
+		IUnknown punk_outer,
 		void* riid,
 		out void** ppv
 	);
@@ -12553,7 +12838,7 @@ namespace Win32.Ui.Controls {
 	);
 
 	[CCode (cname = "GetThemeAnimationProperty")]
-	public extern void* get_theme_animation_property (
+	public extern int get_theme_animation_property (
 		void* h_theme,
 		int i_storyboard_id,
 		int i_target_id,
@@ -12564,7 +12849,7 @@ namespace Win32.Ui.Controls {
 	);
 
 	[CCode (cname = "GetThemeAnimationTransform")]
-	public extern void* get_theme_animation_transform (
+	public extern int get_theme_animation_transform (
 		void* h_theme,
 		int i_storyboard_id,
 		int i_target_id,
@@ -12575,7 +12860,7 @@ namespace Win32.Ui.Controls {
 	);
 
 	[CCode (cname = "GetThemeTimingFunction")]
-	public extern void* get_theme_timing_function (
+	public extern int get_theme_timing_function (
 		void* h_theme,
 		int i_timing_function_id,
 		out TaTIMINGFUNCTION p_timing_function,
@@ -12597,12 +12882,12 @@ namespace Win32.Ui.Controls {
 	);
 
 	[CCode (cname = "CloseThemeData")]
-	public extern void* close_theme_data (
+	public extern int close_theme_data (
 		void* h_theme
 	);
 
 	[CCode (cname = "DrawThemeBackground")]
-	public extern void* draw_theme_background (
+	public extern int draw_theme_background (
 		void* h_theme,
 		void* hdc,
 		int i_part_id,
@@ -12612,7 +12897,7 @@ namespace Win32.Ui.Controls {
 	);
 
 	[CCode (cname = "DrawThemeBackgroundEx")]
-	public extern void* draw_theme_background_ex (
+	public extern int draw_theme_background_ex (
 		void* h_theme,
 		void* hdc,
 		int i_part_id,
@@ -12622,7 +12907,7 @@ namespace Win32.Ui.Controls {
 	);
 
 	[CCode (cname = "DrawThemeText")]
-	public extern void* draw_theme_text (
+	public extern int draw_theme_text (
 		void* h_theme,
 		void* hdc,
 		int i_part_id,
@@ -12635,7 +12920,7 @@ namespace Win32.Ui.Controls {
 	);
 
 	[CCode (cname = "GetThemeBackgroundContentRect")]
-	public extern void* get_theme_background_content_rect (
+	public extern int get_theme_background_content_rect (
 		void* h_theme,
 		void* hdc,
 		int i_part_id,
@@ -12645,7 +12930,7 @@ namespace Win32.Ui.Controls {
 	);
 
 	[CCode (cname = "GetThemeBackgroundExtent")]
-	public extern void* get_theme_background_extent (
+	public extern int get_theme_background_extent (
 		void* h_theme,
 		void* hdc,
 		int i_part_id,
@@ -12655,7 +12940,7 @@ namespace Win32.Ui.Controls {
 	);
 
 	[CCode (cname = "GetThemeBackgroundRegion")]
-	public extern void* get_theme_background_region (
+	public extern int get_theme_background_region (
 		void* h_theme,
 		void* hdc,
 		int i_part_id,
@@ -12665,7 +12950,7 @@ namespace Win32.Ui.Controls {
 	);
 
 	[CCode (cname = "GetThemePartSize")]
-	public extern void* get_theme_part_size (
+	public extern int get_theme_part_size (
 		void* h_theme,
 		void* hdc,
 		int i_part_id,
@@ -12676,7 +12961,7 @@ namespace Win32.Ui.Controls {
 	);
 
 	[CCode (cname = "GetThemeTextExtent")]
-	public extern void* get_theme_text_extent (
+	public extern int get_theme_text_extent (
 		void* h_theme,
 		void* hdc,
 		int i_part_id,
@@ -12689,7 +12974,7 @@ namespace Win32.Ui.Controls {
 	);
 
 	[CCode (cname = "GetThemeTextMetrics")]
-	public extern void* get_theme_text_metrics (
+	public extern int get_theme_text_metrics (
 		void* h_theme,
 		void* hdc,
 		int i_part_id,
@@ -12698,7 +12983,7 @@ namespace Win32.Ui.Controls {
 	);
 
 	[CCode (cname = "HitTestThemeBackground")]
-	public extern void* hit_test_theme_background (
+	public extern int hit_test_theme_background (
 		void* h_theme,
 		void* hdc,
 		int i_part_id,
@@ -12711,7 +12996,7 @@ namespace Win32.Ui.Controls {
 	);
 
 	[CCode (cname = "DrawThemeEdge")]
-	public extern void* draw_theme_edge (
+	public extern int draw_theme_edge (
 		void* h_theme,
 		void* hdc,
 		int i_part_id,
@@ -12723,7 +13008,7 @@ namespace Win32.Ui.Controls {
 	);
 
 	[CCode (cname = "DrawThemeIcon")]
-	public extern void* draw_theme_icon (
+	public extern int draw_theme_icon (
 		void* h_theme,
 		void* hdc,
 		int i_part_id,
@@ -12748,7 +13033,7 @@ namespace Win32.Ui.Controls {
 	);
 
 	[CCode (cname = "GetThemeColor")]
-	public extern void* get_theme_color (
+	public extern int get_theme_color (
 		void* h_theme,
 		int i_part_id,
 		int i_state_id,
@@ -12757,7 +13042,7 @@ namespace Win32.Ui.Controls {
 	);
 
 	[CCode (cname = "GetThemeMetric")]
-	public extern void* get_theme_metric (
+	public extern int get_theme_metric (
 		void* h_theme,
 		void* hdc,
 		int i_part_id,
@@ -12767,7 +13052,7 @@ namespace Win32.Ui.Controls {
 	);
 
 	[CCode (cname = "GetThemeString")]
-	public extern void* get_theme_string (
+	public extern int get_theme_string (
 		void* h_theme,
 		int i_part_id,
 		int i_state_id,
@@ -12777,7 +13062,7 @@ namespace Win32.Ui.Controls {
 	);
 
 	[CCode (cname = "GetThemeBool")]
-	public extern void* get_theme_bool (
+	public extern int get_theme_bool (
 		void* h_theme,
 		int i_part_id,
 		int i_state_id,
@@ -12786,7 +13071,7 @@ namespace Win32.Ui.Controls {
 	);
 
 	[CCode (cname = "GetThemeInt")]
-	public extern void* get_theme_int (
+	public extern int get_theme_int (
 		void* h_theme,
 		int i_part_id,
 		int i_state_id,
@@ -12795,7 +13080,7 @@ namespace Win32.Ui.Controls {
 	);
 
 	[CCode (cname = "GetThemeEnumValue")]
-	public extern void* get_theme_enum_value (
+	public extern int get_theme_enum_value (
 		void* h_theme,
 		int i_part_id,
 		int i_state_id,
@@ -12804,7 +13089,7 @@ namespace Win32.Ui.Controls {
 	);
 
 	[CCode (cname = "GetThemePosition")]
-	public extern void* get_theme_position (
+	public extern int get_theme_position (
 		void* h_theme,
 		int i_part_id,
 		int i_state_id,
@@ -12813,7 +13098,7 @@ namespace Win32.Ui.Controls {
 	);
 
 	[CCode (cname = "GetThemeFont")]
-	public extern void* get_theme_font (
+	public extern int get_theme_font (
 		void* h_theme,
 		void* hdc,
 		int i_part_id,
@@ -12823,7 +13108,7 @@ namespace Win32.Ui.Controls {
 	);
 
 	[CCode (cname = "GetThemeRect")]
-	public extern void* get_theme_rect (
+	public extern int get_theme_rect (
 		void* h_theme,
 		int i_part_id,
 		int i_state_id,
@@ -12832,7 +13117,7 @@ namespace Win32.Ui.Controls {
 	);
 
 	[CCode (cname = "GetThemeMargins")]
-	public extern void* get_theme_margins (
+	public extern int get_theme_margins (
 		void* h_theme,
 		void* hdc,
 		int i_part_id,
@@ -12843,7 +13128,7 @@ namespace Win32.Ui.Controls {
 	);
 
 	[CCode (cname = "GetThemeIntList")]
-	public extern void* get_theme_int_list (
+	public extern int get_theme_int_list (
 		void* h_theme,
 		int i_part_id,
 		int i_state_id,
@@ -12852,7 +13137,7 @@ namespace Win32.Ui.Controls {
 	);
 
 	[CCode (cname = "GetThemePropertyOrigin")]
-	public extern void* get_theme_property_origin (
+	public extern int get_theme_property_origin (
 		void* h_theme,
 		int i_part_id,
 		int i_state_id,
@@ -12861,14 +13146,14 @@ namespace Win32.Ui.Controls {
 	);
 
 	[CCode (cname = "SetWindowTheme")]
-	public extern void* set_window_theme (
+	public extern int set_window_theme (
 		[CCode (type_id = "HWND")] void* hwnd,
 		[CCode (type_id = "LPCWSTR")] uint16* psz_sub_app_name,
 		[CCode (type_id = "LPCWSTR")] uint16* psz_sub_id_list
 	);
 
 	[CCode (cname = "GetThemeFilename")]
-	public extern void* get_theme_filename (
+	public extern int get_theme_filename (
 		void* h_theme,
 		int i_part_id,
 		int i_state_id,
@@ -12902,14 +13187,14 @@ namespace Win32.Ui.Controls {
 	);
 
 	[CCode (cname = "GetThemeSysFont")]
-	public extern void* get_theme_sys_font (
+	public extern int get_theme_sys_font (
 		void* h_theme,
 		THEMEPROPERTYSYMBOLId i_font_id,
 		out void* plf
 	);
 
 	[CCode (cname = "GetThemeSysString")]
-	public extern void* get_theme_sys_string (
+	public extern int get_theme_sys_string (
 		void* h_theme,
 		THEMEPROPERTYSYMBOLId i_string_id,
 		void* psz_string_buff,
@@ -12917,7 +13202,7 @@ namespace Win32.Ui.Controls {
 	);
 
 	[CCode (cname = "GetThemeSysInt")]
-	public extern void* get_theme_sys_int (
+	public extern int get_theme_sys_int (
 		void* h_theme,
 		THEMEPROPERTYSYMBOLId i_int_id,
 		out int pi_value
@@ -12937,7 +13222,7 @@ namespace Win32.Ui.Controls {
 	);
 
 	[CCode (cname = "EnableThemeDialogTexture")]
-	public extern void* enable_theme_dialog_texture (
+	public extern int enable_theme_dialog_texture (
 		[CCode (type_id = "HWND")] void* hwnd,
 		uint dw_flags
 	);
@@ -12957,7 +13242,7 @@ namespace Win32.Ui.Controls {
 	);
 
 	[CCode (cname = "GetCurrentThemeName")]
-	public extern void* get_current_theme_name (
+	public extern int get_current_theme_name (
 		void* psz_theme_file_name,
 		int cch_max_name_chars,
 		void* psz_color_buff,
@@ -12967,7 +13252,7 @@ namespace Win32.Ui.Controls {
 	);
 
 	[CCode (cname = "GetThemeDocumentationProperty")]
-	public extern void* get_theme_documentation_property (
+	public extern int get_theme_documentation_property (
 		[CCode (type_id = "LPCWSTR")] uint16* psz_theme_name,
 		[CCode (type_id = "LPCWSTR")] uint16* psz_property_name,
 		void* psz_value_buff,
@@ -12975,19 +13260,19 @@ namespace Win32.Ui.Controls {
 	);
 
 	[CCode (cname = "DrawThemeParentBackground")]
-	public extern void* draw_theme_parent_background (
+	public extern int draw_theme_parent_background (
 		[CCode (type_id = "HWND")] void* hwnd,
 		void* hdc,
 		ref Win32.Foundation.Rect prc
 	);
 
 	[CCode (cname = "EnableTheming")]
-	public extern void* enable_theming (
+	public extern int enable_theming (
 		int f_enable
 	);
 
 	[CCode (cname = "DrawThemeParentBackgroundEx")]
-	public extern void* draw_theme_parent_background_ex (
+	public extern int draw_theme_parent_background_ex (
 		[CCode (type_id = "HWND")] void* hwnd,
 		void* hdc,
 		DRAWTHEMEPARENTBACKGROUNDFLAGS dw_flags,
@@ -12995,7 +13280,7 @@ namespace Win32.Ui.Controls {
 	);
 
 	[CCode (cname = "SetWindowThemeAttribute")]
-	public extern void* set_window_theme_attribute (
+	public extern int set_window_theme_attribute (
 		[CCode (type_id = "HWND")] void* hwnd,
 		WINDOWTHEMEATTRIBUTETYPE e_attribute,
 		void* pv_attribute,
@@ -13003,7 +13288,7 @@ namespace Win32.Ui.Controls {
 	);
 
 	[CCode (cname = "DrawThemeTextEx")]
-	public extern void* draw_theme_text_ex (
+	public extern int draw_theme_text_ex (
 		void* h_theme,
 		void* hdc,
 		int i_part_id,
@@ -13016,7 +13301,7 @@ namespace Win32.Ui.Controls {
 	);
 
 	[CCode (cname = "GetThemeBitmap")]
-	public extern void* get_theme_bitmap (
+	public extern int get_theme_bitmap (
 		void* h_theme,
 		int i_part_id,
 		int i_state_id,
@@ -13026,7 +13311,7 @@ namespace Win32.Ui.Controls {
 	);
 
 	[CCode (cname = "GetThemeStream")]
-	public extern void* get_theme_stream (
+	public extern int get_theme_stream (
 		void* h_theme,
 		int i_part_id,
 		int i_state_id,
@@ -13037,11 +13322,11 @@ namespace Win32.Ui.Controls {
 	);
 
 	[CCode (cname = "BufferedPaintInit")]
-	public extern void* buffered_paint_init (
+	public extern int buffered_paint_init (
 	);
 
 	[CCode (cname = "BufferedPaintUnInit")]
-	public extern void* buffered_paint_un_init (
+	public extern int buffered_paint_un_init (
 	);
 
 	[CCode (cname = "BeginBufferedPaint")]
@@ -13054,13 +13339,13 @@ namespace Win32.Ui.Controls {
 	);
 
 	[CCode (cname = "EndBufferedPaint")]
-	public extern void* end_buffered_paint (
+	public extern int end_buffered_paint (
 		void* h_buffered_paint,
 		int f_update_target
 	);
 
 	[CCode (cname = "GetBufferedPaintTargetRect")]
-	public extern void* get_buffered_paint_target_rect (
+	public extern int get_buffered_paint_target_rect (
 		void* h_buffered_paint,
 		out Win32.Foundation.Rect prc
 	);
@@ -13076,27 +13361,27 @@ namespace Win32.Ui.Controls {
 	);
 
 	[CCode (cname = "GetBufferedPaintBits")]
-	public extern void* get_buffered_paint_bits (
+	public extern int get_buffered_paint_bits (
 		void* h_buffered_paint,
 		out void** ppb_buffer,
 		out int pcx_row
 	);
 
 	[CCode (cname = "BufferedPaintClear")]
-	public extern void* buffered_paint_clear (
+	public extern int buffered_paint_clear (
 		void* h_buffered_paint,
 		ref Win32.Foundation.Rect prc
 	);
 
 	[CCode (cname = "BufferedPaintSetAlpha")]
-	public extern void* buffered_paint_set_alpha (
+	public extern int buffered_paint_set_alpha (
 		void* h_buffered_paint,
 		ref Win32.Foundation.Rect prc,
 		void* alpha
 	);
 
 	[CCode (cname = "BufferedPaintStopAllAnimations")]
-	public extern void* buffered_paint_stop_all_animations (
+	public extern int buffered_paint_stop_all_animations (
 		[CCode (type_id = "HWND")] void* hwnd
 	);
 
@@ -13113,7 +13398,7 @@ namespace Win32.Ui.Controls {
 	);
 
 	[CCode (cname = "EndBufferedAnimation")]
-	public extern void* end_buffered_animation (
+	public extern int end_buffered_animation (
 		void* hbp_animation,
 		int f_update_target
 	);
@@ -13129,7 +13414,7 @@ namespace Win32.Ui.Controls {
 	);
 
 	[CCode (cname = "GetThemeTransitionDuration")]
-	public extern void* get_theme_transition_duration (
+	public extern int get_theme_transition_duration (
 		void* h_theme,
 		int i_part_id,
 		int i_state_id_from,

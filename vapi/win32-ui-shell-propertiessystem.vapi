@@ -575,21 +575,701 @@ namespace Win32.Ui.Shell.PropertiesSystem {
 		public void* achPIFFile;
 	}
 
+	[CCode (cheader_filename = "objbase.h", cname = "IUnknown", ref_function = "", unref_function = "")]
+	public interface IUnknown {
+		[CCode (cname = "QueryInterface")]
+		public abstract int query_interface (void* riid, void** ppv_object);
+
+		[CCode (cname = "AddRef")]
+		public abstract uint add_ref ();
+
+		[CCode (cname = "Release")]
+		public abstract uint release ();
+	}
+
+	[CCode (cname = "IInitializeWithFile", ref_function = "", unref_function = "")]
+	public interface IInitializeWithFile : IUnknown {
+		[CCode (cname = "Initialize")]
+		public abstract int initialize (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_file_path,
+			uint grf_mode
+		);
+
+	}
+
+	[CCode (cname = "IInitializeWithStream", ref_function = "", unref_function = "")]
+	public interface IInitializeWithStream : IUnknown {
+		[CCode (cname = "Initialize")]
+		public abstract int initialize (
+			IStream pstream,
+			uint grf_mode
+		);
+
+	}
+
+	[CCode (cname = "IPropertyStore", ref_function = "", unref_function = "")]
+	public interface IPropertyStore : IUnknown {
+		[CCode (cname = "GetCount")]
+		public abstract int get_count (
+			out uint c_props
+		);
+
+		[CCode (cname = "GetAt")]
+		public abstract int get_at (
+			uint i_prop,
+			out void* pkey
+		);
+
+		[CCode (cname = "GetValue")]
+		public abstract int get_value (
+			void* key,
+			out void* pv
+		);
+
+		[CCode (cname = "SetValue")]
+		public abstract int set_value (
+			void* key,
+			void* propvar
+		);
+
+		[CCode (cname = "Commit")]
+		public abstract int commit (
+		);
+
+	}
+
+	[CCode (cname = "INamedPropertyStore", ref_function = "", unref_function = "")]
+	public interface INamedPropertyStore : IUnknown {
+		[CCode (cname = "GetNamedValue")]
+		public abstract int get_named_value (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_name,
+			out void* ppropvar
+		);
+
+		[CCode (cname = "SetNamedValue")]
+		public abstract int set_named_value (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_name,
+			void* propvar
+		);
+
+		[CCode (cname = "GetNameCount")]
+		public abstract int get_name_count (
+			out uint pdw_count
+		);
+
+		[CCode (cname = "GetNameAt")]
+		public abstract int get_name_at (
+			uint i_prop,
+			out void* pbstr_name
+		);
+
+	}
+
+	[CCode (cname = "IObjectWithPropertyKey", ref_function = "", unref_function = "")]
+	public interface IObjectWithPropertyKey : IUnknown {
+		[CCode (cname = "SetPropertyKey")]
+		public abstract int set_property_key (
+			void* key
+		);
+
+		[CCode (cname = "GetPropertyKey")]
+		public abstract int get_property_key (
+			out void* pkey
+		);
+
+	}
+
+	[CCode (cname = "IPropertyChange", ref_function = "", unref_function = "")]
+	public interface IPropertyChange : IObjectWithPropertyKey {
+		[CCode (cname = "ApplyToPropVariant")]
+		public abstract int apply_to_prop_variant (
+			void* propvar_in,
+			out void* ppropvar_out
+		);
+
+	}
+
+	[CCode (cname = "IPropertyChangeArray", ref_function = "", unref_function = "")]
+	public interface IPropertyChangeArray : IUnknown {
+		[CCode (cname = "GetCount")]
+		public abstract int get_count (
+			out uint pc_operations
+		);
+
+		[CCode (cname = "GetAt")]
+		public abstract int get_at (
+			uint i_index,
+			void* riid,
+			out out void* ppv
+		);
+
+		[CCode (cname = "InsertAt")]
+		public abstract int insert_at (
+			uint i_index,
+			IPropertyChange pprop_change
+		);
+
+		[CCode (cname = "Append")]
+		public abstract int append (
+			IPropertyChange pprop_change
+		);
+
+		[CCode (cname = "AppendOrReplace")]
+		public abstract int append_or_replace (
+			IPropertyChange pprop_change
+		);
+
+		[CCode (cname = "RemoveAt")]
+		public abstract int remove_at (
+			uint i_index
+		);
+
+		[CCode (cname = "IsKeyInArray")]
+		public abstract int is_key_in_array (
+			void* key
+		);
+
+	}
+
+	[CCode (cname = "IPropertyStoreCapabilities", ref_function = "", unref_function = "")]
+	public interface IPropertyStoreCapabilities : IUnknown {
+		[CCode (cname = "IsPropertyWritable")]
+		public abstract int is_property_writable (
+			void* key
+		);
+
+	}
+
+	[CCode (cname = "IPropertyStoreCache", ref_function = "", unref_function = "")]
+	public interface IPropertyStoreCache : IPropertyStore {
+		[CCode (cname = "GetState")]
+		public abstract int get_state (
+			void* key,
+			out PscSTATE pstate
+		);
+
+		[CCode (cname = "GetValueAndState")]
+		public abstract int get_value_and_state (
+			void* key,
+			out void* ppropvar,
+			out PscSTATE pstate
+		);
+
+		[CCode (cname = "SetState")]
+		public abstract int set_state (
+			void* key,
+			PscSTATE state
+		);
+
+		[CCode (cname = "SetValueAndState")]
+		public abstract int set_value_and_state (
+			void* key,
+			void* ppropvar,
+			PscSTATE state
+		);
+
+	}
+
+	[CCode (cname = "IPropertyEnumType", ref_function = "", unref_function = "")]
+	public interface IPropertyEnumType : IUnknown {
+		[CCode (cname = "GetEnumType")]
+		public abstract int get_enum_type (
+			out PROPENUMTYPE penumtype
+		);
+
+		[CCode (cname = "GetValue")]
+		public abstract int get_value (
+			out void* ppropvar
+		);
+
+		[CCode (cname = "GetRangeMinValue")]
+		public abstract int get_range_min_value (
+			out void* ppropvar_min
+		);
+
+		[CCode (cname = "GetRangeSetValue")]
+		public abstract int get_range_set_value (
+			out void* ppropvar_set
+		);
+
+		[CCode (cname = "GetDisplayText")]
+		public abstract int get_display_text (
+			out uint16* ppsz_display
+		);
+
+	}
+
+	[CCode (cname = "IPropertyEnumType2", ref_function = "", unref_function = "")]
+	public interface IPropertyEnumType2 : IPropertyEnumType {
+		[CCode (cname = "GetImageReference")]
+		public abstract int get_image_reference (
+			out uint16* ppsz_image_res
+		);
+
+	}
+
+	[CCode (cname = "IPropertyEnumTypeList", ref_function = "", unref_function = "")]
+	public interface IPropertyEnumTypeList : IUnknown {
+		[CCode (cname = "GetCount")]
+		public abstract int get_count (
+			out uint pctypes
+		);
+
+		[CCode (cname = "GetAt")]
+		public abstract int get_at (
+			uint itype,
+			void* riid,
+			out out void* ppv
+		);
+
+		[CCode (cname = "GetConditionAt")]
+		public abstract int get_condition_at (
+			uint n_index,
+			void* riid,
+			out out void* ppv
+		);
+
+		[CCode (cname = "FindMatchingIndex")]
+		public abstract int find_matching_index (
+			void* propvar_cmp,
+			out uint pn_index
+		);
+
+	}
+
+	[CCode (cname = "IPropertyDescription", ref_function = "", unref_function = "")]
+	public interface IPropertyDescription : IUnknown {
+		[CCode (cname = "GetPropertyKey")]
+		public abstract int get_property_key (
+			out void* pkey
+		);
+
+		[CCode (cname = "GetCanonicalName")]
+		public abstract int get_canonical_name (
+			out uint16* ppsz_name
+		);
+
+		[CCode (cname = "GetPropertyType")]
+		public abstract int get_property_type (
+			out ushort pvartype
+		);
+
+		[CCode (cname = "GetDisplayName")]
+		public abstract int get_display_name (
+			out uint16* ppsz_name
+		);
+
+		[CCode (cname = "GetEditInvitation")]
+		public abstract int get_edit_invitation (
+			out uint16* ppsz_invite
+		);
+
+		[CCode (cname = "GetTypeFlags")]
+		public abstract int get_type_flags (
+			PROPDESCTYPEFLAGS mask,
+			out PROPDESCTYPEFLAGS ppdt_flags
+		);
+
+		[CCode (cname = "GetViewFlags")]
+		public abstract int get_view_flags (
+			out PROPDESCVIEWFLAGS ppdv_flags
+		);
+
+		[CCode (cname = "GetDefaultColumnWidth")]
+		public abstract int get_default_column_width (
+			out uint pcx_chars
+		);
+
+		[CCode (cname = "GetDisplayType")]
+		public abstract int get_display_type (
+			out PROPDESCDISPLAYTYPE pdisplaytype
+		);
+
+		[CCode (cname = "GetColumnState")]
+		public abstract int get_column_state (
+			out uint pcs_flags
+		);
+
+		[CCode (cname = "GetGroupingRange")]
+		public abstract int get_grouping_range (
+			out PROPDESCGROUPINGRANGE pgr
+		);
+
+		[CCode (cname = "GetRelativeDescriptionType")]
+		public abstract int get_relative_description_type (
+			out PROPDESCRELATIVEDESCRIPTIONTYPE prdt
+		);
+
+		[CCode (cname = "GetRelativeDescription")]
+		public abstract int get_relative_description (
+			void* propvar1,
+			void* propvar2,
+			out uint16* ppsz_desc1,
+			out uint16* ppsz_desc2
+		);
+
+		[CCode (cname = "GetSortDescription")]
+		public abstract int get_sort_description (
+			out PROPDESCSORTDESCRIPTION psd
+		);
+
+		[CCode (cname = "GetSortDescriptionLabel")]
+		public abstract int get_sort_description_label (
+			int f_descending,
+			out uint16* ppsz_description
+		);
+
+		[CCode (cname = "GetAggregationType")]
+		public abstract int get_aggregation_type (
+			out PROPDESCAGGREGATIONTYPE paggtype
+		);
+
+		[CCode (cname = "GetConditionType")]
+		public abstract int get_condition_type (
+			out PROPDESCCONDITIONTYPE pcontype,
+			out Win32.System.Search.Common.CONDITIONOPERATION pop_default
+		);
+
+		[CCode (cname = "GetEnumTypeList")]
+		public abstract int get_enum_type_list (
+			void* riid,
+			out out void* ppv
+		);
+
+		[CCode (cname = "CoerceToCanonicalValue")]
+		public abstract int coerce_to_canonical_value (
+			out void* ppropvar
+		);
+
+		[CCode (cname = "FormatForDisplay")]
+		public abstract int format_for_display (
+			void* propvar,
+			PROPDESCFORMATFLAGS pdf_flags,
+			out uint16* ppsz_display
+		);
+
+		[CCode (cname = "IsValueCanonical")]
+		public abstract int is_value_canonical (
+			void* propvar
+		);
+
+	}
+
+	[CCode (cname = "IPropertyDescription2", ref_function = "", unref_function = "")]
+	public interface IPropertyDescription2 : IPropertyDescription {
+		[CCode (cname = "GetImageReferenceForValue")]
+		public abstract int get_image_reference_for_value (
+			void* propvar,
+			out uint16* ppsz_image_res
+		);
+
+	}
+
+	[CCode (cname = "IPropertyDescriptionAliasInfo", ref_function = "", unref_function = "")]
+	public interface IPropertyDescriptionAliasInfo : IPropertyDescription {
+		[CCode (cname = "GetSortByAlias")]
+		public abstract int get_sort_by_alias (
+			void* riid,
+			out out void* ppv
+		);
+
+		[CCode (cname = "GetAdditionalSortByAliases")]
+		public abstract int get_additional_sort_by_aliases (
+			void* riid,
+			out out void* ppv
+		);
+
+	}
+
+	[CCode (cname = "IPropertyDescriptionSearchInfo", ref_function = "", unref_function = "")]
+	public interface IPropertyDescriptionSearchInfo : IPropertyDescription {
+		[CCode (cname = "GetSearchInfoFlags")]
+		public abstract int get_search_info_flags (
+			out PROPDESCSEARCHINFOFLAGS ppdsi_flags
+		);
+
+		[CCode (cname = "GetColumnIndexType")]
+		public abstract int get_column_index_type (
+			out PROPDESCCOLUMNINDEXTYPE ppdci_type
+		);
+
+		[CCode (cname = "GetProjectionString")]
+		public abstract int get_projection_string (
+			out uint16* ppsz_projection
+		);
+
+		[CCode (cname = "GetMaxSize")]
+		public abstract int get_max_size (
+			out uint pcb_max_size
+		);
+
+	}
+
+	[CCode (cname = "IPropertyDescriptionRelatedPropertyInfo", ref_function = "", unref_function = "")]
+	public interface IPropertyDescriptionRelatedPropertyInfo : IPropertyDescription {
+		[CCode (cname = "GetRelatedProperty")]
+		public abstract int get_related_property (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_relationship_name,
+			void* riid,
+			out out void* ppv
+		);
+
+	}
+
+	[CCode (cname = "IPropertySystem", ref_function = "", unref_function = "")]
+	public interface IPropertySystem : IUnknown {
+		[CCode (cname = "GetPropertyDescription")]
+		public abstract int get_property_description (
+			void* propkey,
+			void* riid,
+			out out void* ppv
+		);
+
+		[CCode (cname = "GetPropertyDescriptionByName")]
+		public abstract int get_property_description_by_name (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_canonical_name,
+			void* riid,
+			out out void* ppv
+		);
+
+		[CCode (cname = "GetPropertyDescriptionListFromString")]
+		public abstract int get_property_description_list_from_string (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_prop_list,
+			void* riid,
+			out out void* ppv
+		);
+
+		[CCode (cname = "EnumeratePropertyDescriptions")]
+		public abstract int enumerate_property_descriptions (
+			PROPDESCENUMFILTER filter_on,
+			void* riid,
+			out out void* ppv
+		);
+
+		[CCode (cname = "FormatForDisplay")]
+		public abstract int format_for_display (
+			void* key,
+			void* propvar,
+			PROPDESCFORMATFLAGS pdff,
+			void* psz_text,
+			uint cch_text
+		);
+
+		[CCode (cname = "FormatForDisplayAlloc")]
+		public abstract int format_for_display_alloc (
+			void* key,
+			void* propvar,
+			PROPDESCFORMATFLAGS pdff,
+			out uint16* ppsz_display
+		);
+
+		[CCode (cname = "RegisterPropertySchema")]
+		public abstract int register_property_schema (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_path
+		);
+
+		[CCode (cname = "UnregisterPropertySchema")]
+		public abstract int unregister_property_schema (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_path
+		);
+
+		[CCode (cname = "RefreshPropertySchema")]
+		public abstract int refresh_property_schema (
+		);
+
+	}
+
+	[CCode (cname = "IPropertyDescriptionList", ref_function = "", unref_function = "")]
+	public interface IPropertyDescriptionList : IUnknown {
+		[CCode (cname = "GetCount")]
+		public abstract int get_count (
+			out uint pc_elem
+		);
+
+		[CCode (cname = "GetAt")]
+		public abstract int get_at (
+			uint i_elem,
+			void* riid,
+			out out void* ppv
+		);
+
+	}
+
+	[CCode (cname = "IPropertyStoreFactory", ref_function = "", unref_function = "")]
+	public interface IPropertyStoreFactory : IUnknown {
+		[CCode (cname = "GetPropertyStore")]
+		public abstract int get_property_store (
+			GETPROPERTYSTOREFLAGS flags,
+			IUnknown p_unk_factory,
+			void* riid,
+			out out void* ppv
+		);
+
+		[CCode (cname = "GetPropertyStoreForKeys")]
+		public abstract int get_property_store_for_keys (
+			void* rg_keys,
+			uint c_keys,
+			GETPROPERTYSTOREFLAGS flags,
+			void* riid,
+			out out void* ppv
+		);
+
+	}
+
+	[CCode (cname = "IDelayedPropertyStoreFactory", ref_function = "", unref_function = "")]
+	public interface IDelayedPropertyStoreFactory : IPropertyStoreFactory {
+		[CCode (cname = "GetDelayedPropertyStore")]
+		public abstract int get_delayed_property_store (
+			GETPROPERTYSTOREFLAGS flags,
+			uint dw_store_id,
+			void* riid,
+			out out void* ppv
+		);
+
+	}
+
+	[CCode (cname = "IPersistSerializedPropStorage", ref_function = "", unref_function = "")]
+	public interface IPersistSerializedPropStorage : IUnknown {
+		[CCode (cname = "SetFlags")]
+		public abstract int set_flags (
+			int flags
+		);
+
+		[CCode (cname = "SetPropertyStorage")]
+		public abstract int set_property_storage (
+			void* psps,
+			uint cb
+		);
+
+		[CCode (cname = "GetPropertyStorage")]
+		public abstract int get_property_storage (
+			out out void* ppsps,
+			out uint pcb
+		);
+
+	}
+
+	[CCode (cname = "IPersistSerializedPropStorage2", ref_function = "", unref_function = "")]
+	public interface IPersistSerializedPropStorage2 : IPersistSerializedPropStorage {
+		[CCode (cname = "GetPropertyStorageSize")]
+		public abstract int get_property_storage_size (
+			out uint pcb
+		);
+
+		[CCode (cname = "GetPropertyStorageBuffer")]
+		public abstract int get_property_storage_buffer (
+			out void* psps,
+			uint cb,
+			out uint pcb_written
+		);
+
+	}
+
+	[CCode (cname = "IPropertySystemChangeNotify", ref_function = "", unref_function = "")]
+	public interface IPropertySystemChangeNotify : IUnknown {
+		[CCode (cname = "SchemaRefreshed")]
+		public abstract int schema_refreshed (
+		);
+
+	}
+
+	[CCode (cname = "ICreateObject", ref_function = "", unref_function = "")]
+	public interface ICreateObject : IUnknown {
+		[CCode (cname = "CreateObject")]
+		public abstract int create_object (
+			void* clsid,
+			IUnknown p_unk_outer,
+			void* riid,
+			out out void* ppv
+		);
+
+	}
+
+	[CCode (cname = "IPropertyUI", ref_function = "", unref_function = "")]
+	public interface IPropertyUI : IUnknown {
+		[CCode (cname = "ParsePropertyName")]
+		public abstract int parse_property_name (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_name,
+			out void* pfmtid,
+			out uint ppid,
+			out uint pch_eaten
+		);
+
+		[CCode (cname = "GetCannonicalName")]
+		public abstract int get_cannonical_name (
+			void* fmtid,
+			uint pid,
+			void* pwsz_text,
+			uint cch_text
+		);
+
+		[CCode (cname = "GetDisplayName")]
+		public abstract int get_display_name (
+			void* fmtid,
+			uint pid,
+			PROPERTYUINAMEFLAGS flags,
+			void* pwsz_text,
+			uint cch_text
+		);
+
+		[CCode (cname = "GetPropertyDescription")]
+		public abstract int get_property_description (
+			void* fmtid,
+			uint pid,
+			void* pwsz_text,
+			uint cch_text
+		);
+
+		[CCode (cname = "GetDefaultWidth")]
+		public abstract int get_default_width (
+			void* fmtid,
+			uint pid,
+			out uint pcx_chars
+		);
+
+		[CCode (cname = "GetFlags")]
+		public abstract int get_flags (
+			void* fmtid,
+			uint pid,
+			out PROPERTYUIFLAGS pflags
+		);
+
+		[CCode (cname = "FormatForDisplay")]
+		public abstract int format_for_display (
+			void* fmtid,
+			uint pid,
+			void* ppropvar,
+			PROPERTYUIFORMATFLAGS puiff,
+			void* pwsz_text,
+			uint cch_text
+		);
+
+		[CCode (cname = "GetHelpInfo")]
+		public abstract int get_help_info (
+			void* fmtid,
+			uint pid,
+			void* pwsz_help_file,
+			uint cch,
+			out uint pu_help_id
+		);
+
+	}
+
 	[CCode (cname = "PropVariantToWinRTPropertyValue")]
-	public extern void* prop_variant_to_win_rtproperty_value (
+	public extern int prop_variant_to_win_rtproperty_value (
 		void* propvar,
 		void* riid,
 		out void** ppv
 	);
 
 	[CCode (cname = "WinRTPropertyValueToPropVariant")]
-	public extern void* win_rtproperty_value_to_prop_variant (
-		void* punk_property_value,
+	public extern int win_rtproperty_value_to_prop_variant (
+		IUnknown punk_property_value,
 		out void* ppropvar
 	);
 
 	[CCode (cname = "PSFormatForDisplay")]
-	public extern void* psformat_for_display (
+	public extern int psformat_for_display (
 		void* propkey,
 		void* propvar,
 		PROPDESCFORMATFLAGS pdf_flags,
@@ -598,7 +1278,7 @@ namespace Win32.Ui.Shell.PropertiesSystem {
 	);
 
 	[CCode (cname = "PSFormatForDisplayAlloc")]
-	public extern void* psformat_for_display_alloc (
+	public extern int psformat_for_display_alloc (
 		void* key,
 		void* propvar,
 		PROPDESCFORMATFLAGS pdff,
@@ -606,43 +1286,43 @@ namespace Win32.Ui.Shell.PropertiesSystem {
 	);
 
 	[CCode (cname = "PSFormatPropertyValue")]
-	public extern void* psformat_property_value (
-		void* pps,
-		void* ppd,
+	public extern int psformat_property_value (
+		IPropertyStore pps,
+		IPropertyDescription ppd,
 		PROPDESCFORMATFLAGS pdff,
 		[CCode (type_id = "LPCWSTR")] out uint16* ppsz_display
 	);
 
 	[CCode (cname = "PSGetImageReferenceForValue")]
-	public extern void* psget_image_reference_for_value (
+	public extern int psget_image_reference_for_value (
 		void* propkey,
 		void* propvar,
 		[CCode (type_id = "LPCWSTR")] out uint16* ppsz_image_res
 	);
 
 	[CCode (cname = "PSStringFromPropertyKey")]
-	public extern void* psstring_from_property_key (
+	public extern int psstring_from_property_key (
 		void* pkey,
 		void* psz,
 		uint cch
 	);
 
 	[CCode (cname = "PSPropertyKeyFromString")]
-	public extern void* psproperty_key_from_string (
+	public extern int psproperty_key_from_string (
 		[CCode (type_id = "LPCWSTR")] uint16* psz_string,
 		out void* pkey
 	);
 
 	[CCode (cname = "PSCreateMemoryPropertyStore")]
-	public extern void* pscreate_memory_property_store (
+	public extern int pscreate_memory_property_store (
 		void* riid,
 		out void** ppv
 	);
 
 	[CCode (cname = "PSCreateDelayedMultiplexPropertyStore")]
-	public extern void* pscreate_delayed_multiplex_property_store (
+	public extern int pscreate_delayed_multiplex_property_store (
 		GETPROPERTYSTOREFLAGS flags,
-		void* pdpsf,
+		IDelayedPropertyStoreFactory pdpsf,
 		void* rg_store_ids,
 		uint c_stores,
 		void* riid,
@@ -650,7 +1330,7 @@ namespace Win32.Ui.Shell.PropertiesSystem {
 	);
 
 	[CCode (cname = "PSCreateMultiplexPropertyStore")]
-	public extern void* pscreate_multiplex_property_store (
+	public extern int pscreate_multiplex_property_store (
 		void* prgpunk_stores,
 		uint c_stores,
 		void* riid,
@@ -658,7 +1338,7 @@ namespace Win32.Ui.Shell.PropertiesSystem {
 	);
 
 	[CCode (cname = "PSCreatePropertyChangeArray")]
-	public extern void* pscreate_property_change_array (
+	public extern int pscreate_property_change_array (
 		void* rgpropkey,
 		void* rgflags,
 		void* rgpropvar,
@@ -668,7 +1348,7 @@ namespace Win32.Ui.Shell.PropertiesSystem {
 	);
 
 	[CCode (cname = "PSCreateSimplePropertyChange")]
-	public extern void* pscreate_simple_property_change (
+	public extern int pscreate_simple_property_change (
 		PkaFLAGS flags,
 		void* key,
 		void* propvar,
@@ -677,133 +1357,133 @@ namespace Win32.Ui.Shell.PropertiesSystem {
 	);
 
 	[CCode (cname = "PSGetPropertyDescription")]
-	public extern void* psget_property_description (
+	public extern int psget_property_description (
 		void* propkey,
 		void* riid,
 		out void** ppv
 	);
 
 	[CCode (cname = "PSGetPropertyDescriptionByName")]
-	public extern void* psget_property_description_by_name (
+	public extern int psget_property_description_by_name (
 		[CCode (type_id = "LPCWSTR")] uint16* psz_canonical_name,
 		void* riid,
 		out void** ppv
 	);
 
 	[CCode (cname = "PSLookupPropertyHandlerCLSID")]
-	public extern void* pslookup_property_handler_clsid (
+	public extern int pslookup_property_handler_clsid (
 		[CCode (type_id = "LPCWSTR")] uint16* psz_file_path,
 		out void* pclsid
 	);
 
 	[CCode (cname = "PSGetItemPropertyHandler")]
-	public extern void* psget_item_property_handler (
-		void* punk_item,
+	public extern int psget_item_property_handler (
+		IUnknown punk_item,
 		int f_read_write,
 		void* riid,
 		out void** ppv
 	);
 
 	[CCode (cname = "PSGetItemPropertyHandlerWithCreateObject")]
-	public extern void* psget_item_property_handler_with_create_object (
-		void* punk_item,
+	public extern int psget_item_property_handler_with_create_object (
+		IUnknown punk_item,
 		int f_read_write,
-		void* punk_create_object,
+		IUnknown punk_create_object,
 		void* riid,
 		out void** ppv
 	);
 
 	[CCode (cname = "PSGetPropertyValue")]
-	public extern void* psget_property_value (
-		void* pps,
-		void* ppd,
+	public extern int psget_property_value (
+		IPropertyStore pps,
+		IPropertyDescription ppd,
 		out void* ppropvar
 	);
 
 	[CCode (cname = "PSSetPropertyValue")]
-	public extern void* psset_property_value (
-		void* pps,
-		void* ppd,
+	public extern int psset_property_value (
+		IPropertyStore pps,
+		IPropertyDescription ppd,
 		void* propvar
 	);
 
 	[CCode (cname = "PSRegisterPropertySchema")]
-	public extern void* psregister_property_schema (
+	public extern int psregister_property_schema (
 		[CCode (type_id = "LPCWSTR")] uint16* psz_path
 	);
 
 	[CCode (cname = "PSUnregisterPropertySchema")]
-	public extern void* psunregister_property_schema (
+	public extern int psunregister_property_schema (
 		[CCode (type_id = "LPCWSTR")] uint16* psz_path
 	);
 
 	[CCode (cname = "PSRefreshPropertySchema")]
-	public extern void* psrefresh_property_schema (
+	public extern int psrefresh_property_schema (
 	);
 
 	[CCode (cname = "PSEnumeratePropertyDescriptions")]
-	public extern void* psenumerate_property_descriptions (
+	public extern int psenumerate_property_descriptions (
 		PROPDESCENUMFILTER filter_on,
 		void* riid,
 		out void** ppv
 	);
 
 	[CCode (cname = "PSGetPropertyKeyFromName")]
-	public extern void* psget_property_key_from_name (
+	public extern int psget_property_key_from_name (
 		[CCode (type_id = "LPCWSTR")] uint16* psz_name,
 		out void* ppropkey
 	);
 
 	[CCode (cname = "PSGetNameFromPropertyKey")]
-	public extern void* psget_name_from_property_key (
+	public extern int psget_name_from_property_key (
 		void* propkey,
 		[CCode (type_id = "LPCWSTR")] out uint16* ppsz_canonical_name
 	);
 
 	[CCode (cname = "PSCoerceToCanonicalValue")]
-	public extern void* pscoerce_to_canonical_value (
+	public extern int pscoerce_to_canonical_value (
 		void* key,
 		out void* ppropvar
 	);
 
 	[CCode (cname = "PSGetPropertyDescriptionListFromString")]
-	public extern void* psget_property_description_list_from_string (
+	public extern int psget_property_description_list_from_string (
 		[CCode (type_id = "LPCWSTR")] uint16* psz_prop_list,
 		void* riid,
 		out void** ppv
 	);
 
 	[CCode (cname = "PSCreatePropertyStoreFromPropertySetStorage")]
-	public extern void* pscreate_property_store_from_property_set_storage (
-		void* ppss,
+	public extern int pscreate_property_store_from_property_set_storage (
+		IPropertySetStorage ppss,
 		uint grf_mode,
 		void* riid,
 		out void** ppv
 	);
 
 	[CCode (cname = "PSCreatePropertyStoreFromObject")]
-	public extern void* pscreate_property_store_from_object (
-		void* punk,
+	public extern int pscreate_property_store_from_object (
+		IUnknown punk,
 		uint grf_mode,
 		void* riid,
 		out void** ppv
 	);
 
 	[CCode (cname = "PSCreateAdapterFromPropertyStore")]
-	public extern void* pscreate_adapter_from_property_store (
-		void* pps,
+	public extern int pscreate_adapter_from_property_store (
+		IPropertyStore pps,
 		void* riid,
 		out void** ppv
 	);
 
 	[CCode (cname = "PSGetPropertySystem")]
-	public extern void* psget_property_system (
+	public extern int psget_property_system (
 		void* riid,
 		out void** ppv
 	);
 
 	[CCode (cname = "PSGetPropertyFromPropertyStorage")]
-	public extern void* psget_property_from_property_storage (
+	public extern int psget_property_from_property_storage (
 		void* psps,
 		uint cb,
 		void* rpkey,
@@ -811,7 +1491,7 @@ namespace Win32.Ui.Shell.PropertiesSystem {
 	);
 
 	[CCode (cname = "PSGetNamedPropertyFromPropertyStorage")]
-	public extern void* psget_named_property_from_property_storage (
+	public extern int psget_named_property_from_property_storage (
 		void* psps,
 		uint cb,
 		[CCode (type_id = "LPCWSTR")] uint16* psz_name,
@@ -819,362 +1499,362 @@ namespace Win32.Ui.Shell.PropertiesSystem {
 	);
 
 	[CCode (cname = "PSPropertyBag_ReadType")]
-	public extern void* psproperty_bag__read_type (
-		void* prop_bag,
+	public extern int psproperty_bag__read_type (
+		IPropertyBag prop_bag,
 		[CCode (type_id = "LPCWSTR")] uint16* prop_name,
 		out void* var,
 		void* type
 	);
 
 	[CCode (cname = "PSPropertyBag_ReadStr")]
-	public extern void* psproperty_bag__read_str (
-		void* prop_bag,
+	public extern int psproperty_bag__read_str (
+		IPropertyBag prop_bag,
 		[CCode (type_id = "LPCWSTR")] uint16* prop_name,
 		void* value,
 		int character_count
 	);
 
 	[CCode (cname = "PSPropertyBag_ReadStrAlloc")]
-	public extern void* psproperty_bag__read_str_alloc (
-		void* prop_bag,
+	public extern int psproperty_bag__read_str_alloc (
+		IPropertyBag prop_bag,
 		[CCode (type_id = "LPCWSTR")] uint16* prop_name,
 		[CCode (type_id = "LPCWSTR")] out uint16* value
 	);
 
 	[CCode (cname = "PSPropertyBag_ReadBSTR")]
-	public extern void* psproperty_bag__read_bstr (
-		void* prop_bag,
+	public extern int psproperty_bag__read_bstr (
+		IPropertyBag prop_bag,
 		[CCode (type_id = "LPCWSTR")] uint16* prop_name,
 		out void* value
 	);
 
 	[CCode (cname = "PSPropertyBag_WriteStr")]
-	public extern void* psproperty_bag__write_str (
-		void* prop_bag,
+	public extern int psproperty_bag__write_str (
+		IPropertyBag prop_bag,
 		[CCode (type_id = "LPCWSTR")] uint16* prop_name,
 		[CCode (type_id = "LPCWSTR")] uint16* value
 	);
 
 	[CCode (cname = "PSPropertyBag_WriteBSTR")]
-	public extern void* psproperty_bag__write_bstr (
-		void* prop_bag,
+	public extern int psproperty_bag__write_bstr (
+		IPropertyBag prop_bag,
 		[CCode (type_id = "LPCWSTR")] uint16* prop_name,
 		void* value
 	);
 
 	[CCode (cname = "PSPropertyBag_ReadInt")]
-	public extern void* psproperty_bag__read_int (
-		void* prop_bag,
+	public extern int psproperty_bag__read_int (
+		IPropertyBag prop_bag,
 		[CCode (type_id = "LPCWSTR")] uint16* prop_name,
 		out int value
 	);
 
 	[CCode (cname = "PSPropertyBag_WriteInt")]
-	public extern void* psproperty_bag__write_int (
-		void* prop_bag,
+	public extern int psproperty_bag__write_int (
+		IPropertyBag prop_bag,
 		[CCode (type_id = "LPCWSTR")] uint16* prop_name,
 		int value
 	);
 
 	[CCode (cname = "PSPropertyBag_ReadSHORT")]
-	public extern void* psproperty_bag__read_short (
-		void* prop_bag,
+	public extern int psproperty_bag__read_short (
+		IPropertyBag prop_bag,
 		[CCode (type_id = "LPCWSTR")] uint16* prop_name,
 		out void* value
 	);
 
 	[CCode (cname = "PSPropertyBag_WriteSHORT")]
-	public extern void* psproperty_bag__write_short (
-		void* prop_bag,
+	public extern int psproperty_bag__write_short (
+		IPropertyBag prop_bag,
 		[CCode (type_id = "LPCWSTR")] uint16* prop_name,
 		void* value
 	);
 
 	[CCode (cname = "PSPropertyBag_ReadLONG")]
-	public extern void* psproperty_bag__read_long (
-		void* prop_bag,
+	public extern int psproperty_bag__read_long (
+		IPropertyBag prop_bag,
 		[CCode (type_id = "LPCWSTR")] uint16* prop_name,
 		out int value
 	);
 
 	[CCode (cname = "PSPropertyBag_WriteLONG")]
-	public extern void* psproperty_bag__write_long (
-		void* prop_bag,
+	public extern int psproperty_bag__write_long (
+		IPropertyBag prop_bag,
 		[CCode (type_id = "LPCWSTR")] uint16* prop_name,
 		int value
 	);
 
 	[CCode (cname = "PSPropertyBag_ReadDWORD")]
-	public extern void* psproperty_bag__read_dword (
-		void* prop_bag,
+	public extern int psproperty_bag__read_dword (
+		IPropertyBag prop_bag,
 		[CCode (type_id = "LPCWSTR")] uint16* prop_name,
 		out uint value
 	);
 
 	[CCode (cname = "PSPropertyBag_WriteDWORD")]
-	public extern void* psproperty_bag__write_dword (
-		void* prop_bag,
+	public extern int psproperty_bag__write_dword (
+		IPropertyBag prop_bag,
 		[CCode (type_id = "LPCWSTR")] uint16* prop_name,
 		uint value
 	);
 
 	[CCode (cname = "PSPropertyBag_ReadBOOL")]
-	public extern void* psproperty_bag__read_bool (
-		void* prop_bag,
+	public extern int psproperty_bag__read_bool (
+		IPropertyBag prop_bag,
 		[CCode (type_id = "LPCWSTR")] uint16* prop_name,
 		out int value
 	);
 
 	[CCode (cname = "PSPropertyBag_WriteBOOL")]
-	public extern void* psproperty_bag__write_bool (
-		void* prop_bag,
+	public extern int psproperty_bag__write_bool (
+		IPropertyBag prop_bag,
 		[CCode (type_id = "LPCWSTR")] uint16* prop_name,
 		int value
 	);
 
 	[CCode (cname = "PSPropertyBag_ReadPOINTL")]
-	public extern void* psproperty_bag__read_pointl (
-		void* prop_bag,
+	public extern int psproperty_bag__read_pointl (
+		IPropertyBag prop_bag,
 		[CCode (type_id = "LPCWSTR")] uint16* prop_name,
 		out void* value
 	);
 
 	[CCode (cname = "PSPropertyBag_WritePOINTL")]
-	public extern void* psproperty_bag__write_pointl (
-		void* prop_bag,
+	public extern int psproperty_bag__write_pointl (
+		IPropertyBag prop_bag,
 		[CCode (type_id = "LPCWSTR")] uint16* prop_name,
 		void* value
 	);
 
 	[CCode (cname = "PSPropertyBag_ReadPOINTS")]
-	public extern void* psproperty_bag__read_points (
-		void* prop_bag,
+	public extern int psproperty_bag__read_points (
+		IPropertyBag prop_bag,
 		[CCode (type_id = "LPCWSTR")] uint16* prop_name,
 		out void* value
 	);
 
 	[CCode (cname = "PSPropertyBag_WritePOINTS")]
-	public extern void* psproperty_bag__write_points (
-		void* prop_bag,
+	public extern int psproperty_bag__write_points (
+		IPropertyBag prop_bag,
 		[CCode (type_id = "LPCWSTR")] uint16* prop_name,
 		void* value
 	);
 
 	[CCode (cname = "PSPropertyBag_ReadRECTL")]
-	public extern void* psproperty_bag__read_rectl (
-		void* prop_bag,
+	public extern int psproperty_bag__read_rectl (
+		IPropertyBag prop_bag,
 		[CCode (type_id = "LPCWSTR")] uint16* prop_name,
 		out void* value
 	);
 
 	[CCode (cname = "PSPropertyBag_WriteRECTL")]
-	public extern void* psproperty_bag__write_rectl (
-		void* prop_bag,
+	public extern int psproperty_bag__write_rectl (
+		IPropertyBag prop_bag,
 		[CCode (type_id = "LPCWSTR")] uint16* prop_name,
 		void* value
 	);
 
 	[CCode (cname = "PSPropertyBag_ReadStream")]
-	public extern void* psproperty_bag__read_stream (
-		void* prop_bag,
+	public extern int psproperty_bag__read_stream (
+		IPropertyBag prop_bag,
 		[CCode (type_id = "LPCWSTR")] uint16* prop_name,
-		out void* value
+		out IStream value
 	);
 
 	[CCode (cname = "PSPropertyBag_WriteStream")]
-	public extern void* psproperty_bag__write_stream (
-		void* prop_bag,
+	public extern int psproperty_bag__write_stream (
+		IPropertyBag prop_bag,
 		[CCode (type_id = "LPCWSTR")] uint16* prop_name,
-		void* value
+		IStream value
 	);
 
 	[CCode (cname = "PSPropertyBag_Delete")]
-	public extern void* psproperty_bag__delete (
-		void* prop_bag,
+	public extern int psproperty_bag__delete (
+		IPropertyBag prop_bag,
 		[CCode (type_id = "LPCWSTR")] uint16* prop_name
 	);
 
 	[CCode (cname = "PSPropertyBag_ReadULONGLONG")]
-	public extern void* psproperty_bag__read_ulonglong (
-		void* prop_bag,
+	public extern int psproperty_bag__read_ulonglong (
+		IPropertyBag prop_bag,
 		[CCode (type_id = "LPCWSTR")] uint16* prop_name,
 		out ulong value
 	);
 
 	[CCode (cname = "PSPropertyBag_WriteULONGLONG")]
-	public extern void* psproperty_bag__write_ulonglong (
-		void* prop_bag,
+	public extern int psproperty_bag__write_ulonglong (
+		IPropertyBag prop_bag,
 		[CCode (type_id = "LPCWSTR")] uint16* prop_name,
 		ulong value
 	);
 
 	[CCode (cname = "PSPropertyBag_ReadUnknown")]
-	public extern void* psproperty_bag__read_unknown (
-		void* prop_bag,
+	public extern int psproperty_bag__read_unknown (
+		IPropertyBag prop_bag,
 		[CCode (type_id = "LPCWSTR")] uint16* prop_name,
 		void* riid,
 		out void** ppv
 	);
 
 	[CCode (cname = "PSPropertyBag_WriteUnknown")]
-	public extern void* psproperty_bag__write_unknown (
-		void* prop_bag,
+	public extern int psproperty_bag__write_unknown (
+		IPropertyBag prop_bag,
 		[CCode (type_id = "LPCWSTR")] uint16* prop_name,
-		void* punk
+		IUnknown punk
 	);
 
 	[CCode (cname = "PSPropertyBag_ReadGUID")]
-	public extern void* psproperty_bag__read_guid (
-		void* prop_bag,
+	public extern int psproperty_bag__read_guid (
+		IPropertyBag prop_bag,
 		[CCode (type_id = "LPCWSTR")] uint16* prop_name,
 		out void* value
 	);
 
 	[CCode (cname = "PSPropertyBag_WriteGUID")]
-	public extern void* psproperty_bag__write_guid (
-		void* prop_bag,
+	public extern int psproperty_bag__write_guid (
+		IPropertyBag prop_bag,
 		[CCode (type_id = "LPCWSTR")] uint16* prop_name,
 		void* value
 	);
 
 	[CCode (cname = "PSPropertyBag_ReadPropertyKey")]
-	public extern void* psproperty_bag__read_property_key (
-		void* prop_bag,
+	public extern int psproperty_bag__read_property_key (
+		IPropertyBag prop_bag,
 		[CCode (type_id = "LPCWSTR")] uint16* prop_name,
 		out void* value
 	);
 
 	[CCode (cname = "PSPropertyBag_WritePropertyKey")]
-	public extern void* psproperty_bag__write_property_key (
-		void* prop_bag,
+	public extern int psproperty_bag__write_property_key (
+		IPropertyBag prop_bag,
 		[CCode (type_id = "LPCWSTR")] uint16* prop_name,
 		void* value
 	);
 
 	[CCode (cname = "InitPropVariantFromResource")]
-	public extern void* init_prop_variant_from_resource (
+	public extern int init_prop_variant_from_resource (
 		[CCode (type_id = "HINSTANCE")] void* hinst,
 		uint id,
 		out void* ppropvar
 	);
 
 	[CCode (cname = "InitPropVariantFromBuffer")]
-	public extern void* init_prop_variant_from_buffer (
+	public extern int init_prop_variant_from_buffer (
 		void* pv,
 		uint cb,
 		out void* ppropvar
 	);
 
 	[CCode (cname = "InitPropVariantFromCLSID")]
-	public extern void* init_prop_variant_from_clsid (
+	public extern int init_prop_variant_from_clsid (
 		void* clsid,
 		out void* ppropvar
 	);
 
 	[CCode (cname = "InitPropVariantFromGUIDAsString")]
-	public extern void* init_prop_variant_from_guidas_string (
+	public extern int init_prop_variant_from_guidas_string (
 		void* guid,
 		out void* ppropvar
 	);
 
 	[CCode (cname = "InitPropVariantFromFileTime")]
-	public extern void* init_prop_variant_from_file_time (
+	public extern int init_prop_variant_from_file_time (
 		void* pft_in,
 		out void* ppropvar
 	);
 
 	[CCode (cname = "InitPropVariantFromPropVariantVectorElem")]
-	public extern void* init_prop_variant_from_prop_variant_vector_elem (
+	public extern int init_prop_variant_from_prop_variant_vector_elem (
 		void* propvar_in,
 		uint i_elem,
 		out void* ppropvar
 	);
 
 	[CCode (cname = "InitPropVariantVectorFromPropVariant")]
-	public extern void* init_prop_variant_vector_from_prop_variant (
+	public extern int init_prop_variant_vector_from_prop_variant (
 		void* propvar_single,
 		out void* ppropvar_vector
 	);
 
 	[CCode (cname = "InitPropVariantFromStrRet")]
-	public extern void* init_prop_variant_from_str_ret (
+	public extern int init_prop_variant_from_str_ret (
 		out void* pstrret,
 		void* pidl,
 		out void* ppropvar
 	);
 
 	[CCode (cname = "InitPropVariantFromBooleanVector")]
-	public extern void* init_prop_variant_from_boolean_vector (
+	public extern int init_prop_variant_from_boolean_vector (
 		void* prgf,
 		uint c_elems,
 		out void* ppropvar
 	);
 
 	[CCode (cname = "InitPropVariantFromInt16Vector")]
-	public extern void* init_prop_variant_from_int16vector (
+	public extern int init_prop_variant_from_int16vector (
 		void* prgn,
 		uint c_elems,
 		out void* ppropvar
 	);
 
 	[CCode (cname = "InitPropVariantFromUInt16Vector")]
-	public extern void* init_prop_variant_from_uint16vector (
+	public extern int init_prop_variant_from_uint16vector (
 		void* prgn,
 		uint c_elems,
 		out void* ppropvar
 	);
 
 	[CCode (cname = "InitPropVariantFromInt32Vector")]
-	public extern void* init_prop_variant_from_int32vector (
+	public extern int init_prop_variant_from_int32vector (
 		void* prgn,
 		uint c_elems,
 		out void* ppropvar
 	);
 
 	[CCode (cname = "InitPropVariantFromUInt32Vector")]
-	public extern void* init_prop_variant_from_uint32vector (
+	public extern int init_prop_variant_from_uint32vector (
 		void* prgn,
 		uint c_elems,
 		out void* ppropvar
 	);
 
 	[CCode (cname = "InitPropVariantFromInt64Vector")]
-	public extern void* init_prop_variant_from_int64vector (
+	public extern int init_prop_variant_from_int64vector (
 		void* prgn,
 		uint c_elems,
 		out void* ppropvar
 	);
 
 	[CCode (cname = "InitPropVariantFromUInt64Vector")]
-	public extern void* init_prop_variant_from_uint64vector (
+	public extern int init_prop_variant_from_uint64vector (
 		void* prgn,
 		uint c_elems,
 		out void* ppropvar
 	);
 
 	[CCode (cname = "InitPropVariantFromDoubleVector")]
-	public extern void* init_prop_variant_from_double_vector (
+	public extern int init_prop_variant_from_double_vector (
 		void* prgn,
 		uint c_elems,
 		out void* ppropvar
 	);
 
 	[CCode (cname = "InitPropVariantFromFileTimeVector")]
-	public extern void* init_prop_variant_from_file_time_vector (
+	public extern int init_prop_variant_from_file_time_vector (
 		void* prgft,
 		uint c_elems,
 		out void* ppropvar
 	);
 
 	[CCode (cname = "InitPropVariantFromStringVector")]
-	public extern void* init_prop_variant_from_string_vector (
+	public extern int init_prop_variant_from_string_vector (
 		[CCode (type_id = "LPCWSTR")] void* prgsz,
 		uint c_elems,
 		out void* ppropvar
 	);
 
 	[CCode (cname = "InitPropVariantFromStringAsVector")]
-	public extern void* init_prop_variant_from_string_as_vector (
+	public extern int init_prop_variant_from_string_as_vector (
 		[CCode (type_id = "LPCWSTR")] uint16* psz,
 		out void* ppropvar
 	);
@@ -1234,93 +1914,93 @@ namespace Win32.Ui.Shell.PropertiesSystem {
 	);
 
 	[CCode (cname = "PropVariantToBoolean")]
-	public extern void* prop_variant_to_boolean (
+	public extern int prop_variant_to_boolean (
 		void* propvar_in,
 		out int pf_ret
 	);
 
 	[CCode (cname = "PropVariantToInt16")]
-	public extern void* prop_variant_to_int16 (
+	public extern int prop_variant_to_int16 (
 		void* propvar_in,
 		out void* pi_ret
 	);
 
 	[CCode (cname = "PropVariantToUInt16")]
-	public extern void* prop_variant_to_uint16 (
+	public extern int prop_variant_to_uint16 (
 		void* propvar_in,
 		out ushort pui_ret
 	);
 
 	[CCode (cname = "PropVariantToInt32")]
-	public extern void* prop_variant_to_int32 (
+	public extern int prop_variant_to_int32 (
 		void* propvar_in,
 		out int pl_ret
 	);
 
 	[CCode (cname = "PropVariantToUInt32")]
-	public extern void* prop_variant_to_uint32 (
+	public extern int prop_variant_to_uint32 (
 		void* propvar_in,
 		out uint pul_ret
 	);
 
 	[CCode (cname = "PropVariantToInt64")]
-	public extern void* prop_variant_to_int64 (
+	public extern int prop_variant_to_int64 (
 		void* propvar_in,
 		out long pll_ret
 	);
 
 	[CCode (cname = "PropVariantToUInt64")]
-	public extern void* prop_variant_to_uint64 (
+	public extern int prop_variant_to_uint64 (
 		void* propvar_in,
 		out ulong pull_ret
 	);
 
 	[CCode (cname = "PropVariantToDouble")]
-	public extern void* prop_variant_to_double (
+	public extern int prop_variant_to_double (
 		void* propvar_in,
 		out void* pdbl_ret
 	);
 
 	[CCode (cname = "PropVariantToBuffer")]
-	public extern void* prop_variant_to_buffer (
+	public extern int prop_variant_to_buffer (
 		void* propvar,
 		out void* pv,
 		uint cb
 	);
 
 	[CCode (cname = "PropVariantToString")]
-	public extern void* prop_variant_to_string (
+	public extern int prop_variant_to_string (
 		void* propvar,
 		void* psz,
 		uint cch
 	);
 
 	[CCode (cname = "PropVariantToGUID")]
-	public extern void* prop_variant_to_guid (
+	public extern int prop_variant_to_guid (
 		void* propvar,
 		out void* pguid
 	);
 
 	[CCode (cname = "PropVariantToStringAlloc")]
-	public extern void* prop_variant_to_string_alloc (
+	public extern int prop_variant_to_string_alloc (
 		void* propvar,
 		[CCode (type_id = "LPCWSTR")] out uint16* ppsz_out
 	);
 
 	[CCode (cname = "PropVariantToBSTR")]
-	public extern void* prop_variant_to_bstr (
+	public extern int prop_variant_to_bstr (
 		void* propvar,
 		out void* pbstr_out
 	);
 
 	[CCode (cname = "PropVariantToStrRet")]
-	public extern void* prop_variant_to_str_ret (
+	public extern int prop_variant_to_str_ret (
 		void* propvar,
 		out void* pstrret
 	);
 
 	[CCode (cname = "PropVariantToFileTime")]
-	public extern void* prop_variant_to_file_time (
+	public extern int prop_variant_to_file_time (
 		void* propvar,
 		PSTIMEFLAGS pstf_out,
 		out void* pft_out
@@ -1332,7 +2012,7 @@ namespace Win32.Ui.Shell.PropertiesSystem {
 	);
 
 	[CCode (cname = "PropVariantToBooleanVector")]
-	public extern void* prop_variant_to_boolean_vector (
+	public extern int prop_variant_to_boolean_vector (
 		void* propvar,
 		void* prgf,
 		uint crgf,
@@ -1340,7 +2020,7 @@ namespace Win32.Ui.Shell.PropertiesSystem {
 	);
 
 	[CCode (cname = "PropVariantToInt16Vector")]
-	public extern void* prop_variant_to_int16vector (
+	public extern int prop_variant_to_int16vector (
 		void* propvar,
 		void* prgn,
 		uint crgn,
@@ -1348,7 +2028,7 @@ namespace Win32.Ui.Shell.PropertiesSystem {
 	);
 
 	[CCode (cname = "PropVariantToUInt16Vector")]
-	public extern void* prop_variant_to_uint16vector (
+	public extern int prop_variant_to_uint16vector (
 		void* propvar,
 		void* prgn,
 		uint crgn,
@@ -1356,7 +2036,7 @@ namespace Win32.Ui.Shell.PropertiesSystem {
 	);
 
 	[CCode (cname = "PropVariantToInt32Vector")]
-	public extern void* prop_variant_to_int32vector (
+	public extern int prop_variant_to_int32vector (
 		void* propvar,
 		void* prgn,
 		uint crgn,
@@ -1364,7 +2044,7 @@ namespace Win32.Ui.Shell.PropertiesSystem {
 	);
 
 	[CCode (cname = "PropVariantToUInt32Vector")]
-	public extern void* prop_variant_to_uint32vector (
+	public extern int prop_variant_to_uint32vector (
 		void* propvar,
 		void* prgn,
 		uint crgn,
@@ -1372,7 +2052,7 @@ namespace Win32.Ui.Shell.PropertiesSystem {
 	);
 
 	[CCode (cname = "PropVariantToInt64Vector")]
-	public extern void* prop_variant_to_int64vector (
+	public extern int prop_variant_to_int64vector (
 		void* propvar,
 		void* prgn,
 		uint crgn,
@@ -1380,7 +2060,7 @@ namespace Win32.Ui.Shell.PropertiesSystem {
 	);
 
 	[CCode (cname = "PropVariantToUInt64Vector")]
-	public extern void* prop_variant_to_uint64vector (
+	public extern int prop_variant_to_uint64vector (
 		void* propvar,
 		void* prgn,
 		uint crgn,
@@ -1388,7 +2068,7 @@ namespace Win32.Ui.Shell.PropertiesSystem {
 	);
 
 	[CCode (cname = "PropVariantToDoubleVector")]
-	public extern void* prop_variant_to_double_vector (
+	public extern int prop_variant_to_double_vector (
 		void* propvar,
 		void* prgn,
 		uint crgn,
@@ -1396,7 +2076,7 @@ namespace Win32.Ui.Shell.PropertiesSystem {
 	);
 
 	[CCode (cname = "PropVariantToFileTimeVector")]
-	public extern void* prop_variant_to_file_time_vector (
+	public extern int prop_variant_to_file_time_vector (
 		void* propvar,
 		void* prgft,
 		uint crgft,
@@ -1404,7 +2084,7 @@ namespace Win32.Ui.Shell.PropertiesSystem {
 	);
 
 	[CCode (cname = "PropVariantToStringVector")]
-	public extern void* prop_variant_to_string_vector (
+	public extern int prop_variant_to_string_vector (
 		void* propvar,
 		[CCode (type_id = "LPCWSTR")] void* prgsz,
 		uint crgsz,
@@ -1412,140 +2092,140 @@ namespace Win32.Ui.Shell.PropertiesSystem {
 	);
 
 	[CCode (cname = "PropVariantToBooleanVectorAlloc")]
-	public extern void* prop_variant_to_boolean_vector_alloc (
+	public extern int prop_variant_to_boolean_vector_alloc (
 		void* propvar,
 		out int* pprgf,
 		out uint pc_elem
 	);
 
 	[CCode (cname = "PropVariantToInt16VectorAlloc")]
-	public extern void* prop_variant_to_int16vector_alloc (
+	public extern int prop_variant_to_int16vector_alloc (
 		void* propvar,
 		out void** pprgn,
 		out uint pc_elem
 	);
 
 	[CCode (cname = "PropVariantToUInt16VectorAlloc")]
-	public extern void* prop_variant_to_uint16vector_alloc (
+	public extern int prop_variant_to_uint16vector_alloc (
 		void* propvar,
 		out ushort* pprgn,
 		out uint pc_elem
 	);
 
 	[CCode (cname = "PropVariantToInt32VectorAlloc")]
-	public extern void* prop_variant_to_int32vector_alloc (
+	public extern int prop_variant_to_int32vector_alloc (
 		void* propvar,
 		out int* pprgn,
 		out uint pc_elem
 	);
 
 	[CCode (cname = "PropVariantToUInt32VectorAlloc")]
-	public extern void* prop_variant_to_uint32vector_alloc (
+	public extern int prop_variant_to_uint32vector_alloc (
 		void* propvar,
 		out uint* pprgn,
 		out uint pc_elem
 	);
 
 	[CCode (cname = "PropVariantToInt64VectorAlloc")]
-	public extern void* prop_variant_to_int64vector_alloc (
+	public extern int prop_variant_to_int64vector_alloc (
 		void* propvar,
 		out long* pprgn,
 		out uint pc_elem
 	);
 
 	[CCode (cname = "PropVariantToUInt64VectorAlloc")]
-	public extern void* prop_variant_to_uint64vector_alloc (
+	public extern int prop_variant_to_uint64vector_alloc (
 		void* propvar,
 		out ulong* pprgn,
 		out uint pc_elem
 	);
 
 	[CCode (cname = "PropVariantToDoubleVectorAlloc")]
-	public extern void* prop_variant_to_double_vector_alloc (
+	public extern int prop_variant_to_double_vector_alloc (
 		void* propvar,
 		out void** pprgn,
 		out uint pc_elem
 	);
 
 	[CCode (cname = "PropVariantToFileTimeVectorAlloc")]
-	public extern void* prop_variant_to_file_time_vector_alloc (
+	public extern int prop_variant_to_file_time_vector_alloc (
 		void* propvar,
 		out void** pprgft,
 		out uint pc_elem
 	);
 
 	[CCode (cname = "PropVariantToStringVectorAlloc")]
-	public extern void* prop_variant_to_string_vector_alloc (
+	public extern int prop_variant_to_string_vector_alloc (
 		void* propvar,
 		out uint16** pprgsz,
 		out uint pc_elem
 	);
 
 	[CCode (cname = "PropVariantGetBooleanElem")]
-	public extern void* prop_variant_get_boolean_elem (
+	public extern int prop_variant_get_boolean_elem (
 		void* propvar,
 		uint i_elem,
 		out int pf_val
 	);
 
 	[CCode (cname = "PropVariantGetInt16Elem")]
-	public extern void* prop_variant_get_int16elem (
+	public extern int prop_variant_get_int16elem (
 		void* propvar,
 		uint i_elem,
 		out void* pn_val
 	);
 
 	[CCode (cname = "PropVariantGetUInt16Elem")]
-	public extern void* prop_variant_get_uint16elem (
+	public extern int prop_variant_get_uint16elem (
 		void* propvar,
 		uint i_elem,
 		out ushort pn_val
 	);
 
 	[CCode (cname = "PropVariantGetInt32Elem")]
-	public extern void* prop_variant_get_int32elem (
+	public extern int prop_variant_get_int32elem (
 		void* propvar,
 		uint i_elem,
 		out int pn_val
 	);
 
 	[CCode (cname = "PropVariantGetUInt32Elem")]
-	public extern void* prop_variant_get_uint32elem (
+	public extern int prop_variant_get_uint32elem (
 		void* propvar,
 		uint i_elem,
 		out uint pn_val
 	);
 
 	[CCode (cname = "PropVariantGetInt64Elem")]
-	public extern void* prop_variant_get_int64elem (
+	public extern int prop_variant_get_int64elem (
 		void* propvar,
 		uint i_elem,
 		out long pn_val
 	);
 
 	[CCode (cname = "PropVariantGetUInt64Elem")]
-	public extern void* prop_variant_get_uint64elem (
+	public extern int prop_variant_get_uint64elem (
 		void* propvar,
 		uint i_elem,
 		out ulong pn_val
 	);
 
 	[CCode (cname = "PropVariantGetDoubleElem")]
-	public extern void* prop_variant_get_double_elem (
+	public extern int prop_variant_get_double_elem (
 		void* propvar,
 		uint i_elem,
 		out void* pn_val
 	);
 
 	[CCode (cname = "PropVariantGetFileTimeElem")]
-	public extern void* prop_variant_get_file_time_elem (
+	public extern int prop_variant_get_file_time_elem (
 		void* propvar,
 		uint i_elem,
 		out void* pft_val
 	);
 
 	[CCode (cname = "PropVariantGetStringElem")]
-	public extern void* prop_variant_get_string_elem (
+	public extern int prop_variant_get_string_elem (
 		void* propvar,
 		uint i_elem,
 		[CCode (type_id = "LPCWSTR")] out uint16* ppsz_val
@@ -1566,7 +2246,7 @@ namespace Win32.Ui.Shell.PropertiesSystem {
 	);
 
 	[CCode (cname = "PropVariantChangeType")]
-	public extern void* prop_variant_change_type (
+	public extern int prop_variant_change_type (
 		out void* ppropvar_dest,
 		void* propvar_src,
 		PROPVARCHANGEFLAGS flags,
@@ -1574,122 +2254,122 @@ namespace Win32.Ui.Shell.PropertiesSystem {
 	);
 
 	[CCode (cname = "PropVariantToVariant")]
-	public extern void* prop_variant_to_variant (
+	public extern int prop_variant_to_variant (
 		void* p_prop_var,
 		out void* p_var
 	);
 
 	[CCode (cname = "VariantToPropVariant")]
-	public extern void* variant_to_prop_variant (
+	public extern int variant_to_prop_variant (
 		void* p_var,
 		out void* p_prop_var
 	);
 
 	[CCode (cname = "InitVariantFromResource")]
-	public extern void* init_variant_from_resource (
+	public extern int init_variant_from_resource (
 		[CCode (type_id = "HINSTANCE")] void* hinst,
 		uint id,
 		out void* pvar
 	);
 
 	[CCode (cname = "InitVariantFromBuffer")]
-	public extern void* init_variant_from_buffer (
+	public extern int init_variant_from_buffer (
 		void* pv,
 		uint cb,
 		out void* pvar
 	);
 
 	[CCode (cname = "InitVariantFromGUIDAsString")]
-	public extern void* init_variant_from_guidas_string (
+	public extern int init_variant_from_guidas_string (
 		void* guid,
 		out void* pvar
 	);
 
 	[CCode (cname = "InitVariantFromFileTime")]
-	public extern void* init_variant_from_file_time (
+	public extern int init_variant_from_file_time (
 		void* pft,
 		out void* pvar
 	);
 
 	[CCode (cname = "InitVariantFromFileTimeArray")]
-	public extern void* init_variant_from_file_time_array (
+	public extern int init_variant_from_file_time_array (
 		void* prgft,
 		uint c_elems,
 		out void* pvar
 	);
 
 	[CCode (cname = "InitVariantFromStrRet")]
-	public extern void* init_variant_from_str_ret (
+	public extern int init_variant_from_str_ret (
 		void* pstrret,
 		void* pidl,
 		out void* pvar
 	);
 
 	[CCode (cname = "InitVariantFromVariantArrayElem")]
-	public extern void* init_variant_from_variant_array_elem (
+	public extern int init_variant_from_variant_array_elem (
 		void* var_in,
 		uint i_elem,
 		out void* pvar
 	);
 
 	[CCode (cname = "InitVariantFromBooleanArray")]
-	public extern void* init_variant_from_boolean_array (
+	public extern int init_variant_from_boolean_array (
 		void* prgf,
 		uint c_elems,
 		out void* pvar
 	);
 
 	[CCode (cname = "InitVariantFromInt16Array")]
-	public extern void* init_variant_from_int16array (
+	public extern int init_variant_from_int16array (
 		void* prgn,
 		uint c_elems,
 		out void* pvar
 	);
 
 	[CCode (cname = "InitVariantFromUInt16Array")]
-	public extern void* init_variant_from_uint16array (
+	public extern int init_variant_from_uint16array (
 		void* prgn,
 		uint c_elems,
 		out void* pvar
 	);
 
 	[CCode (cname = "InitVariantFromInt32Array")]
-	public extern void* init_variant_from_int32array (
+	public extern int init_variant_from_int32array (
 		void* prgn,
 		uint c_elems,
 		out void* pvar
 	);
 
 	[CCode (cname = "InitVariantFromUInt32Array")]
-	public extern void* init_variant_from_uint32array (
+	public extern int init_variant_from_uint32array (
 		void* prgn,
 		uint c_elems,
 		out void* pvar
 	);
 
 	[CCode (cname = "InitVariantFromInt64Array")]
-	public extern void* init_variant_from_int64array (
+	public extern int init_variant_from_int64array (
 		void* prgn,
 		uint c_elems,
 		out void* pvar
 	);
 
 	[CCode (cname = "InitVariantFromUInt64Array")]
-	public extern void* init_variant_from_uint64array (
+	public extern int init_variant_from_uint64array (
 		void* prgn,
 		uint c_elems,
 		out void* pvar
 	);
 
 	[CCode (cname = "InitVariantFromDoubleArray")]
-	public extern void* init_variant_from_double_array (
+	public extern int init_variant_from_double_array (
 		void* prgn,
 		uint c_elems,
 		out void* pvar
 	);
 
 	[CCode (cname = "InitVariantFromStringArray")]
-	public extern void* init_variant_from_string_array (
+	public extern int init_variant_from_string_array (
 		[CCode (type_id = "LPCWSTR")] void* prgsz,
 		uint c_elems,
 		out void* pvar
@@ -1750,94 +2430,94 @@ namespace Win32.Ui.Shell.PropertiesSystem {
 	);
 
 	[CCode (cname = "VariantToBoolean")]
-	public extern void* variant_to_boolean (
+	public extern int variant_to_boolean (
 		void* var_in,
 		out int pf_ret
 	);
 
 	[CCode (cname = "VariantToInt16")]
-	public extern void* variant_to_int16 (
+	public extern int variant_to_int16 (
 		void* var_in,
 		out void* pi_ret
 	);
 
 	[CCode (cname = "VariantToUInt16")]
-	public extern void* variant_to_uint16 (
+	public extern int variant_to_uint16 (
 		void* var_in,
 		out ushort pui_ret
 	);
 
 	[CCode (cname = "VariantToInt32")]
-	public extern void* variant_to_int32 (
+	public extern int variant_to_int32 (
 		void* var_in,
 		out int pl_ret
 	);
 
 	[CCode (cname = "VariantToUInt32")]
-	public extern void* variant_to_uint32 (
+	public extern int variant_to_uint32 (
 		void* var_in,
 		out uint pul_ret
 	);
 
 	[CCode (cname = "VariantToInt64")]
-	public extern void* variant_to_int64 (
+	public extern int variant_to_int64 (
 		void* var_in,
 		out long pll_ret
 	);
 
 	[CCode (cname = "VariantToUInt64")]
-	public extern void* variant_to_uint64 (
+	public extern int variant_to_uint64 (
 		void* var_in,
 		out ulong pull_ret
 	);
 
 	[CCode (cname = "VariantToDouble")]
-	public extern void* variant_to_double (
+	public extern int variant_to_double (
 		void* var_in,
 		out void* pdbl_ret
 	);
 
 	[CCode (cname = "VariantToBuffer")]
-	public extern void* variant_to_buffer (
+	public extern int variant_to_buffer (
 		void* var_in,
 		out void* pv,
 		uint cb
 	);
 
 	[CCode (cname = "VariantToGUID")]
-	public extern void* variant_to_guid (
+	public extern int variant_to_guid (
 		void* var_in,
 		out void* pguid
 	);
 
 	[CCode (cname = "VariantToString")]
-	public extern void* variant_to_string (
+	public extern int variant_to_string (
 		void* var_in,
 		void* psz_buf,
 		uint cch_buf
 	);
 
 	[CCode (cname = "VariantToStringAlloc")]
-	public extern void* variant_to_string_alloc (
+	public extern int variant_to_string_alloc (
 		void* var_in,
 		[CCode (type_id = "LPCWSTR")] out uint16* ppsz_buf
 	);
 
 	[CCode (cname = "VariantToDosDateTime")]
-	public extern void* variant_to_dos_date_time (
+	public extern int variant_to_dos_date_time (
 		void* var_in,
 		out ushort pw_date,
 		out ushort pw_time
 	);
 
 	[CCode (cname = "VariantToStrRet")]
-	public extern void* variant_to_str_ret (
+	public extern int variant_to_str_ret (
 		void* var_in,
 		out void* pstrret
 	);
 
 	[CCode (cname = "VariantToFileTime")]
-	public extern void* variant_to_file_time (
+	public extern int variant_to_file_time (
 		void* var_in,
 		PSTIMEFLAGS stf_out,
 		out void* pft_out
@@ -1849,7 +2529,7 @@ namespace Win32.Ui.Shell.PropertiesSystem {
 	);
 
 	[CCode (cname = "VariantToBooleanArray")]
-	public extern void* variant_to_boolean_array (
+	public extern int variant_to_boolean_array (
 		void* var,
 		void* prgf,
 		uint crgn,
@@ -1857,7 +2537,7 @@ namespace Win32.Ui.Shell.PropertiesSystem {
 	);
 
 	[CCode (cname = "VariantToInt16Array")]
-	public extern void* variant_to_int16array (
+	public extern int variant_to_int16array (
 		void* var,
 		void* prgn,
 		uint crgn,
@@ -1865,7 +2545,7 @@ namespace Win32.Ui.Shell.PropertiesSystem {
 	);
 
 	[CCode (cname = "VariantToUInt16Array")]
-	public extern void* variant_to_uint16array (
+	public extern int variant_to_uint16array (
 		void* var,
 		void* prgn,
 		uint crgn,
@@ -1873,7 +2553,7 @@ namespace Win32.Ui.Shell.PropertiesSystem {
 	);
 
 	[CCode (cname = "VariantToInt32Array")]
-	public extern void* variant_to_int32array (
+	public extern int variant_to_int32array (
 		void* var,
 		void* prgn,
 		uint crgn,
@@ -1881,7 +2561,7 @@ namespace Win32.Ui.Shell.PropertiesSystem {
 	);
 
 	[CCode (cname = "VariantToUInt32Array")]
-	public extern void* variant_to_uint32array (
+	public extern int variant_to_uint32array (
 		void* var,
 		void* prgn,
 		uint crgn,
@@ -1889,7 +2569,7 @@ namespace Win32.Ui.Shell.PropertiesSystem {
 	);
 
 	[CCode (cname = "VariantToInt64Array")]
-	public extern void* variant_to_int64array (
+	public extern int variant_to_int64array (
 		void* var,
 		void* prgn,
 		uint crgn,
@@ -1897,7 +2577,7 @@ namespace Win32.Ui.Shell.PropertiesSystem {
 	);
 
 	[CCode (cname = "VariantToUInt64Array")]
-	public extern void* variant_to_uint64array (
+	public extern int variant_to_uint64array (
 		void* var,
 		void* prgn,
 		uint crgn,
@@ -1905,7 +2585,7 @@ namespace Win32.Ui.Shell.PropertiesSystem {
 	);
 
 	[CCode (cname = "VariantToDoubleArray")]
-	public extern void* variant_to_double_array (
+	public extern int variant_to_double_array (
 		void* var,
 		void* prgn,
 		uint crgn,
@@ -1913,7 +2593,7 @@ namespace Win32.Ui.Shell.PropertiesSystem {
 	);
 
 	[CCode (cname = "VariantToStringArray")]
-	public extern void* variant_to_string_array (
+	public extern int variant_to_string_array (
 		void* var,
 		[CCode (type_id = "LPCWSTR")] void* prgsz,
 		uint crgsz,
@@ -1921,126 +2601,126 @@ namespace Win32.Ui.Shell.PropertiesSystem {
 	);
 
 	[CCode (cname = "VariantToBooleanArrayAlloc")]
-	public extern void* variant_to_boolean_array_alloc (
+	public extern int variant_to_boolean_array_alloc (
 		void* var,
 		out int* pprgf,
 		out uint pc_elem
 	);
 
 	[CCode (cname = "VariantToInt16ArrayAlloc")]
-	public extern void* variant_to_int16array_alloc (
+	public extern int variant_to_int16array_alloc (
 		void* var,
 		out void** pprgn,
 		out uint pc_elem
 	);
 
 	[CCode (cname = "VariantToUInt16ArrayAlloc")]
-	public extern void* variant_to_uint16array_alloc (
+	public extern int variant_to_uint16array_alloc (
 		void* var,
 		out ushort* pprgn,
 		out uint pc_elem
 	);
 
 	[CCode (cname = "VariantToInt32ArrayAlloc")]
-	public extern void* variant_to_int32array_alloc (
+	public extern int variant_to_int32array_alloc (
 		void* var,
 		out int* pprgn,
 		out uint pc_elem
 	);
 
 	[CCode (cname = "VariantToUInt32ArrayAlloc")]
-	public extern void* variant_to_uint32array_alloc (
+	public extern int variant_to_uint32array_alloc (
 		void* var,
 		out uint* pprgn,
 		out uint pc_elem
 	);
 
 	[CCode (cname = "VariantToInt64ArrayAlloc")]
-	public extern void* variant_to_int64array_alloc (
+	public extern int variant_to_int64array_alloc (
 		void* var,
 		out long* pprgn,
 		out uint pc_elem
 	);
 
 	[CCode (cname = "VariantToUInt64ArrayAlloc")]
-	public extern void* variant_to_uint64array_alloc (
+	public extern int variant_to_uint64array_alloc (
 		void* var,
 		out ulong* pprgn,
 		out uint pc_elem
 	);
 
 	[CCode (cname = "VariantToDoubleArrayAlloc")]
-	public extern void* variant_to_double_array_alloc (
+	public extern int variant_to_double_array_alloc (
 		void* var,
 		out void** pprgn,
 		out uint pc_elem
 	);
 
 	[CCode (cname = "VariantToStringArrayAlloc")]
-	public extern void* variant_to_string_array_alloc (
+	public extern int variant_to_string_array_alloc (
 		void* var,
 		out uint16** pprgsz,
 		out uint pc_elem
 	);
 
 	[CCode (cname = "VariantGetBooleanElem")]
-	public extern void* variant_get_boolean_elem (
+	public extern int variant_get_boolean_elem (
 		void* var,
 		uint i_elem,
 		out int pf_val
 	);
 
 	[CCode (cname = "VariantGetInt16Elem")]
-	public extern void* variant_get_int16elem (
+	public extern int variant_get_int16elem (
 		void* var,
 		uint i_elem,
 		out void* pn_val
 	);
 
 	[CCode (cname = "VariantGetUInt16Elem")]
-	public extern void* variant_get_uint16elem (
+	public extern int variant_get_uint16elem (
 		void* var,
 		uint i_elem,
 		out ushort pn_val
 	);
 
 	[CCode (cname = "VariantGetInt32Elem")]
-	public extern void* variant_get_int32elem (
+	public extern int variant_get_int32elem (
 		void* var,
 		uint i_elem,
 		out int pn_val
 	);
 
 	[CCode (cname = "VariantGetUInt32Elem")]
-	public extern void* variant_get_uint32elem (
+	public extern int variant_get_uint32elem (
 		void* var,
 		uint i_elem,
 		out uint pn_val
 	);
 
 	[CCode (cname = "VariantGetInt64Elem")]
-	public extern void* variant_get_int64elem (
+	public extern int variant_get_int64elem (
 		void* var,
 		uint i_elem,
 		out long pn_val
 	);
 
 	[CCode (cname = "VariantGetUInt64Elem")]
-	public extern void* variant_get_uint64elem (
+	public extern int variant_get_uint64elem (
 		void* var,
 		uint i_elem,
 		out ulong pn_val
 	);
 
 	[CCode (cname = "VariantGetDoubleElem")]
-	public extern void* variant_get_double_elem (
+	public extern int variant_get_double_elem (
 		void* var,
 		uint i_elem,
 		out void* pn_val
 	);
 
 	[CCode (cname = "VariantGetStringElem")]
-	public extern void* variant_get_string_elem (
+	public extern int variant_get_string_elem (
 		void* var,
 		uint i_elem,
 		[CCode (type_id = "LPCWSTR")] out uint16* ppsz_val
@@ -2059,7 +2739,7 @@ namespace Win32.Ui.Shell.PropertiesSystem {
 	);
 
 	[CCode (cname = "SHGetPropertyStoreFromIDList")]
-	public extern void* shget_property_store_from_idlist (
+	public extern int shget_property_store_from_idlist (
 		void* pidl,
 		GETPROPERTYSTOREFLAGS flags,
 		void* riid,
@@ -2067,18 +2747,18 @@ namespace Win32.Ui.Shell.PropertiesSystem {
 	);
 
 	[CCode (cname = "SHGetPropertyStoreFromParsingName")]
-	public extern void* shget_property_store_from_parsing_name (
+	public extern int shget_property_store_from_parsing_name (
 		[CCode (type_id = "LPCWSTR")] uint16* psz_path,
-		void* pbc,
+		IBindCtx pbc,
 		GETPROPERTYSTOREFLAGS flags,
 		void* riid,
 		out void** ppv
 	);
 
 	[CCode (cname = "SHAddDefaultPropertiesByExt")]
-	public extern void* shadd_default_properties_by_ext (
+	public extern int shadd_default_properties_by_ext (
 		[CCode (type_id = "LPCWSTR")] uint16* psz_ext,
-		void* p_prop_store
+		IPropertyStore p_prop_store
 	);
 
 	[CCode (cname = "PifMgr_OpenProperties")]
@@ -2114,20 +2794,20 @@ namespace Win32.Ui.Shell.PropertiesSystem {
 	);
 
 	[CCode (cname = "SHPropStgCreate")]
-	public extern void* shprop_stg_create (
-		void* psstg,
+	public extern int shprop_stg_create (
+		IPropertySetStorage psstg,
 		void* fmtid,
 		void* pclsid,
 		uint grf_flags,
 		uint grf_mode,
 		uint dw_disposition,
-		out void* ppstg,
+		out IPropertyStorage ppstg,
 		out uint pu_code_page
 	);
 
 	[CCode (cname = "SHPropStgReadMultiple")]
-	public extern void* shprop_stg_read_multiple (
-		void* pps,
+	public extern int shprop_stg_read_multiple (
+		IPropertyStorage pps,
 		uint u_code_page,
 		uint cpspec,
 		void* rgpspec,
@@ -2135,8 +2815,8 @@ namespace Win32.Ui.Shell.PropertiesSystem {
 	);
 
 	[CCode (cname = "SHPropStgWriteMultiple")]
-	public extern void* shprop_stg_write_multiple (
-		void* pps,
+	public extern int shprop_stg_write_multiple (
+		IPropertyStorage pps,
 		ref uint pu_code_page,
 		uint cpspec,
 		void* rgpspec,
@@ -2145,7 +2825,7 @@ namespace Win32.Ui.Shell.PropertiesSystem {
 	);
 
 	[CCode (cname = "SHGetPropertyStoreForWindow")]
-	public extern void* shget_property_store_for_window (
+	public extern int shget_property_store_for_window (
 		[CCode (type_id = "HWND")] void* hwnd,
 		void* riid,
 		out void** ppv

@@ -842,7 +842,7 @@ namespace Win32.Ui.Controls.Dialogs {
 		public uint nCopies;
 		public void* hInstance;
 		public unowned uint16* lpPrintTemplateName;
-		public void* lpCallback;
+		public IUnknown lpCallback;
 		public uint nPropertyPages;
 		public void** lphPropertyPages;
 		public uint nStartPage;
@@ -873,6 +873,61 @@ namespace Win32.Ui.Controls.Dialogs {
 		public LPPAGEPAINTHOOK lpfnPagePaintHook;
 		public unowned uint16* lpPageSetupTemplateName;
 		public void* hPageSetupTemplate;
+	}
+
+	[CCode (cheader_filename = "objbase.h", cname = "IUnknown", ref_function = "", unref_function = "")]
+	public interface IUnknown {
+		[CCode (cname = "QueryInterface")]
+		public abstract int query_interface (void* riid, void** ppv_object);
+
+		[CCode (cname = "AddRef")]
+		public abstract uint add_ref ();
+
+		[CCode (cname = "Release")]
+		public abstract uint release ();
+	}
+
+	[CCode (cname = "IPrintDialogCallback", ref_function = "", unref_function = "")]
+	public interface IPrintDialogCallback : IUnknown {
+		[CCode (cname = "InitDone")]
+		public abstract int init_done (
+		);
+
+		[CCode (cname = "SelectionChange")]
+		public abstract int selection_change (
+		);
+
+		[CCode (cname = "HandleMessage")]
+		public abstract int handle_message (
+			[CCode (type_id = "HWND")] void* h_dlg,
+			uint u_msg,
+			ulong w_param,
+			int64 l_param,
+			out int64 p_result
+		);
+
+	}
+
+	[CCode (cname = "IPrintDialogServices", ref_function = "", unref_function = "")]
+	public interface IPrintDialogServices : IUnknown {
+		[CCode (cname = "GetCurrentDevMode")]
+		public abstract int get_current_dev_mode (
+			out void* p_dev_mode,
+			out uint pcb_size
+		);
+
+		[CCode (cname = "GetCurrentPrinterName")]
+		public abstract int get_current_printer_name (
+			void* p_printer_name,
+			out uint pcch_size
+		);
+
+		[CCode (cname = "GetCurrentPortName")]
+		public abstract int get_current_port_name (
+			void* p_port_name,
+			out uint pcch_size
+		);
+
 	}
 
 	[CCode (cname = "GetOpenFileNameW")]
@@ -918,7 +973,7 @@ namespace Win32.Ui.Controls.Dialogs {
 	);
 
 	[CCode (cname = "PrintDlgExW")]
-	public extern void* print_dlg_ex (
+	public extern int print_dlg_ex (
 		out void* p_pd
 	);
 

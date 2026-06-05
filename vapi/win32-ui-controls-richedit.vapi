@@ -1211,6 +1211,9 @@ namespace Win32.Ui.Controls.RichEdit {
 	[CCode (cname = "GCM_MOUSEMENU")]
 	public const uint GCM_MOUSEMENU;
 
+	[CCode (cname = "S_MSG_KEY_IGNORED")]
+	public const int S_MSG_KEY_IGNORED;
+
 	[CCode (cname = "TXTBIT_RICHTEXT")]
 	public const uint TXTBIT_RICHTEXT;
 
@@ -3109,15 +3112,15 @@ namespace Win32.Ui.Controls.RichEdit {
 	);
 
 	[CCode (cname = "PCreateTextServices", has_target = false)]
-	public delegate void* PCreateTextServices (
-		void* punk_outer,
-		void* p_itext_host,
-		out void* pp_unk
+	public delegate int PCreateTextServices (
+		IUnknown punk_outer,
+		ITextHost p_itext_host,
+		out IUnknown pp_unk
 	);
 
 	[CCode (cname = "PShutdownTextServices", has_target = false)]
-	public delegate void* PShutdownTextServices (
-		void* p_text_services
+	public delegate int PShutdownTextServices (
+		IUnknown p_text_services
 	);
 
 	[CCode (cname = "IMECOMPTEXT")]
@@ -3165,7 +3168,7 @@ namespace Win32.Ui.Controls.RichEdit {
 		public int Ascent;
 		public Win32.Graphics.Gdi.TEXTALIGNOPTIONS Type;
 		public unowned uint16* pwszAlternateText;
-		public void* pIStream;
+		public IStream pIStream;
 	}
 
 	[CCode (cname = "ENDCOMPOSITIONNOTIFY")]
@@ -3347,7 +3350,7 @@ namespace Win32.Ui.Controls.RichEdit {
 		public void* nmhdr;
 		public int iob;
 		public int lOper;
-		public void* hr;
+		public int hr;
 	}
 
 	[CCode (cname = "OBJECTPOSITIONS")]
@@ -3451,13 +3454,3080 @@ namespace Win32.Ui.Controls.RichEdit {
 		public uint cbStruct;
 		public int cp;
 		public void* clsid;
-		public void* poleobj;
-		public void* pstg;
-		public void* polesite;
+		public IOleObject poleobj;
+		public IStorage pstg;
+		public IOleClientSite polesite;
 		public Win32.Foundation.Size sizel;
 		public uint dvaspect;
 		public REOBJECTFLAGS dwFlags;
 		public uint dwUser;
+	}
+
+	[CCode (cheader_filename = "objbase.h", cname = "IUnknown", ref_function = "", unref_function = "")]
+	public interface IUnknown {
+		[CCode (cname = "QueryInterface")]
+		public abstract int query_interface (void* riid, void** ppv_object);
+
+		[CCode (cname = "AddRef")]
+		public abstract uint add_ref ();
+
+		[CCode (cname = "Release")]
+		public abstract uint release ();
+	}
+
+	[CCode (cname = "ITextServices", ref_function = "", unref_function = "")]
+	public interface ITextServices : IUnknown {
+		[CCode (cname = "TxSendMessage")]
+		public abstract int tx_send_message (
+			uint msg,
+			ulong wparam,
+			int64 lparam,
+			out int64 plresult
+		);
+
+		[CCode (cname = "TxDraw")]
+		public abstract int tx_draw (
+			void* dw_draw_aspect,
+			int lindex,
+			out void* pv_aspect,
+			out void* ptd,
+			void* hdc_draw,
+			void* hic_target_dev,
+			out void* lprc_bounds,
+			out void* lprc_wbounds,
+			out Win32.Foundation.Rect lprc_update,
+			void* pfn_continue,
+			uint dw_continue,
+			int l_view_id
+		);
+
+		[CCode (cname = "TxGetHScroll")]
+		public abstract int tx_get_hscroll (
+			out int pl_min,
+			out int pl_max,
+			out int pl_pos,
+			out int pl_page,
+			out int pf_enabled
+		);
+
+		[CCode (cname = "TxGetVScroll")]
+		public abstract int tx_get_vscroll (
+			out int pl_min,
+			out int pl_max,
+			out int pl_pos,
+			out int pl_page,
+			out int pf_enabled
+		);
+
+		[CCode (cname = "OnTxSetCursor")]
+		public abstract int on_tx_set_cursor (
+			void* dw_draw_aspect,
+			int lindex,
+			out void* pv_aspect,
+			out void* ptd,
+			void* hdc_draw,
+			void* hic_target_dev,
+			out Win32.Foundation.Rect lprc_client,
+			int x,
+			int y
+		);
+
+		[CCode (cname = "TxQueryHitPoint")]
+		public abstract int tx_query_hit_point (
+			void* dw_draw_aspect,
+			int lindex,
+			out void* pv_aspect,
+			out void* ptd,
+			void* hdc_draw,
+			void* hic_target_dev,
+			out Win32.Foundation.Rect lprc_client,
+			int x,
+			int y,
+			out uint p_hit_result
+		);
+
+		[CCode (cname = "OnTxInPlaceActivate")]
+		public abstract int on_tx_in_place_activate (
+			out Win32.Foundation.Rect prc_client
+		);
+
+		[CCode (cname = "OnTxInPlaceDeactivate")]
+		public abstract int on_tx_in_place_deactivate (
+		);
+
+		[CCode (cname = "OnTxUIActivate")]
+		public abstract int on_tx_uiactivate (
+		);
+
+		[CCode (cname = "OnTxUIDeactivate")]
+		public abstract int on_tx_uideactivate (
+		);
+
+		[CCode (cname = "TxGetText")]
+		public abstract int tx_get_text (
+			out void* pbstr_text
+		);
+
+		[CCode (cname = "TxSetText")]
+		public abstract int tx_set_text (
+			[CCode (type_id = "LPCWSTR")] uint16* psz_text
+		);
+
+		[CCode (cname = "TxGetCurTargetX")]
+		public abstract int tx_get_cur_target_x (
+			out int param0
+		);
+
+		[CCode (cname = "TxGetBaseLinePos")]
+		public abstract int tx_get_base_line_pos (
+			out int param0
+		);
+
+		[CCode (cname = "TxGetNaturalSize")]
+		public abstract int tx_get_natural_size (
+			uint dw_aspect,
+			void* hdc_draw,
+			void* hic_target_dev,
+			out void* ptd,
+			uint dw_mode,
+			ref Win32.Foundation.Size psizel_extent,
+			out int pwidth,
+			out int pheight
+		);
+
+		[CCode (cname = "TxGetDropTarget")]
+		public abstract int tx_get_drop_target (
+			void* pp_drop_target
+		);
+
+		[CCode (cname = "OnTxPropertyBitsChange")]
+		public abstract int on_tx_property_bits_change (
+			uint dw_mask,
+			uint dw_bits
+		);
+
+		[CCode (cname = "TxGetCachedSize")]
+		public abstract int tx_get_cached_size (
+			out uint pdw_width,
+			out uint pdw_height
+		);
+
+	}
+
+	[CCode (cname = "ITextHost", ref_function = "", unref_function = "")]
+	public interface ITextHost : IUnknown {
+		[CCode (cname = "TxGetDC")]
+		public abstract void* tx_get_dc (
+		);
+
+		[CCode (cname = "TxReleaseDC")]
+		public abstract int tx_release_dc (
+			void* hdc
+		);
+
+		[CCode (cname = "TxShowScrollBar")]
+		public abstract int tx_show_scroll_bar (
+			int fn_bar,
+			int f_show
+		);
+
+		[CCode (cname = "TxEnableScrollBar")]
+		public abstract int tx_enable_scroll_bar (
+			Win32.Ui.WindowsAndMessaging.SCROLLBARCONSTANTS fu_sbflags,
+			Win32.Ui.Controls.ENABLESCROLLBarARROWS fu_arrowflags
+		);
+
+		[CCode (cname = "TxSetScrollRange")]
+		public abstract int tx_set_scroll_range (
+			int fn_bar,
+			int n_min_pos,
+			int n_max_pos,
+			int f_redraw
+		);
+
+		[CCode (cname = "TxSetScrollPos")]
+		public abstract int tx_set_scroll_pos (
+			int fn_bar,
+			int n_pos,
+			int f_redraw
+		);
+
+		[CCode (cname = "TxInvalidateRect")]
+		public abstract void* tx_invalidate_rect (
+			out Win32.Foundation.Rect prc,
+			int f_mode
+		);
+
+		[CCode (cname = "TxViewChange")]
+		public abstract void* tx_view_change (
+			int f_update
+		);
+
+		[CCode (cname = "TxCreateCaret")]
+		public abstract int tx_create_caret (
+			void* hbmp,
+			int x_width,
+			int y_height
+		);
+
+		[CCode (cname = "TxShowCaret")]
+		public abstract int tx_show_caret (
+			int f_show
+		);
+
+		[CCode (cname = "TxSetCaretPos")]
+		public abstract int tx_set_caret_pos (
+			int x,
+			int y
+		);
+
+		[CCode (cname = "TxSetTimer")]
+		public abstract int tx_set_timer (
+			uint id_timer,
+			uint u_timeout
+		);
+
+		[CCode (cname = "TxKillTimer")]
+		public abstract void* tx_kill_timer (
+			uint id_timer
+		);
+
+		[CCode (cname = "TxScrollWindowEx")]
+		public abstract void* tx_scroll_window_ex (
+			int dx,
+			int dy,
+			out Win32.Foundation.Rect lprc_scroll,
+			out Win32.Foundation.Rect lprc_clip,
+			void* hrgn_update,
+			out Win32.Foundation.Rect lprc_update,
+			Win32.Ui.WindowsAndMessaging.SHOWWINDOWCmd fu_scroll
+		);
+
+		[CCode (cname = "TxSetCapture")]
+		public abstract void* tx_set_capture (
+			int f_capture
+		);
+
+		[CCode (cname = "TxSetFocus")]
+		public abstract void* tx_set_focus (
+		);
+
+		[CCode (cname = "TxSetCursor")]
+		public abstract void* tx_set_cursor (
+			[CCode (type_id = "HCURSOR")] void* hcur,
+			int f_text
+		);
+
+		[CCode (cname = "TxScreenToClient")]
+		public abstract int tx_screen_to_client (
+			out Win32.Foundation.Point lppt
+		);
+
+		[CCode (cname = "TxClientToScreen")]
+		public abstract int tx_client_to_screen (
+			out Win32.Foundation.Point lppt
+		);
+
+		[CCode (cname = "TxActivate")]
+		public abstract int tx_activate (
+			out int pl_old_state
+		);
+
+		[CCode (cname = "TxDeactivate")]
+		public abstract int tx_deactivate (
+			int l_new_state
+		);
+
+		[CCode (cname = "TxGetClientRect")]
+		public abstract int tx_get_client_rect (
+			out Win32.Foundation.Rect prc
+		);
+
+		[CCode (cname = "TxGetViewInset")]
+		public abstract int tx_get_view_inset (
+			out Win32.Foundation.Rect prc
+		);
+
+		[CCode (cname = "TxGetCharFormat")]
+		public abstract int tx_get_char_format (
+			void** pp_cf
+		);
+
+		[CCode (cname = "TxGetParaFormat")]
+		public abstract int tx_get_para_format (
+			void** pp_pf
+		);
+
+		[CCode (cname = "TxGetSysColor")]
+		public abstract void* tx_get_sys_color (
+			int n_index
+		);
+
+		[CCode (cname = "TxGetBackStyle")]
+		public abstract int tx_get_back_style (
+			out TXTBACKSTYLE pstyle
+		);
+
+		[CCode (cname = "TxGetMaxLength")]
+		public abstract int tx_get_max_length (
+			out uint plength
+		);
+
+		[CCode (cname = "TxGetScrollBars")]
+		public abstract int tx_get_scroll_bars (
+			out uint pdw_scroll_bar
+		);
+
+		[CCode (cname = "TxGetPasswordChar")]
+		public abstract int tx_get_password_char (
+			out void* pch
+		);
+
+		[CCode (cname = "TxGetAcceleratorPos")]
+		public abstract int tx_get_accelerator_pos (
+			out int pcp
+		);
+
+		[CCode (cname = "TxGetExtent")]
+		public abstract int tx_get_extent (
+			out Win32.Foundation.Size lp_extent
+		);
+
+		[CCode (cname = "OnTxCharFormatChange")]
+		public abstract int on_tx_char_format_change (
+			void* p_cf
+		);
+
+		[CCode (cname = "OnTxParaFormatChange")]
+		public abstract int on_tx_para_format_change (
+			void* p_pf
+		);
+
+		[CCode (cname = "TxGetPropertyBits")]
+		public abstract int tx_get_property_bits (
+			uint dw_mask,
+			out uint pdw_bits
+		);
+
+		[CCode (cname = "TxNotify")]
+		public abstract int tx_notify (
+			uint i_notify,
+			out void* pv
+		);
+
+		[CCode (cname = "TxImmGetContext")]
+		public abstract void* tx_imm_get_context (
+		);
+
+		[CCode (cname = "TxImmReleaseContext")]
+		public abstract void* tx_imm_release_context (
+			void* himc
+		);
+
+		[CCode (cname = "TxGetSelectionBarWidth")]
+		public abstract int tx_get_selection_bar_width (
+			out int l_sel_bar_width
+		);
+
+	}
+
+	[CCode (cname = "IRicheditUiaOverrides", ref_function = "", unref_function = "")]
+	public interface IRicheditUiaOverrides : IUnknown {
+		[CCode (cname = "GetPropertyOverrideValue")]
+		public abstract int get_property_override_value (
+			int property_id,
+			out void* p_ret_value
+		);
+
+	}
+
+	[CCode (cname = "ITextHost2", ref_function = "", unref_function = "")]
+	public interface ITextHost2 : ITextHost {
+		[CCode (cname = "TxIsDoubleClickPending")]
+		public abstract int tx_is_double_click_pending (
+		);
+
+		[CCode (cname = "TxGetWindow")]
+		public abstract int tx_get_window (
+			out void* phwnd
+		);
+
+		[CCode (cname = "TxSetForegroundWindow")]
+		public abstract int tx_set_foreground_window (
+		);
+
+		[CCode (cname = "TxGetPalette")]
+		public abstract void* tx_get_palette (
+		);
+
+		[CCode (cname = "TxGetEastAsianFlags")]
+		public abstract int tx_get_east_asian_flags (
+			out int p_flags
+		);
+
+		[CCode (cname = "TxSetCursor2")]
+		public abstract void* tx_set_cursor2 (
+			[CCode (type_id = "HCURSOR")] void* hcur,
+			int b_text
+		);
+
+		[CCode (cname = "TxFreeTextServicesNotification")]
+		public abstract void* tx_free_text_services_notification (
+		);
+
+		[CCode (cname = "TxGetEditStyle")]
+		public abstract int tx_get_edit_style (
+			uint dw_item,
+			out uint pdw_data
+		);
+
+		[CCode (cname = "TxGetWindowStyles")]
+		public abstract int tx_get_window_styles (
+			out uint pdw_style,
+			out uint pdw_ex_style
+		);
+
+		[CCode (cname = "TxShowDropCaret")]
+		public abstract int tx_show_drop_caret (
+			int f_show,
+			void* hdc,
+			out Win32.Foundation.Rect prc
+		);
+
+		[CCode (cname = "TxDestroyCaret")]
+		public abstract int tx_destroy_caret (
+		);
+
+		[CCode (cname = "TxGetHorzExtent")]
+		public abstract int tx_get_horz_extent (
+			out int pl_horz_extent
+		);
+
+	}
+
+	[CCode (cname = "ITextServices2", ref_function = "", unref_function = "")]
+	public interface ITextServices2 : ITextServices {
+		[CCode (cname = "TxGetNaturalSize2")]
+		public abstract int tx_get_natural_size2 (
+			uint dw_aspect,
+			void* hdc_draw,
+			void* hic_target_dev,
+			out void* ptd,
+			uint dw_mode,
+			ref Win32.Foundation.Size psizel_extent,
+			out int pwidth,
+			out int pheight,
+			out int pascent
+		);
+
+		[CCode (cname = "TxDrawD2D")]
+		public abstract int tx_draw_d2d (
+			ID2D1RenderTarget p_render_target,
+			out void* lprc_bounds,
+			out Win32.Foundation.Rect lprc_update,
+			int l_view_id
+		);
+
+	}
+
+	[CCode (cname = "IRichEditOle", ref_function = "", unref_function = "")]
+	public interface IRichEditOle : IUnknown {
+		[CCode (cname = "GetClientSite")]
+		public abstract int get_client_site (
+			void* lplpolesite
+		);
+
+		[CCode (cname = "GetObjectCount")]
+		public abstract int get_object_count (
+		);
+
+		[CCode (cname = "GetLinkCount")]
+		public abstract int get_link_count (
+		);
+
+		[CCode (cname = "GetObject")]
+		public abstract int get_object (
+			int iob,
+			out void* lpreobject,
+			RICHEDITGetOBJECTFLAGS dw_flags
+		);
+
+		[CCode (cname = "InsertObject")]
+		public abstract int insert_object (
+			out void* lpreobject
+		);
+
+		[CCode (cname = "ConvertObject")]
+		public abstract int convert_object (
+			int iob,
+			void* rclsid_new,
+			void* lpstr_user_type_new
+		);
+
+		[CCode (cname = "ActivateAs")]
+		public abstract int activate_as (
+			void* rclsid,
+			void* rclsid_as
+		);
+
+		[CCode (cname = "SetHostNames")]
+		public abstract int set_host_names (
+			void* lpstr_container_app,
+			void* lpstr_container_obj
+		);
+
+		[CCode (cname = "SetLinkAvailable")]
+		public abstract int set_link_available (
+			int iob,
+			int f_available
+		);
+
+		[CCode (cname = "SetDvaspect")]
+		public abstract int set_dvaspect (
+			int iob,
+			uint dvaspect
+		);
+
+		[CCode (cname = "HandsOffStorage")]
+		public abstract int hands_off_storage (
+			int iob
+		);
+
+		[CCode (cname = "SaveCompleted")]
+		public abstract int save_completed (
+			int iob,
+			IStorage lpstg
+		);
+
+		[CCode (cname = "InPlaceDeactivate")]
+		public abstract int in_place_deactivate (
+		);
+
+		[CCode (cname = "ContextSensitiveHelp")]
+		public abstract int context_sensitive_help (
+			int f_enter_mode
+		);
+
+		[CCode (cname = "GetClipboardData")]
+		public abstract int get_clipboard_data (
+			out void* lpchrg,
+			uint reco,
+			void* lplpdataobj
+		);
+
+		[CCode (cname = "ImportDataObject")]
+		public abstract int import_data_object (
+			IDataObject lpdataobj,
+			ushort cf,
+			void* h_meta_pict
+		);
+
+	}
+
+	[CCode (cname = "IRichEditOleCallback", ref_function = "", unref_function = "")]
+	public interface IRichEditOleCallback : IUnknown {
+		[CCode (cname = "GetNewStorage")]
+		public abstract int get_new_storage (
+			void* lplpstg
+		);
+
+		[CCode (cname = "GetInPlaceContext")]
+		public abstract int get_in_place_context (
+			void* lplp_frame,
+			void* lplp_doc,
+			out void* lp_frame_info
+		);
+
+		[CCode (cname = "ShowContainerUI")]
+		public abstract int show_container_ui (
+			int f_show
+		);
+
+		[CCode (cname = "QueryInsertObject")]
+		public abstract int query_insert_object (
+			out void* lpclsid,
+			IStorage lpstg,
+			int cp
+		);
+
+		[CCode (cname = "DeleteObject")]
+		public abstract int delete_object (
+			IOleObject lpoleobj
+		);
+
+		[CCode (cname = "QueryAcceptData")]
+		public abstract int query_accept_data (
+			IDataObject lpdataobj,
+			out ushort lpcf_format,
+			uint reco,
+			int f_really,
+			void* h_meta_pict
+		);
+
+		[CCode (cname = "ContextSensitiveHelp")]
+		public abstract int context_sensitive_help (
+			int f_enter_mode
+		);
+
+		[CCode (cname = "GetClipboardData")]
+		public abstract int get_clipboard_data (
+			out void* lpchrg,
+			uint reco,
+			void* lplpdataobj
+		);
+
+		[CCode (cname = "GetDragDropEffect")]
+		public abstract int get_drag_drop_effect (
+			int f_drag,
+			Win32.System.SystemServices.MODIFIERKEYSFLAGS grf_key_state,
+			out uint pdw_effect
+		);
+
+		[CCode (cname = "GetContextMenu")]
+		public abstract int get_context_menu (
+			RICHEDITGetCONTEXTMENUSelTYPE seltype,
+			IOleObject lpoleobj,
+			out void* lpchrg,
+			out void* lphmenu
+		);
+
+	}
+
+	[CCode (cname = "ITextDocument", ref_function = "", unref_function = "")]
+	public interface ITextDocument : IDispatch {
+		[CCode (cname = "GetName")]
+		public abstract int get_name (
+			out void* p_name
+		);
+
+		[CCode (cname = "GetSelection")]
+		public abstract int get_selection (
+			ITextSelection pp_sel
+		);
+
+		[CCode (cname = "GetStoryCount")]
+		public abstract int get_story_count (
+			out int p_count
+		);
+
+		[CCode (cname = "GetStoryRanges")]
+		public abstract int get_story_ranges (
+			ITextStoryRanges pp_stories
+		);
+
+		[CCode (cname = "GetSaved")]
+		public abstract int get_saved (
+			out int p_value
+		);
+
+		[CCode (cname = "SetSaved")]
+		public abstract int set_saved (
+			void* value
+		);
+
+		[CCode (cname = "GetDefaultTabStop")]
+		public abstract int get_default_tab_stop (
+			out void* p_value
+		);
+
+		[CCode (cname = "SetDefaultTabStop")]
+		public abstract int set_default_tab_stop (
+			void* value
+		);
+
+		[CCode (cname = "New")]
+		public abstract int new (
+		);
+
+		[CCode (cname = "Open")]
+		public abstract int open (
+			void* p_var,
+			int flags,
+			int code_page
+		);
+
+		[CCode (cname = "Save")]
+		public abstract int save (
+			void* p_var,
+			int flags,
+			int code_page
+		);
+
+		[CCode (cname = "Freeze")]
+		public abstract int freeze (
+			out int p_count
+		);
+
+		[CCode (cname = "Unfreeze")]
+		public abstract int unfreeze (
+			out int p_count
+		);
+
+		[CCode (cname = "BeginEditCollection")]
+		public abstract int begin_edit_collection (
+		);
+
+		[CCode (cname = "EndEditCollection")]
+		public abstract int end_edit_collection (
+		);
+
+		[CCode (cname = "Undo")]
+		public abstract int undo (
+			int count,
+			out int p_count
+		);
+
+		[CCode (cname = "Redo")]
+		public abstract int redo (
+			int count,
+			out int p_count
+		);
+
+		[CCode (cname = "Range")]
+		public abstract int range (
+			int cp_active,
+			int cp_anchor,
+			ITextRange pp_range
+		);
+
+		[CCode (cname = "RangeFromPoint")]
+		public abstract int range_from_point (
+			int x,
+			int y,
+			ITextRange pp_range
+		);
+
+	}
+
+	[CCode (cname = "ITextRange", ref_function = "", unref_function = "")]
+	public interface ITextRange : IDispatch {
+		[CCode (cname = "GetText")]
+		public abstract int get_text (
+			out void* pbstr
+		);
+
+		[CCode (cname = "SetText")]
+		public abstract int set_text (
+			void* bstr
+		);
+
+		[CCode (cname = "GetChar")]
+		public abstract int get_char (
+			out int p_char
+		);
+
+		[CCode (cname = "SetChar")]
+		public abstract int set_char (
+			int char
+		);
+
+		[CCode (cname = "GetDuplicate")]
+		public abstract int get_duplicate (
+			ITextRange pp_range
+		);
+
+		[CCode (cname = "GetFormattedText")]
+		public abstract int get_formatted_text (
+			ITextRange pp_range
+		);
+
+		[CCode (cname = "SetFormattedText")]
+		public abstract int set_formatted_text (
+			ITextRange p_range
+		);
+
+		[CCode (cname = "GetStart")]
+		public abstract int get_start (
+			out int pcp_first
+		);
+
+		[CCode (cname = "SetStart")]
+		public abstract int set_start (
+			int cp_first
+		);
+
+		[CCode (cname = "GetEnd")]
+		public abstract int get_end (
+			out int pcp_lim
+		);
+
+		[CCode (cname = "SetEnd")]
+		public abstract int set_end (
+			int cp_lim
+		);
+
+		[CCode (cname = "GetFont")]
+		public abstract int get_font (
+			ITextFont pp_font
+		);
+
+		[CCode (cname = "SetFont")]
+		public abstract int set_font (
+			ITextFont p_font
+		);
+
+		[CCode (cname = "GetPara")]
+		public abstract int get_para (
+			ITextPara pp_para
+		);
+
+		[CCode (cname = "SetPara")]
+		public abstract int set_para (
+			ITextPara p_para
+		);
+
+		[CCode (cname = "GetStoryLength")]
+		public abstract int get_story_length (
+			out int p_count
+		);
+
+		[CCode (cname = "GetStoryType")]
+		public abstract int get_story_type (
+			out int p_value
+		);
+
+		[CCode (cname = "Collapse")]
+		public abstract int collapse (
+			int b_start
+		);
+
+		[CCode (cname = "Expand")]
+		public abstract int expand (
+			int unit,
+			out int p_delta
+		);
+
+		[CCode (cname = "GetIndex")]
+		public abstract int get_index (
+			int unit,
+			out int p_index
+		);
+
+		[CCode (cname = "SetIndex")]
+		public abstract int set_index (
+			int unit,
+			int index,
+			int extend
+		);
+
+		[CCode (cname = "SetRange")]
+		public abstract int set_range (
+			int cp_anchor,
+			int cp_active
+		);
+
+		[CCode (cname = "InRange")]
+		public abstract int in_range (
+			ITextRange p_range,
+			out int p_value
+		);
+
+		[CCode (cname = "InStory")]
+		public abstract int in_story (
+			ITextRange p_range,
+			out int p_value
+		);
+
+		[CCode (cname = "IsEqual")]
+		public abstract int is_equal (
+			ITextRange p_range,
+			out int p_value
+		);
+
+		[CCode (cname = "Select")]
+		public abstract int select (
+		);
+
+		[CCode (cname = "StartOf")]
+		public abstract int start_of (
+			int unit,
+			int extend,
+			out int p_delta
+		);
+
+		[CCode (cname = "EndOf")]
+		public abstract int end_of (
+			int unit,
+			int extend,
+			out int p_delta
+		);
+
+		[CCode (cname = "Move")]
+		public abstract int move (
+			int unit,
+			int count,
+			out int p_delta
+		);
+
+		[CCode (cname = "MoveStart")]
+		public abstract int move_start (
+			int unit,
+			int count,
+			out int p_delta
+		);
+
+		[CCode (cname = "MoveEnd")]
+		public abstract int move_end (
+			int unit,
+			int count,
+			out int p_delta
+		);
+
+		[CCode (cname = "MoveWhile")]
+		public abstract int move_while (
+			void* cset,
+			int count,
+			out int p_delta
+		);
+
+		[CCode (cname = "MoveStartWhile")]
+		public abstract int move_start_while (
+			void* cset,
+			int count,
+			out int p_delta
+		);
+
+		[CCode (cname = "MoveEndWhile")]
+		public abstract int move_end_while (
+			void* cset,
+			int count,
+			out int p_delta
+		);
+
+		[CCode (cname = "MoveUntil")]
+		public abstract int move_until (
+			void* cset,
+			int count,
+			out int p_delta
+		);
+
+		[CCode (cname = "MoveStartUntil")]
+		public abstract int move_start_until (
+			void* cset,
+			int count,
+			out int p_delta
+		);
+
+		[CCode (cname = "MoveEndUntil")]
+		public abstract int move_end_until (
+			void* cset,
+			int count,
+			out int p_delta
+		);
+
+		[CCode (cname = "FindText")]
+		public abstract int find_text (
+			void* bstr,
+			int count,
+			int flags,
+			out int p_length
+		);
+
+		[CCode (cname = "FindTextStart")]
+		public abstract int find_text_start (
+			void* bstr,
+			int count,
+			int flags,
+			out int p_length
+		);
+
+		[CCode (cname = "FindTextEnd")]
+		public abstract int find_text_end (
+			void* bstr,
+			int count,
+			int flags,
+			out int p_length
+		);
+
+		[CCode (cname = "Delete")]
+		public abstract int delete (
+			int unit,
+			int count,
+			out int p_delta
+		);
+
+		[CCode (cname = "Cut")]
+		public abstract int cut (
+			out void* p_var
+		);
+
+		[CCode (cname = "Copy")]
+		public abstract int copy (
+			out void* p_var
+		);
+
+		[CCode (cname = "Paste")]
+		public abstract int paste (
+			void* p_var,
+			int format
+		);
+
+		[CCode (cname = "CanPaste")]
+		public abstract int can_paste (
+			void* p_var,
+			int format,
+			out int p_value
+		);
+
+		[CCode (cname = "CanEdit")]
+		public abstract int can_edit (
+			out int p_value
+		);
+
+		[CCode (cname = "ChangeCase")]
+		public abstract int change_case (
+			int type
+		);
+
+		[CCode (cname = "GetPoint")]
+		public abstract int get_point (
+			int type,
+			out int px,
+			out int py
+		);
+
+		[CCode (cname = "SetPoint")]
+		public abstract int set_point (
+			int x,
+			int y,
+			int type,
+			int extend
+		);
+
+		[CCode (cname = "ScrollIntoView")]
+		public abstract int scroll_into_view (
+			int value
+		);
+
+		[CCode (cname = "GetEmbeddedObject")]
+		public abstract int get_embedded_object (
+			IUnknown pp_object
+		);
+
+	}
+
+	[CCode (cname = "ITextSelection", ref_function = "", unref_function = "")]
+	public interface ITextSelection : ITextRange {
+		[CCode (cname = "GetFlags")]
+		public abstract int get_flags (
+			out int p_flags
+		);
+
+		[CCode (cname = "SetFlags")]
+		public abstract int set_flags (
+			int flags
+		);
+
+		[CCode (cname = "GetType")]
+		public abstract int get_type (
+			out int p_type
+		);
+
+		[CCode (cname = "MoveLeft")]
+		public abstract int move_left (
+			int unit,
+			int count,
+			int extend,
+			out int p_delta
+		);
+
+		[CCode (cname = "MoveRight")]
+		public abstract int move_right (
+			int unit,
+			int count,
+			int extend,
+			out int p_delta
+		);
+
+		[CCode (cname = "MoveUp")]
+		public abstract int move_up (
+			int unit,
+			int count,
+			int extend,
+			out int p_delta
+		);
+
+		[CCode (cname = "MoveDown")]
+		public abstract int move_down (
+			int unit,
+			int count,
+			int extend,
+			out int p_delta
+		);
+
+		[CCode (cname = "HomeKey")]
+		public abstract int home_key (
+			void* unit,
+			int extend,
+			out int p_delta
+		);
+
+		[CCode (cname = "EndKey")]
+		public abstract int end_key (
+			int unit,
+			int extend,
+			out int p_delta
+		);
+
+		[CCode (cname = "TypeText")]
+		public abstract int type_text (
+			void* bstr
+		);
+
+	}
+
+	[CCode (cname = "ITextFont", ref_function = "", unref_function = "")]
+	public interface ITextFont : IDispatch {
+		[CCode (cname = "GetDuplicate")]
+		public abstract int get_duplicate (
+			ITextFont pp_font
+		);
+
+		[CCode (cname = "SetDuplicate")]
+		public abstract int set_duplicate (
+			ITextFont p_font
+		);
+
+		[CCode (cname = "CanChange")]
+		public abstract int can_change (
+			out int p_value
+		);
+
+		[CCode (cname = "IsEqual")]
+		public abstract int is_equal (
+			ITextFont p_font,
+			out int p_value
+		);
+
+		[CCode (cname = "Reset")]
+		public abstract int reset (
+			void* value
+		);
+
+		[CCode (cname = "GetStyle")]
+		public abstract int get_style (
+			out int p_value
+		);
+
+		[CCode (cname = "SetStyle")]
+		public abstract int set_style (
+			int value
+		);
+
+		[CCode (cname = "GetAllCaps")]
+		public abstract int get_all_caps (
+			out int p_value
+		);
+
+		[CCode (cname = "SetAllCaps")]
+		public abstract int set_all_caps (
+			int value
+		);
+
+		[CCode (cname = "GetAnimation")]
+		public abstract int get_animation (
+			out int p_value
+		);
+
+		[CCode (cname = "SetAnimation")]
+		public abstract int set_animation (
+			int value
+		);
+
+		[CCode (cname = "GetBackColor")]
+		public abstract int get_back_color (
+			out int p_value
+		);
+
+		[CCode (cname = "SetBackColor")]
+		public abstract int set_back_color (
+			int value
+		);
+
+		[CCode (cname = "GetBold")]
+		public abstract int get_bold (
+			out int p_value
+		);
+
+		[CCode (cname = "SetBold")]
+		public abstract int set_bold (
+			int value
+		);
+
+		[CCode (cname = "GetEmboss")]
+		public abstract int get_emboss (
+			out int p_value
+		);
+
+		[CCode (cname = "SetEmboss")]
+		public abstract int set_emboss (
+			int value
+		);
+
+		[CCode (cname = "GetForeColor")]
+		public abstract int get_fore_color (
+			out int p_value
+		);
+
+		[CCode (cname = "SetForeColor")]
+		public abstract int set_fore_color (
+			int value
+		);
+
+		[CCode (cname = "GetHidden")]
+		public abstract int get_hidden (
+			out int p_value
+		);
+
+		[CCode (cname = "SetHidden")]
+		public abstract int set_hidden (
+			int value
+		);
+
+		[CCode (cname = "GetEngrave")]
+		public abstract int get_engrave (
+			out int p_value
+		);
+
+		[CCode (cname = "SetEngrave")]
+		public abstract int set_engrave (
+			int value
+		);
+
+		[CCode (cname = "GetItalic")]
+		public abstract int get_italic (
+			out int p_value
+		);
+
+		[CCode (cname = "SetItalic")]
+		public abstract int set_italic (
+			int value
+		);
+
+		[CCode (cname = "GetKerning")]
+		public abstract int get_kerning (
+			out void* p_value
+		);
+
+		[CCode (cname = "SetKerning")]
+		public abstract int set_kerning (
+			void* value
+		);
+
+		[CCode (cname = "GetLanguageID")]
+		public abstract int get_language_id (
+			out int p_value
+		);
+
+		[CCode (cname = "SetLanguageID")]
+		public abstract int set_language_id (
+			int value
+		);
+
+		[CCode (cname = "GetName")]
+		public abstract int get_name (
+			out void* pbstr
+		);
+
+		[CCode (cname = "SetName")]
+		public abstract int set_name (
+			void* bstr
+		);
+
+		[CCode (cname = "GetOutline")]
+		public abstract int get_outline (
+			out int p_value
+		);
+
+		[CCode (cname = "SetOutline")]
+		public abstract int set_outline (
+			int value
+		);
+
+		[CCode (cname = "GetPosition")]
+		public abstract int get_position (
+			out void* p_value
+		);
+
+		[CCode (cname = "SetPosition")]
+		public abstract int set_position (
+			void* value
+		);
+
+		[CCode (cname = "GetProtected")]
+		public abstract int get_protected (
+			out int p_value
+		);
+
+		[CCode (cname = "SetProtected")]
+		public abstract int set_protected (
+			int value
+		);
+
+		[CCode (cname = "GetShadow")]
+		public abstract int get_shadow (
+			out int p_value
+		);
+
+		[CCode (cname = "SetShadow")]
+		public abstract int set_shadow (
+			int value
+		);
+
+		[CCode (cname = "GetSize")]
+		public abstract int get_size (
+			out void* p_value
+		);
+
+		[CCode (cname = "SetSize")]
+		public abstract int set_size (
+			void* value
+		);
+
+		[CCode (cname = "GetSmallCaps")]
+		public abstract int get_small_caps (
+			out int p_value
+		);
+
+		[CCode (cname = "SetSmallCaps")]
+		public abstract int set_small_caps (
+			int value
+		);
+
+		[CCode (cname = "GetSpacing")]
+		public abstract int get_spacing (
+			out void* p_value
+		);
+
+		[CCode (cname = "SetSpacing")]
+		public abstract int set_spacing (
+			void* value
+		);
+
+		[CCode (cname = "GetStrikeThrough")]
+		public abstract int get_strike_through (
+			out int p_value
+		);
+
+		[CCode (cname = "SetStrikeThrough")]
+		public abstract int set_strike_through (
+			int value
+		);
+
+		[CCode (cname = "GetSubscript")]
+		public abstract int get_subscript (
+			out int p_value
+		);
+
+		[CCode (cname = "SetSubscript")]
+		public abstract int set_subscript (
+			int value
+		);
+
+		[CCode (cname = "GetSuperscript")]
+		public abstract int get_superscript (
+			out int p_value
+		);
+
+		[CCode (cname = "SetSuperscript")]
+		public abstract int set_superscript (
+			int value
+		);
+
+		[CCode (cname = "GetUnderline")]
+		public abstract int get_underline (
+			out int p_value
+		);
+
+		[CCode (cname = "SetUnderline")]
+		public abstract int set_underline (
+			int value
+		);
+
+		[CCode (cname = "GetWeight")]
+		public abstract int get_weight (
+			out int p_value
+		);
+
+		[CCode (cname = "SetWeight")]
+		public abstract int set_weight (
+			int value
+		);
+
+	}
+
+	[CCode (cname = "ITextPara", ref_function = "", unref_function = "")]
+	public interface ITextPara : IDispatch {
+		[CCode (cname = "GetDuplicate")]
+		public abstract int get_duplicate (
+			ITextPara pp_para
+		);
+
+		[CCode (cname = "SetDuplicate")]
+		public abstract int set_duplicate (
+			ITextPara p_para
+		);
+
+		[CCode (cname = "CanChange")]
+		public abstract int can_change (
+			out int p_value
+		);
+
+		[CCode (cname = "IsEqual")]
+		public abstract int is_equal (
+			ITextPara p_para,
+			out int p_value
+		);
+
+		[CCode (cname = "Reset")]
+		public abstract int reset (
+			int value
+		);
+
+		[CCode (cname = "GetStyle")]
+		public abstract int get_style (
+			out int p_value
+		);
+
+		[CCode (cname = "SetStyle")]
+		public abstract int set_style (
+			int value
+		);
+
+		[CCode (cname = "GetAlignment")]
+		public abstract int get_alignment (
+			out int p_value
+		);
+
+		[CCode (cname = "SetAlignment")]
+		public abstract int set_alignment (
+			int value
+		);
+
+		[CCode (cname = "GetHyphenation")]
+		public abstract int get_hyphenation (
+			out void* p_value
+		);
+
+		[CCode (cname = "SetHyphenation")]
+		public abstract int set_hyphenation (
+			int value
+		);
+
+		[CCode (cname = "GetFirstLineIndent")]
+		public abstract int get_first_line_indent (
+			out void* p_value
+		);
+
+		[CCode (cname = "GetKeepTogether")]
+		public abstract int get_keep_together (
+			out void* p_value
+		);
+
+		[CCode (cname = "SetKeepTogether")]
+		public abstract int set_keep_together (
+			int value
+		);
+
+		[CCode (cname = "GetKeepWithNext")]
+		public abstract int get_keep_with_next (
+			out void* p_value
+		);
+
+		[CCode (cname = "SetKeepWithNext")]
+		public abstract int set_keep_with_next (
+			int value
+		);
+
+		[CCode (cname = "GetLeftIndent")]
+		public abstract int get_left_indent (
+			out void* p_value
+		);
+
+		[CCode (cname = "GetLineSpacing")]
+		public abstract int get_line_spacing (
+			out void* p_value
+		);
+
+		[CCode (cname = "GetLineSpacingRule")]
+		public abstract int get_line_spacing_rule (
+			out int p_value
+		);
+
+		[CCode (cname = "GetListAlignment")]
+		public abstract int get_list_alignment (
+			out int p_value
+		);
+
+		[CCode (cname = "SetListAlignment")]
+		public abstract int set_list_alignment (
+			int value
+		);
+
+		[CCode (cname = "GetListLevelIndex")]
+		public abstract int get_list_level_index (
+			out int p_value
+		);
+
+		[CCode (cname = "SetListLevelIndex")]
+		public abstract int set_list_level_index (
+			int value
+		);
+
+		[CCode (cname = "GetListStart")]
+		public abstract int get_list_start (
+			out int p_value
+		);
+
+		[CCode (cname = "SetListStart")]
+		public abstract int set_list_start (
+			int value
+		);
+
+		[CCode (cname = "GetListTab")]
+		public abstract int get_list_tab (
+			out void* p_value
+		);
+
+		[CCode (cname = "SetListTab")]
+		public abstract int set_list_tab (
+			void* value
+		);
+
+		[CCode (cname = "GetListType")]
+		public abstract int get_list_type (
+			out int p_value
+		);
+
+		[CCode (cname = "SetListType")]
+		public abstract int set_list_type (
+			int value
+		);
+
+		[CCode (cname = "GetNoLineNumber")]
+		public abstract int get_no_line_number (
+			out int p_value
+		);
+
+		[CCode (cname = "SetNoLineNumber")]
+		public abstract int set_no_line_number (
+			int value
+		);
+
+		[CCode (cname = "GetPageBreakBefore")]
+		public abstract int get_page_break_before (
+			out int p_value
+		);
+
+		[CCode (cname = "SetPageBreakBefore")]
+		public abstract int set_page_break_before (
+			int value
+		);
+
+		[CCode (cname = "GetRightIndent")]
+		public abstract int get_right_indent (
+			out void* p_value
+		);
+
+		[CCode (cname = "SetRightIndent")]
+		public abstract int set_right_indent (
+			void* value
+		);
+
+		[CCode (cname = "SetIndents")]
+		public abstract int set_indents (
+			void* first,
+			void* left,
+			void* right
+		);
+
+		[CCode (cname = "SetLineSpacing")]
+		public abstract int set_line_spacing (
+			int rule,
+			void* spacing
+		);
+
+		[CCode (cname = "GetSpaceAfter")]
+		public abstract int get_space_after (
+			out void* p_value
+		);
+
+		[CCode (cname = "SetSpaceAfter")]
+		public abstract int set_space_after (
+			void* value
+		);
+
+		[CCode (cname = "GetSpaceBefore")]
+		public abstract int get_space_before (
+			out void* p_value
+		);
+
+		[CCode (cname = "SetSpaceBefore")]
+		public abstract int set_space_before (
+			void* value
+		);
+
+		[CCode (cname = "GetWidowControl")]
+		public abstract int get_widow_control (
+			out int p_value
+		);
+
+		[CCode (cname = "SetWidowControl")]
+		public abstract int set_widow_control (
+			int value
+		);
+
+		[CCode (cname = "GetTabCount")]
+		public abstract int get_tab_count (
+			out int p_count
+		);
+
+		[CCode (cname = "AddTab")]
+		public abstract int add_tab (
+			void* tb_pos,
+			int tb_align,
+			int tb_leader
+		);
+
+		[CCode (cname = "ClearAllTabs")]
+		public abstract int clear_all_tabs (
+		);
+
+		[CCode (cname = "DeleteTab")]
+		public abstract int delete_tab (
+			void* tb_pos
+		);
+
+		[CCode (cname = "GetTab")]
+		public abstract int get_tab (
+			int i_tab,
+			out void* ptb_pos,
+			out int ptb_align,
+			out int ptb_leader
+		);
+
+	}
+
+	[CCode (cname = "ITextStoryRanges", ref_function = "", unref_function = "")]
+	public interface ITextStoryRanges : IDispatch {
+		[CCode (cname = "_NewEnum")]
+		public abstract int __new_enum (
+			IUnknown ppunk_enum
+		);
+
+		[CCode (cname = "Item")]
+		public abstract int item (
+			int index,
+			ITextRange pp_range
+		);
+
+		[CCode (cname = "GetCount")]
+		public abstract int get_count (
+			out int p_count
+		);
+
+	}
+
+	[CCode (cname = "ITextDocument2", ref_function = "", unref_function = "")]
+	public interface ITextDocument2 : ITextDocument {
+		[CCode (cname = "GetCaretType")]
+		public abstract int get_caret_type (
+			out int p_value
+		);
+
+		[CCode (cname = "SetCaretType")]
+		public abstract int set_caret_type (
+			int value
+		);
+
+		[CCode (cname = "GetDisplays")]
+		public abstract int get_displays (
+			ITextDisplays pp_displays
+		);
+
+		[CCode (cname = "GetDocumentFont")]
+		public abstract int get_document_font (
+			ITextFont2 pp_font
+		);
+
+		[CCode (cname = "SetDocumentFont")]
+		public abstract int set_document_font (
+			ITextFont2 p_font
+		);
+
+		[CCode (cname = "GetDocumentPara")]
+		public abstract int get_document_para (
+			ITextPara2 pp_para
+		);
+
+		[CCode (cname = "SetDocumentPara")]
+		public abstract int set_document_para (
+			ITextPara2 p_para
+		);
+
+		[CCode (cname = "GetEastAsianFlags")]
+		public abstract int get_east_asian_flags (
+			out void* p_flags
+		);
+
+		[CCode (cname = "GetGenerator")]
+		public abstract int get_generator (
+			out void* pbstr
+		);
+
+		[CCode (cname = "SetIMEInProgress")]
+		public abstract int set_imein_progress (
+			int value
+		);
+
+		[CCode (cname = "GetNotificationMode")]
+		public abstract int get_notification_mode (
+			out int p_value
+		);
+
+		[CCode (cname = "SetNotificationMode")]
+		public abstract int set_notification_mode (
+			int value
+		);
+
+		[CCode (cname = "GetSelection2")]
+		public abstract int get_selection2 (
+			ITextSelection2 pp_sel
+		);
+
+		[CCode (cname = "GetStoryRanges2")]
+		public abstract int get_story_ranges2 (
+			ITextStoryRanges2 pp_stories
+		);
+
+		[CCode (cname = "GetTypographyOptions")]
+		public abstract int get_typography_options (
+			out int p_options
+		);
+
+		[CCode (cname = "GetVersion")]
+		public abstract int get_version (
+			out int p_value
+		);
+
+		[CCode (cname = "GetWindow")]
+		public abstract int get_window (
+			out long p_hwnd
+		);
+
+		[CCode (cname = "AttachMsgFilter")]
+		public abstract int attach_msg_filter (
+			IUnknown p_filter
+		);
+
+		[CCode (cname = "CheckTextLimit")]
+		public abstract int check_text_limit (
+			int cch,
+			ref int pcch
+		);
+
+		[CCode (cname = "GetCallManager")]
+		public abstract int get_call_manager (
+			IUnknown pp_void
+		);
+
+		[CCode (cname = "GetClientRect")]
+		public abstract int get_client_rect (
+			void* type,
+			out int p_left,
+			out int p_top,
+			out int p_right,
+			out int p_bottom
+		);
+
+		[CCode (cname = "GetEffectColor")]
+		public abstract int get_effect_color (
+			int index,
+			out int p_value
+		);
+
+		[CCode (cname = "GetImmContext")]
+		public abstract int get_imm_context (
+			out long p_context
+		);
+
+		[CCode (cname = "GetPreferredFont")]
+		public abstract int get_preferred_font (
+			int cp,
+			int char_rep,
+			int options,
+			int cur_char_rep,
+			int cur_font_size,
+			out void* pbstr,
+			out int p_pitch_and_family,
+			out int p_new_font_size
+		);
+
+		[CCode (cname = "GetProperty")]
+		public abstract int get_property (
+			int type,
+			out int p_value
+		);
+
+		[CCode (cname = "GetStrings")]
+		public abstract int get_strings (
+			ITextStrings pp_strs
+		);
+
+		[CCode (cname = "Notify")]
+		public abstract int notify (
+			int notify
+		);
+
+		[CCode (cname = "Range2")]
+		public abstract int range2 (
+			int cp_active,
+			int cp_anchor,
+			ITextRange2 pp_range
+		);
+
+		[CCode (cname = "RangeFromPoint2")]
+		public abstract int range_from_point2 (
+			int x,
+			int y,
+			int type,
+			ITextRange2 pp_range
+		);
+
+		[CCode (cname = "ReleaseCallManager")]
+		public abstract int release_call_manager (
+			IUnknown p_void
+		);
+
+		[CCode (cname = "ReleaseImmContext")]
+		public abstract int release_imm_context (
+			long context
+		);
+
+		[CCode (cname = "SetEffectColor")]
+		public abstract int set_effect_color (
+			int index,
+			int value
+		);
+
+		[CCode (cname = "SetProperty")]
+		public abstract int set_property (
+			int type,
+			int value
+		);
+
+		[CCode (cname = "SetTypographyOptions")]
+		public abstract int set_typography_options (
+			int options,
+			int mask
+		);
+
+		[CCode (cname = "SysBeep")]
+		public abstract int sys_beep (
+		);
+
+		[CCode (cname = "Update")]
+		public abstract int update (
+			int value
+		);
+
+		[CCode (cname = "UpdateWindow")]
+		public abstract int update_window (
+		);
+
+		[CCode (cname = "GetMathProperties")]
+		public abstract int get_math_properties (
+			out int p_options
+		);
+
+		[CCode (cname = "SetMathProperties")]
+		public abstract int set_math_properties (
+			int options,
+			int mask
+		);
+
+		[CCode (cname = "GetActiveStory")]
+		public abstract int get_active_story (
+			ITextStory pp_story
+		);
+
+		[CCode (cname = "SetActiveStory")]
+		public abstract int set_active_story (
+			ITextStory p_story
+		);
+
+		[CCode (cname = "GetMainStory")]
+		public abstract int get_main_story (
+			ITextStory pp_story
+		);
+
+		[CCode (cname = "GetNewStory")]
+		public abstract int get_new_story (
+			ITextStory pp_story
+		);
+
+		[CCode (cname = "GetStory")]
+		public abstract int get_story (
+			int index,
+			ITextStory pp_story
+		);
+
+	}
+
+	[CCode (cname = "ITextRange2", ref_function = "", unref_function = "")]
+	public interface ITextRange2 : ITextSelection {
+		[CCode (cname = "GetCch")]
+		public abstract int get_cch (
+			out int pcch
+		);
+
+		[CCode (cname = "GetCells")]
+		public abstract int get_cells (
+			IUnknown pp_cells
+		);
+
+		[CCode (cname = "GetColumn")]
+		public abstract int get_column (
+			IUnknown pp_column
+		);
+
+		[CCode (cname = "GetCount")]
+		public abstract int get_count (
+			out int p_count
+		);
+
+		[CCode (cname = "GetDuplicate2")]
+		public abstract int get_duplicate2 (
+			ITextRange2 pp_range
+		);
+
+		[CCode (cname = "GetFont2")]
+		public abstract int get_font2 (
+			ITextFont2 pp_font
+		);
+
+		[CCode (cname = "SetFont2")]
+		public abstract int set_font2 (
+			ITextFont2 p_font
+		);
+
+		[CCode (cname = "GetFormattedText2")]
+		public abstract int get_formatted_text2 (
+			ITextRange2 pp_range
+		);
+
+		[CCode (cname = "SetFormattedText2")]
+		public abstract int set_formatted_text2 (
+			ITextRange2 p_range
+		);
+
+		[CCode (cname = "GetGravity")]
+		public abstract int get_gravity (
+			out int p_value
+		);
+
+		[CCode (cname = "SetGravity")]
+		public abstract int set_gravity (
+			int value
+		);
+
+		[CCode (cname = "GetPara2")]
+		public abstract int get_para2 (
+			ITextPara2 pp_para
+		);
+
+		[CCode (cname = "SetPara2")]
+		public abstract int set_para2 (
+			ITextPara2 p_para
+		);
+
+		[CCode (cname = "GetRow")]
+		public abstract int get_row (
+			ITextRow pp_row
+		);
+
+		[CCode (cname = "GetStartPara")]
+		public abstract int get_start_para (
+			out int p_value
+		);
+
+		[CCode (cname = "GetTable")]
+		public abstract int get_table (
+			IUnknown pp_table
+		);
+
+		[CCode (cname = "GetURL")]
+		public abstract int get_url (
+			out void* pbstr
+		);
+
+		[CCode (cname = "SetURL")]
+		public abstract int set_url (
+			void* bstr
+		);
+
+		[CCode (cname = "AddSubrange")]
+		public abstract int add_subrange (
+			int cp1,
+			int cp2,
+			int activate
+		);
+
+		[CCode (cname = "BuildUpMath")]
+		public abstract int build_up_math (
+			int flags
+		);
+
+		[CCode (cname = "DeleteSubrange")]
+		public abstract int delete_subrange (
+			int cp_first,
+			int cp_lim
+		);
+
+		[CCode (cname = "Find")]
+		public abstract int find (
+			ITextRange2 p_range,
+			int count,
+			int flags,
+			out int p_delta
+		);
+
+		[CCode (cname = "GetChar2")]
+		public abstract int get_char2 (
+			out int p_char,
+			int offset
+		);
+
+		[CCode (cname = "GetDropCap")]
+		public abstract int get_drop_cap (
+			out int pc_line,
+			out int p_position
+		);
+
+		[CCode (cname = "GetInlineObject")]
+		public abstract int get_inline_object (
+			out int p_type,
+			out int p_align,
+			out int p_char,
+			out int p_char1,
+			out int p_char2,
+			out int p_count,
+			out int p_te_xstyle,
+			out int pc_col,
+			out int p_level
+		);
+
+		[CCode (cname = "GetProperty")]
+		public abstract int get_property (
+			int type,
+			out int p_value
+		);
+
+		[CCode (cname = "GetRect")]
+		public abstract int get_rect (
+			int type,
+			out int p_left,
+			out int p_top,
+			out int p_right,
+			out int p_bottom,
+			out int p_hit
+		);
+
+		[CCode (cname = "GetSubrange")]
+		public abstract int get_subrange (
+			int i_subrange,
+			out int pcp_first,
+			out int pcp_lim
+		);
+
+		[CCode (cname = "GetText2")]
+		public abstract int get_text2 (
+			int flags,
+			out void* pbstr
+		);
+
+		[CCode (cname = "HexToUnicode")]
+		public abstract int hex_to_unicode (
+		);
+
+		[CCode (cname = "InsertTable")]
+		public abstract int insert_table (
+			int c_col,
+			int c_row,
+			int auto_fit
+		);
+
+		[CCode (cname = "Linearize")]
+		public abstract int linearize (
+			int flags
+		);
+
+		[CCode (cname = "SetActiveSubrange")]
+		public abstract int set_active_subrange (
+			int cp_anchor,
+			int cp_active
+		);
+
+		[CCode (cname = "SetDropCap")]
+		public abstract int set_drop_cap (
+			int c_line,
+			int position
+		);
+
+		[CCode (cname = "SetProperty")]
+		public abstract int set_property (
+			int type,
+			int value
+		);
+
+		[CCode (cname = "SetText2")]
+		public abstract int set_text2 (
+			int flags,
+			void* bstr
+		);
+
+		[CCode (cname = "UnicodeToHex")]
+		public abstract int unicode_to_hex (
+		);
+
+		[CCode (cname = "SetInlineObject")]
+		public abstract int set_inline_object (
+			int type,
+			int align,
+			int char,
+			int char1,
+			int char2,
+			int count,
+			int te_xstyle,
+			int c_col
+		);
+
+		[CCode (cname = "GetMathFunctionType")]
+		public abstract int get_math_function_type (
+			void* bstr,
+			out int p_value
+		);
+
+		[CCode (cname = "InsertImage")]
+		public abstract int insert_image (
+			int width,
+			int height,
+			int ascent,
+			Win32.Graphics.Gdi.TEXTALIGNOPTIONS type,
+			void* bstr_alt_text,
+			IStream p_stream
+		);
+
+	}
+
+	[CCode (cname = "ITextSelection2", ref_function = "", unref_function = "")]
+	public interface ITextSelection2 : ITextRange2 {
+	}
+
+	[CCode (cname = "ITextFont2", ref_function = "", unref_function = "")]
+	public interface ITextFont2 : ITextFont {
+		[CCode (cname = "GetCount")]
+		public abstract int get_count (
+			out int p_count
+		);
+
+		[CCode (cname = "GetAutoLigatures")]
+		public abstract int get_auto_ligatures (
+			out int p_value
+		);
+
+		[CCode (cname = "SetAutoLigatures")]
+		public abstract int set_auto_ligatures (
+			int value
+		);
+
+		[CCode (cname = "GetAutospaceAlpha")]
+		public abstract int get_autospace_alpha (
+			out int p_value
+		);
+
+		[CCode (cname = "SetAutospaceAlpha")]
+		public abstract int set_autospace_alpha (
+			int value
+		);
+
+		[CCode (cname = "GetAutospaceNumeric")]
+		public abstract int get_autospace_numeric (
+			out int p_value
+		);
+
+		[CCode (cname = "SetAutospaceNumeric")]
+		public abstract int set_autospace_numeric (
+			int value
+		);
+
+		[CCode (cname = "GetAutospaceParens")]
+		public abstract int get_autospace_parens (
+			out int p_value
+		);
+
+		[CCode (cname = "SetAutospaceParens")]
+		public abstract int set_autospace_parens (
+			int value
+		);
+
+		[CCode (cname = "GetCharRep")]
+		public abstract int get_char_rep (
+			out int p_value
+		);
+
+		[CCode (cname = "SetCharRep")]
+		public abstract int set_char_rep (
+			int value
+		);
+
+		[CCode (cname = "GetCompressionMode")]
+		public abstract int get_compression_mode (
+			out int p_value
+		);
+
+		[CCode (cname = "SetCompressionMode")]
+		public abstract int set_compression_mode (
+			int value
+		);
+
+		[CCode (cname = "GetCookie")]
+		public abstract int get_cookie (
+			out int p_value
+		);
+
+		[CCode (cname = "SetCookie")]
+		public abstract int set_cookie (
+			int value
+		);
+
+		[CCode (cname = "GetDoubleStrike")]
+		public abstract int get_double_strike (
+			out int p_value
+		);
+
+		[CCode (cname = "SetDoubleStrike")]
+		public abstract int set_double_strike (
+			int value
+		);
+
+		[CCode (cname = "GetDuplicate2")]
+		public abstract int get_duplicate2 (
+			ITextFont2 pp_font
+		);
+
+		[CCode (cname = "SetDuplicate2")]
+		public abstract int set_duplicate2 (
+			ITextFont2 p_font
+		);
+
+		[CCode (cname = "GetLinkType")]
+		public abstract int get_link_type (
+			out int p_value
+		);
+
+		[CCode (cname = "GetMathZone")]
+		public abstract int get_math_zone (
+			out int p_value
+		);
+
+		[CCode (cname = "SetMathZone")]
+		public abstract int set_math_zone (
+			int value
+		);
+
+		[CCode (cname = "GetModWidthPairs")]
+		public abstract int get_mod_width_pairs (
+			out int p_value
+		);
+
+		[CCode (cname = "SetModWidthPairs")]
+		public abstract int set_mod_width_pairs (
+			int value
+		);
+
+		[CCode (cname = "GetModWidthSpace")]
+		public abstract int get_mod_width_space (
+			out int p_value
+		);
+
+		[CCode (cname = "SetModWidthSpace")]
+		public abstract int set_mod_width_space (
+			int value
+		);
+
+		[CCode (cname = "GetOldNumbers")]
+		public abstract int get_old_numbers (
+			out int p_value
+		);
+
+		[CCode (cname = "SetOldNumbers")]
+		public abstract int set_old_numbers (
+			int value
+		);
+
+		[CCode (cname = "GetOverlapping")]
+		public abstract int get_overlapping (
+			out int p_value
+		);
+
+		[CCode (cname = "SetOverlapping")]
+		public abstract int set_overlapping (
+			int value
+		);
+
+		[CCode (cname = "GetPositionSubSuper")]
+		public abstract int get_position_sub_super (
+			out int p_value
+		);
+
+		[CCode (cname = "SetPositionSubSuper")]
+		public abstract int set_position_sub_super (
+			int value
+		);
+
+		[CCode (cname = "GetScaling")]
+		public abstract int get_scaling (
+			out int p_value
+		);
+
+		[CCode (cname = "SetScaling")]
+		public abstract int set_scaling (
+			int value
+		);
+
+		[CCode (cname = "GetSpaceExtension")]
+		public abstract int get_space_extension (
+			out void* p_value
+		);
+
+		[CCode (cname = "SetSpaceExtension")]
+		public abstract int set_space_extension (
+			void* value
+		);
+
+		[CCode (cname = "GetUnderlinePositionMode")]
+		public abstract int get_underline_position_mode (
+			out int p_value
+		);
+
+		[CCode (cname = "SetUnderlinePositionMode")]
+		public abstract int set_underline_position_mode (
+			int value
+		);
+
+		[CCode (cname = "GetEffects")]
+		public abstract int get_effects (
+			out int p_value,
+			out int p_mask
+		);
+
+		[CCode (cname = "GetEffects2")]
+		public abstract int get_effects2 (
+			out int p_value,
+			out int p_mask
+		);
+
+		[CCode (cname = "GetProperty")]
+		public abstract int get_property (
+			int type,
+			out int p_value
+		);
+
+		[CCode (cname = "GetPropertyInfo")]
+		public abstract int get_property_info (
+			int index,
+			out int p_type,
+			out int p_value
+		);
+
+		[CCode (cname = "IsEqual2")]
+		public abstract int is_equal2 (
+			ITextFont2 p_font,
+			out int p_b
+		);
+
+		[CCode (cname = "SetEffects")]
+		public abstract int set_effects (
+			int value,
+			int mask
+		);
+
+		[CCode (cname = "SetEffects2")]
+		public abstract int set_effects2 (
+			int value,
+			int mask
+		);
+
+		[CCode (cname = "SetProperty")]
+		public abstract int set_property (
+			int type,
+			int value
+		);
+
+	}
+
+	[CCode (cname = "ITextPara2", ref_function = "", unref_function = "")]
+	public interface ITextPara2 : ITextPara {
+		[CCode (cname = "GetBorders")]
+		public abstract int get_borders (
+			IUnknown pp_borders
+		);
+
+		[CCode (cname = "GetDuplicate2")]
+		public abstract int get_duplicate2 (
+			ITextPara2 pp_para
+		);
+
+		[CCode (cname = "SetDuplicate2")]
+		public abstract int set_duplicate2 (
+			ITextPara2 p_para
+		);
+
+		[CCode (cname = "GetFontAlignment")]
+		public abstract int get_font_alignment (
+			out int p_value
+		);
+
+		[CCode (cname = "SetFontAlignment")]
+		public abstract int set_font_alignment (
+			int value
+		);
+
+		[CCode (cname = "GetHangingPunctuation")]
+		public abstract int get_hanging_punctuation (
+			out int p_value
+		);
+
+		[CCode (cname = "SetHangingPunctuation")]
+		public abstract int set_hanging_punctuation (
+			int value
+		);
+
+		[CCode (cname = "GetSnapToGrid")]
+		public abstract int get_snap_to_grid (
+			out int p_value
+		);
+
+		[CCode (cname = "SetSnapToGrid")]
+		public abstract int set_snap_to_grid (
+			int value
+		);
+
+		[CCode (cname = "GetTrimPunctuationAtStart")]
+		public abstract int get_trim_punctuation_at_start (
+			out int p_value
+		);
+
+		[CCode (cname = "SetTrimPunctuationAtStart")]
+		public abstract int set_trim_punctuation_at_start (
+			int value
+		);
+
+		[CCode (cname = "GetEffects")]
+		public abstract int get_effects (
+			out int p_value,
+			out int p_mask
+		);
+
+		[CCode (cname = "GetProperty")]
+		public abstract int get_property (
+			int type,
+			out int p_value
+		);
+
+		[CCode (cname = "IsEqual2")]
+		public abstract int is_equal2 (
+			ITextPara2 p_para,
+			out int p_b
+		);
+
+		[CCode (cname = "SetEffects")]
+		public abstract int set_effects (
+			int value,
+			int mask
+		);
+
+		[CCode (cname = "SetProperty")]
+		public abstract int set_property (
+			int type,
+			int value
+		);
+
+	}
+
+	[CCode (cname = "ITextStoryRanges2", ref_function = "", unref_function = "")]
+	public interface ITextStoryRanges2 : ITextStoryRanges {
+		[CCode (cname = "Item2")]
+		public abstract int item2 (
+			int index,
+			ITextRange2 pp_range
+		);
+
+	}
+
+	[CCode (cname = "ITextStory", ref_function = "", unref_function = "")]
+	public interface ITextStory : IUnknown {
+		[CCode (cname = "GetActive")]
+		public abstract int get_active (
+			out int p_value
+		);
+
+		[CCode (cname = "SetActive")]
+		public abstract int set_active (
+			int value
+		);
+
+		[CCode (cname = "GetDisplay")]
+		public abstract int get_display (
+			IUnknown pp_display
+		);
+
+		[CCode (cname = "GetIndex")]
+		public abstract int get_index (
+			out int p_value
+		);
+
+		[CCode (cname = "GetType")]
+		public abstract int get_type (
+			out int p_value
+		);
+
+		[CCode (cname = "SetType")]
+		public abstract int set_type (
+			int value
+		);
+
+		[CCode (cname = "GetProperty")]
+		public abstract int get_property (
+			int type,
+			out int p_value
+		);
+
+		[CCode (cname = "GetRange")]
+		public abstract int get_range (
+			int cp_active,
+			int cp_anchor,
+			ITextRange2 pp_range
+		);
+
+		[CCode (cname = "GetText")]
+		public abstract int get_text (
+			int flags,
+			out void* pbstr
+		);
+
+		[CCode (cname = "SetFormattedText")]
+		public abstract int set_formatted_text (
+			IUnknown p_unk
+		);
+
+		[CCode (cname = "SetProperty")]
+		public abstract int set_property (
+			int type,
+			int value
+		);
+
+		[CCode (cname = "SetText")]
+		public abstract int set_text (
+			int flags,
+			void* bstr
+		);
+
+	}
+
+	[CCode (cname = "ITextStrings", ref_function = "", unref_function = "")]
+	public interface ITextStrings : IDispatch {
+		[CCode (cname = "Item")]
+		public abstract int item (
+			int index,
+			ITextRange2 pp_range
+		);
+
+		[CCode (cname = "GetCount")]
+		public abstract int get_count (
+			out int p_count
+		);
+
+		[CCode (cname = "Add")]
+		public abstract int add (
+			void* bstr
+		);
+
+		[CCode (cname = "Append")]
+		public abstract int append (
+			ITextRange2 p_range,
+			int i_string
+		);
+
+		[CCode (cname = "Cat2")]
+		public abstract int cat2 (
+			int i_string
+		);
+
+		[CCode (cname = "CatTop2")]
+		public abstract int cat_top2 (
+			void* bstr
+		);
+
+		[CCode (cname = "DeleteRange")]
+		public abstract int delete_range (
+			ITextRange2 p_range
+		);
+
+		[CCode (cname = "EncodeFunction")]
+		public abstract int encode_function (
+			int type,
+			int align,
+			int char,
+			int char1,
+			int char2,
+			int count,
+			int te_xstyle,
+			int c_col,
+			ITextRange2 p_range
+		);
+
+		[CCode (cname = "GetCch")]
+		public abstract int get_cch (
+			int i_string,
+			out int pcch
+		);
+
+		[CCode (cname = "InsertNullStr")]
+		public abstract int insert_null_str (
+			int i_string
+		);
+
+		[CCode (cname = "MoveBoundary")]
+		public abstract int move_boundary (
+			int i_string,
+			int cch
+		);
+
+		[CCode (cname = "PrefixTop")]
+		public abstract int prefix_top (
+			void* bstr
+		);
+
+		[CCode (cname = "Remove")]
+		public abstract int remove (
+			int i_string,
+			int c_string
+		);
+
+		[CCode (cname = "SetFormattedText")]
+		public abstract int set_formatted_text (
+			ITextRange2 p_range_d,
+			ITextRange2 p_range_s
+		);
+
+		[CCode (cname = "SetOpCp")]
+		public abstract int set_op_cp (
+			int i_string,
+			int cp
+		);
+
+		[CCode (cname = "SuffixTop")]
+		public abstract int suffix_top (
+			void* bstr,
+			ITextRange2 p_range
+		);
+
+		[CCode (cname = "Swap")]
+		public abstract int swap (
+		);
+
+	}
+
+	[CCode (cname = "ITextRow", ref_function = "", unref_function = "")]
+	public interface ITextRow : IDispatch {
+		[CCode (cname = "GetAlignment")]
+		public abstract int get_alignment (
+			out int p_value
+		);
+
+		[CCode (cname = "SetAlignment")]
+		public abstract int set_alignment (
+			int value
+		);
+
+		[CCode (cname = "GetCellCount")]
+		public abstract int get_cell_count (
+			out int p_value
+		);
+
+		[CCode (cname = "SetCellCount")]
+		public abstract int set_cell_count (
+			int value
+		);
+
+		[CCode (cname = "GetCellCountCache")]
+		public abstract int get_cell_count_cache (
+			out int p_value
+		);
+
+		[CCode (cname = "SetCellCountCache")]
+		public abstract int set_cell_count_cache (
+			int value
+		);
+
+		[CCode (cname = "GetCellIndex")]
+		public abstract int get_cell_index (
+			out int p_value
+		);
+
+		[CCode (cname = "SetCellIndex")]
+		public abstract int set_cell_index (
+			int value
+		);
+
+		[CCode (cname = "GetCellMargin")]
+		public abstract int get_cell_margin (
+			out int p_value
+		);
+
+		[CCode (cname = "SetCellMargin")]
+		public abstract int set_cell_margin (
+			int value
+		);
+
+		[CCode (cname = "GetHeight")]
+		public abstract int get_height (
+			out int p_value
+		);
+
+		[CCode (cname = "SetHeight")]
+		public abstract int set_height (
+			int value
+		);
+
+		[CCode (cname = "GetIndent")]
+		public abstract int get_indent (
+			out int p_value
+		);
+
+		[CCode (cname = "SetIndent")]
+		public abstract int set_indent (
+			int value
+		);
+
+		[CCode (cname = "GetKeepTogether")]
+		public abstract int get_keep_together (
+			out int p_value
+		);
+
+		[CCode (cname = "SetKeepTogether")]
+		public abstract int set_keep_together (
+			int value
+		);
+
+		[CCode (cname = "GetKeepWithNext")]
+		public abstract int get_keep_with_next (
+			out int p_value
+		);
+
+		[CCode (cname = "SetKeepWithNext")]
+		public abstract int set_keep_with_next (
+			int value
+		);
+
+		[CCode (cname = "GetNestLevel")]
+		public abstract int get_nest_level (
+			out int p_value
+		);
+
+		[CCode (cname = "GetRTL")]
+		public abstract int get_rtl (
+			out int p_value
+		);
+
+		[CCode (cname = "SetRTL")]
+		public abstract int set_rtl (
+			int value
+		);
+
+		[CCode (cname = "GetCellAlignment")]
+		public abstract int get_cell_alignment (
+			out int p_value
+		);
+
+		[CCode (cname = "SetCellAlignment")]
+		public abstract int set_cell_alignment (
+			int value
+		);
+
+		[CCode (cname = "GetCellColorBack")]
+		public abstract int get_cell_color_back (
+			out int p_value
+		);
+
+		[CCode (cname = "SetCellColorBack")]
+		public abstract int set_cell_color_back (
+			int value
+		);
+
+		[CCode (cname = "GetCellColorFore")]
+		public abstract int get_cell_color_fore (
+			out int p_value
+		);
+
+		[CCode (cname = "SetCellColorFore")]
+		public abstract int set_cell_color_fore (
+			int value
+		);
+
+		[CCode (cname = "GetCellMergeFlags")]
+		public abstract int get_cell_merge_flags (
+			out int p_value
+		);
+
+		[CCode (cname = "SetCellMergeFlags")]
+		public abstract int set_cell_merge_flags (
+			int value
+		);
+
+		[CCode (cname = "GetCellShading")]
+		public abstract int get_cell_shading (
+			out int p_value
+		);
+
+		[CCode (cname = "SetCellShading")]
+		public abstract int set_cell_shading (
+			int value
+		);
+
+		[CCode (cname = "GetCellVerticalText")]
+		public abstract int get_cell_vertical_text (
+			out int p_value
+		);
+
+		[CCode (cname = "SetCellVerticalText")]
+		public abstract int set_cell_vertical_text (
+			int value
+		);
+
+		[CCode (cname = "GetCellWidth")]
+		public abstract int get_cell_width (
+			out int p_value
+		);
+
+		[CCode (cname = "SetCellWidth")]
+		public abstract int set_cell_width (
+			int value
+		);
+
+		[CCode (cname = "GetCellBorderColors")]
+		public abstract int get_cell_border_colors (
+			out int pcr_left,
+			out int pcr_top,
+			out int pcr_right,
+			out int pcr_bottom
+		);
+
+		[CCode (cname = "GetCellBorderWidths")]
+		public abstract int get_cell_border_widths (
+			out int pdu_left,
+			out int pdu_top,
+			out int pdu_right,
+			out int pdu_bottom
+		);
+
+		[CCode (cname = "SetCellBorderColors")]
+		public abstract int set_cell_border_colors (
+			int cr_left,
+			int cr_top,
+			int cr_right,
+			int cr_bottom
+		);
+
+		[CCode (cname = "SetCellBorderWidths")]
+		public abstract int set_cell_border_widths (
+			int du_left,
+			int du_top,
+			int du_right,
+			int du_bottom
+		);
+
+		[CCode (cname = "Apply")]
+		public abstract int apply (
+			int c_row,
+			void* flags
+		);
+
+		[CCode (cname = "CanChange")]
+		public abstract int can_change (
+			out int p_value
+		);
+
+		[CCode (cname = "GetProperty")]
+		public abstract int get_property (
+			int type,
+			out int p_value
+		);
+
+		[CCode (cname = "Insert")]
+		public abstract int insert (
+			int c_row
+		);
+
+		[CCode (cname = "IsEqual")]
+		public abstract int is_equal (
+			ITextRow p_row,
+			out int p_b
+		);
+
+		[CCode (cname = "Reset")]
+		public abstract int reset (
+			int value
+		);
+
+		[CCode (cname = "SetProperty")]
+		public abstract int set_property (
+			int type,
+			int value
+		);
+
+	}
+
+	[CCode (cname = "ITextDisplays", ref_function = "", unref_function = "")]
+	public interface ITextDisplays : IDispatch {
+	}
+
+	[CCode (cname = "ITextDocument2Old", ref_function = "", unref_function = "")]
+	public interface ITextDocument2Old : ITextDocument {
+		[CCode (cname = "AttachMsgFilter")]
+		public abstract int attach_msg_filter (
+			IUnknown p_filter
+		);
+
+		[CCode (cname = "SetEffectColor")]
+		public abstract int set_effect_color (
+			int index,
+			void* cr
+		);
+
+		[CCode (cname = "GetEffectColor")]
+		public abstract int get_effect_color (
+			int index,
+			out void* pcr
+		);
+
+		[CCode (cname = "GetCaretType")]
+		public abstract int get_caret_type (
+			out int p_caret_type
+		);
+
+		[CCode (cname = "SetCaretType")]
+		public abstract int set_caret_type (
+			int caret_type
+		);
+
+		[CCode (cname = "GetImmContext")]
+		public abstract int get_imm_context (
+			out long p_context
+		);
+
+		[CCode (cname = "ReleaseImmContext")]
+		public abstract int release_imm_context (
+			long context
+		);
+
+		[CCode (cname = "GetPreferredFont")]
+		public abstract int get_preferred_font (
+			int cp,
+			int char_rep,
+			int option,
+			int char_rep_cur,
+			int cur_font_size,
+			out void* pbstr,
+			out int p_pitch_and_family,
+			out int p_new_font_size
+		);
+
+		[CCode (cname = "GetNotificationMode")]
+		public abstract int get_notification_mode (
+			out int p_mode
+		);
+
+		[CCode (cname = "SetNotificationMode")]
+		public abstract int set_notification_mode (
+			int mode
+		);
+
+		[CCode (cname = "GetClientRect")]
+		public abstract int get_client_rect (
+			int type,
+			out int p_left,
+			out int p_top,
+			out int p_right,
+			out int p_bottom
+		);
+
+		[CCode (cname = "GetSelection2")]
+		public abstract int get_selection2 (
+			ITextSelection pp_sel
+		);
+
+		[CCode (cname = "GetWindow")]
+		public abstract int get_window (
+			out int ph_wnd
+		);
+
+		[CCode (cname = "GetFEFlags")]
+		public abstract int get_feflags (
+			out int p_flags
+		);
+
+		[CCode (cname = "UpdateWindow")]
+		public abstract int update_window (
+		);
+
+		[CCode (cname = "CheckTextLimit")]
+		public abstract int check_text_limit (
+			int cch,
+			ref int pcch
+		);
+
+		[CCode (cname = "IMEInProgress")]
+		public abstract int imein_progress (
+			int value
+		);
+
+		[CCode (cname = "SysBeep")]
+		public abstract int sys_beep (
+		);
+
+		[CCode (cname = "Update")]
+		public abstract int update (
+			int mode
+		);
+
+		[CCode (cname = "Notify")]
+		public abstract int notify (
+			int notify
+		);
+
+		[CCode (cname = "GetDocumentFont")]
+		public abstract int get_document_font (
+			ITextFont pp_itext_font
+		);
+
+		[CCode (cname = "GetDocumentPara")]
+		public abstract int get_document_para (
+			ITextPara pp_itext_para
+		);
+
+		[CCode (cname = "GetCallManager")]
+		public abstract int get_call_manager (
+			IUnknown pp_void
+		);
+
+		[CCode (cname = "ReleaseCallManager")]
+		public abstract int release_call_manager (
+			IUnknown p_void
+		);
+
 	}
 
 }
