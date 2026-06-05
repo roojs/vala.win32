@@ -107,7 +107,7 @@ Canonical list lives in [`metadata/widget-conventions.json`](../metadata/widget-
 | signal `navigation_starting` | COM handler glue | `add_NavigationStarting` | planned |
 | signal `document_title_changed` | COM handler glue | `add_DocumentTitleChanged` | planned |
 
-**Generator rule:** ergo method body is one line → `Ui.WebView.<same_name>(…)`. Glue calls generated vapi on stored `ICoreWebView2*` / controller refs. `CoTaskMemFree` for out-string getters lives in glue Vala (`take_com_string`). Event signals need C handler glue in `com-glue.c` (same pattern as env/controller completed handlers).
+**Generator rule:** ergo method body is one line → `Ui.WebView.<same_name>(…)`. Glue sync methods are generated to `generated/win32-ui-webview2-host-glue.vala` via `WebView2GlueEmitter` (from `ergo_native_map`). Hand shell: `src/win32-ui-webview2-host.vala` (host state, async bootstrap, helpers).
 
 WinMD is optional upstream input; today we scrape the **vendored `WebView2.h`** so Linux can regen the JSON without .NET.
 
