@@ -20,6 +20,7 @@ namespace Generate.Parse {
 		public bool list_view_helpers { get; set; default = false; }
 		public bool tree_view_helpers { get; set; default = false; }
 		public bool tab_page_helpers { get; set; default = false; }
+		public Gee.ArrayList<ErgoNativeMapEntry> ergo_native_map { get; private set; default = new Gee.ArrayList<ErgoNativeMapEntry> (); }
 
 		public Generate.WidgetBehaviorProfile to_profile (string wc_symbol) throws GLib.Error {
 			Generate.WidgetBehaviorProfile result = {};
@@ -85,6 +86,23 @@ namespace Generate.Parse {
 				this.style_literal_exprs = Base.deserialize_string_list (property_node);
 				value = new Value (typeof (Gee.ArrayList));
 				value.set_object (this.style_literal_exprs);
+				return true;
+			case "ergo_native_map":
+				this.ergo_native_map = new Gee.ArrayList<ErgoNativeMapEntry> ();
+				if (property_node.get_node_type () == Json.NodeType.ARRAY) {
+					var arr = property_node.get_array ();
+					for (uint i = 0; i < arr.get_length (); i++) {
+						var entry = Json.gobject_deserialize (
+							typeof (ErgoNativeMapEntry),
+							arr.get_element (i)
+						) as ErgoNativeMapEntry;
+						if (entry != null) {
+							this.ergo_native_map.add (entry);
+						}
+					}
+				}
+				value = new Value (typeof (Gee.ArrayList));
+				value.set_object (this.ergo_native_map);
 				return true;
 			default:
 				return default_deserialize_property (property_name, out value, pspec, property_node);
