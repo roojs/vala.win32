@@ -122,6 +122,9 @@ namespace $(ns) {
 			this.iunknown_emitted = false;
 			var ns = this.shard_vala_namespace (entry.basename);
 			this.append_namespace_open (ns, true);
+			if (this.cheader_filename == "WebView2.h") {
+				this.emit_webview2_foundation_stub ();
+			}
 			this.emit_shard_body (entry);
 			if (entry.basename == "UI.WindowsAndMessaging.json") {
 				this.emit_word_helpers ();
@@ -410,6 +413,18 @@ namespace Win32 {
 			this.buffer.append ("\t);\n\n");
 		}
 
+		void emit_webview2_foundation_stub () {
+			this.buffer.append ("""	[CCode (cname = "RECT")]
+	public struct Rect {
+		public int left;
+		public int top;
+		public int right;
+		public int bottom;
+	}
+
+""");
+		}
+
 		void maybe_emit_iunknown () {
 			if (this.iunknown_emitted) {
 				return;
@@ -499,7 +514,7 @@ namespace Win32 {
 				if (!emitted_com.contains (iface) && iface != "IUnknown") {
 					return "void*";
 				}
-				return "unowned " + iface;
+				return iface;
 			}
 			if (getter_method && type_ref.Kind == "PointerTo") {
 				if (type_ref.Child != null && type_ref.Child.Name == "LPWSTR") {

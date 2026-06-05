@@ -2,6 +2,14 @@
 
 [CCode (cprefix = "", cheader_filename = "WebView2.h")]
 namespace Microsoft.Web.WebView2.Win32 {
+	[CCode (cname = "RECT")]
+	public struct Rect {
+		public int left;
+		public int top;
+		public int right;
+		public int bottom;
+	}
+
 	[CCode (cname = "INT", has_type_id = false)]
 	public enum COREWEBVIEW2_CAPTURE_PREVIEW_IMAGE_FORMAT {
 		[CCode (cname = "COREWEBVIEW2_CAPTURE_PREVIEW_IMAGE_FORMAT_PNG")]
@@ -60,6 +68,42 @@ namespace Microsoft.Web.WebView2.Win32 {
 		COREWEBVIEW2_WEB_ERROR_STATUS_VALID_AUTHENTICATION_CREDENTIALS_REQUIRED = 0,
 		[CCode (cname = "COREWEBVIEW2_WEB_ERROR_STATUS_VALID_PROXY_AUTHENTICATION_REQUIRED")]
 		COREWEBVIEW2_WEB_ERROR_STATUS_VALID_PROXY_AUTHENTICATION_REQUIRED = 0,
+	}
+
+	[CCode (cname = "INT", has_type_id = false)]
+	public enum COREWEBVIEW2_WEB_RESOURCE_CONTEXT {
+		[CCode (cname = "COREWEBVIEW2_WEB_RESOURCE_CONTEXT_ALL")]
+		COREWEBVIEW2_WEB_RESOURCE_CONTEXT_ALL = 0,
+		[CCode (cname = "COREWEBVIEW2_WEB_RESOURCE_CONTEXT_DOCUMENT")]
+		COREWEBVIEW2_WEB_RESOURCE_CONTEXT_DOCUMENT = 0,
+		[CCode (cname = "COREWEBVIEW2_WEB_RESOURCE_CONTEXT_STYLESHEET")]
+		COREWEBVIEW2_WEB_RESOURCE_CONTEXT_STYLESHEET = 0,
+		[CCode (cname = "COREWEBVIEW2_WEB_RESOURCE_CONTEXT_IMAGE")]
+		COREWEBVIEW2_WEB_RESOURCE_CONTEXT_IMAGE = 0,
+		[CCode (cname = "COREWEBVIEW2_WEB_RESOURCE_CONTEXT_FONT")]
+		COREWEBVIEW2_WEB_RESOURCE_CONTEXT_FONT = 0,
+		[CCode (cname = "COREWEBVIEW2_WEB_RESOURCE_CONTEXT_SCRIPT")]
+		COREWEBVIEW2_WEB_RESOURCE_CONTEXT_SCRIPT = 0,
+		[CCode (cname = "COREWEBVIEW2_WEB_RESOURCE_CONTEXT_XML_HTTP_REQUEST")]
+		COREWEBVIEW2_WEB_RESOURCE_CONTEXT_XML_HTTP_REQUEST = 0,
+		[CCode (cname = "COREWEBVIEW2_WEB_RESOURCE_CONTEXT_FETCH")]
+		COREWEBVIEW2_WEB_RESOURCE_CONTEXT_FETCH = 0,
+		[CCode (cname = "COREWEBVIEW2_WEB_RESOURCE_CONTEXT_TEXT_TRACK")]
+		COREWEBVIEW2_WEB_RESOURCE_CONTEXT_TEXT_TRACK = 0,
+		[CCode (cname = "COREWEBVIEW2_WEB_RESOURCE_CONTEXT_EVENT_SOURCE")]
+		COREWEBVIEW2_WEB_RESOURCE_CONTEXT_EVENT_SOURCE = 0,
+		[CCode (cname = "COREWEBVIEW2_WEB_RESOURCE_CONTEXT_WEBSOCKET")]
+		COREWEBVIEW2_WEB_RESOURCE_CONTEXT_WEBSOCKET = 0,
+		[CCode (cname = "COREWEBVIEW2_WEB_RESOURCE_CONTEXT_MANIFEST")]
+		COREWEBVIEW2_WEB_RESOURCE_CONTEXT_MANIFEST = 0,
+		[CCode (cname = "COREWEBVIEW2_WEB_RESOURCE_CONTEXT_SIGNED_EXCHANGE")]
+		COREWEBVIEW2_WEB_RESOURCE_CONTEXT_SIGNED_EXCHANGE = 0,
+		[CCode (cname = "COREWEBVIEW2_WEB_RESOURCE_CONTEXT_PING")]
+		COREWEBVIEW2_WEB_RESOURCE_CONTEXT_PING = 0,
+		[CCode (cname = "COREWEBVIEW2_WEB_RESOURCE_CONTEXT_CSP_VIOLATION_REPORT")]
+		COREWEBVIEW2_WEB_RESOURCE_CONTEXT_CSP_VIOLATION_REPORT = 0,
+		[CCode (cname = "COREWEBVIEW2_WEB_RESOURCE_CONTEXT_OTHER")]
+		COREWEBVIEW2_WEB_RESOURCE_CONTEXT_OTHER = 0,
 	}
 
 	[CCode (cname = "EventRegistrationToken")]
@@ -147,7 +191,7 @@ namespace Microsoft.Web.WebView2.Win32 {
 
 		[CCode (cname = "add_NavigationCompleted")]
 		public abstract int add_navigation_completed (
-			unowned ICoreWebView2NavigationCompletedEventHandler event_handler,
+			ICoreWebView2NavigationCompletedEventHandler event_handler,
 			out EventRegistrationToken token
 		);
 
@@ -169,7 +213,7 @@ namespace Microsoft.Web.WebView2.Win32 {
 
 		[CCode (cname = "add_FrameNavigationCompleted")]
 		public abstract int add_frame_navigation_completed (
-			unowned ICoreWebView2NavigationCompletedEventHandler event_handler,
+			ICoreWebView2NavigationCompletedEventHandler event_handler,
 			out EventRegistrationToken token
 		);
 
@@ -225,14 +269,14 @@ namespace Microsoft.Web.WebView2.Win32 {
 		[CCode (cname = "ExecuteScript")]
 		public abstract int execute_script (
 			[CCode (type_id = "LPCWSTR")] uint16* java_script,
-			unowned ICoreWebView2ExecuteScriptCompletedHandler handler
+			ICoreWebView2ExecuteScriptCompletedHandler handler
 		);
 
 		[CCode (cname = "CapturePreview")]
 		public abstract int capture_preview (
 			COREWEBVIEW2_CAPTURE_PREVIEW_IMAGE_FORMAT image_format,
 			void* image_stream,
-			unowned ICoreWebView2CapturePreviewCompletedHandler handler
+			ICoreWebView2CapturePreviewCompletedHandler handler
 		);
 
 		[CCode (cname = "Reload")]
@@ -398,8 +442,8 @@ namespace Microsoft.Web.WebView2.Win32 {
 	public interface ICoreWebView2NavigationCompletedEventHandler : IUnknown {
 		[CCode (cname = "Invoke")]
 		public abstract int invoke (
-			unowned ICoreWebView2 sender,
-			unowned ICoreWebView2NavigationCompletedEventArgs args
+			ICoreWebView2 sender,
+			ICoreWebView2NavigationCompletedEventArgs args
 		);
 
 	}
@@ -551,7 +595,7 @@ namespace Microsoft.Web.WebView2.Win32 {
 		[CCode (cname = "CreateCoreWebView2Controller")]
 		public abstract int create_core_web_view2controller (
 			[CCode (type_id = "HWND")] void* parent_window,
-			unowned ICoreWebView2CreateCoreWebView2ControllerCompletedHandler handler
+			ICoreWebView2CreateCoreWebView2ControllerCompletedHandler handler
 		);
 
 		[CCode (cname = "CreateWebResourceResponse")]
@@ -586,7 +630,7 @@ namespace Microsoft.Web.WebView2.Win32 {
 		[CCode (cname = "Invoke")]
 		public abstract int invoke (
 			int error_code,
-			unowned ICoreWebView2Controller result
+			ICoreWebView2Controller result
 		);
 
 	}
@@ -596,7 +640,7 @@ namespace Microsoft.Web.WebView2.Win32 {
 		[CCode (cname = "Invoke")]
 		public abstract int invoke (
 			int error_code,
-			unowned ICoreWebView2Environment result
+			ICoreWebView2Environment result
 		);
 
 	}
