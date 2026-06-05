@@ -3536,7 +3536,7 @@
        "Name" : "uri",
        "Type" : {
         "Kind" : "ApiRef",
-        "Name" : "const LPCWSTR",
+        "Name" : "LPCWSTR",
         "TargetKind" : "Default",
         "Api" : "WebView2",
         "Parents" : []
@@ -3547,7 +3547,7 @@
        "Name" : "resourceContext",
        "Type" : {
         "Kind" : "ApiRef",
-        "Name" : "const COREWEBVIEW2_WEB_RESOURCE_CONTEXT",
+        "Name" : "COREWEBVIEW2_WEB_RESOURCE_CONTEXT",
         "TargetKind" : "Default",
         "Api" : "WebView2",
         "Parents" : []
@@ -3575,7 +3575,7 @@
        "Name" : "uri",
        "Type" : {
         "Kind" : "ApiRef",
-        "Name" : "const LPCWSTR",
+        "Name" : "LPCWSTR",
         "TargetKind" : "Default",
         "Api" : "WebView2",
         "Parents" : []
@@ -3586,7 +3586,7 @@
        "Name" : "resourceContext",
        "Type" : {
         "Kind" : "ApiRef",
-        "Name" : "const COREWEBVIEW2_WEB_RESOURCE_CONTEXT",
+        "Name" : "COREWEBVIEW2_WEB_RESOURCE_CONTEXT",
         "TargetKind" : "Default",
         "Api" : "WebView2",
         "Parents" : []

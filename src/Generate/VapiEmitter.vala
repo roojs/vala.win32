@@ -603,6 +603,9 @@ namespace Win32 {
 			if (name.has_prefix ("ICoreWebView2") || name == "IUnknown") {
 				return name;
 			}
+			if (name.has_prefix ("COREWEBVIEW2_")) {
+				return name;
+			}
 			if (name == "IStream") {
 				return "void*";
 			}

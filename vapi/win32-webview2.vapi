@@ -230,7 +230,7 @@ namespace Microsoft.Web.WebView2.Win32 {
 
 		[CCode (cname = "CapturePreview")]
 		public abstract int capture_preview (
-			COREWEBVIEW2CAPTUREPREVIEWIMAGEFORMAT image_format,
+			COREWEBVIEW2_CAPTURE_PREVIEW_IMAGE_FORMAT image_format,
 			void* image_stream,
 			unowned ICoreWebView2CapturePreviewCompletedHandler handler
 		);
@@ -371,14 +371,14 @@ namespace Microsoft.Web.WebView2.Win32 {
 
 		[CCode (cname = "AddWebResourceRequestedFilter")]
 		public abstract int add_web_resource_requested_filter (
-			void* uri,
-			const COREWEBVIEW2WebRESOURCECONTEXT resource_context
+			[CCode (type_id = "LPCWSTR")] uint16* uri,
+			COREWEBVIEW2_WEB_RESOURCE_CONTEXT resource_context
 		);
 
 		[CCode (cname = "RemoveWebResourceRequestedFilter")]
 		public abstract int remove_web_resource_requested_filter (
-			void* uri,
-			const COREWEBVIEW2WebRESOURCECONTEXT resource_context
+			[CCode (type_id = "LPCWSTR")] uint16* uri,
+			COREWEBVIEW2_WEB_RESOURCE_CONTEXT resource_context
 		);
 
 		[CCode (cname = "add_WindowCloseRequested")]
@@ -474,7 +474,7 @@ namespace Microsoft.Web.WebView2.Win32 {
 
 		[CCode (cname = "MoveFocus")]
 		public abstract int move_focus (
-			COREWEBVIEW2MOVEFOCUSREASON reason
+			COREWEBVIEW2_MOVE_FOCUS_REASON reason
 		);
 
 		[CCode (cname = "add_MoveFocusRequested")]
@@ -610,7 +610,7 @@ namespace Microsoft.Web.WebView2.Win32 {
 
 		[CCode (cname = "get_WebErrorStatus")]
 		public abstract int get_web_error_status (
-			COREWEBVIEW2WebERRORSTATUS* web_error_status
+			COREWEBVIEW2_WEB_ERROR_STATUS* web_error_status
 		);
 
 		[CCode (cname = "get_NavigationId")]

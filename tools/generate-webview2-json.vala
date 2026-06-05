@@ -220,6 +220,9 @@ static Json.Object? parse_param (string raw) {
 		return null;
 	}
 	var ctype = cleaned.substring (0, space).strip ();
+	if (ctype.has_prefix ("const ")) {
+		ctype = ctype.substring ("const ".length).strip ();
+	}
 	var pname = cleaned.substring (space + 1).strip ();
 	while (pname.has_prefix ("*")) {
 		ctype += "*";
