@@ -7,7 +7,7 @@ public bool navigate_to_string(string html) {
 	if (!webview_ready() || html.length == 0) {
 		return false;
 	}
-	return com_ok(com_webview_navigate_to_string (g_host.webview, WideString(html).ptr));
+	return com_ok(com_webview_navigate_to_string (host_webview_com(), WideString(html).ptr));
 }
 
 [CCode(cname = "vala_webview2_host_reload")]
@@ -15,7 +15,7 @@ public bool reload() {
 	if (!webview_ready()) {
 		return false;
 	}
-	return com_ok(com_webview_reload (g_host.webview));
+	return com_ok(com_webview_reload (host_webview_com()));
 }
 
 [CCode(cname = "vala_webview2_host_stop")]
@@ -23,7 +23,7 @@ public bool stop() {
 	if (!webview_ready()) {
 		return false;
 	}
-	return com_ok(com_webview_stop (g_host.webview));
+	return com_ok(com_webview_stop (host_webview_com()));
 }
 
 [CCode(cname = "vala_webview2_host_go_back")]
@@ -31,7 +31,7 @@ public bool go_back() {
 	if (!webview_ready()) {
 		return false;
 	}
-	return com_ok(com_webview_go_back (g_host.webview));
+	return com_ok(com_webview_go_back (host_webview_com()));
 }
 
 [CCode(cname = "vala_webview2_host_go_forward")]
@@ -39,7 +39,7 @@ public bool go_forward() {
 	if (!webview_ready()) {
 		return false;
 	}
-	return com_ok(com_webview_go_forward (g_host.webview));
+	return com_ok(com_webview_go_forward (host_webview_com()));
 }
 
 [CCode(cname = "vala_webview2_host_execute_script")]
@@ -56,7 +56,7 @@ public bool post_web_message_as_json(string json) {
 	if (!webview_ready() || json.length == 0) {
 		return false;
 	}
-	return com_ok(com_webview_post_web_message_as_json (g_host.webview, WideString(json).ptr));
+	return com_ok(com_webview_post_web_message_as_json (host_webview_com(), WideString(json).ptr));
 }
 
 [CCode(cname = "vala_webview2_host_get_source")]
@@ -65,7 +65,7 @@ public string get_source() {
 		return "";
 	}
 	uint16* uri = null;
-	if (!com_ok(com_webview_get_source (g_host.webview, out uri))) {
+	if (!com_ok(com_webview_get_source (host_webview_com(), out uri))) {
 		return "";
 	}
 	return take_com_string(uri);
@@ -77,7 +77,7 @@ public bool get_can_go_back() {
 		return false;
 	}
 	int val = 0;
-	if (!com_ok(com_webview_get_can_go_back (g_host.webview, out val))) {
+	if (!com_ok(com_webview_get_can_go_back (host_webview_com(), out val))) {
 		return false;
 	}
 	return val != 0;
@@ -89,7 +89,7 @@ public bool get_can_go_forward() {
 		return false;
 	}
 	int val = 0;
-	if (!com_ok(com_webview_get_can_go_forward (g_host.webview, out val))) {
+	if (!com_ok(com_webview_get_can_go_forward (host_webview_com(), out val))) {
 		return false;
 	}
 	return val != 0;
@@ -101,7 +101,7 @@ public string get_document_title() {
 		return "";
 	}
 	uint16* title = null;
-	if (!com_ok(com_webview_get_document_title (g_host.webview, out title))) {
+	if (!com_ok(com_webview_get_document_title (host_webview_com(), out title))) {
 		return "";
 	}
 	return take_com_string(title);
@@ -112,7 +112,7 @@ public bool put_is_visible(bool visible) {
 	if (!controller_ready()) {
 		return false;
 	}
-	return com_ok(com_controller_put_is_visible (g_host.controller, visible ? 1 : 0));
+	return com_ok(com_controller_put_is_visible (host_controller_com(), visible ? 1 : 0));
 }
 
 [CCode(cname = "vala_webview2_host_get_is_visible")]
@@ -121,7 +121,7 @@ public bool get_is_visible() {
 		return false;
 	}
 	int val = 0;
-	if (!com_ok(com_controller_get_is_visible (g_host.controller, out val))) {
+	if (!com_ok(com_controller_get_is_visible (host_controller_com(), out val))) {
 		return false;
 	}
 	return val != 0;
@@ -132,7 +132,7 @@ public bool put_zoom_factor(double zoom) {
 	if (!controller_ready()) {
 		return false;
 	}
-	return com_ok(com_controller_put_zoom_factor (g_host.controller, zoom));
+	return com_ok(com_controller_put_zoom_factor (host_controller_com(), zoom));
 }
 
 [CCode(cname = "vala_webview2_host_get_zoom_factor")]
@@ -141,7 +141,7 @@ public double get_zoom_factor() {
 		return 1.0;
 	}
 	double val = 1.0;
-	if (!com_ok(com_controller_get_zoom_factor (g_host.controller, out val))) {
+	if (!com_ok(com_controller_get_zoom_factor (host_controller_com(), out val))) {
 		return 1.0;
 	}
 	return val;

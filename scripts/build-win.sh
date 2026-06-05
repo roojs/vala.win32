@@ -136,6 +136,15 @@ copy_artifacts_to_share() {
 	elif [[ -f build/vendor/webview2/x64/WebView2Loader.dll ]]; then
 		cp -f build/vendor/webview2/x64/WebView2Loader.dll build-win/
 	fi
+	# Track B demos (webview2-demo, hello-window, …) need MSYS2 GLib beside the exe when not run from UCRT64 shell.
+	local ucrt_bin="${MINGW_PREFIX:-/ucrt64}/bin"
+	if [[ -d "${ucrt_bin}" ]]; then
+		for dll in libglib-2.0-0.dll libgobject-2.0-0.dll libintl-8.dll libiconv-2.dll libffi-8.dll libpcre2-8-0.dll; do
+			if [[ -f "${ucrt_bin}/${dll}" ]]; then
+				cp -f "${ucrt_bin}/${dll}" build-win/
+			fi
+		done
+	fi
 	if [[ ${#missing[@]} -gt 0 ]]; then
 		echo "[build-win] error: ${#missing[@]} demo EXE(s) not built:" >&2
 		printf '  %s\n' "${missing[@]}" >&2

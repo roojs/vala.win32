@@ -412,9 +412,9 @@ extern %s;
 			string[] vala_args
 		) {
 			if (glue_name == "put_bounds") {
-				return "%s (g_host.controller, g_host.bounds)".printf(extern_name);
+				return "%s (host_controller_com(), g_host.bounds)".printf(extern_name);
 			}
-			var host_ref = host == "controller" ? "g_host.controller" : "g_host.webview";
+			var host_ref = host == "controller" ? "host_controller_com()" : "host_webview_com()";
 			if (vala_args.length <= 1) {
 				return "%s (%s)".printf(extern_name, host_ref);
 			}

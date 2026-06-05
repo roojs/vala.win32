@@ -27,8 +27,9 @@ extern void co_task_mem_free(void* ptr);
 private struct HostState {
 	public void* parent;
 	public Microsoft.Web.WebView2.Win32.Rect bounds;
-	public ICoreWebView2Controller? controller;
-	public ICoreWebView2? webview;
+	/* Raw COM pointers — not Vala interface types (gobject profile would Release them). */
+	public void* controller;
+	public void* webview;
 	public WideString? pending_url;
 	public bool ready;
 }
@@ -67,6 +68,15 @@ private bool controller_ready() {
 	return g_host != null && g_host.ready && g_host.controller != null;
 }
 
+/* For generated glue — COM as void* in HostState; cast here only. */
+internal unowned ICoreWebView2Controller host_controller_com() {
+	return (ICoreWebView2Controller) g_host.controller;
+}
+
+internal unowned ICoreWebView2 host_webview_com() {
+	return (ICoreWebView2) g_host.webview;
+}
+
 private string take_com_string(uint16* com_str) {
 	if (com_str == null) {
 		return "";
@@ -95,7 +105,7 @@ private void apply_bounds() {
 	if (g_host == null || g_host.controller == null) {
 		return;
 	}
-	var hr = com_controller_put_bounds(g_host.controller, g_host.bounds);
+	var hr = com_controller_put_bounds(host_controller_com(), g_host.bounds);
 	if (!com_ok(hr)) {
 		stderr.printf("WebView2 put_bounds failed: 0x%08x\n", (uint) hr);
 	}
@@ -105,7 +115,7 @@ private void flush_pending_navigate() {
 	if (g_host == null || !g_host.ready || g_host.webview == null || g_host.pending_url == null) {
 		return;
 	}
-	var nav = com_webview_navigate(g_host.webview, g_host.pending_url.ptr);
+	var nav = com_webview_navigate(host_webview_com(), g_host.pending_url.ptr);
 	if (!com_ok(nav)) {
 		stderr.printf("WebView2 navigate failed: 0x%08x\n", (uint) nav);
 	}
@@ -121,11 +131,15 @@ public void finish_setup(
 	if (g_host == null) {
 		return;
 	}
-	g_host.controller = controller;
-	g_host.webview = webview;
+	g_host.controller = (void*) controller;
+	g_host.webview = (void*) webview;
 	g_host.parent = parent;
 	g_host.ready = true;
 	apply_bounds();
+	var vis = com_controller_put_is_visible(host_controller_com(), 1);
+	if (!com_ok(vis)) {
+		stderr.printf("WebView2 put_is_visible failed: 0x%08x\n", (uint) vis);
+	}
 	flush_pending_navigate();
 }
 
