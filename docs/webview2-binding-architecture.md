@@ -22,8 +22,7 @@ Writes committed [`metadata/webview2/api/WebView2.json`](../metadata/webview2/ap
 |------|------|
 | `src/webview2-loader.c` | `WebView2Loader.dll` + `CoInitializeEx` |
 | `src/webview2-com-glue.c` | Async env/controller **completed-handler** vtables only |
-| `src/webview2-host.vala` | `Navigate`, `put_Bounds`, `close` via **`win32-webview2.vapi`** |
-| `vapi/webview2.vapi` | Capture-spike C hooks; host API from `webview2-host.vala` |
+| `src/webview2-host.vala` | Host API + `Navigate`, `put_Bounds`, `close` via **`win32-webview2.vapi`** |
 
 COM event-handler vtables stay in C (Vala cannot satisfy raw `IUnknown` prerequisites). Application-facing WebView2 calls use generated bindings.
 

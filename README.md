@@ -94,7 +94,7 @@ C:\msys64\msys2_shell.cmd -defterm -no-start -ucrt64 -c 'cd /x/vala.win32/build-
 |------|--------|
 | Phases 0–5 | Done — win32json vendor, generator, per-shard vapi, common controls, dialogs/menus, widget codegen (`Win32.*` ergonomic layer) |
 | Phase 6 | In progress — API coverage, filter expansion, gap reports |
-| Phase 7 | In progress — WebView2 host on Windows; JSON + filtered COM vapi (`win32-webview2.vapi`); plumbing shrink / demo migration still open |
+| Phase 7 | In progress — WebView2 host on Windows; JSON + filtered COM vapi (`win32-webview2.vapi`); host in `webview2-host.vala` |
 | Phase 8 | Not started — Valadoc, CI, polish |
 
 **Examples:** default **`examples/*.vala`** — `Win32.*` widgets (`--profile=gobject` + MinGW GLib). **`examples/native/`** — raw generated vapi (`native-*` exe names, `--profile=posix`). WebView2 host lives under **`examples/native/`** (`Win32.Ui.WebView` plumbing vapi).

@@ -395,7 +395,7 @@ webview2_capture_spike_c = project_root / 'src' / 'webview2-capture-spike.c'
 webview2_link_libs = ['-lole32', '-luuid', '-lshlwapi', '-lshell32', '-ladvapi32']
 
 if have_webview2_sdk
-  webview2_vala_args = ['--vapidir', vapidir, '--profile=posix', '--pkg', 'webview2', '--pkg', 'win32-webview2']
+  webview2_vala_args = ['--vapidir', vapidir, '--profile=posix', '--pkg', 'win32-webview2']
   foreach pkg : example_pkgs
     webview2_vala_args += ['--pkg', pkg]
   endforeach
