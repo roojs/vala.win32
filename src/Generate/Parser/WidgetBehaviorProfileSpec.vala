@@ -20,7 +20,7 @@ namespace Generate.Parse {
 		public bool list_view_helpers { get; set; default = false; }
 		public bool tree_view_helpers { get; set; default = false; }
 		public bool tab_page_helpers { get; set; default = false; }
-		public Gee.ArrayList<ErgoNativeMapEntry> ergo_native_map { get; private set; default = new Gee.ArrayList<ErgoNativeMapEntry> (); }
+		public Gee.ArrayList<ErgoNativeMapEntry> ergo_native_map { get; set; default = new Gee.ArrayList<ErgoNativeMapEntry> (); }
 
 		public Generate.WidgetBehaviorProfile to_profile (string wc_symbol) throws GLib.Error {
 			Generate.WidgetBehaviorProfile result = {};
