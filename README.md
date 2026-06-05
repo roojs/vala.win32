@@ -18,7 +18,7 @@ Cross-compile with **MinGW** (`x86_64-w64-mingw32-gcc`). Run demos under **Wine*
 
 Win32 JSON for regen (if `metadata/win32json/api/` is empty): `./scripts/vendor-win32json.sh`
 
-### Compile
+### Compile 
 
 ```bash
 meson setup build          # once
