@@ -24,7 +24,6 @@ Writes committed [`metadata/webview2/api/WebView2.json`](../metadata/webview2/ap
 | `src/win32-ui-webview2-loader.c` | `WebView2Loader.dll` + `CoInitializeEx` |
 | `src/win32-ui-webview2-com-glue.c` | Async env/controller completed-handler vtables; initial `put_Bounds` + `Navigate` |
 | `src/win32-ui-webview2-host.vala` | Glue API (`Win32.Ui.WebView`); calls generated vapi on stored COM refs |
-| `src/win32-ui-webview2-com-glue.c` | Async env/controller completed-handler vtables only |
 
 **What is generated:** COM interface surface in [`vapi/win32-ui-webview2.vapi`](../vapi/win32-ui-webview2.vapi) — `Navigate`, `GoBack`, `get_DocumentTitle`, etc. Regenerated from committed JSON via `generate-binding`.
 
@@ -44,9 +43,7 @@ Writes committed [`metadata/webview2/api/WebView2.json`](../metadata/webview2/ap
 
 **Ergo (7h hand baseline):** [`src/win32-ergo-webview2.vala`](../src/win32-ergo-webview2.vala) — `Win32.WebView` delegates to `Win32.Ui.WebView` glue with aligned names (`navigate`, `create_with_xywh`, …).
 
-**Call stack (navigate):** `Win32.WebView.navigate` → `Win32.Ui.WebView.navigate` → `webview_navigate` (C) → `ICoreWebView2.Navigate` (vapi).
-
-**What stays hand-written C:** Loader bootstrap, async completed-handler vtables (Vala cannot implement raw `IUnknown` vtables), and thin `COBJMACROS` wrappers where Vala cannot link generated vtable symbols. The old monolithic `webview2-plumbing.c` is gone; that logic is split across these small files.
+**Call stack (navigate):** `Win32.WebView.navigate` → `Win32.Ui.WebView.navigate` → `ICoreWebView2.navigate` (generated vapi).
 
 ## Target shape (aligned with the rest of vala.win32)
 
@@ -87,7 +84,7 @@ Canonical list lives in [`metadata/widget-conventions.json`](../metadata/widget-
 | signal `navigation_starting` | COM handler glue | `add_NavigationStarting` | planned |
 | signal `document_title_changed` | COM handler glue | `add_DocumentTitleChanged` | planned |
 
-**Generator rule:** ergo method body is one line → `Ui.WebView.<same_name>(…)`. Glue holds `ICoreWebView2*` / controller refs and C wrappers for vtable calls. Event signals need small C handler glue (same pattern as env/controller completed handlers).
+**Generator rule:** ergo method body is one line → `Ui.WebView.<same_name>(…)`. Glue calls generated vapi on stored `ICoreWebView2*` / controller refs. `CoTaskMemFree` for out-string getters lives in glue Vala (`take_com_string`). Event signals need C handler glue in `com-glue.c` (same pattern as env/controller completed handlers).
 
 WinMD is optional upstream input; today we scrape the **vendored `WebView2.h`** so Linux can regen the JSON without .NET.
 
