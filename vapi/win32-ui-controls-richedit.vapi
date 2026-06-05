@@ -3114,7 +3114,7 @@ namespace Win32.Ui.Controls.RichEdit {
 	[CCode (cname = "PCreateTextServices", has_target = false)]
 	public delegate int PCreateTextServices (
 		IUnknown punk_outer,
-		ITextHost p_itext_host,
+		void* p_itext_host,
 		out IUnknown pp_unk
 	);
 

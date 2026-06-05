@@ -2443,7 +2443,7 @@ namespace Win32.Ui.Accessibility {
 	[CCode (cname = "LPFNACCESSIBLEOBJECTFROMPOINT", has_target = false)]
 	public delegate int LPFNACCESSIBLEOBJECTFROMPOINT (
 		Win32.Foundation.Point pt_screen,
-		out IAccessible ppacc,
+		void* ppacc,
 		out void* pvar_child
 	);
 
@@ -2457,7 +2457,7 @@ namespace Win32.Ui.Accessibility {
 
 	[CCode (cname = "LPFNACCESSIBLECHILDREN", has_target = false)]
 	public delegate int LPFNACCESSIBLECHILDREN (
-		IAccessible pacc_container,
+		void* pacc_container,
 		int i_child_start,
 		int c_children,
 		out void* rgvar_children,
@@ -2936,7 +2936,7 @@ namespace Win32.Ui.Accessibility {
 		[CCode (cname = "QueryObjectIdRanges")]
 		public abstract int query_object_id_ranges (
 			IAccessibleHandler p_ranges_owner,
-			out out void* psa_ranges
+			out void** psa_ranges
 		);
 
 		[CCode (cname = "GetParentAccessible")]
@@ -3148,7 +3148,7 @@ namespace Win32.Ui.Accessibility {
 
 		[CCode (cname = "GetRuntimeId")]
 		public abstract int get_runtime_id (
-			out out void* p_ret_val
+			out void** p_ret_val
 		);
 
 		[CCode (cname = "ConvertReturnedElement")]
@@ -3204,7 +3204,7 @@ namespace Win32.Ui.Accessibility {
 
 		[CCode (cname = "GetRuntimeId")]
 		public abstract int get_runtime_id (
-			out out void* p_ret_val
+			out void** p_ret_val
 		);
 
 		[CCode (cname = "get_BoundingRectangle")]
@@ -3214,7 +3214,7 @@ namespace Win32.Ui.Accessibility {
 
 		[CCode (cname = "GetEmbeddedFragmentRoots")]
 		public abstract int get_embedded_fragment_roots (
-			out out void* p_ret_val
+			out void** p_ret_val
 		);
 
 		[CCode (cname = "SetFocus")]
@@ -3301,7 +3301,7 @@ namespace Win32.Ui.Accessibility {
 
 		[CCode (cname = "GetRuntimeIdPrefix")]
 		public abstract int get_runtime_id_prefix (
-			out out void* p_ret_val
+			out void** p_ret_val
 		);
 
 	}
@@ -3310,7 +3310,7 @@ namespace Win32.Ui.Accessibility {
 	public interface IAccessibleHostingElementProviders : IUnknown {
 		[CCode (cname = "GetEmbeddedFragmentRoots")]
 		public abstract int get_embedded_fragment_roots (
-			out out void* p_ret_val
+			out void** p_ret_val
 		);
 
 		[CCode (cname = "GetObjectIdForProvider")]
@@ -3325,7 +3325,7 @@ namespace Win32.Ui.Accessibility {
 	public interface IRawElementProviderHostingAccessibles : IUnknown {
 		[CCode (cname = "GetEmbeddedAccessibles")]
 		public abstract int get_embedded_accessibles (
-			out out void* p_ret_val
+			out void** p_ret_val
 		);
 
 	}
@@ -3439,7 +3439,7 @@ namespace Win32.Ui.Accessibility {
 
 		[CCode (cname = "GetSupportedViews")]
 		public abstract int get_supported_views (
-			out out void* p_ret_val
+			out void** p_ret_val
 		);
 
 	}
@@ -3495,7 +3495,7 @@ namespace Win32.Ui.Accessibility {
 	public interface ISelectionProvider : IUnknown {
 		[CCode (cname = "GetSelection")]
 		public abstract int get_selection (
-			out out void* p_ret_val
+			out void** p_ret_val
 		);
 
 		[CCode (cname = "get_CanSelectMultiple")]
@@ -3623,12 +3623,12 @@ namespace Win32.Ui.Accessibility {
 	public interface ITableProvider : IUnknown {
 		[CCode (cname = "GetRowHeaders")]
 		public abstract int get_row_headers (
-			out out void* p_ret_val
+			out void** p_ret_val
 		);
 
 		[CCode (cname = "GetColumnHeaders")]
 		public abstract int get_column_headers (
-			out out void* p_ret_val
+			out void** p_ret_val
 		);
 
 		[CCode (cname = "get_RowOrColumnMajor")]
@@ -3642,12 +3642,12 @@ namespace Win32.Ui.Accessibility {
 	public interface ITableItemProvider : IUnknown {
 		[CCode (cname = "GetRowHeaderItems")]
 		public abstract int get_row_header_items (
-			out out void* p_ret_val
+			out void** p_ret_val
 		);
 
 		[CCode (cname = "GetColumnHeaderItems")]
 		public abstract int get_column_header_items (
-			out out void* p_ret_val
+			out void** p_ret_val
 		);
 
 	}
@@ -3832,7 +3832,7 @@ namespace Win32.Ui.Accessibility {
 
 		[CCode (cname = "GetSelection")]
 		public abstract int get_selection (
-			out out void* pvar_selected_children
+			out void** pvar_selected_children
 		);
 
 		[CCode (cname = "get_DefaultAction")]
@@ -3958,12 +3958,12 @@ namespace Win32.Ui.Accessibility {
 
 		[CCode (cname = "GetAnnotationObjects")]
 		public abstract int get_annotation_objects (
-			out out void* p_ret_val
+			out void** p_ret_val
 		);
 
 		[CCode (cname = "GetAnnotationTypes")]
 		public abstract int get_annotation_types (
-			out out void* p_ret_val
+			out void** p_ret_val
 		);
 
 	}
@@ -4016,12 +4016,12 @@ namespace Win32.Ui.Accessibility {
 
 		[CCode (cname = "get_DropEffects")]
 		public abstract int get_drop_effects (
-			out out void* p_ret_val
+			out void** p_ret_val
 		);
 
 		[CCode (cname = "GetGrabbedItems")]
 		public abstract int get_grabbed_items (
-			out out void* p_ret_val
+			out void** p_ret_val
 		);
 
 	}
@@ -4035,7 +4035,7 @@ namespace Win32.Ui.Accessibility {
 
 		[CCode (cname = "get_DropTargetEffects")]
 		public abstract int get_drop_target_effects (
-			out out void* p_ret_val
+			out void** p_ret_val
 		);
 
 	}
@@ -4090,7 +4090,7 @@ namespace Win32.Ui.Accessibility {
 
 		[CCode (cname = "GetBoundingRectangles")]
 		public abstract int get_bounding_rectangles (
-			out out void* p_ret_val
+			out void** p_ret_val
 		);
 
 		[CCode (cname = "GetEnclosingElement")]
@@ -4145,7 +4145,7 @@ namespace Win32.Ui.Accessibility {
 
 		[CCode (cname = "GetChildren")]
 		public abstract int get_children (
-			out out void* p_ret_val
+			out void** p_ret_val
 		);
 
 	}
@@ -4154,12 +4154,12 @@ namespace Win32.Ui.Accessibility {
 	public interface ITextProvider : IUnknown {
 		[CCode (cname = "GetSelection")]
 		public abstract int get_selection (
-			out out void* p_ret_val
+			out void** p_ret_val
 		);
 
 		[CCode (cname = "GetVisibleRanges")]
 		public abstract int get_visible_ranges (
-			out out void* p_ret_val
+			out void** p_ret_val
 		);
 
 		[CCode (cname = "RangeFromChild")]
@@ -4320,7 +4320,7 @@ namespace Win32.Ui.Accessibility {
 
 		[CCode (cname = "GetRuntimeId")]
 		public abstract int get_runtime_id (
-			out out void* runtime_id
+			out void** runtime_id
 		);
 
 		[CCode (cname = "FindFirst")]
@@ -4389,14 +4389,14 @@ namespace Win32.Ui.Accessibility {
 		public abstract int get_current_pattern_as (
 			int pattern_id,
 			void* riid,
-			out out void* pattern_object
+			out void** pattern_object
 		);
 
 		[CCode (cname = "GetCachedPatternAs")]
 		public abstract int get_cached_pattern_as (
 			int pattern_id,
 			void* riid,
-			out out void* pattern_object
+			out void** pattern_object
 		);
 
 		[CCode (cname = "GetCurrentPattern")]
@@ -4811,7 +4811,7 @@ namespace Win32.Ui.Accessibility {
 
 		[CCode (cname = "GetChildren")]
 		public abstract int get_children (
-			out out void* child_array
+			out void** child_array
 		);
 
 	}
@@ -4831,7 +4831,7 @@ namespace Win32.Ui.Accessibility {
 
 		[CCode (cname = "GetChildren")]
 		public abstract int get_children (
-			out out void* child_array
+			out void** child_array
 		);
 
 	}
@@ -5211,7 +5211,7 @@ namespace Win32.Ui.Accessibility {
 
 		[CCode (cname = "GetCurrentSupportedViews")]
 		public abstract int get_current_supported_views (
-			out out void* ret_val
+			out void** ret_val
 		);
 
 		[CCode (cname = "get_CachedCurrentView")]
@@ -5221,7 +5221,7 @@ namespace Win32.Ui.Accessibility {
 
 		[CCode (cname = "GetCachedSupportedViews")]
 		public abstract int get_cached_supported_views (
-			out out void* ret_val
+			out void** ret_val
 		);
 
 	}
@@ -5800,7 +5800,7 @@ namespace Win32.Ui.Accessibility {
 
 		[CCode (cname = "GetBoundingRectangles")]
 		public abstract int get_bounding_rectangles (
-			out out void* bounding_rects
+			out void** bounding_rects
 		);
 
 		[CCode (cname = "GetEnclosingElement")]
@@ -5886,7 +5886,7 @@ namespace Win32.Ui.Accessibility {
 		public abstract int get_attribute_values (
 			void* attribute_ids,
 			int attribute_id_count,
-			out out void* attribute_values
+			out void** attribute_values
 		);
 
 	}
@@ -6228,7 +6228,7 @@ namespace Win32.Ui.Accessibility {
 
 		[CCode (cname = "GetCurrentExtendedPropertiesAsArray")]
 		public abstract int get_current_extended_properties_as_array (
-			out out void* property_array,
+			out void** property_array,
 			out int property_count
 		);
 
@@ -6269,7 +6269,7 @@ namespace Win32.Ui.Accessibility {
 
 		[CCode (cname = "GetCachedExtendedPropertiesAsArray")]
 		public abstract int get_cached_extended_properties_as_array (
-			out out void* property_array,
+			out void** property_array,
 			out int property_count
 		);
 
@@ -6299,7 +6299,7 @@ namespace Win32.Ui.Accessibility {
 
 		[CCode (cname = "GetCurrentAnnotationTypes")]
 		public abstract int get_current_annotation_types (
-			out out void* ret_val
+			out void** ret_val
 		);
 
 		[CCode (cname = "get_CachedFormula")]
@@ -6314,7 +6314,7 @@ namespace Win32.Ui.Accessibility {
 
 		[CCode (cname = "GetCachedAnnotationTypes")]
 		public abstract int get_cached_annotation_types (
-			out out void* ret_val
+			out void** ret_val
 		);
 
 	}
@@ -6411,12 +6411,12 @@ namespace Win32.Ui.Accessibility {
 
 		[CCode (cname = "get_CurrentDropEffects")]
 		public abstract int get_current_drop_effects (
-			out out void* ret_val
+			out void** ret_val
 		);
 
 		[CCode (cname = "get_CachedDropEffects")]
 		public abstract int get_cached_drop_effects (
-			out out void* ret_val
+			out void** ret_val
 		);
 
 		[CCode (cname = "GetCurrentGrabbedItems")]
@@ -6445,12 +6445,12 @@ namespace Win32.Ui.Accessibility {
 
 		[CCode (cname = "get_CurrentDropTargetEffects")]
 		public abstract int get_current_drop_target_effects (
-			out out void* ret_val
+			out void** ret_val
 		);
 
 		[CCode (cname = "get_CachedDropTargetEffects")]
 		public abstract int get_cached_drop_target_effects (
-			out out void* ret_val
+			out void** ret_val
 		);
 
 	}
@@ -6526,7 +6526,7 @@ namespace Win32.Ui.Accessibility {
 
 		[CCode (cname = "get_CurrentAnnotationTypes")]
 		public abstract int get_current_annotation_types (
-			out out void* ret_val
+			out void** ret_val
 		);
 
 		[CCode (cname = "get_CurrentAnnotationObjects")]
@@ -6551,7 +6551,7 @@ namespace Win32.Ui.Accessibility {
 
 		[CCode (cname = "get_CachedAnnotationTypes")]
 		public abstract int get_cached_annotation_types (
-			out out void* ret_val
+			out void** ret_val
 		);
 
 		[CCode (cname = "get_CachedAnnotationObjects")]
@@ -6761,7 +6761,7 @@ namespace Win32.Ui.Accessibility {
 		public abstract int get_win_events_for_automation_event (
 			int event_id,
 			int property_id,
-			out out void* win_events
+			out void** win_events
 		);
 
 	}
@@ -6775,7 +6775,7 @@ namespace Win32.Ui.Accessibility {
 
 		[CCode (cname = "GetTable")]
 		public abstract int get_table (
-			out out void* table
+			out void** table
 		);
 
 		[CCode (cname = "GetEntry")]
@@ -7125,7 +7125,7 @@ namespace Win32.Ui.Accessibility {
 		public abstract int int_native_array_to_safe_array (
 			void* array,
 			int array_count,
-			out out void* safe_array
+			out void** safe_array
 		);
 
 		[CCode (cname = "IntSafeArrayToNativeArray")]
@@ -7180,15 +7180,15 @@ namespace Win32.Ui.Accessibility {
 		[CCode (cname = "PollForPotentialSupportedPatterns")]
 		public abstract int poll_for_potential_supported_patterns (
 			IUIAutomationElement p_element,
-			out out void* pattern_ids,
-			out out void* pattern_names
+			out void** pattern_ids,
+			out void** pattern_names
 		);
 
 		[CCode (cname = "PollForPotentialSupportedProperties")]
 		public abstract int poll_for_potential_supported_properties (
 			IUIAutomationElement p_element,
-			out out void* property_ids,
-			out out void* property_names
+			out void** property_ids,
+			out void** property_names
 		);
 
 		[CCode (cname = "CheckNotSupported")]

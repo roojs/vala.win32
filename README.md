@@ -2,7 +2,7 @@
 
 Generated **Vala vapi** bindings for native Win32 GUI. Application `.vala` compiles to C that calls Win32 directly—no monolithic `libwin32`. Metadata comes from [win32json](https://github.com/marlersoft/win32json) (filtered Microsoft win32metadata); a small generator emits per-area `.vapi` shards and ergonomic helpers. **WebView2** (Edge Chromium in an HWND) is integrated alongside the Win32 work—host demo and plumbing today, generated COM bindings next.
 
-![hello-window demo (Wine)](https://private-user-images.githubusercontent.com/415282/603186551-b645fe2c-d579-424c-b3d3-0b573e3f4e23.png?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3ODA2MjcyNjIsIm5iZiI6MTc4MDYyNjk2MiwicGF0aCI6Ii80MTUyODIvNjAzMTg2NTUxLWI2NDVmZTJjLWQ1NzktNDI0Yy1iM2QzLTBiNTczZTNmNGUyMy5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjYwNjA1JTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI2MDYwNVQwMjM2MDJaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT1kOGQyYTNmODNiZDJjNGNhMTdiMmJmMDI2YzM1YjhlODhkNTMxYTc1MTVjYWQ2ZGE0N2ZjZjIzMzAwOWYwOWZjJlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCZyZXNwb25zZS1jb250ZW50LXR5cGU9aW1hZ2UlMkZwbmcifQ.advJRjj_C2QxgJvkYVXO_OM7XpMQvIRVCa56AqCcA-o)
+![hello-window demo (Wine)](https://github.com/user-attachments/assets/23298046-8cf9-4f10-89f9-deabc6e3a738)
 
 **Thanks** to [emrevit/vala-win32](https://github.com/emrevit/vala-win32) for the early ideas on Vala, Win32, and cross-compiling with MinGW GLib.
 
@@ -47,7 +47,7 @@ Regenerate API metadata on Linux or Windows (commit the result):
 ```bash
 ./scripts/vendor-webview2-sdk.sh   # if needed
 ./scripts/regen-webview2-json.sh   # → metadata/webview2/api/WebView2.json
-./scripts/regen-webview2-vapi.sh   # → vapi/win32-webview2.vapi
+./scripts/regen-webview2-vapi.sh   # → vapi/win32-ui-webview2.vapi (COM)
 ```
 
 Details: [metadata/webview2/README.md](metadata/webview2/README.md)
@@ -94,7 +94,7 @@ C:\msys64\msys2_shell.cmd -defterm -no-start -ucrt64 -c 'cd /x/vala.win32/build-
 |------|--------|
 | Phases 0–5 | Done — win32json vendor, generator, per-shard vapi, common controls, dialogs/menus, widget codegen (`Win32.*` ergonomic layer) |
 | Phase 6 | In progress — API coverage, filter expansion, gap reports |
-| Phase 7 | In progress — WebView2 host on Windows; JSON + filtered COM vapi (`win32-webview2.vapi`); host in `webview2-host.vala` |
+| Phase 7 | In progress — COM vapi `win32-ui-webview2.vapi`; hand ergo `Win32.WebView` in `src/win32-ergo-webview2.vala` (→ `win32-ergo-webview2` generator); demos `webview2-host-demo` + `webview2-ergo-demo` |
 | Phase 8 | Not started — Valadoc, CI, polish |
 
 **Examples:** default **`examples/*.vala`** — `Win32.*` widgets (`--profile=gobject` + MinGW GLib). **`examples/native/`** — raw generated vapi (`native-*` exe names, `--profile=posix`). WebView2 host lives under **`examples/native/`** (`Win32.Ui.WebView` plumbing vapi).
@@ -113,14 +113,13 @@ C:\msys64\msys2_shell.cmd -defterm -no-start -ucrt64 -c 'cd /x/vala.win32/build-
 ```
 vapi/                 # Generated Win32 shards + small hand stubs
 generated/            # Regen helpers (widgets, wide strings, errors, …)
-examples/             # Default ergonomic demos (hello-window, button-demo, …)
+examples/             # Default ergonomic demos (hello-window, webview2-ergo-demo, …)
 examples/native/      # Raw vapi + webview2-host-demo (native-* exes)
 metadata/             # win32json filter lists; webview2 JSON (committed)
 tools/                # generate-binding, generate-webview2-json
 src/Generate/         # Generator and widget templates
-src/webview2-loader.c     # WebView2Loader.dll bootstrap (C)
-src/webview2-com-glue.c   # Async COM completed handlers (C)
-src/webview2-host.vala    # Host logic via win32-webview2.vapi (Vala)
+src/win32-ui-webview2-*.c/h/vala   # WebView2 COM host glue + low-level API
+src/win32-ergo-webview2.vala          # Hand ergo Win32.WebView (→ win32-ergo-webview2 generator)
 scripts/              # vendor-win32json, setup-mingw-libs, build-win, …
 docs/                 # Build guides, architecture, plans, coverage
 ```

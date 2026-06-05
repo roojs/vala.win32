@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Regenerate vapi/win32-webview2.vapi from metadata/webview2/api/WebView2.json
+# Regenerate vapi/win32-ui-webview2.vapi from metadata/webview2/api/WebView2.json
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
@@ -23,8 +23,8 @@ fi
 	--out "${ROOT}/vapi" \
 	--symbol-prefix Microsoft.Web.WebView2.Win32 \
 	--no-basename-in-symbol \
-	--cheader WebView2.h \
+	--cheader win32-ui-webview2-sdk.h \
 	--vala-namespace Microsoft.Web.WebView2.Win32 \
 	--vapi-only
 
-echo "Done. Commit vapi/win32-webview2.vapi"
+echo "Done. Commit vapi/win32-ui-webview2.vapi"

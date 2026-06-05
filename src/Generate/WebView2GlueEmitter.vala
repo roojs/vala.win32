@@ -29,14 +29,56 @@ namespace Win32.Ui.WebView {
 		}
 
 		public string emit (Parse.WidgetConventionsFile conventions) {
-			Parse.WidgetBehaviorProfileSpec? profile;
-			if (!conventions.profiles.has_key ("WebView2")) {
+			return emit_entries (collect_entries (conventions));
+		}
+
+		public string emit_from_file (string conventions_path) throws GLib.Error {
+			var parser = new Json.Parser ();
+			parser.load_from_file (conventions_path);
+			var root = parser.get_root ();
+			if (root == null || root.get_node_type () != Json.NodeType.OBJECT) {
+				throw new GLib.IOError.FAILED ("conventions root must be object");
+			}
+			var profiles = root.get_object ().get_object_member ("profiles");
+			if (profiles == null || !profiles.has_member ("WebView2")) {
 				return GENERATED_HEADER + GENERATED_FOOTER;
 			}
-			profile = conventions.profiles["WebView2"];
+			var webview2 = profiles.get_object_member ("WebView2");
+			var map_node = webview2.get_member ("ergo_native_map");
+			if (map_node == null || map_node.get_node_type () != Json.NodeType.ARRAY) {
+				return GENERATED_HEADER + GENERATED_FOOTER;
+			}
+			var entries = new Gee.ArrayList<Parse.ErgoNativeMapEntry> ();
+			var arr = map_node.get_array ();
+			for (uint i = 0; i < arr.get_length (); i++) {
+				var entry = Json.gobject_deserialize (
+					typeof (Parse.ErgoNativeMapEntry),
+					arr.get_element (i)
+				) as Parse.ErgoNativeMapEntry;
+				if (entry != null) {
+					entries.add (entry);
+				}
+			}
+			return emit_entries (entries);
+		}
+
+		static Gee.ArrayList<Parse.ErgoNativeMapEntry> collect_entries (
+			Parse.WidgetConventionsFile conventions
+		) {
+			var entries = new Gee.ArrayList<Parse.ErgoNativeMapEntry> ();
+			if (!conventions.profiles.has_key ("WebView2")) {
+				return entries;
+			}
+			foreach (var entry in conventions.profiles["WebView2"].ergo_native_map) {
+				entries.add (entry);
+			}
+			return entries;
+		}
+
+		string emit_entries (Gee.ArrayList<Parse.ErgoNativeMapEntry> entries) {
 			var sb = new GLib.StringBuilder (GENERATED_HEADER);
 			var seen = new Gee.HashSet<string> ();
-			foreach (var entry in profile.ergo_native_map) {
+			foreach (var entry in entries) {
 				foreach (var name in glue_method_names (entry.glue)) {
 					if (seen.contains (name)) {
 						continue;

@@ -232,7 +232,7 @@ int main (string[] args) {
 
 	try {
 		var webview2_glue_emitter = new Generate.WebView2GlueEmitter ();
-		var webview2_glue = webview2_glue_emitter.emit (conventions);
+		var webview2_glue = webview2_glue_emitter.emit_from_file (conventions_path);
 		var webview2_glue_path = GLib.Path.build_filename (generated_dir, "win32-ui-webview2-host-glue.vala");
 		GLib.FileUtils.set_contents (webview2_glue_path, webview2_glue);
 		print ("wrote %s (%u bytes)\n", webview2_glue_path, webview2_glue.length);

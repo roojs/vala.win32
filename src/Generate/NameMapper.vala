@@ -172,8 +172,12 @@ namespace Generate {
 		/**
 		 * JSON basename → pkg / vapi filename id.
 		 * UI.WindowsAndMessaging.json → win32-ui-windowsandmessaging
+		 * WebView2.json → win32-ui-webview2 (COM shard; win32-ergo-webview2 for ergo widget vapi)
 		 */
 		public static string json_basename_to_pkg_id (string json_basename) {
+			if (json_basename == "WebView2.json") {
+				return "win32-ui-webview2";
+			}
 			var stem = json_basename;
 			if (stem.has_suffix (".json")) {
 				stem = stem.slice (0, -5);

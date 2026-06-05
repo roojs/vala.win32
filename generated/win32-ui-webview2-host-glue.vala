@@ -2,6 +2,151 @@
 
 namespace Win32.Ui.WebView {
 
+[CCode (cname = "vala_webview2_host_navigate_to_string")]
+public bool navigate_to_string (string html) {
+	if (!webview_ready () || html.length == 0) {
+		return false;
+	}
+	return com_ok (g_host.webview.navigate_to_string (WideString (html).ptr));
+}
+
+[CCode (cname = "vala_webview2_host_reload")]
+public bool reload () {
+	if (!webview_ready ()) {
+		return false;
+	}
+	return com_ok (g_host.webview.reload ());
+}
+
+[CCode (cname = "vala_webview2_host_stop")]
+public bool stop () {
+	if (!webview_ready ()) {
+		return false;
+	}
+	return com_ok (g_host.webview.stop ());
+}
+
+[CCode (cname = "vala_webview2_host_go_back")]
+public bool go_back () {
+	if (!webview_ready ()) {
+		return false;
+	}
+	return com_ok (g_host.webview.go_back ());
+}
+
+[CCode (cname = "vala_webview2_host_go_forward")]
+public bool go_forward () {
+	if (!webview_ready ()) {
+		return false;
+	}
+	return com_ok (g_host.webview.go_forward ());
+}
+
+[CCode (cname = "vala_webview2_host_execute_script")]
+public bool execute_script (string js) {
+	/* vapi needs ICoreWebView2ExecuteScriptCompletedHandler — wiring deferred. */
+	if (!webview_ready () || js.length == 0) {
+		return false;
+	}
+	return false;
+}
+
+[CCode (cname = "vala_webview2_host_post_web_message_as_json")]
+public bool post_web_message_as_json (string json) {
+	if (!webview_ready () || json.length == 0) {
+		return false;
+	}
+	return com_ok (g_host.webview.post_web_message_as_json (WideString (json).ptr));
+}
+
+[CCode (cname = "vala_webview2_host_get_source")]
+public string get_source () {
+	if (!webview_ready ()) {
+		return "";
+	}
+	uint16* uri = null;
+	if (!com_ok (g_host.webview.get_source (out uri))) {
+		return "";
+	}
+	return take_com_string (uri);
+}
+
+[CCode (cname = "vala_webview2_host_get_can_go_back")]
+public bool get_can_go_back () {
+	if (!webview_ready ()) {
+		return false;
+	}
+	int val = 0;
+	if (!com_ok (g_host.webview.get_can_go_back (out val))) {
+		return false;
+	}
+	return val != 0;
+}
+
+[CCode (cname = "vala_webview2_host_get_can_go_forward")]
+public bool get_can_go_forward () {
+	if (!webview_ready ()) {
+		return false;
+	}
+	int val = 0;
+	if (!com_ok (g_host.webview.get_can_go_forward (out val))) {
+		return false;
+	}
+	return val != 0;
+}
+
+[CCode (cname = "vala_webview2_host_get_document_title")]
+public string get_document_title () {
+	if (!webview_ready ()) {
+		return "";
+	}
+	uint16* title = null;
+	if (!com_ok (g_host.webview.get_document_title (out title))) {
+		return "";
+	}
+	return take_com_string (title);
+}
+
+[CCode (cname = "vala_webview2_host_put_is_visible")]
+public bool put_is_visible (bool visible) {
+	if (!controller_ready ()) {
+		return false;
+	}
+	return com_ok (g_host.controller.put_is_visible (visible ? 1 : 0));
+}
+
+[CCode (cname = "vala_webview2_host_get_is_visible")]
+public bool get_is_visible () {
+	if (!controller_ready ()) {
+		return false;
+	}
+	int val = 0;
+	if (!com_ok (g_host.controller.get_is_visible (out val))) {
+		return false;
+	}
+	return val != 0;
+}
+
+[CCode (cname = "vala_webview2_host_put_zoom_factor")]
+public bool put_zoom_factor (double zoom) {
+	if (!controller_ready ()) {
+		return false;
+	}
+	return com_ok (g_host.controller.put_zoom_factor (zoom));
+}
+
+[CCode (cname = "vala_webview2_host_get_zoom_factor")]
+public double get_zoom_factor () {
+	if (!controller_ready ()) {
+		return 1.0;
+	}
+	double val = 1.0;
+	if (!com_ok (g_host.controller.get_zoom_factor (out val))) {
+		return 1.0;
+	}
+	return val;
+}
+
 
 }
 

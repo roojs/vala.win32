@@ -5,18 +5,23 @@
 #include <windows.h>
 #include <stdio.h>
 
-#include "webview2-com-glue.h"
-#include "webview2-loader.h"
-#include "WebView2.h"
+#include "win32-ui-webview2-com-glue.h"
+#include "win32-ui-webview2-loader.h"
+#include "win32-ui-webview2-sdk.h"
 
 void vala_webview2_host_finish_setup (
 	ICoreWebView2Controller *controller,
 	ICoreWebView2 *webview,
-	HWND parent);
+	HWND parent); /* WebView2.h included above */
 
 typedef struct WebView2GlueState {
 	HWND parent;
 	wchar_t url[2048];
+	BOOL use_client_bounds;
+	RECT bounds;
+	ICoreWebView2Environment *environment;
+	ICoreWebView2Controller *controller;
+	ICoreWebView2 *webview;
 } WebView2GlueState;
 
 static WebView2GlueState g_glue;
@@ -104,7 +109,6 @@ static HRESULT STDMETHODCALLTYPE controller_handler_invoke (
 	HRESULT error_code,
 	ICoreWebView2Controller *controller)
 {
-	ICoreWebView2 *webview = NULL;
 	HRESULT hr;
 
 	(void) This;
@@ -113,13 +117,34 @@ static HRESULT STDMETHODCALLTYPE controller_handler_invoke (
 		return error_code;
 	}
 
-	hr = ICoreWebView2Controller_get_CoreWebView2 (controller, &webview);
-	if (FAILED (hr) || webview == NULL) {
+	g_glue.controller = controller;
+	ICoreWebView2Controller_AddRef (g_glue.controller);
+	hr = ICoreWebView2Controller_get_CoreWebView2 (g_glue.controller, &g_glue.webview);
+	if (FAILED (hr) || g_glue.webview == NULL) {
 		fprintf (stderr, "get_CoreWebView2 failed: 0x%08lx\n", (unsigned long) hr);
 		return hr;
 	}
 
-	vala_webview2_host_finish_setup (controller, webview, g_glue.parent);
+	{
+		RECT bounds;
+		if (g_glue.use_client_bounds) {
+			GetClientRect (g_glue.parent, &bounds);
+		} else {
+			bounds = g_glue.bounds;
+		}
+		hr = ICoreWebView2Controller_put_Bounds (g_glue.controller, bounds);
+		if (FAILED (hr)) {
+			fprintf (stderr, "WebView2 put_Bounds failed: 0x%08lx\n", (unsigned long) hr);
+		}
+	}
+	if (g_glue.url[0] != L'\0') {
+		hr = ICoreWebView2_Navigate (g_glue.webview, g_glue.url);
+		if (FAILED (hr)) {
+			fprintf (stderr, "WebView2 Navigate failed: 0x%08lx (url=%ls)\n",
+			         (unsigned long) hr, g_glue.url);
+		}
+	}
+	vala_webview2_host_finish_setup (g_glue.controller, g_glue.webview, g_glue.parent);
 	return S_OK;
 }
 
@@ -137,6 +162,9 @@ static HRESULT STDMETHODCALLTYPE env_handler_invoke (
 		fprintf (stderr, "WebView2 environment failed: 0x%08lx\n", (unsigned long) error_code);
 		return error_code;
 	}
+
+	g_glue.environment = environment;
+	ICoreWebView2Environment_AddRef (g_glue.environment);
 
 	controller_handler = (ControllerCompletedHandler *) CoTaskMemAlloc (sizeof (ControllerCompletedHandler));
 	if (controller_handler == NULL) {
@@ -158,19 +186,25 @@ static HRESULT STDMETHODCALLTYPE env_handler_invoke (
 	return hr;
 }
 
-BOOL vala_webview2_com_begin_host (HWND parent, LPCWSTR url)
+BOOL vala_webview2_com_begin_host (HWND parent, LPCWSTR url, const RECT *bounds)
 {
 	EnvCompletedHandler *env_handler;
 	HRESULT hr;
 
-	if (parent == NULL || url == NULL) {
+	if (parent == NULL) {
 		return FALSE;
 	}
 
 	ZeroMemory (&g_glue, sizeof (g_glue));
 	g_glue.parent = parent;
-	wcsncpy (g_glue.url, url, (sizeof (g_glue.url) / sizeof (g_glue.url[0])) - 1);
-	g_glue.url[(sizeof (g_glue.url) / sizeof (g_glue.url[0])) - 1] = L'\0';
+	g_glue.use_client_bounds = (bounds == NULL);
+	if (bounds != NULL) {
+		g_glue.bounds = *bounds;
+	}
+	if (url != NULL) {
+		wcsncpy (g_glue.url, url, (sizeof (g_glue.url) / sizeof (g_glue.url[0])) - 1);
+		g_glue.url[(sizeof (g_glue.url) / sizeof (g_glue.url[0])) - 1] = L'\0';
+	}
 
 	if (!vala_webview2_loader_init ()) {
 		return FALSE;
@@ -195,4 +229,21 @@ BOOL vala_webview2_com_begin_host (HWND parent, LPCWSTR url)
 		return FALSE;
 	}
 	return TRUE;
+}
+
+void vala_webview2_com_release_host (void)
+{
+	if (g_glue.webview != NULL) {
+		ICoreWebView2_Release (g_glue.webview);
+		g_glue.webview = NULL;
+	}
+	if (g_glue.controller != NULL) {
+		ICoreWebView2Controller_Close (g_glue.controller);
+		ICoreWebView2Controller_Release (g_glue.controller);
+		g_glue.controller = NULL;
+	}
+	if (g_glue.environment != NULL) {
+		ICoreWebView2Environment_Release (g_glue.environment);
+		g_glue.environment = NULL;
+	}
 }

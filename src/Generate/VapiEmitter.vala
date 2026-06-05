@@ -122,7 +122,8 @@ namespace $(ns) {
 			this.iunknown_emitted = false;
 			var ns = this.shard_vala_namespace (entry.basename);
 			this.append_namespace_open (ns, true);
-			if (this.cheader_filename == "WebView2.h") {
+			if (this.cheader_filename == "WebView2.h"
+			    || this.cheader_filename == "win32-ui-webview2-sdk.h") {
 				this.emit_webview2_foundation_stub ();
 			}
 			this.emit_shard_body (entry);
@@ -393,6 +394,30 @@ namespace Win32 {
 			this.buffer.append ("\t}\n\n");
 		}
 
+		string shard_param_type (Parse.Parameter p) {
+			var void_ptr = VapiEmitter.com_type_as_void_ptr_if_missing (p.Type, this.emitted_com_names);
+			if (void_ptr != null) {
+				return void_ptr;
+			}
+			return VapiEmitter.vala_param_type (p, this.shard_basename);
+		}
+
+		static string? com_type_as_void_ptr_if_missing (
+			Parse.TypeRef type_ref,
+			Gee.HashSet<string> emitted_com
+		) {
+			if (type_ref.Kind == "ApiRef" && type_ref.TargetKind == "Com") {
+				if (!emitted_com.contains (type_ref.Name) && type_ref.Name != "IUnknown") {
+					return "void*";
+				}
+				return null;
+			}
+			if (type_ref.Kind == "PointerTo" && type_ref.Child != null) {
+				return VapiEmitter.com_type_as_void_ptr_if_missing (type_ref.Child, emitted_com);
+			}
+			return null;
+		}
+
 		void emit_delegate (Parse.MetadataType t) {
 			var vala_name = NameMapper.to_vala_type (t.Name);
 			if (!this.claim_vala_name (vala_name)) {
@@ -405,7 +430,7 @@ namespace Win32 {
 			var n = t.Params.size;
 			for (int i = 0; i < n; i++) {
 				var p = t.Params.get (i);
-				var ptype = VapiEmitter.vala_param_type (p);
+				var ptype = this.shard_param_type (p);
 				var comma = i < n - 1 ? "," : "";
 				this.buffer.append (@"		$(ptype) $(NameMapper.delegate_param_name (t.Name, p.Name, i))$(comma)
 ");
@@ -548,7 +573,8 @@ namespace Win32 {
 		}
 
 		static string rewrite_webview2_rect (string mapped, string cheader_filename) {
-			if (cheader_filename == "WebView2.h") {
+			if (cheader_filename == "WebView2.h"
+			    || cheader_filename == "win32-ui-webview2-sdk.h") {
 				return mapped.replace ("Win32.Foundation.Rect", "Rect");
 			}
 			return mapped;
@@ -577,7 +603,7 @@ namespace Win32 {
 			var n = f.Params.size;
 			for (int i = 0; i < n; i++) {
 				var p = f.Params.get (i);
-				var ptype = VapiEmitter.vala_param_type (p, this.shard_basename);
+				var ptype = this.shard_param_type (p);
 				var pname = VapiEmitter.param_vala_name (f.Name, p);
 				var comma = i < n - 1 ? "," : "";
 				this.buffer.append (@"		$(ptype) $(pname)$(comma)

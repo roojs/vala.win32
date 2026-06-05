@@ -8776,9 +8776,9 @@ namespace Win32.Ui.Shell {
 
 	[CCode (cname = "LPFNDFMCALLBACK", has_target = false)]
 	public delegate int LPFNDFMCALLBACK (
-		IShellFolder psf,
+		void* psf,
 		[CCode (type_id = "HWND")] void* hwnd,
-		IDataObject pdtobj,
+		void* pdtobj,
 		uint u_msg,
 		ulong w_param,
 		int64 l_param
@@ -8786,8 +8786,8 @@ namespace Win32.Ui.Shell {
 
 	[CCode (cname = "LPFNVIEWCALLBACK", has_target = false)]
 	public delegate int LPFNVIEWCALLBACK (
-		IShellView psv_outer,
-		IShellFolder psf,
+		void* psv_outer,
+		void* psf,
 		[CCode (type_id = "HWND")] void* hwnd_main,
 		uint u_msg,
 		ulong w_param,
@@ -10047,7 +10047,7 @@ namespace Win32.Ui.Shell {
 	public interface IPersistFolder2 : IPersistFolder {
 		[CCode (cname = "GetCurFolder")]
 		public abstract int get_cur_folder (
-			out out void* ppidl
+			out void** ppidl
 		);
 
 	}
@@ -10077,7 +10077,7 @@ namespace Win32.Ui.Shell {
 
 		[CCode (cname = "GetIDList")]
 		public abstract int get_idlist (
-			out out void* ppidl
+			out void** ppidl
 		);
 
 	}
@@ -10173,7 +10173,7 @@ namespace Win32.Ui.Shell {
 		[CCode (cname = "GetItem")]
 		public abstract int get_item (
 			void* riid,
-			out out void* ppv
+			out void** ppv
 		);
 
 	}
@@ -10186,7 +10186,7 @@ namespace Win32.Ui.Shell {
 			IBindCtx pbc,
 			[CCode (type_id = "LPCWSTR")] uint16* psz_display_name,
 			out uint pch_eaten,
-			out out void* ppidl,
+			out void** ppidl,
 			out uint pdw_attributes
 		);
 
@@ -10202,7 +10202,7 @@ namespace Win32.Ui.Shell {
 			void* pidl,
 			IBindCtx pbc,
 			void* riid,
-			out out void* ppv
+			out void** ppv
 		);
 
 		[CCode (cname = "BindToStorage")]
@@ -10210,7 +10210,7 @@ namespace Win32.Ui.Shell {
 			void* pidl,
 			IBindCtx pbc,
 			void* riid,
-			out out void* ppv
+			out void** ppv
 		);
 
 		[CCode (cname = "CompareIDs")]
@@ -10224,7 +10224,7 @@ namespace Win32.Ui.Shell {
 		public abstract int create_view_object (
 			[CCode (type_id = "HWND")] void* hwnd_owner,
 			void* riid,
-			out out void* ppv
+			out void** ppv
 		);
 
 		[CCode (cname = "GetAttributesOf")]
@@ -10241,7 +10241,7 @@ namespace Win32.Ui.Shell {
 			void* apidl,
 			void* riid,
 			out uint rgf_reserved,
-			out out void* ppv
+			out void** ppv
 		);
 
 		[CCode (cname = "GetDisplayNameOf")]
@@ -10257,7 +10257,7 @@ namespace Win32.Ui.Shell {
 			void* pidl,
 			[CCode (type_id = "LPCWSTR")] uint16* psz_name,
 			void* u_flags,
-			out out void* ppidl_out
+			out void** ppidl_out
 		);
 
 	}
@@ -10394,7 +10394,7 @@ namespace Win32.Ui.Shell {
 		public abstract int get_item_object (
 			uint u_item,
 			void* riid,
-			out out void* ppv
+			out void** ppv
 		);
 
 	}
@@ -10441,13 +10441,13 @@ namespace Win32.Ui.Shell {
 		[CCode (cname = "GetFolder")]
 		public abstract int get_folder (
 			void* riid,
-			out out void* ppv
+			out void** ppv
 		);
 
 		[CCode (cname = "Item")]
 		public abstract int item (
 			int i_item_index,
-			out out void* ppidl
+			out void** ppidl
 		);
 
 		[CCode (cname = "ItemCount")]
@@ -10460,7 +10460,7 @@ namespace Win32.Ui.Shell {
 		public abstract int items (
 			uint u_flags,
 			void* riid,
-			out out void* ppv
+			out void** ppv
 		);
 
 		[CCode (cname = "GetSelectionMarkedItem")]
@@ -10587,7 +10587,7 @@ namespace Win32.Ui.Shell {
 		public abstract int get_item (
 			int i_item,
 			void* riid,
-			out out void* ppv
+			out void** ppv
 		);
 
 		[CCode (cname = "GetVisibleItem")]
@@ -10662,7 +10662,7 @@ namespace Win32.Ui.Shell {
 		[CCode (cname = "GetColumnPropertyList")]
 		public abstract int get_column_property_list (
 			void* riid,
-			out out void* ppv
+			out void** ppv
 		);
 
 		[CCode (cname = "GetGroupByProperty")]
@@ -10723,7 +10723,7 @@ namespace Win32.Ui.Shell {
 
 		[CCode (cname = "GetIDList")]
 		public abstract int get_idlist (
-			out out void* id_list
+			out void** id_list
 		);
 
 		[CCode (cname = "GetProvider")]
@@ -11025,7 +11025,7 @@ namespace Win32.Ui.Shell {
 			IBindCtx pbc,
 			void* bhid,
 			void* riid,
-			out out void* ppv
+			out void** ppv
 		);
 
 		[CCode (cname = "GetParent")]
@@ -11060,7 +11060,7 @@ namespace Win32.Ui.Shell {
 		public abstract int get_property_store (
 			Win32.Ui.Shell.PropertiesSystem.GETPROPERTYSTOREFLAGS flags,
 			void* riid,
-			out out void* ppv
+			out void** ppv
 		);
 
 		[CCode (cname = "GetPropertyStoreWithCreateObject")]
@@ -11068,7 +11068,7 @@ namespace Win32.Ui.Shell {
 			Win32.Ui.Shell.PropertiesSystem.GETPROPERTYSTOREFLAGS flags,
 			IUnknown punk_create_object,
 			void* riid,
-			out out void* ppv
+			out void** ppv
 		);
 
 		[CCode (cname = "GetPropertyStoreForKeys")]
@@ -11077,14 +11077,14 @@ namespace Win32.Ui.Shell {
 			uint c_keys,
 			Win32.Ui.Shell.PropertiesSystem.GETPROPERTYSTOREFLAGS flags,
 			void* riid,
-			out out void* ppv
+			out void** ppv
 		);
 
 		[CCode (cname = "GetPropertyDescriptionList")]
 		public abstract int get_property_description_list (
 			void* key_type,
 			void* riid,
-			out out void* ppv
+			out void** ppv
 		);
 
 		[CCode (cname = "Update")]
@@ -11255,7 +11255,7 @@ namespace Win32.Ui.Shell {
 			IShellItem psi,
 			uint flags,
 			void* riid,
-			out out void* ppv
+			out void** ppv
 		);
 
 		[CCode (cname = "MoveItem")]
@@ -11394,14 +11394,14 @@ namespace Win32.Ui.Shell {
 		public abstract int open_resource (
 			ref SHELLITEMRESOURCE pcsir,
 			void* riid,
-			out out void* ppv
+			out void** ppv
 		);
 
 		[CCode (cname = "CreateResource")]
 		public abstract int create_resource (
 			ref SHELLITEMRESOURCE pcsir,
 			void* riid,
-			out out void* ppv
+			out void** ppv
 		);
 
 		[CCode (cname = "MarkForDelete")]
@@ -11430,9 +11430,9 @@ namespace Win32.Ui.Shell {
 			ulong ull_size,
 			uint flags,
 			void* riid_item,
-			out out void* ppv_item,
+			out void** ppv_item,
 			void* riid_resources,
-			out out void* ppv_resources
+			out void** ppv_resources
 		);
 
 	}
@@ -11559,21 +11559,21 @@ namespace Win32.Ui.Shell {
 			IBindCtx pbc,
 			void* bhid,
 			void* riid,
-			out out void* ppv_out
+			out void** ppv_out
 		);
 
 		[CCode (cname = "GetPropertyStore")]
 		public abstract int get_property_store (
 			Win32.Ui.Shell.PropertiesSystem.GETPROPERTYSTOREFLAGS flags,
 			void* riid,
-			out out void* ppv
+			out void** ppv
 		);
 
 		[CCode (cname = "GetPropertyDescriptionList")]
 		public abstract int get_property_description_list (
 			void* key_type,
 			void* riid,
-			out out void* ppv
+			out void** ppv
 		);
 
 		[CCode (cname = "GetAttributes")]
@@ -11621,7 +11621,7 @@ namespace Win32.Ui.Shell {
 		[CCode (cname = "GetSelection")]
 		public abstract int get_selection (
 			void* riid,
-			out out void* ppv
+			out void** ppv
 		);
 
 	}
@@ -11669,7 +11669,7 @@ namespace Win32.Ui.Shell {
 		public abstract int create_category (
 			void* pguid,
 			void* riid,
-			out out void* ppv
+			out void** ppv
 		);
 
 	}
@@ -11767,7 +11767,7 @@ namespace Win32.Ui.Shell {
 
 		[CCode (cname = "GetIDList")]
 		public abstract int get_idlist (
-			out out void* ppidl
+			out void** ppidl
 		);
 
 		[CCode (cname = "SetIDList")]
@@ -11870,7 +11870,7 @@ namespace Win32.Ui.Shell {
 		[CCode (cname = "CopyDataBlock")]
 		public abstract int copy_data_block (
 			uint dw_sig,
-			out out void* pp_data_block
+			out void** pp_data_block
 		);
 
 		[CCode (cname = "RemoveDataBlock")]
@@ -12116,12 +12116,12 @@ namespace Win32.Ui.Shell {
 		[CCode (cname = "GetShellItem")]
 		public abstract int get_shell_item (
 			void* riid,
-			out out void* ppv
+			out void** ppv
 		);
 
 		[CCode (cname = "GetIDList")]
 		public abstract int get_idlist (
-			out out void* ppidl
+			out void** ppidl
 		);
 
 	}
@@ -12161,7 +12161,7 @@ namespace Win32.Ui.Shell {
 			void* pidl_child,
 			IBindCtx pbc,
 			void* riid,
-			out out void* ppv
+			out void** ppv
 		);
 
 	}
@@ -12177,9 +12177,9 @@ namespace Win32.Ui.Shell {
 
 		[CCode (cname = "GetParentAndItem")]
 		public abstract int get_parent_and_item (
-			out out void* ppidl_parent,
+			out void** ppidl_parent,
 			IShellFolder ppsf,
-			out out void* ppidl_child
+			out void** ppidl_child
 		);
 
 	}
@@ -12459,7 +12459,7 @@ namespace Win32.Ui.Shell {
 		[CCode (cname = "GetCurrentView")]
 		public abstract int get_current_view (
 			void* riid,
-			out out void* ppv
+			out void** ppv
 		);
 
 	}
@@ -12705,7 +12705,7 @@ namespace Win32.Ui.Shell {
 		public abstract int query_object (
 			void* guid_object,
 			void* riid,
-			out out void* ppv_out
+			out void** ppv_out
 		);
 
 	}
@@ -12803,7 +12803,7 @@ namespace Win32.Ui.Shell {
 		public abstract int get_band_object (
 			uint dw_band_id,
 			void* riid,
-			out out void* ppv
+			out void** ppv
 		);
 
 		[CCode (cname = "SetBandSiteInfo")]
@@ -13222,7 +13222,7 @@ namespace Win32.Ui.Shell {
 		[CCode (cname = "GetEditBoxText")]
 		public abstract int get_edit_box_text (
 			uint dw_idctl,
-			out out ushort ppsz_text
+			out ushort* ppsz_text
 		);
 
 		[CCode (cname = "SetEditBoxText")]
@@ -13495,9 +13495,9 @@ namespace Win32.Ui.Shell {
 		[CCode (cname = "GetShellFolder")]
 		public abstract int get_shell_folder (
 			out uint pdw_flags,
-			out out void* ppidl,
+			out void** ppidl,
 			void* riid,
-			out out void* ppv
+			out void** ppv
 		);
 
 		[CCode (cname = "SetMenu")]
@@ -13549,7 +13549,7 @@ namespace Win32.Ui.Shell {
 		public abstract int get_shell_item (
 			uint dw_flags,
 			void* riid,
-			out out void* ppv
+			out void** ppv
 		);
 
 		[CCode (cname = "GetPath")]
@@ -13567,7 +13567,7 @@ namespace Win32.Ui.Shell {
 		[CCode (cname = "GetIDList")]
 		public abstract int get_idlist (
 			uint dw_flags,
-			out out void* ppidl
+			out void** ppidl
 		);
 
 		[CCode (cname = "GetFolderType")]
@@ -13698,7 +13698,7 @@ namespace Win32.Ui.Shell {
 	public interface IRelatedItem : IUnknown {
 		[CCode (cname = "GetItemIDList")]
 		public abstract int get_item_idlist (
-			out out void* ppidl
+			out void** ppidl
 		);
 
 		[CCode (cname = "GetItem")]
@@ -14198,14 +14198,14 @@ namespace Win32.Ui.Shell {
 		public abstract int get_commands (
 			IUnknown punk_site,
 			void* riid,
-			out out void* ppv
+			out void** ppv
 		);
 
 		[CCode (cname = "GetCommand")]
 		public abstract int get_command (
 			void* rguid_command_id,
 			void* riid,
-			out out void* ppv
+			out void** ppv
 		);
 
 	}
@@ -14282,7 +14282,7 @@ namespace Win32.Ui.Shell {
 		public abstract int begin_list (
 			out uint pc_min_slots,
 			void* riid,
-			out out void* ppv
+			out void** ppv
 		);
 
 		[CCode (cname = "AppendCategory")]
@@ -14308,7 +14308,7 @@ namespace Win32.Ui.Shell {
 		[CCode (cname = "GetRemovedDestinations")]
 		public abstract int get_removed_destinations (
 			void* riid,
-			out out void* ppv
+			out void** ppv
 		);
 
 		[CCode (cname = "DeleteList")]
@@ -14352,7 +14352,7 @@ namespace Win32.Ui.Shell {
 			APPDOCLISTTYPE listtype,
 			uint c_items_desired,
 			void* riid,
-			out out void* ppv
+			out void** ppv
 		);
 
 	}
@@ -14391,7 +14391,7 @@ namespace Win32.Ui.Shell {
 		public abstract int update (
 			IBindCtx pbc,
 			void* pidl_in,
-			out out void* ppidl_out
+			out void** ppidl_out
 		);
 
 	}
@@ -14520,7 +14520,7 @@ namespace Win32.Ui.Shell {
 			uint dw_start_index,
 			uint dw_count,
 			void* riid,
-			out out void* ppv
+			out void** ppv
 		);
 
 	}
@@ -14553,7 +14553,7 @@ namespace Win32.Ui.Shell {
 		public abstract int get_folders (
 			void* lff,
 			void* riid,
-			out out void* ppv
+			out void** ppv
 		);
 
 		[CCode (cname = "ResolveFolder")]
@@ -14561,14 +14561,14 @@ namespace Win32.Ui.Shell {
 			IShellItem psi_folder_to_resolve,
 			uint dw_timeout,
 			void* riid,
-			out out void* ppv
+			out void** ppv
 		);
 
 		[CCode (cname = "GetDefaultSaveFolder")]
 		public abstract int get_default_save_folder (
 			DEFAULTSAVEFOLDERTYPE dsft,
 			void* riid,
-			out out void* ppv
+			out void** ppv
 		);
 
 		[CCode (cname = "SetDefaultSaveFolder")]
@@ -14795,7 +14795,7 @@ namespace Win32.Ui.Shell {
 		public abstract int get_for_window (
 			[CCode (type_id = "HWND")] void* app_window,
 			void* riid,
-			out out void* data_transfer_manager
+			out void** data_transfer_manager
 		);
 
 		[CCode (cname = "ShowShareUIForWindow")]
@@ -14938,8 +14938,8 @@ namespace Win32.Ui.Shell {
 		public abstract int enumerate_background_tasks (
 			[CCode (type_id = "LPCWSTR")] uint16* package_full_name,
 			out uint task_count,
-			out out void* task_ids,
-			out out uint16* task_names
+			out void** task_ids,
+			out uint16** task_names
 		);
 
 		[CCode (cname = "ActivateBackgroundTask")]
@@ -14994,8 +14994,8 @@ namespace Win32.Ui.Shell {
 		public abstract int enumerate_apps (
 			[CCode (type_id = "LPCWSTR")] uint16* package_full_name,
 			out uint app_count,
-			out out uint16* app_user_model_ids,
-			out out uint16* app_display_names
+			out uint16** app_user_model_ids,
+			out uint16** app_display_names
 		);
 
 	}
@@ -15390,7 +15390,7 @@ namespace Win32.Ui.Shell {
 		[CCode (cname = "GetCondition")]
 		public abstract int get_condition (
 			void* riid,
-			out out void* ppv
+			out void** ppv
 		);
 
 		[CCode (cname = "GetText")]
@@ -15792,7 +15792,7 @@ namespace Win32.Ui.Shell {
 		[CCode (cname = "AddIDList")]
 		public abstract int add_idlist (
 			void* pidl,
-			out out void* ppidl_added
+			out void** ppidl_added
 		);
 
 		[CCode (cname = "RemoveItem")]
@@ -16098,7 +16098,7 @@ namespace Win32.Ui.Shell {
 		public abstract int on_before_context_menu (
 			IShellItem psi,
 			void* riid,
-			out out void* ppv
+			out void** ppv
 		);
 
 		[CCode (cname = "OnAfterContextMenu")]
@@ -16106,7 +16106,7 @@ namespace Win32.Ui.Shell {
 			IShellItem psi,
 			IContextMenu pcm_in,
 			void* riid,
-			out out void* ppv
+			out void** ppv
 		);
 
 		[CCode (cname = "OnBeforeStateImageChange")]
@@ -16260,7 +16260,7 @@ namespace Win32.Ui.Shell {
 			int f_available,
 			int f_visible,
 			void* riid,
-			out out void* ppv
+			out void** ppv
 		);
 
 		[CCode (cname = "SetBandAvailability")]
@@ -18886,7 +18886,7 @@ namespace Win32.Ui.Shell {
 
 		[CCode (cname = "GetObject")]
 		public abstract int get_object (
-			out out void* ppidl,
+			out void** ppidl,
 			uint u_item
 		);
 
@@ -18932,7 +18932,7 @@ namespace Win32.Ui.Shell {
 
 		[CCode (cname = "GetSelectedObjects")]
 		public abstract int get_selected_objects (
-			out out void** pppidl,
+			out void*** pppidl,
 			out uint pu_items
 		);
 
@@ -19117,7 +19117,7 @@ namespace Win32.Ui.Shell {
 		public abstract int find_toolbar (
 			[CCode (type_id = "LPCWSTR")] uint16* pwsz_item,
 			void* riid,
-			out out void* ppv
+			out void** ppv
 		);
 
 	}
@@ -19283,7 +19283,7 @@ namespace Win32.Ui.Shell {
 			void* assocenum,
 			[CCode (type_id = "LPCWSTR")] uint16* psz_extra,
 			void* riid,
-			out out void* ppv_out
+			out void** ppv_out
 		);
 
 	}
@@ -19615,7 +19615,7 @@ namespace Win32.Ui.Shell {
 		[CCode (cname = "GetFieldDescriptorAt")]
 		public abstract int get_field_descriptor_at (
 			uint dw_index,
-			out out CREDENTIALPROVIDERFIELDDESCRIPTOR ppcpfd
+			out CREDENTIALPROVIDERFIELDDESCRIPTOR* ppcpfd
 		);
 
 		[CCode (cname = "GetCredentialCount")]
@@ -19770,7 +19770,7 @@ namespace Win32.Ui.Shell {
 		public abstract int bind_to_handler (
 			[CCode (type_id = "LPCWSTR")] uint16* psz_handler_id,
 			void* riid,
-			out out void* ppv
+			out void** ppv
 		);
 
 	}
@@ -19791,7 +19791,7 @@ namespace Win32.Ui.Shell {
 		public abstract int get_object (
 			void* rguid_object_id,
 			void* riid,
-			out out void* ppv
+			out void** ppv
 		);
 
 		[CCode (cname = "GetCapabilities")]
@@ -19902,7 +19902,7 @@ namespace Win32.Ui.Shell {
 		public abstract int get_object (
 			void* rguid_object_id,
 			void* riid,
-			out out void* ppv
+			out void** ppv
 		);
 
 		[CCode (cname = "GetCapabilities")]
@@ -20331,7 +20331,7 @@ namespace Win32.Ui.Shell {
 		public abstract int bind_to_conflict (
 			ref SYNCMGRCONFLICTIdINFO p_conflict_id_info,
 			void* riid,
-			out out void* ppv
+			out void** ppv
 		);
 
 		[CCode (cname = "RemoveConflicts")]
@@ -20400,7 +20400,7 @@ namespace Win32.Ui.Shell {
 		[CCode (cname = "GetResolutionHandler")]
 		public abstract int get_resolution_handler (
 			void* riid,
-			out out void* ppv_resolution_handler
+			out void** ppv_resolution_handler
 		);
 
 	}
@@ -20501,7 +20501,7 @@ namespace Win32.Ui.Shell {
 		[CCode (cname = "GetConflictIDList")]
 		public abstract int get_conflict_idlist (
 			ISyncMgrConflict p_conflict,
-			out out void* ppidl_conflict
+			out void** ppidl_conflict
 		);
 
 	}
@@ -20795,7 +20795,7 @@ namespace Win32.Ui.Shell {
 		[CCode (cname = "GetEncoderParams")]
 		public abstract int get_encoder_params (
 			out void* pguid_fmt,
-			out out void* pp_enc_params
+			out void** pp_enc_params
 		);
 
 		[CCode (cname = "RegisterAbort")]
@@ -20806,7 +20806,7 @@ namespace Win32.Ui.Shell {
 
 		[CCode (cname = "CloneFrame")]
 		public abstract int clone_frame (
-			out out void* pp_img
+			out void** pp_img
 		);
 
 		[CCode (cname = "ReplaceFrame")]
@@ -20955,7 +20955,7 @@ namespace Win32.Ui.Shell {
 
 		[CCode (cname = "GetHandlerInfo")]
 		public abstract int get_handler_info (
-			out out SYNCMGRHANDLERINFO pp_sync_mgr_handler_info
+			out SYNCMGRHANDLERINFO* pp_sync_mgr_handler_info
 		);
 
 		[CCode (cname = "EnumSyncMgrItems")]
@@ -20967,7 +20967,7 @@ namespace Win32.Ui.Shell {
 		public abstract int get_item_object (
 			void* item_id,
 			void* riid,
-			out out void* ppv
+			out void** ppv
 		);
 
 		[CCode (cname = "ShowProperties")]
@@ -21522,7 +21522,7 @@ namespace Win32.Ui.Shell {
 
 		[CCode (cname = "GetPidl")]
 		public abstract int get_pidl (
-			out out void* ppidl
+			out void** ppidl
 		);
 
 	}
@@ -21607,7 +21607,7 @@ namespace Win32.Ui.Shell {
 		[CCode (cname = "DoInvokeIE4")]
 		public abstract int do_invoke_ie4 (
 			out int pf,
-			out out void* ppv,
+			out void** ppv,
 			int dispid,
 			out void* pdispparams
 		);
@@ -21730,7 +21730,7 @@ namespace Win32.Ui.Shell {
 		public abstract int ieparse_display_name (
 			uint ui_cp,
 			[CCode (type_id = "LPCWSTR")] uint16* pwsz_path,
-			out out void* ppidl_out
+			out void** ppidl_out
 		);
 
 		[CCode (cname = "DisplayParseError")]
@@ -21787,7 +21787,7 @@ namespace Win32.Ui.Shell {
 
 		[CCode (cname = "GetPidl")]
 		public abstract int get_pidl (
-			out out void* ppidl
+			out void** ppidl
 		);
 
 		[CCode (cname = "SetReferrer")]
@@ -21931,7 +21931,7 @@ namespace Win32.Ui.Shell {
 		[CCode (cname = "CreateBrowserPropSheetExt")]
 		public abstract int create_browser_prop_sheet_ext (
 			void* riid,
-			out out void* ppv
+			out void** ppv
 		);
 
 		[CCode (cname = "GetViewWindow")]
@@ -21941,7 +21941,7 @@ namespace Win32.Ui.Shell {
 
 		[CCode (cname = "GetBaseBrowserData")]
 		public abstract int get_base_browser_data (
-			out out void* pbbd
+			out void** pbbd
 		);
 
 		[CCode (cname = "PutBaseBrowserData")]
@@ -22151,7 +22151,7 @@ namespace Win32.Ui.Shell {
 			ref Win32.Ui.WindowsAndMessaging.Msg lp_msg,
 			uint itb_next,
 			int citb,
-			out out void* pptbi,
+			out void** pptbi,
 			out void* phwnd
 		);
 
@@ -22205,7 +22205,7 @@ namespace Win32.Ui.Shell {
 			uint ui_cp,
 			[CCode (type_id = "LPCWSTR")] uint16* pwsz_path,
 			uint dw_flags,
-			out out void* ppidl_out
+			out void** ppidl_out
 		);
 
 	}
@@ -22424,7 +22424,7 @@ namespace Win32.Ui.Shell {
 	[CCode (cname = "SHCreateItemFromParsingName")]
 	public extern int shcreate_item_from_parsing_name (
 		[CCode (type_id = "LPCWSTR")] uint16* psz_path,
-		IBindCtx pbc,
+		void* pbc,
 		void* riid,
 		out void** ppv
 	);
@@ -22442,7 +22442,7 @@ namespace Win32.Ui.Shell {
 	public extern int shcreate_item_from_relative_name (
 		IShellItem psi_parent,
 		[CCode (type_id = "LPCWSTR")] uint16* psz_name,
-		IBindCtx pbc,
+		void* pbc,
 		void* riid,
 		out void** ppv
 	);
@@ -22478,7 +22478,7 @@ namespace Win32.Ui.Shell {
 
 	[CCode (cname = "SHGetItemFromDataObject")]
 	public extern int shget_item_from_data_object (
-		IDataObject pdtobj,
+		void* pdtobj,
 		DATAOBJGetITEMFLAGS dw_flags,
 		void* riid,
 		out void** ppv
@@ -22495,7 +22495,7 @@ namespace Win32.Ui.Shell {
 
 	[CCode (cname = "SHCreateShellItemArrayFromDataObject")]
 	public extern int shcreate_shell_item_array_from_data_object (
-		IDataObject pdo,
+		void* pdo,
 		void* riid,
 		out void** ppv
 	);
@@ -22648,7 +22648,7 @@ namespace Win32.Ui.Shell {
 
 	[CCode (cname = "SHGetMalloc")]
 	public extern int shget_malloc (
-		out IMalloc pp_malloc
+		void* pp_malloc
 	);
 
 	[CCode (cname = "SHAlloc")]
@@ -22729,13 +22729,13 @@ namespace Win32.Ui.Shell {
 
 	[CCode (cname = "ILSaveToStream")]
 	public extern int ilsave_to_stream (
-		IStream pstm,
+		void* pstm,
 		void* pidl
 	);
 
 	[CCode (cname = "ILLoadFromStreamEx")]
 	public extern int ilload_from_stream_ex (
-		IStream pstm,
+		void* pstm,
 		out void** pidl
 	);
 
@@ -23023,7 +23023,7 @@ namespace Win32.Ui.Shell {
 		void* pidl_folder,
 		uint cidl,
 		void* apidl,
-		IDataObject pdt_inner,
+		void* pdt_inner,
 		void* riid,
 		out void** ppv
 	);
@@ -23033,21 +23033,21 @@ namespace Win32.Ui.Shell {
 		void* pidl_folder,
 		uint cidl,
 		void* apidl,
-		out IDataObject ppdtobj
+		void* ppdtobj
 	);
 
 	[CCode (cname = "SHCreateStdEnumFmtEtc")]
 	public extern int shcreate_std_enum_fmt_etc (
 		uint cfmt,
 		void* afmt,
-		out IEnumFORMATETC ppenum_format_etc
+		void* ppenum_format_etc
 	);
 
 	[CCode (cname = "SHDoDragDrop")]
 	public extern int shdo_drag_drop (
 		[CCode (type_id = "HWND")] void* hwnd,
-		IDataObject pdata,
-		IDropSource pdsrc,
+		void* pdata,
+		void* pdsrc,
 		void* dw_effect,
 		out void* pdw_effect
 	);
@@ -23068,7 +23068,7 @@ namespace Win32.Ui.Shell {
 	public extern int dad__drag_enter_ex2 (
 		[CCode (type_id = "HWND")] void* hwnd_target,
 		Win32.Foundation.Point pt_start,
-		IDataObject pdt_object
+		void* pdt_object
 	);
 
 	[CCode (cname = "DAD_ShowDragImage")]
@@ -23387,7 +23387,7 @@ namespace Win32.Ui.Shell {
 	public extern int shbind_to_folder_idlist_parent_ex (
 		IShellFolder psf_root,
 		void* pidl,
-		IBindCtx ppbc,
+		void* ppbc,
 		void* riid,
 		out void** ppv,
 		out void** ppidl_last
@@ -23397,7 +23397,7 @@ namespace Win32.Ui.Shell {
 	public extern int shbind_to_object (
 		IShellFolder psf,
 		void* pidl,
-		IBindCtx pbc,
+		void* pbc,
 		void* riid,
 		out void** ppv
 	);
@@ -23405,7 +23405,7 @@ namespace Win32.Ui.Shell {
 	[CCode (cname = "SHParseDisplayName")]
 	public extern int shparse_display_name (
 		[CCode (type_id = "LPCWSTR")] uint16* psz_name,
-		IBindCtx pbc,
+		void* pbc,
 		out void** ppidl,
 		uint sfgao_in,
 		out uint psfgao_out
@@ -23435,7 +23435,7 @@ namespace Win32.Ui.Shell {
 
 	[CCode (cname = "SHGetAttributesFromDataObject")]
 	public extern int shget_attributes_from_data_object (
-		IDataObject pdo,
+		void* pdo,
 		uint dw_attribute_mask,
 		out uint pdw_attributes,
 		out uint pc_items
@@ -23464,7 +23464,7 @@ namespace Win32.Ui.Shell {
 
 	[CCode (cname = "StgMakeUniqueName")]
 	public extern int stg_make_unique_name (
-		IStorage pstg_parent,
+		void* pstg_parent,
 		[CCode (type_id = "LPCWSTR")] uint16* psz_file_spec,
 		uint grf_mode,
 		void* riid,
@@ -23500,7 +23500,7 @@ namespace Win32.Ui.Shell {
 		void* ahkeys,
 		uint ckeys,
 		void* pclsid_default,
-		IDataObject pdtobj,
+		void* pdtobj,
 		IShellBrowser psb,
 		[CCode (type_id = "LPCWSTR")] uint16* p_start_page
 	);
@@ -23515,13 +23515,13 @@ namespace Win32.Ui.Shell {
 
 	[CCode (cname = "SHMultiFileProperties")]
 	public extern int shmulti_file_properties (
-		IDataObject pdtobj,
+		void* pdtobj,
 		uint dw_flags
 	);
 
 	[CCode (cname = "SHCreateQueryCancelAutoPlayMoniker")]
 	public extern int shcreate_query_cancel_auto_play_moniker (
-		out IMoniker ppmoniker
+		void* ppmoniker
 	);
 
 	[CCode (cname = "ImportPrivacySettings")]
@@ -24974,7 +24974,7 @@ namespace Win32.Ui.Shell {
 	public extern int shcreate_stream_on_file (
 		[CCode (type_id = "LPCWSTR")] uint16* psz_file,
 		uint grf_mode,
-		out IStream ppstm
+		void* ppstm
 	);
 
 	[CCode (cname = "SHCreateStreamOnFileEx")]
@@ -24983,8 +24983,8 @@ namespace Win32.Ui.Shell {
 		uint grf_mode,
 		uint dw_attributes,
 		int f_create,
-		IStream pstm_template,
-		out IStream ppstm
+		void* pstm_template,
+		void* ppstm
 	);
 
 	[CCode (cname = "SHCreateMemStream")]
@@ -25039,26 +25039,26 @@ namespace Win32.Ui.Shell {
 
 	[CCode (cname = "IStream_Read")]
 	public extern int istream__read (
-		IStream pstm,
+		void* pstm,
 		out void* pv,
 		uint cb
 	);
 
 	[CCode (cname = "IStream_Write")]
 	public extern int istream__write (
-		IStream pstm,
+		void* pstm,
 		void* pv,
 		uint cb
 	);
 
 	[CCode (cname = "IStream_Reset")]
 	public extern int istream__reset (
-		IStream pstm
+		void* pstm
 	);
 
 	[CCode (cname = "IStream_Size")]
 	public extern int istream__size (
-		IStream pstm,
+		void* pstm,
 		out void* pui
 	);
 
@@ -25069,37 +25069,37 @@ namespace Win32.Ui.Shell {
 		int f_connect,
 		IUnknown punk_target,
 		out uint pdw_cookie,
-		out IConnectionPoint ppcp_out
+		void* ppcp_out
 	);
 
 	[CCode (cname = "IStream_ReadPidl")]
 	public extern int istream__read_pidl (
-		IStream pstm,
+		void* pstm,
 		out void** ppidl_out
 	);
 
 	[CCode (cname = "IStream_WritePidl")]
 	public extern int istream__write_pidl (
-		IStream pstm,
+		void* pstm,
 		void* pidl_write
 	);
 
 	[CCode (cname = "IStream_ReadStr")]
 	public extern int istream__read_str (
-		IStream pstm,
+		void* pstm,
 		[CCode (type_id = "LPCWSTR")] out uint16* ppsz
 	);
 
 	[CCode (cname = "IStream_WriteStr")]
 	public extern int istream__write_str (
-		IStream pstm,
+		void* pstm,
 		[CCode (type_id = "LPCWSTR")] uint16* psz
 	);
 
 	[CCode (cname = "IStream_Copy")]
 	public extern int istream__copy (
-		IStream pstm_from,
-		IStream pstm_to,
+		void* pstm_from,
+		void* pstm_to,
 		uint cb
 	);
 
@@ -25246,7 +25246,7 @@ namespace Win32.Ui.Shell {
 
 	[CCode (cname = "SHSkipJunction")]
 	public extern int shskip_junction (
-		IBindCtx pbc,
+		void* pbc,
 		void* pclsid
 	);
 
@@ -25304,7 +25304,7 @@ namespace Win32.Ui.Shell {
 
 	[CCode (cname = "HlinkCreateFromMoniker")]
 	public extern int hlink_create_from_moniker (
-		IMoniker pimk_trgt,
+		void* pimk_trgt,
 		[CCode (type_id = "LPCWSTR")] uint16* pwz_location,
 		[CCode (type_id = "LPCWSTR")] uint16* pwz_friendly_name,
 		IHlinkSite pihlsite,
@@ -25328,7 +25328,7 @@ namespace Win32.Ui.Shell {
 
 	[CCode (cname = "HlinkCreateFromData")]
 	public extern int hlink_create_from_data (
-		IDataObject pi_data_obj,
+		void* pi_data_obj,
 		IHlinkSite pihlsite,
 		uint dw_site_data,
 		IUnknown piunk_outer,
@@ -25338,7 +25338,7 @@ namespace Win32.Ui.Shell {
 
 	[CCode (cname = "HlinkQueryCreateFromData")]
 	public extern int hlink_query_create_from_data (
-		IDataObject pi_data_obj
+		void* pi_data_obj
 	);
 
 	[CCode (cname = "HlinkClone")]
@@ -25365,8 +25365,8 @@ namespace Win32.Ui.Shell {
 		uint dw_site_data,
 		IHlinkFrame pihlframe,
 		uint grf_hlnf,
-		IBindCtx pibc,
-		IBindStatusCallback pibsc,
+		void* pibc,
+		void* pibsc,
 		IHlinkBrowseContext pihlbc
 	);
 
@@ -25375,8 +25375,8 @@ namespace Win32.Ui.Shell {
 		IHlink pihl,
 		IHlinkFrame pihlframe,
 		uint grf_hlnf,
-		IBindCtx pbc,
-		IBindStatusCallback pibsc,
+		void* pbc,
+		void* pibsc,
 		IHlinkBrowseContext pihlbc
 	);
 
@@ -25385,7 +25385,7 @@ namespace Win32.Ui.Shell {
 		IHlinkFrame pihlframe,
 		IHlinkBrowseContext pihlbc,
 		uint grf_hlnf,
-		IMoniker pimk_target,
+		void* pimk_target,
 		[CCode (type_id = "LPCWSTR")] uint16* pwz_location,
 		[CCode (type_id = "LPCWSTR")] uint16* pwz_friendly_name,
 		ref uint pu_hlid
@@ -25396,7 +25396,7 @@ namespace Win32.Ui.Shell {
 		IHlinkFrame pihlframe,
 		IHlinkBrowseContext pihlbc,
 		uint u_hlid,
-		IMoniker pimk_trgt,
+		void* pimk_trgt,
 		[CCode (type_id = "LPCWSTR")] uint16* pwz_location,
 		[CCode (type_id = "LPCWSTR")] uint16* pwz_friendly_name
 	);
@@ -25405,39 +25405,39 @@ namespace Win32.Ui.Shell {
 	public extern int hlink_on_rename_document (
 		uint dw_reserved,
 		IHlinkBrowseContext pihlbc,
-		IMoniker pimk_old,
-		IMoniker pimk_new
+		void* pimk_old,
+		void* pimk_new
 	);
 
 	[CCode (cname = "HlinkResolveMonikerForData")]
 	public extern int hlink_resolve_moniker_for_data (
-		IMoniker pimk_reference,
+		void* pimk_reference,
 		uint reserved,
-		IBindCtx pibc,
+		void* pibc,
 		uint c_fmtetc,
 		out void* rg_fmtetc,
-		IBindStatusCallback pibsc,
-		IMoniker pimk_base
+		void* pibsc,
+		void* pimk_base
 	);
 
 	[CCode (cname = "HlinkResolveStringForData")]
 	public extern int hlink_resolve_string_for_data (
 		[CCode (type_id = "LPCWSTR")] uint16* pwz_reference,
 		uint reserved,
-		IBindCtx pibc,
+		void* pibc,
 		uint c_fmtetc,
 		out void* rg_fmtetc,
-		IBindStatusCallback pibsc,
-		IMoniker pimk_base
+		void* pibsc,
+		void* pimk_base
 	);
 
 	[CCode (cname = "HlinkParseDisplayName")]
 	public extern int hlink_parse_display_name (
-		IBindCtx pibc,
+		void* pibc,
 		[CCode (type_id = "LPCWSTR")] uint16* pwz_display_name,
 		int f_no_force_abs,
 		ref uint pcch_eaten,
-		out IMoniker ppimk
+		void* ppimk
 	);
 
 	[CCode (cname = "HlinkCreateExtensionServices")]
@@ -25453,15 +25453,15 @@ namespace Win32.Ui.Shell {
 
 	[CCode (cname = "HlinkPreprocessMoniker")]
 	public extern int hlink_preprocess_moniker (
-		IBindCtx pibc,
-		IMoniker pimk_in,
-		out IMoniker ppimk_out
+		void* pibc,
+		void* pimk_in,
+		void* ppimk_out
 	);
 
 	[CCode (cname = "OleSaveToStreamEx")]
 	public extern int ole_save_to_stream_ex (
 		IUnknown piunk,
-		IStream pistm,
+		void* pistm,
 		int f_clear_dirty
 	);
 
@@ -25490,7 +25490,7 @@ namespace Win32.Ui.Shell {
 	[CCode (cname = "HlinkCreateShortcutFromMoniker")]
 	public extern int hlink_create_shortcut_from_moniker (
 		uint grf_hlshortcutf,
-		IMoniker pimk_target,
+		void* pimk_target,
 		[CCode (type_id = "LPCWSTR")] uint16* pwz_location,
 		[CCode (type_id = "LPCWSTR")] uint16* pwz_dir,
 		[CCode (type_id = "LPCWSTR")] uint16* pwz_file_name,
@@ -25522,7 +25522,7 @@ namespace Win32.Ui.Shell {
 	[CCode (cname = "HlinkResolveShortcutToMoniker")]
 	public extern int hlink_resolve_shortcut_to_moniker (
 		[CCode (type_id = "LPCWSTR")] uint16* pwz_shortcut_file_name,
-		out IMoniker ppimk_target,
+		void* ppimk_target,
 		[CCode (type_id = "LPCWSTR")] out uint16* ppwz_location
 	);
 

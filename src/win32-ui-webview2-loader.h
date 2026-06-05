@@ -1,5 +1,5 @@
-#ifndef VALA_WEBVIEW2_LOADER_H
-#define VALA_WEBVIEW2_LOADER_H
+#ifndef VALA_WIN32_UI_WEBVIEW2_LOADER_H
+#define VALA_WIN32_UI_WEBVIEW2_LOADER_H
 
 #include <windows.h>
 
@@ -14,10 +14,10 @@ BOOL vala_webview2_loader_init (void);
 
 /* Async; handler must stay alive until Invoke runs. */
 HRESULT vala_webview2_loader_create_environment (
-	ICoreWebView2CreateCoreWebView2EnvironmentCompletedHandler *handler);
+	struct ICoreWebView2CreateCoreWebView2EnvironmentCompletedHandler *handler);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* VALA_WEBVIEW2_LOADER_H */
+#endif /* VALA_WIN32_UI_WEBVIEW2_LOADER_H */

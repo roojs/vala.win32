@@ -700,7 +700,7 @@ namespace Win32.Ui.Shell.PropertiesSystem {
 		public abstract int get_at (
 			uint i_index,
 			void* riid,
-			out out void* ppv
+			out void** ppv
 		);
 
 		[CCode (cname = "InsertAt")]
@@ -819,14 +819,14 @@ namespace Win32.Ui.Shell.PropertiesSystem {
 		public abstract int get_at (
 			uint itype,
 			void* riid,
-			out out void* ppv
+			out void** ppv
 		);
 
 		[CCode (cname = "GetConditionAt")]
 		public abstract int get_condition_at (
 			uint n_index,
 			void* riid,
-			out out void* ppv
+			out void** ppv
 		);
 
 		[CCode (cname = "FindMatchingIndex")]
@@ -933,7 +933,7 @@ namespace Win32.Ui.Shell.PropertiesSystem {
 		[CCode (cname = "GetEnumTypeList")]
 		public abstract int get_enum_type_list (
 			void* riid,
-			out out void* ppv
+			out void** ppv
 		);
 
 		[CCode (cname = "CoerceToCanonicalValue")]
@@ -970,13 +970,13 @@ namespace Win32.Ui.Shell.PropertiesSystem {
 		[CCode (cname = "GetSortByAlias")]
 		public abstract int get_sort_by_alias (
 			void* riid,
-			out out void* ppv
+			out void** ppv
 		);
 
 		[CCode (cname = "GetAdditionalSortByAliases")]
 		public abstract int get_additional_sort_by_aliases (
 			void* riid,
-			out out void* ppv
+			out void** ppv
 		);
 
 	}
@@ -1011,7 +1011,7 @@ namespace Win32.Ui.Shell.PropertiesSystem {
 		public abstract int get_related_property (
 			[CCode (type_id = "LPCWSTR")] uint16* psz_relationship_name,
 			void* riid,
-			out out void* ppv
+			out void** ppv
 		);
 
 	}
@@ -1022,28 +1022,28 @@ namespace Win32.Ui.Shell.PropertiesSystem {
 		public abstract int get_property_description (
 			void* propkey,
 			void* riid,
-			out out void* ppv
+			out void** ppv
 		);
 
 		[CCode (cname = "GetPropertyDescriptionByName")]
 		public abstract int get_property_description_by_name (
 			[CCode (type_id = "LPCWSTR")] uint16* psz_canonical_name,
 			void* riid,
-			out out void* ppv
+			out void** ppv
 		);
 
 		[CCode (cname = "GetPropertyDescriptionListFromString")]
 		public abstract int get_property_description_list_from_string (
 			[CCode (type_id = "LPCWSTR")] uint16* psz_prop_list,
 			void* riid,
-			out out void* ppv
+			out void** ppv
 		);
 
 		[CCode (cname = "EnumeratePropertyDescriptions")]
 		public abstract int enumerate_property_descriptions (
 			PROPDESCENUMFILTER filter_on,
 			void* riid,
-			out out void* ppv
+			out void** ppv
 		);
 
 		[CCode (cname = "FormatForDisplay")]
@@ -1090,7 +1090,7 @@ namespace Win32.Ui.Shell.PropertiesSystem {
 		public abstract int get_at (
 			uint i_elem,
 			void* riid,
-			out out void* ppv
+			out void** ppv
 		);
 
 	}
@@ -1102,7 +1102,7 @@ namespace Win32.Ui.Shell.PropertiesSystem {
 			GETPROPERTYSTOREFLAGS flags,
 			IUnknown p_unk_factory,
 			void* riid,
-			out out void* ppv
+			out void** ppv
 		);
 
 		[CCode (cname = "GetPropertyStoreForKeys")]
@@ -1111,7 +1111,7 @@ namespace Win32.Ui.Shell.PropertiesSystem {
 			uint c_keys,
 			GETPROPERTYSTOREFLAGS flags,
 			void* riid,
-			out out void* ppv
+			out void** ppv
 		);
 
 	}
@@ -1123,7 +1123,7 @@ namespace Win32.Ui.Shell.PropertiesSystem {
 			GETPROPERTYSTOREFLAGS flags,
 			uint dw_store_id,
 			void* riid,
-			out out void* ppv
+			out void** ppv
 		);
 
 	}
@@ -1143,7 +1143,7 @@ namespace Win32.Ui.Shell.PropertiesSystem {
 
 		[CCode (cname = "GetPropertyStorage")]
 		public abstract int get_property_storage (
-			out out void* ppsps,
+			out void** ppsps,
 			out uint pcb
 		);
 
@@ -1180,7 +1180,7 @@ namespace Win32.Ui.Shell.PropertiesSystem {
 			void* clsid,
 			IUnknown p_unk_outer,
 			void* riid,
-			out out void* ppv
+			out void** ppv
 		);
 
 	}
@@ -1455,7 +1455,7 @@ namespace Win32.Ui.Shell.PropertiesSystem {
 
 	[CCode (cname = "PSCreatePropertyStoreFromPropertySetStorage")]
 	public extern int pscreate_property_store_from_property_set_storage (
-		IPropertySetStorage ppss,
+		void* ppss,
 		uint grf_mode,
 		void* riid,
 		out void** ppv
@@ -1500,7 +1500,7 @@ namespace Win32.Ui.Shell.PropertiesSystem {
 
 	[CCode (cname = "PSPropertyBag_ReadType")]
 	public extern int psproperty_bag__read_type (
-		IPropertyBag prop_bag,
+		void* prop_bag,
 		[CCode (type_id = "LPCWSTR")] uint16* prop_name,
 		out void* var,
 		void* type
@@ -1508,7 +1508,7 @@ namespace Win32.Ui.Shell.PropertiesSystem {
 
 	[CCode (cname = "PSPropertyBag_ReadStr")]
 	public extern int psproperty_bag__read_str (
-		IPropertyBag prop_bag,
+		void* prop_bag,
 		[CCode (type_id = "LPCWSTR")] uint16* prop_name,
 		void* value,
 		int character_count
@@ -1516,181 +1516,181 @@ namespace Win32.Ui.Shell.PropertiesSystem {
 
 	[CCode (cname = "PSPropertyBag_ReadStrAlloc")]
 	public extern int psproperty_bag__read_str_alloc (
-		IPropertyBag prop_bag,
+		void* prop_bag,
 		[CCode (type_id = "LPCWSTR")] uint16* prop_name,
 		[CCode (type_id = "LPCWSTR")] out uint16* value
 	);
 
 	[CCode (cname = "PSPropertyBag_ReadBSTR")]
 	public extern int psproperty_bag__read_bstr (
-		IPropertyBag prop_bag,
+		void* prop_bag,
 		[CCode (type_id = "LPCWSTR")] uint16* prop_name,
 		out void* value
 	);
 
 	[CCode (cname = "PSPropertyBag_WriteStr")]
 	public extern int psproperty_bag__write_str (
-		IPropertyBag prop_bag,
+		void* prop_bag,
 		[CCode (type_id = "LPCWSTR")] uint16* prop_name,
 		[CCode (type_id = "LPCWSTR")] uint16* value
 	);
 
 	[CCode (cname = "PSPropertyBag_WriteBSTR")]
 	public extern int psproperty_bag__write_bstr (
-		IPropertyBag prop_bag,
+		void* prop_bag,
 		[CCode (type_id = "LPCWSTR")] uint16* prop_name,
 		void* value
 	);
 
 	[CCode (cname = "PSPropertyBag_ReadInt")]
 	public extern int psproperty_bag__read_int (
-		IPropertyBag prop_bag,
+		void* prop_bag,
 		[CCode (type_id = "LPCWSTR")] uint16* prop_name,
 		out int value
 	);
 
 	[CCode (cname = "PSPropertyBag_WriteInt")]
 	public extern int psproperty_bag__write_int (
-		IPropertyBag prop_bag,
+		void* prop_bag,
 		[CCode (type_id = "LPCWSTR")] uint16* prop_name,
 		int value
 	);
 
 	[CCode (cname = "PSPropertyBag_ReadSHORT")]
 	public extern int psproperty_bag__read_short (
-		IPropertyBag prop_bag,
+		void* prop_bag,
 		[CCode (type_id = "LPCWSTR")] uint16* prop_name,
 		out void* value
 	);
 
 	[CCode (cname = "PSPropertyBag_WriteSHORT")]
 	public extern int psproperty_bag__write_short (
-		IPropertyBag prop_bag,
+		void* prop_bag,
 		[CCode (type_id = "LPCWSTR")] uint16* prop_name,
 		void* value
 	);
 
 	[CCode (cname = "PSPropertyBag_ReadLONG")]
 	public extern int psproperty_bag__read_long (
-		IPropertyBag prop_bag,
+		void* prop_bag,
 		[CCode (type_id = "LPCWSTR")] uint16* prop_name,
 		out int value
 	);
 
 	[CCode (cname = "PSPropertyBag_WriteLONG")]
 	public extern int psproperty_bag__write_long (
-		IPropertyBag prop_bag,
+		void* prop_bag,
 		[CCode (type_id = "LPCWSTR")] uint16* prop_name,
 		int value
 	);
 
 	[CCode (cname = "PSPropertyBag_ReadDWORD")]
 	public extern int psproperty_bag__read_dword (
-		IPropertyBag prop_bag,
+		void* prop_bag,
 		[CCode (type_id = "LPCWSTR")] uint16* prop_name,
 		out uint value
 	);
 
 	[CCode (cname = "PSPropertyBag_WriteDWORD")]
 	public extern int psproperty_bag__write_dword (
-		IPropertyBag prop_bag,
+		void* prop_bag,
 		[CCode (type_id = "LPCWSTR")] uint16* prop_name,
 		uint value
 	);
 
 	[CCode (cname = "PSPropertyBag_ReadBOOL")]
 	public extern int psproperty_bag__read_bool (
-		IPropertyBag prop_bag,
+		void* prop_bag,
 		[CCode (type_id = "LPCWSTR")] uint16* prop_name,
 		out int value
 	);
 
 	[CCode (cname = "PSPropertyBag_WriteBOOL")]
 	public extern int psproperty_bag__write_bool (
-		IPropertyBag prop_bag,
+		void* prop_bag,
 		[CCode (type_id = "LPCWSTR")] uint16* prop_name,
 		int value
 	);
 
 	[CCode (cname = "PSPropertyBag_ReadPOINTL")]
 	public extern int psproperty_bag__read_pointl (
-		IPropertyBag prop_bag,
+		void* prop_bag,
 		[CCode (type_id = "LPCWSTR")] uint16* prop_name,
 		out void* value
 	);
 
 	[CCode (cname = "PSPropertyBag_WritePOINTL")]
 	public extern int psproperty_bag__write_pointl (
-		IPropertyBag prop_bag,
+		void* prop_bag,
 		[CCode (type_id = "LPCWSTR")] uint16* prop_name,
 		void* value
 	);
 
 	[CCode (cname = "PSPropertyBag_ReadPOINTS")]
 	public extern int psproperty_bag__read_points (
-		IPropertyBag prop_bag,
+		void* prop_bag,
 		[CCode (type_id = "LPCWSTR")] uint16* prop_name,
 		out void* value
 	);
 
 	[CCode (cname = "PSPropertyBag_WritePOINTS")]
 	public extern int psproperty_bag__write_points (
-		IPropertyBag prop_bag,
+		void* prop_bag,
 		[CCode (type_id = "LPCWSTR")] uint16* prop_name,
 		void* value
 	);
 
 	[CCode (cname = "PSPropertyBag_ReadRECTL")]
 	public extern int psproperty_bag__read_rectl (
-		IPropertyBag prop_bag,
+		void* prop_bag,
 		[CCode (type_id = "LPCWSTR")] uint16* prop_name,
 		out void* value
 	);
 
 	[CCode (cname = "PSPropertyBag_WriteRECTL")]
 	public extern int psproperty_bag__write_rectl (
-		IPropertyBag prop_bag,
+		void* prop_bag,
 		[CCode (type_id = "LPCWSTR")] uint16* prop_name,
 		void* value
 	);
 
 	[CCode (cname = "PSPropertyBag_ReadStream")]
 	public extern int psproperty_bag__read_stream (
-		IPropertyBag prop_bag,
+		void* prop_bag,
 		[CCode (type_id = "LPCWSTR")] uint16* prop_name,
-		out IStream value
+		void* value
 	);
 
 	[CCode (cname = "PSPropertyBag_WriteStream")]
 	public extern int psproperty_bag__write_stream (
-		IPropertyBag prop_bag,
+		void* prop_bag,
 		[CCode (type_id = "LPCWSTR")] uint16* prop_name,
-		IStream value
+		void* value
 	);
 
 	[CCode (cname = "PSPropertyBag_Delete")]
 	public extern int psproperty_bag__delete (
-		IPropertyBag prop_bag,
+		void* prop_bag,
 		[CCode (type_id = "LPCWSTR")] uint16* prop_name
 	);
 
 	[CCode (cname = "PSPropertyBag_ReadULONGLONG")]
 	public extern int psproperty_bag__read_ulonglong (
-		IPropertyBag prop_bag,
+		void* prop_bag,
 		[CCode (type_id = "LPCWSTR")] uint16* prop_name,
 		out ulong value
 	);
 
 	[CCode (cname = "PSPropertyBag_WriteULONGLONG")]
 	public extern int psproperty_bag__write_ulonglong (
-		IPropertyBag prop_bag,
+		void* prop_bag,
 		[CCode (type_id = "LPCWSTR")] uint16* prop_name,
 		ulong value
 	);
 
 	[CCode (cname = "PSPropertyBag_ReadUnknown")]
 	public extern int psproperty_bag__read_unknown (
-		IPropertyBag prop_bag,
+		void* prop_bag,
 		[CCode (type_id = "LPCWSTR")] uint16* prop_name,
 		void* riid,
 		out void** ppv
@@ -1698,35 +1698,35 @@ namespace Win32.Ui.Shell.PropertiesSystem {
 
 	[CCode (cname = "PSPropertyBag_WriteUnknown")]
 	public extern int psproperty_bag__write_unknown (
-		IPropertyBag prop_bag,
+		void* prop_bag,
 		[CCode (type_id = "LPCWSTR")] uint16* prop_name,
 		IUnknown punk
 	);
 
 	[CCode (cname = "PSPropertyBag_ReadGUID")]
 	public extern int psproperty_bag__read_guid (
-		IPropertyBag prop_bag,
+		void* prop_bag,
 		[CCode (type_id = "LPCWSTR")] uint16* prop_name,
 		out void* value
 	);
 
 	[CCode (cname = "PSPropertyBag_WriteGUID")]
 	public extern int psproperty_bag__write_guid (
-		IPropertyBag prop_bag,
+		void* prop_bag,
 		[CCode (type_id = "LPCWSTR")] uint16* prop_name,
 		void* value
 	);
 
 	[CCode (cname = "PSPropertyBag_ReadPropertyKey")]
 	public extern int psproperty_bag__read_property_key (
-		IPropertyBag prop_bag,
+		void* prop_bag,
 		[CCode (type_id = "LPCWSTR")] uint16* prop_name,
 		out void* value
 	);
 
 	[CCode (cname = "PSPropertyBag_WritePropertyKey")]
 	public extern int psproperty_bag__write_property_key (
-		IPropertyBag prop_bag,
+		void* prop_bag,
 		[CCode (type_id = "LPCWSTR")] uint16* prop_name,
 		void* value
 	);
@@ -2749,7 +2749,7 @@ namespace Win32.Ui.Shell.PropertiesSystem {
 	[CCode (cname = "SHGetPropertyStoreFromParsingName")]
 	public extern int shget_property_store_from_parsing_name (
 		[CCode (type_id = "LPCWSTR")] uint16* psz_path,
-		IBindCtx pbc,
+		void* pbc,
 		GETPROPERTYSTOREFLAGS flags,
 		void* riid,
 		out void** ppv
@@ -2795,19 +2795,19 @@ namespace Win32.Ui.Shell.PropertiesSystem {
 
 	[CCode (cname = "SHPropStgCreate")]
 	public extern int shprop_stg_create (
-		IPropertySetStorage psstg,
+		void* psstg,
 		void* fmtid,
 		void* pclsid,
 		uint grf_flags,
 		uint grf_mode,
 		uint dw_disposition,
-		out IPropertyStorage ppstg,
+		void* ppstg,
 		out uint pu_code_page
 	);
 
 	[CCode (cname = "SHPropStgReadMultiple")]
 	public extern int shprop_stg_read_multiple (
-		IPropertyStorage pps,
+		void* pps,
 		uint u_code_page,
 		uint cpspec,
 		void* rgpspec,
@@ -2816,7 +2816,7 @@ namespace Win32.Ui.Shell.PropertiesSystem {
 
 	[CCode (cname = "SHPropStgWriteMultiple")]
 	public extern int shprop_stg_write_multiple (
-		IPropertyStorage pps,
+		void* pps,
 		ref uint pu_code_page,
 		uint cpspec,
 		void* rgpspec,

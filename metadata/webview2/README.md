@@ -35,7 +35,7 @@ Commit `api/WebView2.json` after regen when the SDK pin changes.
 ./scripts/regen-webview2-vapi.sh
 ```
 
-Writes `vapi/win32-webview2.vapi` (filtered subset — see `metadata/filters/webview2.filter`).
+Writes `vapi/win32-ui-webview2.vapi` (filtered COM subset — see `metadata/filters/webview2.filter`). Ergo widget vapi `win32-ergo-webview2.vapi` is reserved for Phase 7h.
 
 Optional: `BUILD_WINMD=1 ./scripts/regen-webview2-json.sh` also builds `Microsoft.Web.WebView2.Win32.winmd` (needs `dotnet` + `pwsh` on the machine). **Not required** for the JSON file today.
 

@@ -89,10 +89,14 @@ configure_build_win() {
 copy_artifacts_to_share() {
 	mkdir -p build-win
 	local exe="${LOCAL_BUILD}/webview2-host-demo.exe"
+	local ergo_exe="${LOCAL_BUILD}/webview2-ergo-demo.exe"
 	local dll="${LOCAL_BUILD}/WebView2Loader.dll"
 	[[ -f "${exe}" ]] || exe="${LOCAL_BUILD}/webview2-host-demo"
 	[[ -f "${exe}" ]] || { echo "error: no webview2-host-demo.exe in ${LOCAL_BUILD}" >&2; return 1; }
 	cp -f "${exe}" build-win/webview2-host-demo.exe
+	if [[ -f "${ergo_exe}" ]]; then
+		cp -f "${ergo_exe}" build-win/webview2-ergo-demo.exe
+	fi
 	if [[ -f "${dll}" ]]; then
 		cp -f "${dll}" build-win/WebView2Loader.dll
 	elif [[ -f build/vendor/webview2/x64/WebView2Loader.dll ]]; then
@@ -112,11 +116,14 @@ echo "[build-win] Local Meson dir: ${LOCAL_BUILD} (source stays on X:)"
 ./scripts/vendor-webview2-sdk.sh
 configure_build_win
 
-echo '[build-win] meson compile webview2-host-demo (5 targets typical, not 22)'
-meson compile -C "${LOCAL_BUILD}" webview2-host-demo
+echo '[build-win] meson compile webview2-host-demo webview2-ergo-demo (~targets; WebView2.h via win32-ui-webview2-sdk.h)'
+meson compile -C "${LOCAL_BUILD}" webview2-host-demo webview2-ergo-demo 2>/dev/null \
+	|| meson compile -C "${LOCAL_BUILD}" webview2-host-demo
 
 copy_artifacts_to_share
 
 echo "[build-win] OK — X:\\vala.win32\\build-win\\webview2-host-demo.exe"
+echo "  Ergo: build-win/webview2-ergo-demo.exe (needs glib2 in MSYS2 UCRT64)"
 echo "  Full log: ${DEBUG_LOG}"
 echo "  Run: build-win/webview2-host-demo.exe https://example.com/"
+echo "       build-win/webview2-ergo-demo.exe https://example.com/"

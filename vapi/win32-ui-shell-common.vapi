@@ -202,7 +202,7 @@ namespace Win32.Ui.Shell.Common {
 		public abstract int get_at (
 			uint ui_index,
 			void* riid,
-			out out void* ppv
+			out void** ppv
 		);
 
 	}

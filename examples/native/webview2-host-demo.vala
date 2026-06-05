@@ -14,15 +14,11 @@ private int64 window_proc (
 	int64 l_param
 ) {
 	if (msg == WM_SIZE) {
-		host_on_size (g_hwnd);
-		return 0;
-	}
-	if (msg == Win32.Ui.WebView.SPIKE_DONE_MESSAGE) {
-		post_quit_message (host_capture_spike_result () < 0 ? 2 : 0);
+		on_size (g_hwnd);
 		return 0;
 	}
 	if (msg == WM_DESTROY) {
-		host_destroy ();
+		destroy ();
 		post_quit_message (0);
 		return 0;
 	}
@@ -66,31 +62,12 @@ public static int main (string[] args) {
 	}
 
 	var start_url = "https://example.com/";
-	var spike = false;
-	var spike_wide = false;
-	var url_set = false;
-	void* spike_dir = null;
-	for (var i = 1; i < args.length; i++) {
-		if (args[i] == "--spike") {
-			spike = true;
-		} else if (args[i] == "--spike-wide") {
-			spike_wide = true;
-		} else {
-			if (!url_set) {
-				start_url = args[i];
-				url_set = true;
-			} else if (spike) {
-				spike_dir = WideString (args[i]).ptr;
-			}
-		}
-	}
-	if (spike) {
-		host_set_capture_spike (spike_dir, spike_wide);
-		stderr.printf ("WebView2 capture spike: scroll + CapturePreview (see docs/webview2-capture-investigation.md)\n");
+	if (args.length > 1) {
+		start_url = args[1];
 	}
 	var url = WideString (start_url);
-	if (!host_create (g_hwnd, url.ptr)) {
-		stderr.printf ("WebView2 host_create failed (runtime/loader missing?)\n");
+	if (!create (g_hwnd, url.ptr)) {
+		stderr.printf ("WebView2 create failed (runtime/loader missing?)\n");
 		return 1;
 	}
 

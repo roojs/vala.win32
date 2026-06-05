@@ -54,7 +54,7 @@ They are **not mixed** in a single executable. You do not link MSVC `.obj` files
 **Do they work together?** Only as **two steps in a pipeline**, not as one link:
 
 1. **Vala** turns `.vala` → `.c` (tool is almost always **MSYS2 `valac`**, regardless of final compiler).
-2. **Either** MSVC **or** MinGW compiles and links that C + `webview2-plumbing.c`.
+2. **Either** MSVC **or** MinGW compiles and links that C + `src/win32-ui-webview2-*` glue.
 
 Our **current** `meson.build` uses **MinGW-style** flags (`-mwindows`, `-lole32`, …). A **Visual Studio / Meson `cl` backend** is the right target for serious WebView2 on Windows (static loader, fewer DLL copies) — tracked as follow-up, not required to *run* the 7b demo.
 

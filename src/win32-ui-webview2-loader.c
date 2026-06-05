@@ -5,8 +5,8 @@
 #include <objbase.h>
 #include <stdio.h>
 
-#include "webview2-loader.h"
-#include "WebView2.h"
+#include "win32-ui-webview2-loader.h"
+#include "win32-ui-webview2-sdk.h"
 
 typedef HRESULT (STDMETHODCALLTYPE *PFN_CreateCoreWebView2EnvironmentWithOptions)(
 	PCWSTR browserExecutableFolder,
@@ -54,7 +54,7 @@ BOOL vala_webview2_loader_init (void)
 }
 
 HRESULT vala_webview2_loader_create_environment (
-	ICoreWebView2CreateCoreWebView2EnvironmentCompletedHandler *handler)
+	struct ICoreWebView2CreateCoreWebView2EnvironmentCompletedHandler *handler)
 {
 	if (g_create_env_with_options == NULL || handler == NULL) {
 		return E_FAIL;

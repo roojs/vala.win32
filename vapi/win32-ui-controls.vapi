@@ -10124,7 +10124,7 @@ namespace Win32.Ui.Controls {
 	[CCode (cname = "PFNDPASTREAM", has_target = false)]
 	public delegate int PFNDPASTREAM (
 		ref DPASTREAMINFO pinfo,
-		IStream pstream,
+		void* pstream,
 		void* pv_inst_data
 	);
 
@@ -11877,13 +11877,13 @@ namespace Win32.Ui.Controls {
 			int dx,
 			int dy,
 			void* riid,
-			out out void* ppv
+			out void** ppv
 		);
 
 		[CCode (cname = "Clone")]
 		public abstract int clone (
 			void* riid,
-			out out void* ppv
+			out void** ppv
 		);
 
 		[CCode (cname = "GetImageRect")]
@@ -11972,7 +11972,7 @@ namespace Win32.Ui.Controls {
 			out Win32.Foundation.Point ppt,
 			out Win32.Foundation.Point ppt_hotspot,
 			void* riid,
-			out out void* ppv
+			out void** ppv
 		);
 
 		[CCode (cname = "GetItemFlags")]
@@ -12020,7 +12020,7 @@ namespace Win32.Ui.Controls {
 		[CCode (cname = "GetCallback")]
 		public abstract int get_callback (
 			void* riid,
-			out out void* ppv
+			out void** ppv
 		);
 
 		[CCode (cname = "ForceImagePresent")]
@@ -12284,19 +12284,19 @@ namespace Win32.Ui.Controls {
 
 	[CCode (cname = "ImageList_Read")]
 	public extern void* image_list__read (
-		IStream pstm
+		void* pstm
 	);
 
 	[CCode (cname = "ImageList_Write")]
 	public extern int image_list__write (
 		void* himl,
-		IStream pstm
+		void* pstm
 	);
 
 	[CCode (cname = "ImageList_ReadEx")]
 	public extern int image_list__read_ex (
 		uint dw_flags,
-		IStream pstm,
+		void* pstm,
 		void* riid,
 		out void** ppv
 	);
@@ -12305,7 +12305,7 @@ namespace Win32.Ui.Controls {
 	public extern int image_list__write_ex (
 		void* himl,
 		uint dw_flags,
-		IStream pstm
+		void* pstm
 	);
 
 	[CCode (cname = "ImageList_GetIconSize")]
@@ -12657,7 +12657,7 @@ namespace Win32.Ui.Controls {
 	public extern int dpa__load_stream (
 		out void* phdpa,
 		PFNDPASTREAM pfn,
-		IStream pstream,
+		void* pstream,
 		void* pv_inst_data
 	);
 
@@ -12665,7 +12665,7 @@ namespace Win32.Ui.Controls {
 	public extern int dpa__save_stream (
 		void* hdpa,
 		PFNDPASTREAM pfn,
-		IStream pstream,
+		void* pstream,
 		void* pv_inst_data
 	);
 
