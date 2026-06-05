@@ -381,7 +381,8 @@ else
   endif
 endif
 
-# Phase 7 — WebView2 host (requires ./scripts/vendor-webview2-sdk.sh)
+# Phase 7 — WebView2 host (Windows host only; requires ./scripts/vendor-webview2-sdk.sh)
+# JSON/vapi regen still works on Linux; see scripts/regen-webview2-*.sh
 webview2_sdk = project_root / 'build/vendor/webview2'
 webview2_header = webview2_sdk / 'include' / 'WebView2.h'
 webview2_loader_x64 = webview2_sdk / 'x64' / 'WebView2Loader.dll'
@@ -434,67 +435,7 @@ if have_webview2_sdk and host_machine.system() == 'windows'
     depends: webview2_host_exe,
     build_by_default: true,
   )
-elif have_webview2_sdk and mingw_cc.found()
-  webview2_build_dir = 'track-webview2-host-demo'
-  webview2_companion = [wide_strings_vala]
-  webview2_companion_c = []
-  webview2_vala_inputs = [files('examples/native/webview2-host-demo.vala')]
-  foreach src : webview2_companion
-    webview2_vala_inputs += src
-    parts = src.split('/')
-    vala_name = parts[-1]
-    webview2_companion_c += webview2_build_dir + '/' + vala_name.substring(0, -5) + '.c'
-  endforeach
-  webview2_plumbing_o = webview2_build_dir + '/webview2-plumbing.o'
-  webview2_capture_spike_o = webview2_build_dir + '/webview2-capture-spike.o'
-  custom_target(
-    'webview2-host-demo',
-    input: webview2_vala_inputs,
-    output: 'webview2-host-demo.exe',
-    command: [
-      'mkdir', '-p', webview2_build_dir,
-      '&&',
-      valac,
-      webview2_vala_args,
-      '-C',
-      '-d', webview2_build_dir,
-      '@INPUT@',
-      '&&',
-      mingw_cc,
-    ] + vala_win32_c_quiet + [
-      '-c',
-      '-I', webview2_sdk / 'include',
-      '-I', project_root / 'src',
-      '-o', webview2_plumbing_o,
-      webview2_plumbing_c,
-      '&&',
-      mingw_cc,
-    ] + vala_win32_c_quiet + [
-      '-c',
-      '-I', webview2_sdk / 'include',
-      '-I', project_root / 'src',
-      '-o', webview2_capture_spike_o,
-      webview2_capture_spike_c,
-      '&&',
-      mingw_cc,
-    ] + vala_win32_c_quiet + [
-      '-mwindows',
-      '-I', project_root / 'src',
-      '-o', '@OUTPUT@',
-      webview2_build_dir + '/webview2-host-demo.c',
-      webview2_companion_c,
-      webview2_plumbing_o,
-      webview2_capture_spike_o,
-    ] + webview2_link_libs + [
-      '&&',
-      'cp', webview2_loader_x64, webview2_build_dir + '/',
-      '&&',
-      'cp', webview2_loader_x64, '.',
-    ],
-    depends: regen_dep,
-    build_by_default: true,
-  )
-elif mingw_cc.found() or host_machine.system() == 'windows'
+elif host_machine.system() == 'windows'
   warning('webview2-host-demo skipped: run ./scripts/vendor-webview2-sdk.sh')
 endif
 

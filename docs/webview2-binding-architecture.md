@@ -12,9 +12,9 @@ Writes committed [`metadata/webview2/api/WebView2.json`](../metadata/webview2/ap
 
 | Step | Linux | Windows |
 |------|-------|---------|
-| Regen JSON | Yes | Yes (MSYS2 bash) |
-| Cross-compile `webview2-host-demo` | Yes | Yes |
-| Run WebView2 in a window | No (use lab PC) | Yes |
+| Regen JSON / vapi | Yes | Yes (MSYS2 bash) |
+| Build `webview2-host-demo` | No | Yes (`scripts/build-win.sh`) |
+| Run WebView2 in a window | No | Yes (Evergreen runtime) |
 
 ## Why `webview2-plumbing.c` is not the long-term API
 

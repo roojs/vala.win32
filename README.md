@@ -40,9 +40,9 @@ wine build/widgets-demo.exe
 # Raw generated vapi: wine build/native-hello-window.exe, native-button-demo.exe, …
 ```
 
-### WebView2 (cross-build)
+### WebView2 (metadata on Linux; demo on Windows only)
 
-Regenerate API metadata (Linux or Windows—commit the result):
+Regenerate API metadata on Linux or Windows (commit the result):
 
 ```bash
 ./scripts/vendor-webview2-sdk.sh   # if needed
@@ -52,11 +52,7 @@ Regenerate API metadata (Linux or Windows—commit the result):
 
 Details: [metadata/webview2/README.md](metadata/webview2/README.md)
 
-```bash
-meson setup build --reconfigure
-meson compile -C build webview2-host-demo
-wine build/webview2-host-demo.exe https://example.com/   # optional; often blank under Wine
-```
+`webview2-host-demo` is **not** built by the Linux cross-compile graph. Build and run on real Windows — see [docs/windows-build.md](docs/windows-build.md) (`./scripts/build-win.sh`).
 
 ### Checks (optional)
 

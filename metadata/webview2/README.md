@@ -1,7 +1,7 @@
 # WebView2 metadata (committed JSON)
 
 win32json-shaped input for Phase **7i** (`generate-binding` + Com emit).  
-**Regenerate on Linux or Windows** (needs vendored SDK + Meson build). **Running the browser host** still requires real Windows.
+**Regenerate JSON/vapi on Linux or Windows** (needs vendored SDK + Meson build). **`webview2-host-demo`** is built only on a Windows host — see [docs/windows-build.md](../../docs/windows-build.md).
 
 | File | Role |
 |------|------|
