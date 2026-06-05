@@ -1,0 +1,30 @@
+# WinUI3 native binding seed whitelist.
+#
+# The existing generator cannot consume .winmd directly yet; keep this filter
+# ready for either a WinMD->win32json converter or a hand-written JSON shard.
+# Last matching rule wins.
+-Microsoft.UI.*
+-Windows.Foundation.*
+-Windows.UI.Xaml.*
+
+# WinRT activation / base ABI needed before any XAML class can be projected.
++Windows.Foundation.IInspectable
++Windows.Foundation.IActivationFactory
++Windows.Foundation.EventRegistrationToken
++Windows.Foundation.TypedEventHandler`2
+
+# Minimal WinUI3 surface for a first window/application spike.
++Microsoft.UI.Xaml.Application
++Microsoft.UI.Xaml.IApplicationOverrides
++Microsoft.UI.Xaml.IApplicationStatics
++Microsoft.UI.Xaml.IApplicationFactory
++Microsoft.UI.Xaml.LaunchActivatedEventArgs
++Microsoft.UI.Xaml.Window
++Microsoft.UI.Xaml.IWindow
++Microsoft.UI.Xaml.IWindowStatics
++Microsoft.UI.Xaml.Controls.Grid
++Microsoft.UI.Xaml.Controls.IGrid
++Microsoft.UI.Xaml.Controls.IGridFactory
++Microsoft.UI.Xaml.Controls.TextBlock
++Microsoft.UI.Xaml.Controls.ITextBlock
++Microsoft.UI.Xaml.Controls.ITextBlockFactory

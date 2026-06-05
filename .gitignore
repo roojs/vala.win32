@@ -8,6 +8,8 @@ metadata/win32json/
 build/vendor/webview2/
 build/vendor/webview2-extract/
 build/vendor/webview2.nupkg
+build/vendor/winui3/
+build/vendor/winui3.nupkg
 metadata/win32metadata/
 metadata/cache/
 tools/generate-binding

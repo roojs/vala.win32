@@ -469,6 +469,7 @@ webview2_header = webview2_sdk / 'include' / 'WebView2.h'
 webview2_loader_x64 = webview2_sdk / 'x64' / 'WebView2Loader.dll'
 have_webview2_sdk = run_command('test', '-f', webview2_header, check: false).returncode() == 0
 vendor_webview2 = find_program('scripts/vendor-webview2-sdk.sh')
+vendor_winui3 = find_program('scripts/vendor-winui3-sdk.sh')
 webview2_loader_c = project_root / 'src' / 'win32-ui-webview2-loader.c'
 webview2_com_glue_c = project_root / 'src' / 'win32-ui-webview2-com-glue.c'
 webview2_host_vala = files('src/win32-ui-webview2-host.vala')
@@ -589,6 +590,7 @@ check_regen = find_program('scripts/check-regen.sh')
 compile_check = find_program('scripts/compile-check.sh')
 
 run_target('vendor-webview2', command: [vendor_webview2])
+run_target('vendor-winui3', command: [vendor_winui3])
 
 webview2_filter = metadata_root / 'filters' / 'webview2.filter'
 webview2_api_list = metadata_root / 'webview2-api.files'

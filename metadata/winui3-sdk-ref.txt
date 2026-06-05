@@ -1,0 +1,3 @@
+# Microsoft.WindowsAppSDK.WinUI NuGet package version.
+# Used by scripts/vendor-winui3-sdk.sh
+2.1.0

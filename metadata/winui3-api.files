@@ -1,0 +1,5 @@
+# WinUI3 metadata shards for generate-binding once WinMD is converted to the
+# win32json shape, or once a hand-written seed shard is committed.
+#
+# Microsoft.UI.Xaml.json
+# Microsoft.UI.Text.json
