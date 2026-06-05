@@ -3,7 +3,7 @@
 [CCode (cprefix = "", cheader_filename = "WebView2.h")]
 namespace Microsoft.Web.WebView2.Win32 {
 	[CCode (cname = "INT", has_type_id = false)]
-	public enum COREWEBVIEW2CAPTUREPREVIEWIMAGEFORMAT {
+	public enum COREWEBVIEW2_CAPTURE_PREVIEW_IMAGE_FORMAT {
 		[CCode (cname = "COREWEBVIEW2_CAPTURE_PREVIEW_IMAGE_FORMAT_PNG")]
 		COREWEBVIEW2_CAPTURE_PREVIEW_IMAGE_FORMAT_PNG = 0,
 		[CCode (cname = "COREWEBVIEW2_CAPTURE_PREVIEW_IMAGE_FORMAT_JPEG")]
@@ -11,7 +11,7 @@ namespace Microsoft.Web.WebView2.Win32 {
 	}
 
 	[CCode (cname = "INT", has_type_id = false)]
-	public enum COREWEBVIEW2MOVEFOCUSREASON {
+	public enum COREWEBVIEW2_MOVE_FOCUS_REASON {
 		[CCode (cname = "COREWEBVIEW2_MOVE_FOCUS_REASON_PROGRAMMATIC")]
 		COREWEBVIEW2_MOVE_FOCUS_REASON_PROGRAMMATIC = 0,
 		[CCode (cname = "COREWEBVIEW2_MOVE_FOCUS_REASON_NEXT")]
@@ -40,13 +40,13 @@ namespace Microsoft.Web.WebView2.Win32 {
 	[CCode (cname = "ICoreWebView2", ref_function = "", unref_function = "")]
 	public interface ICoreWebView2 : IUnknown {
 		[CCode (cname = "get_Settings")]
-		public abstract int get__settings (
-			ICoreWebView2Settings **settings
+		public abstract int get_settings (
+			void* settings
 		);
 
 		[CCode (cname = "get_Source")]
-		public abstract int get__source (
-			[CCode (type_id = "LPCWSTR")] uint16* *uri
+		public abstract int get_source (
+			[CCode (type_id = "LPCWSTR")] uint16** uri
 		);
 
 		[CCode (cname = "Navigate")]
@@ -60,119 +60,119 @@ namespace Microsoft.Web.WebView2.Win32 {
 		);
 
 		[CCode (cname = "add_NavigationStarting")]
-		public abstract int add__navigation_starting (
-			ICoreWebView2NavigationStartingEventHandler *event_handler,
-			EventRegistrationToken *token
+		public abstract int add_navigation_starting (
+			void* event_handler,
+			EventRegistrationToken* token
 		);
 
 		[CCode (cname = "remove_NavigationStarting")]
-		public abstract int remove__navigation_starting (
+		public abstract int remove_navigation_starting (
 			EventRegistrationToken token
 		);
 
 		[CCode (cname = "add_ContentLoading")]
-		public abstract int add__content_loading (
-			ICoreWebView2ContentLoadingEventHandler *event_handler,
-			EventRegistrationToken *token
+		public abstract int add_content_loading (
+			void* event_handler,
+			EventRegistrationToken* token
 		);
 
 		[CCode (cname = "remove_ContentLoading")]
-		public abstract int remove__content_loading (
+		public abstract int remove_content_loading (
 			EventRegistrationToken token
 		);
 
 		[CCode (cname = "add_SourceChanged")]
-		public abstract int add__source_changed (
-			ICoreWebView2SourceChangedEventHandler *event_handler,
-			EventRegistrationToken *token
+		public abstract int add_source_changed (
+			void* event_handler,
+			EventRegistrationToken* token
 		);
 
 		[CCode (cname = "remove_SourceChanged")]
-		public abstract int remove__source_changed (
+		public abstract int remove_source_changed (
 			EventRegistrationToken token
 		);
 
 		[CCode (cname = "add_HistoryChanged")]
-		public abstract int add__history_changed (
-			ICoreWebView2HistoryChangedEventHandler *event_handler,
-			EventRegistrationToken *token
+		public abstract int add_history_changed (
+			void* event_handler,
+			EventRegistrationToken* token
 		);
 
 		[CCode (cname = "remove_HistoryChanged")]
-		public abstract int remove__history_changed (
+		public abstract int remove_history_changed (
 			EventRegistrationToken token
 		);
 
 		[CCode (cname = "add_NavigationCompleted")]
-		public abstract int add__navigation_completed (
-			ICoreWebView2NavigationCompletedEventHandler *event_handler,
-			EventRegistrationToken *token
+		public abstract int add_navigation_completed (
+			unowned ICoreWebView2NavigationCompletedEventHandler event_handler,
+			EventRegistrationToken* token
 		);
 
 		[CCode (cname = "remove_NavigationCompleted")]
-		public abstract int remove__navigation_completed (
+		public abstract int remove_navigation_completed (
 			EventRegistrationToken token
 		);
 
 		[CCode (cname = "add_FrameNavigationStarting")]
-		public abstract int add__frame_navigation_starting (
-			ICoreWebView2NavigationStartingEventHandler *event_handler,
-			EventRegistrationToken *token
+		public abstract int add_frame_navigation_starting (
+			void* event_handler,
+			EventRegistrationToken* token
 		);
 
 		[CCode (cname = "remove_FrameNavigationStarting")]
-		public abstract int remove__frame_navigation_starting (
+		public abstract int remove_frame_navigation_starting (
 			EventRegistrationToken token
 		);
 
 		[CCode (cname = "add_FrameNavigationCompleted")]
-		public abstract int add__frame_navigation_completed (
-			ICoreWebView2NavigationCompletedEventHandler *event_handler,
-			EventRegistrationToken *token
+		public abstract int add_frame_navigation_completed (
+			unowned ICoreWebView2NavigationCompletedEventHandler event_handler,
+			EventRegistrationToken* token
 		);
 
 		[CCode (cname = "remove_FrameNavigationCompleted")]
-		public abstract int remove__frame_navigation_completed (
+		public abstract int remove_frame_navigation_completed (
 			EventRegistrationToken token
 		);
 
 		[CCode (cname = "add_ScriptDialogOpening")]
-		public abstract int add__script_dialog_opening (
-			ICoreWebView2ScriptDialogOpeningEventHandler *event_handler,
-			EventRegistrationToken *token
+		public abstract int add_script_dialog_opening (
+			void* event_handler,
+			EventRegistrationToken* token
 		);
 
 		[CCode (cname = "remove_ScriptDialogOpening")]
-		public abstract int remove__script_dialog_opening (
+		public abstract int remove_script_dialog_opening (
 			EventRegistrationToken token
 		);
 
 		[CCode (cname = "add_PermissionRequested")]
-		public abstract int add__permission_requested (
-			ICoreWebView2PermissionRequestedEventHandler *event_handler,
-			EventRegistrationToken *token
+		public abstract int add_permission_requested (
+			void* event_handler,
+			EventRegistrationToken* token
 		);
 
 		[CCode (cname = "remove_PermissionRequested")]
-		public abstract int remove__permission_requested (
+		public abstract int remove_permission_requested (
 			EventRegistrationToken token
 		);
 
 		[CCode (cname = "add_ProcessFailed")]
-		public abstract int add__process_failed (
-			ICoreWebView2ProcessFailedEventHandler *event_handler,
-			EventRegistrationToken *token
+		public abstract int add_process_failed (
+			void* event_handler,
+			EventRegistrationToken* token
 		);
 
 		[CCode (cname = "remove_ProcessFailed")]
-		public abstract int remove__process_failed (
+		public abstract int remove_process_failed (
 			EventRegistrationToken token
 		);
 
 		[CCode (cname = "AddScriptToExecuteOnDocumentCreated")]
 		public abstract int add_script_to_execute_on_document_created (
 			[CCode (type_id = "LPCWSTR")] uint16* java_script,
-			ICoreWebView2AddScriptToExecuteOnDocumentCreatedCompletedHandler *handler
+			void* handler
 		);
 
 		[CCode (cname = "RemoveScriptToExecuteOnDocumentCreated")]
@@ -183,14 +183,14 @@ namespace Microsoft.Web.WebView2.Win32 {
 		[CCode (cname = "ExecuteScript")]
 		public abstract int execute_script (
 			[CCode (type_id = "LPCWSTR")] uint16* java_script,
-			ICoreWebView2ExecuteScriptCompletedHandler *handler
+			unowned ICoreWebView2ExecuteScriptCompletedHandler handler
 		);
 
 		[CCode (cname = "CapturePreview")]
 		public abstract int capture_preview (
 			COREWEBVIEW2CAPTUREPREVIEWIMAGEFORMAT image_format,
-			IStream *image_stream,
-			ICoreWebView2CapturePreviewCompletedHandler *handler
+			void* image_stream,
+			unowned ICoreWebView2CapturePreviewCompletedHandler handler
 		);
 
 		[CCode (cname = "Reload")]
@@ -208,13 +208,13 @@ namespace Microsoft.Web.WebView2.Win32 {
 		);
 
 		[CCode (cname = "add_WebMessageReceived")]
-		public abstract int add__web_message_received (
-			ICoreWebView2WebMessageReceivedEventHandler *handler,
-			EventRegistrationToken *token
+		public abstract int add_web_message_received (
+			void* handler,
+			EventRegistrationToken* token
 		);
 
 		[CCode (cname = "remove_WebMessageReceived")]
-		public abstract int remove__web_message_received (
+		public abstract int remove_web_message_received (
 			EventRegistrationToken token
 		);
 
@@ -222,22 +222,22 @@ namespace Microsoft.Web.WebView2.Win32 {
 		public abstract int call_dev_tools_protocol_method (
 			[CCode (type_id = "LPCWSTR")] uint16* method_name,
 			[CCode (type_id = "LPCWSTR")] uint16* parameters_as_json,
-			ICoreWebView2CallDevToolsProtocolMethodCompletedHandler *handler
+			void* handler
 		);
 
 		[CCode (cname = "get_BrowserProcessId")]
-		public abstract int get__browser_process_id (
-			void* *value
+		public abstract int get_browser_process_id (
+			void** value
 		);
 
 		[CCode (cname = "get_CanGoBack")]
-		public abstract int get__can_go_back (
-			int *can_go_back
+		public abstract int get_can_go_back (
+			int* can_go_back
 		);
 
 		[CCode (cname = "get_CanGoForward")]
-		public abstract int get__can_go_forward (
-			int *can_go_forward
+		public abstract int get_can_go_forward (
+			int* can_go_forward
 		);
 
 		[CCode (cname = "GoBack")]
@@ -251,7 +251,7 @@ namespace Microsoft.Web.WebView2.Win32 {
 		[CCode (cname = "GetDevToolsProtocolEventReceiver")]
 		public abstract int get_dev_tools_protocol_event_receiver (
 			[CCode (type_id = "LPCWSTR")] uint16* event_name,
-			ICoreWebView2DevToolsProtocolEventReceiver **receiver
+			void* receiver
 		);
 
 		[CCode (cname = "Stop")]
@@ -259,36 +259,36 @@ namespace Microsoft.Web.WebView2.Win32 {
 		);
 
 		[CCode (cname = "add_NewWindowRequested")]
-		public abstract int add__new_window_requested (
-			ICoreWebView2NewWindowRequestedEventHandler *event_handler,
-			EventRegistrationToken *token
+		public abstract int add_new_window_requested (
+			void* event_handler,
+			EventRegistrationToken* token
 		);
 
 		[CCode (cname = "remove_NewWindowRequested")]
-		public abstract int remove__new_window_requested (
+		public abstract int remove_new_window_requested (
 			EventRegistrationToken token
 		);
 
 		[CCode (cname = "add_DocumentTitleChanged")]
-		public abstract int add__document_title_changed (
-			ICoreWebView2DocumentTitleChangedEventHandler *event_handler,
-			EventRegistrationToken *token
+		public abstract int add_document_title_changed (
+			void* event_handler,
+			EventRegistrationToken* token
 		);
 
 		[CCode (cname = "remove_DocumentTitleChanged")]
-		public abstract int remove__document_title_changed (
+		public abstract int remove_document_title_changed (
 			EventRegistrationToken token
 		);
 
 		[CCode (cname = "get_DocumentTitle")]
-		public abstract int get__document_title (
-			[CCode (type_id = "LPCWSTR")] uint16* *title
+		public abstract int get_document_title (
+			[CCode (type_id = "LPCWSTR")] uint16** title
 		);
 
 		[CCode (cname = "AddHostObjectToScript")]
 		public abstract int add_host_object_to_script (
 			[CCode (type_id = "LPCWSTR")] uint16* name,
-			void* *object
+			void** object
 		);
 
 		[CCode (cname = "RemoveHostObjectFromScript")]
@@ -301,29 +301,29 @@ namespace Microsoft.Web.WebView2.Win32 {
 		);
 
 		[CCode (cname = "add_ContainsFullScreenElementChanged")]
-		public abstract int add__contains_full_screen_element_changed (
-			ICoreWebView2ContainsFullScreenElementChangedEventHandler *event_handler,
-			EventRegistrationToken *token
+		public abstract int add_contains_full_screen_element_changed (
+			void* event_handler,
+			EventRegistrationToken* token
 		);
 
 		[CCode (cname = "remove_ContainsFullScreenElementChanged")]
-		public abstract int remove__contains_full_screen_element_changed (
+		public abstract int remove_contains_full_screen_element_changed (
 			EventRegistrationToken token
 		);
 
 		[CCode (cname = "get_ContainsFullScreenElement")]
-		public abstract int get__contains_full_screen_element (
-			int *contains_full_screen_element
+		public abstract int get_contains_full_screen_element (
+			int* contains_full_screen_element
 		);
 
 		[CCode (cname = "add_WebResourceRequested")]
-		public abstract int add__web_resource_requested (
-			ICoreWebView2WebResourceRequestedEventHandler *event_handler,
-			EventRegistrationToken *token
+		public abstract int add_web_resource_requested (
+			void* event_handler,
+			EventRegistrationToken* token
 		);
 
 		[CCode (cname = "remove_WebResourceRequested")]
-		public abstract int remove__web_resource_requested (
+		public abstract int remove_web_resource_requested (
 			EventRegistrationToken token
 		);
 
@@ -340,13 +340,13 @@ namespace Microsoft.Web.WebView2.Win32 {
 		);
 
 		[CCode (cname = "add_WindowCloseRequested")]
-		public abstract int add__window_close_requested (
-			ICoreWebView2WindowCloseRequestedEventHandler *event_handler,
-			EventRegistrationToken *token
+		public abstract int add_window_close_requested (
+			void* event_handler,
+			EventRegistrationToken* token
 		);
 
 		[CCode (cname = "remove_WindowCloseRequested")]
-		public abstract int remove__window_close_requested (
+		public abstract int remove_window_close_requested (
 			EventRegistrationToken token
 		);
 
@@ -356,8 +356,8 @@ namespace Microsoft.Web.WebView2.Win32 {
 	public interface ICoreWebView2NavigationCompletedEventHandler : IUnknown {
 		[CCode (cname = "Invoke")]
 		public abstract int invoke (
-			ICoreWebView2 *sender,
-			ICoreWebView2NavigationCompletedEventArgs *args
+			unowned ICoreWebView2 sender,
+			unowned ICoreWebView2NavigationCompletedEventArgs args
 		);
 
 	}
@@ -384,43 +384,43 @@ namespace Microsoft.Web.WebView2.Win32 {
 	[CCode (cname = "ICoreWebView2Controller", ref_function = "", unref_function = "")]
 	public interface ICoreWebView2Controller : IUnknown {
 		[CCode (cname = "get_IsVisible")]
-		public abstract int get__is_visible (
-			int *is_visible
+		public abstract int get_is_visible (
+			int* is_visible
 		);
 
 		[CCode (cname = "put_IsVisible")]
-		public abstract int put__is_visible (
+		public abstract int put_is_visible (
 			int is_visible
 		);
 
 		[CCode (cname = "get_Bounds")]
-		public abstract int get__bounds (
-			Win32.Foundation.Rect *bounds
+		public abstract int get_bounds (
+			Win32.Foundation.Rect* bounds
 		);
 
 		[CCode (cname = "put_Bounds")]
-		public abstract int put__bounds (
+		public abstract int put_bounds (
 			Win32.Foundation.Rect bounds
 		);
 
 		[CCode (cname = "get_ZoomFactor")]
-		public abstract int get__zoom_factor (
-			double *zoom_factor
+		public abstract int get_zoom_factor (
+			double* zoom_factor
 		);
 
 		[CCode (cname = "put_ZoomFactor")]
-		public abstract int put__zoom_factor (
+		public abstract int put_zoom_factor (
 			double zoom_factor
 		);
 
 		[CCode (cname = "add_ZoomFactorChanged")]
-		public abstract int add__zoom_factor_changed (
-			ICoreWebView2ZoomFactorChangedEventHandler *event_handler,
-			EventRegistrationToken *token
+		public abstract int add_zoom_factor_changed (
+			void* event_handler,
+			EventRegistrationToken* token
 		);
 
 		[CCode (cname = "remove_ZoomFactorChanged")]
-		public abstract int remove__zoom_factor_changed (
+		public abstract int remove_zoom_factor_changed (
 			EventRegistrationToken token
 		);
 
@@ -436,56 +436,56 @@ namespace Microsoft.Web.WebView2.Win32 {
 		);
 
 		[CCode (cname = "add_MoveFocusRequested")]
-		public abstract int add__move_focus_requested (
-			ICoreWebView2MoveFocusRequestedEventHandler *event_handler,
-			EventRegistrationToken *token
+		public abstract int add_move_focus_requested (
+			void* event_handler,
+			EventRegistrationToken* token
 		);
 
 		[CCode (cname = "remove_MoveFocusRequested")]
-		public abstract int remove__move_focus_requested (
+		public abstract int remove_move_focus_requested (
 			EventRegistrationToken token
 		);
 
 		[CCode (cname = "add_GotFocus")]
-		public abstract int add__got_focus (
-			ICoreWebView2FocusChangedEventHandler *event_handler,
-			EventRegistrationToken *token
+		public abstract int add_got_focus (
+			void* event_handler,
+			EventRegistrationToken* token
 		);
 
 		[CCode (cname = "remove_GotFocus")]
-		public abstract int remove__got_focus (
+		public abstract int remove_got_focus (
 			EventRegistrationToken token
 		);
 
 		[CCode (cname = "add_LostFocus")]
-		public abstract int add__lost_focus (
-			ICoreWebView2FocusChangedEventHandler *event_handler,
-			EventRegistrationToken *token
+		public abstract int add_lost_focus (
+			void* event_handler,
+			EventRegistrationToken* token
 		);
 
 		[CCode (cname = "remove_LostFocus")]
-		public abstract int remove__lost_focus (
+		public abstract int remove_lost_focus (
 			EventRegistrationToken token
 		);
 
 		[CCode (cname = "add_AcceleratorKeyPressed")]
-		public abstract int add__accelerator_key_pressed (
-			ICoreWebView2AcceleratorKeyPressedEventHandler *event_handler,
-			EventRegistrationToken *token
+		public abstract int add_accelerator_key_pressed (
+			void* event_handler,
+			EventRegistrationToken* token
 		);
 
 		[CCode (cname = "remove_AcceleratorKeyPressed")]
-		public abstract int remove__accelerator_key_pressed (
+		public abstract int remove_accelerator_key_pressed (
 			EventRegistrationToken token
 		);
 
 		[CCode (cname = "get_ParentWindow")]
-		public abstract int get__parent_window (
-			[CCode (type_id = "HWND")] void* *parent_window
+		public abstract int get_parent_window (
+			[CCode (type_id = "HWND")] void** parent_window
 		);
 
 		[CCode (cname = "put_ParentWindow")]
-		public abstract int put__parent_window (
+		public abstract int put_parent_window (
 			[CCode (type_id = "HWND")] void* parent_window
 		);
 
@@ -498,8 +498,8 @@ namespace Microsoft.Web.WebView2.Win32 {
 		);
 
 		[CCode (cname = "get_CoreWebView2")]
-		public abstract int get__core_web_view2 (
-			ICoreWebView2 **core_web_view2
+		public abstract int get_core_web_view2 (
+			out unowned ICoreWebView2 core_web_view2
 		);
 
 	}
@@ -509,31 +509,31 @@ namespace Microsoft.Web.WebView2.Win32 {
 		[CCode (cname = "CreateCoreWebView2Controller")]
 		public abstract int create_core_web_view2controller (
 			[CCode (type_id = "HWND")] void* parent_window,
-			ICoreWebView2CreateCoreWebView2ControllerCompletedHandler *handler
+			unowned ICoreWebView2CreateCoreWebView2ControllerCompletedHandler handler
 		);
 
 		[CCode (cname = "CreateWebResourceResponse")]
 		public abstract int create_web_resource_response (
-			IStream *content,
+			void* content,
 			void* status_code,
 			[CCode (type_id = "LPCWSTR")] uint16* reason_phrase,
 			[CCode (type_id = "LPCWSTR")] uint16* headers,
-			ICoreWebView2WebResourceResponse **response
+			void* response
 		);
 
 		[CCode (cname = "get_BrowserVersionString")]
-		public abstract int get__browser_version_string (
-			[CCode (type_id = "LPCWSTR")] uint16* *version_info
+		public abstract int get_browser_version_string (
+			[CCode (type_id = "LPCWSTR")] uint16** version_info
 		);
 
 		[CCode (cname = "add_NewBrowserVersionAvailable")]
-		public abstract int add__new_browser_version_available (
-			ICoreWebView2NewBrowserVersionAvailableEventHandler *event_handler,
-			EventRegistrationToken *token
+		public abstract int add_new_browser_version_available (
+			void* event_handler,
+			EventRegistrationToken* token
 		);
 
 		[CCode (cname = "remove_NewBrowserVersionAvailable")]
-		public abstract int remove__new_browser_version_available (
+		public abstract int remove_new_browser_version_available (
 			EventRegistrationToken token
 		);
 
@@ -544,7 +544,7 @@ namespace Microsoft.Web.WebView2.Win32 {
 		[CCode (cname = "Invoke")]
 		public abstract int invoke (
 			int error_code,
-			ICoreWebView2Controller *result
+			unowned ICoreWebView2Controller result
 		);
 
 	}
@@ -554,7 +554,7 @@ namespace Microsoft.Web.WebView2.Win32 {
 		[CCode (cname = "Invoke")]
 		public abstract int invoke (
 			int error_code,
-			ICoreWebView2Environment *result
+			unowned ICoreWebView2Environment result
 		);
 
 	}
@@ -562,18 +562,18 @@ namespace Microsoft.Web.WebView2.Win32 {
 	[CCode (cname = "ICoreWebView2NavigationCompletedEventArgs", ref_function = "", unref_function = "")]
 	public interface ICoreWebView2NavigationCompletedEventArgs : IUnknown {
 		[CCode (cname = "get_IsSuccess")]
-		public abstract int get__is_success (
-			int *is_success
+		public abstract int get_is_success (
+			int* is_success
 		);
 
 		[CCode (cname = "get_WebErrorStatus")]
-		public abstract int get__web_error_status (
-			COREWEBVIEW2WebERRORSTATUS *web_error_status
+		public abstract int get_web_error_status (
+			COREWEBVIEW2WebERRORSTATUS* web_error_status
 		);
 
 		[CCode (cname = "get_NavigationId")]
-		public abstract int get__navigation_id (
-			void* *navigation_id
+		public abstract int get_navigation_id (
+			void** navigation_id
 		);
 
 	}

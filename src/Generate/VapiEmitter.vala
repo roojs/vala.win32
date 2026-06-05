@@ -314,7 +314,7 @@ namespace Win32 {
 			if (t.Values.size == 0) {
 				return;
 			}
-			var vala_name = NameMapper.to_vala_type (t.Name);
+			var vala_name = t.Name.has_prefix ("COREWEBVIEW2_") ? t.Name : NameMapper.to_vala_type (t.Name);
 			if (!this.claim_vala_name (vala_name)) {
 				return;
 			}
@@ -481,46 +481,27 @@ namespace Win32 {
 			string shard_basename,
 			Gee.HashSet<string> emitted_com
 		) {
-			var mapped = VapiEmitter.vala_param_type (p, shard_basename);
-			return VapiEmitter.rewrite_unbound_com_param (p.Type, mapped, emitted_com);
-		}
-
-		static string rewrite_unbound_com_param (
-			Parse.TypeRef type_ref,
-			string mapped,
-			Gee.HashSet<string> emitted_com
-		) {
-			if (type_ref.Kind == "ApiRef" && type_ref.TargetKind == "Com") {
-				if (!emitted_com.contains (type_ref.Name) && type_ref.Name != "IUnknown") {
+			var type_ref = p.Type;
+			if (type_ref.Kind == "PointerTo" && type_ref.Child != null
+				&& type_ref.Child.Kind == "PointerTo" && type_ref.Child.Child != null
+				&& type_ref.Child.Child.Kind == "ApiRef"
+				&& type_ref.Child.Child.TargetKind == "Com") {
+				var iface = type_ref.Child.Child.Name;
+				if (!emitted_com.contains (iface)) {
 					return "void*";
 				}
-				return mapped.replace ("*", "");
+				return "out unowned " + iface;
 			}
-			if (type_ref.Kind == "PointerTo" && type_ref.Child != null) {
-				if (type_ref.Child.Kind == "ApiRef" && type_ref.Child.TargetKind == "Com") {
-					if (!emitted_com.contains (type_ref.Child.Name) && type_ref.Child.Name != "IUnknown") {
-						return "void*";
-					}
+			if (type_ref.Kind == "PointerTo" && type_ref.Child != null
+				&& type_ref.Child.Kind == "ApiRef"
+				&& type_ref.Child.TargetKind == "Com") {
+				var iface = type_ref.Child.Name;
+				if (!emitted_com.contains (iface) && iface != "IUnknown") {
+					return "void*";
 				}
-				if (type_ref.Child.Kind == "PointerTo" && type_ref.Child.Child != null) {
-					var inner = type_ref.Child.Child;
-					if (inner.Kind == "ApiRef" && inner.TargetKind == "Com") {
-						if (!emitted_com.contains (inner.Name)) {
-							return "void*";
-						}
-						var iface = inner.Name;
-						if (VapiEmitter.attrs_contain (type_ref.Child.Attrs, "Out")
-							|| VapiEmitter.attrs_contain (p_attrs_from_chain (type_ref), "Out")) {
-							return "out unowned " + iface;
-						}
-					}
-				}
+				return "unowned " + iface;
 			}
-			return mapped;
-		}
-
-		static Gee.ArrayList<string> p_attrs_from_chain (Parse.TypeRef type_ref) {
-			return new Gee.ArrayList<string> ();
+			return VapiEmitter.vala_param_type (p, shard_basename);
 		}
 
 		void emit_function (Parse.Function f) {
