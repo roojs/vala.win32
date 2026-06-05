@@ -782,7 +782,7 @@ public class GroupBox {
 
 /**
  * Base for Track B child controls — parent, HWND, and auto child-window {@link WID}.
- * Win32 child-window identifier maps to CreateWindowEx hMenu / {@link GetDlgCtrlID}.
+ * Win32 child-window identifier maps to CreateWindowEx hMenu and GetDlgCtrlID.
  */
 public class Widget {
 	const int WID_BASE = 100;
