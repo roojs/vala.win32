@@ -29,6 +29,14 @@ C:\msys64\msys2_shell.cmd -defterm -no-start -ucrt64 -c 'cd /x/vala.win32 && ./s
 
 Commit `api/WebView2.json` after regen when the SDK pin changes.
 
+## Regenerate vapi (COM bindings)
+
+```bash
+./scripts/regen-webview2-vapi.sh
+```
+
+Writes `vapi/win32-webview2.vapi` (filtered subset — see `metadata/filters/webview2.filter`).
+
 Optional: `BUILD_WINMD=1 ./scripts/regen-webview2-json.sh` also builds `Microsoft.Web.WebView2.Win32.winmd` (needs `dotnet` + `pwsh` on the machine). **Not required** for the JSON file today.
 
 ## More context

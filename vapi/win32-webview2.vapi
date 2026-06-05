@@ -20,6 +20,48 @@ namespace Microsoft.Web.WebView2.Win32 {
 		COREWEBVIEW2_MOVE_FOCUS_REASON_PREVIOUS = 0,
 	}
 
+	[CCode (cname = "INT", has_type_id = false)]
+	public enum COREWEBVIEW2_WEB_ERROR_STATUS {
+		[CCode (cname = "COREWEBVIEW2_WEB_ERROR_STATUS_UNKNOWN")]
+		COREWEBVIEW2_WEB_ERROR_STATUS_UNKNOWN = 0,
+		[CCode (cname = "COREWEBVIEW2_WEB_ERROR_STATUS_CERTIFICATE_COMMON_NAME_IS_INCORRECT")]
+		COREWEBVIEW2_WEB_ERROR_STATUS_CERTIFICATE_COMMON_NAME_IS_INCORRECT = 0,
+		[CCode (cname = "COREWEBVIEW2_WEB_ERROR_STATUS_CERTIFICATE_EXPIRED")]
+		COREWEBVIEW2_WEB_ERROR_STATUS_CERTIFICATE_EXPIRED = 0,
+		[CCode (cname = "COREWEBVIEW2_WEB_ERROR_STATUS_CLIENT_CERTIFICATE_CONTAINS_ERRORS")]
+		COREWEBVIEW2_WEB_ERROR_STATUS_CLIENT_CERTIFICATE_CONTAINS_ERRORS = 0,
+		[CCode (cname = "COREWEBVIEW2_WEB_ERROR_STATUS_CERTIFICATE_REVOKED")]
+		COREWEBVIEW2_WEB_ERROR_STATUS_CERTIFICATE_REVOKED = 0,
+		[CCode (cname = "COREWEBVIEW2_WEB_ERROR_STATUS_CERTIFICATE_IS_INVALID")]
+		COREWEBVIEW2_WEB_ERROR_STATUS_CERTIFICATE_IS_INVALID = 0,
+		[CCode (cname = "COREWEBVIEW2_WEB_ERROR_STATUS_SERVER_UNREACHABLE")]
+		COREWEBVIEW2_WEB_ERROR_STATUS_SERVER_UNREACHABLE = 0,
+		[CCode (cname = "COREWEBVIEW2_WEB_ERROR_STATUS_TIMEOUT")]
+		COREWEBVIEW2_WEB_ERROR_STATUS_TIMEOUT = 0,
+		[CCode (cname = "COREWEBVIEW2_WEB_ERROR_STATUS_ERROR_HTTP_INVALID_SERVER_RESPONSE")]
+		COREWEBVIEW2_WEB_ERROR_STATUS_ERROR_HTTP_INVALID_SERVER_RESPONSE = 0,
+		[CCode (cname = "COREWEBVIEW2_WEB_ERROR_STATUS_CONNECTION_ABORTED")]
+		COREWEBVIEW2_WEB_ERROR_STATUS_CONNECTION_ABORTED = 0,
+		[CCode (cname = "COREWEBVIEW2_WEB_ERROR_STATUS_CONNECTION_RESET")]
+		COREWEBVIEW2_WEB_ERROR_STATUS_CONNECTION_RESET = 0,
+		[CCode (cname = "COREWEBVIEW2_WEB_ERROR_STATUS_DISCONNECTED")]
+		COREWEBVIEW2_WEB_ERROR_STATUS_DISCONNECTED = 0,
+		[CCode (cname = "COREWEBVIEW2_WEB_ERROR_STATUS_CANNOT_CONNECT")]
+		COREWEBVIEW2_WEB_ERROR_STATUS_CANNOT_CONNECT = 0,
+		[CCode (cname = "COREWEBVIEW2_WEB_ERROR_STATUS_HOST_NAME_NOT_RESOLVED")]
+		COREWEBVIEW2_WEB_ERROR_STATUS_HOST_NAME_NOT_RESOLVED = 0,
+		[CCode (cname = "COREWEBVIEW2_WEB_ERROR_STATUS_OPERATION_CANCELED")]
+		COREWEBVIEW2_WEB_ERROR_STATUS_OPERATION_CANCELED = 0,
+		[CCode (cname = "COREWEBVIEW2_WEB_ERROR_STATUS_REDIRECT_FAILED")]
+		COREWEBVIEW2_WEB_ERROR_STATUS_REDIRECT_FAILED = 0,
+		[CCode (cname = "COREWEBVIEW2_WEB_ERROR_STATUS_UNEXPECTED_ERROR")]
+		COREWEBVIEW2_WEB_ERROR_STATUS_UNEXPECTED_ERROR = 0,
+		[CCode (cname = "COREWEBVIEW2_WEB_ERROR_STATUS_VALID_AUTHENTICATION_CREDENTIALS_REQUIRED")]
+		COREWEBVIEW2_WEB_ERROR_STATUS_VALID_AUTHENTICATION_CREDENTIALS_REQUIRED = 0,
+		[CCode (cname = "COREWEBVIEW2_WEB_ERROR_STATUS_VALID_PROXY_AUTHENTICATION_REQUIRED")]
+		COREWEBVIEW2_WEB_ERROR_STATUS_VALID_PROXY_AUTHENTICATION_REQUIRED = 0,
+	}
+
 	[CCode (cname = "EventRegistrationToken")]
 	public struct EventRegistrationToken {
 		public long value;
@@ -37,543 +79,1101 @@ namespace Microsoft.Web.WebView2.Win32 {
 		public abstract uint release ();
 	}
 
-	[CCode (cname = "ICoreWebView2", ref_function = "", unref_function = "")]
-	public interface ICoreWebView2 : IUnknown {
-		[CCode (cname = "get_Settings")]
-		public abstract int get_settings (
-			void* settings
+
+	[CCode (cname = $(VapiEmitter.quoted_c_string (t.Name)), ref_function = "", unref_function = "")]
+	public interface $(t.Name) : $(parent) {
+
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "get_Source")]
-		public abstract int get_source (
-			[CCode (type_id = "LPCWSTR")] uint16** uri
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "Navigate")]
-		public abstract int navigate (
-			[CCode (type_id = "LPCWSTR")] uint16* uri
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "NavigateToString")]
-		public abstract int navigate_to_string (
-			[CCode (type_id = "LPCWSTR")] uint16* html_content
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "add_NavigationStarting")]
-		public abstract int add_navigation_starting (
-			void* event_handler,
-			EventRegistrationToken* token
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "remove_NavigationStarting")]
-		public abstract int remove_navigation_starting (
-			EventRegistrationToken token
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "add_ContentLoading")]
-		public abstract int add_content_loading (
-			void* event_handler,
-			EventRegistrationToken* token
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "remove_ContentLoading")]
-		public abstract int remove_content_loading (
-			EventRegistrationToken token
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "add_SourceChanged")]
-		public abstract int add_source_changed (
-			void* event_handler,
-			EventRegistrationToken* token
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "remove_SourceChanged")]
-		public abstract int remove_source_changed (
-			EventRegistrationToken token
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "add_HistoryChanged")]
-		public abstract int add_history_changed (
-			void* event_handler,
-			EventRegistrationToken* token
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "remove_HistoryChanged")]
-		public abstract int remove_history_changed (
-			EventRegistrationToken token
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "add_NavigationCompleted")]
-		public abstract int add_navigation_completed (
-			unowned ICoreWebView2NavigationCompletedEventHandler event_handler,
-			EventRegistrationToken* token
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "remove_NavigationCompleted")]
-		public abstract int remove_navigation_completed (
-			EventRegistrationToken token
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "add_FrameNavigationStarting")]
-		public abstract int add_frame_navigation_starting (
-			void* event_handler,
-			EventRegistrationToken* token
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "remove_FrameNavigationStarting")]
-		public abstract int remove_frame_navigation_starting (
-			EventRegistrationToken token
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "add_FrameNavigationCompleted")]
-		public abstract int add_frame_navigation_completed (
-			unowned ICoreWebView2NavigationCompletedEventHandler event_handler,
-			EventRegistrationToken* token
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "remove_FrameNavigationCompleted")]
-		public abstract int remove_frame_navigation_completed (
-			EventRegistrationToken token
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "add_ScriptDialogOpening")]
-		public abstract int add_script_dialog_opening (
-			void* event_handler,
-			EventRegistrationToken* token
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "remove_ScriptDialogOpening")]
-		public abstract int remove_script_dialog_opening (
-			EventRegistrationToken token
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "add_PermissionRequested")]
-		public abstract int add_permission_requested (
-			void* event_handler,
-			EventRegistrationToken* token
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "remove_PermissionRequested")]
-		public abstract int remove_permission_requested (
-			EventRegistrationToken token
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "add_ProcessFailed")]
-		public abstract int add_process_failed (
-			void* event_handler,
-			EventRegistrationToken* token
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "remove_ProcessFailed")]
-		public abstract int remove_process_failed (
-			EventRegistrationToken token
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "AddScriptToExecuteOnDocumentCreated")]
-		public abstract int add_script_to_execute_on_document_created (
-			[CCode (type_id = "LPCWSTR")] uint16* java_script,
-			void* handler
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "RemoveScriptToExecuteOnDocumentCreated")]
-		public abstract int remove_script_to_execute_on_document_created (
-			[CCode (type_id = "LPCWSTR")] uint16* id
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "ExecuteScript")]
-		public abstract int execute_script (
-			[CCode (type_id = "LPCWSTR")] uint16* java_script,
-			unowned ICoreWebView2ExecuteScriptCompletedHandler handler
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "CapturePreview")]
-		public abstract int capture_preview (
-			COREWEBVIEW2CAPTUREPREVIEWIMAGEFORMAT image_format,
-			void* image_stream,
-			unowned ICoreWebView2CapturePreviewCompletedHandler handler
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
+			$(ptype) $(pname)$(comma)
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "Reload")]
-		public abstract int reload (
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
 		);
 
-		[CCode (cname = "PostWebMessageAsJson")]
-		public abstract int post_web_message_as_json (
-			[CCode (type_id = "LPCWSTR")] uint16* web_message_as_json
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "PostWebMessageAsString")]
-		public abstract int post_web_message_as_string (
-			[CCode (type_id = "LPCWSTR")] uint16* web_message_as_string
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "add_WebMessageReceived")]
-		public abstract int add_web_message_received (
-			void* handler,
-			EventRegistrationToken* token
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "remove_WebMessageReceived")]
-		public abstract int remove_web_message_received (
-			EventRegistrationToken token
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "CallDevToolsProtocolMethod")]
-		public abstract int call_dev_tools_protocol_method (
-			[CCode (type_id = "LPCWSTR")] uint16* method_name,
-			[CCode (type_id = "LPCWSTR")] uint16* parameters_as_json,
-			void* handler
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
+			$(ptype) $(pname)$(comma)
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "get_BrowserProcessId")]
-		public abstract int get_browser_process_id (
-			void** value
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "get_CanGoBack")]
-		public abstract int get_can_go_back (
-			int* can_go_back
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "get_CanGoForward")]
-		public abstract int get_can_go_forward (
-			int* can_go_forward
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "GoBack")]
-		public abstract int go_back (
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
 		);
 
-		[CCode (cname = "GoForward")]
-		public abstract int go_forward (
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
 		);
 
-		[CCode (cname = "GetDevToolsProtocolEventReceiver")]
-		public abstract int get_dev_tools_protocol_event_receiver (
-			[CCode (type_id = "LPCWSTR")] uint16* event_name,
-			void* receiver
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "Stop")]
-		public abstract int stop (
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
 		);
 
-		[CCode (cname = "add_NewWindowRequested")]
-		public abstract int add_new_window_requested (
-			void* event_handler,
-			EventRegistrationToken* token
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "remove_NewWindowRequested")]
-		public abstract int remove_new_window_requested (
-			EventRegistrationToken token
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "add_DocumentTitleChanged")]
-		public abstract int add_document_title_changed (
-			void* event_handler,
-			EventRegistrationToken* token
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "remove_DocumentTitleChanged")]
-		public abstract int remove_document_title_changed (
-			EventRegistrationToken token
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "get_DocumentTitle")]
-		public abstract int get_document_title (
-			[CCode (type_id = "LPCWSTR")] uint16** title
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "AddHostObjectToScript")]
-		public abstract int add_host_object_to_script (
-			[CCode (type_id = "LPCWSTR")] uint16* name,
-			void** object
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "RemoveHostObjectFromScript")]
-		public abstract int remove_host_object_from_script (
-			[CCode (type_id = "LPCWSTR")] uint16* name
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "OpenDevToolsWindow")]
-		public abstract int open_dev_tools_window (
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
 		);
 
-		[CCode (cname = "add_ContainsFullScreenElementChanged")]
-		public abstract int add_contains_full_screen_element_changed (
-			void* event_handler,
-			EventRegistrationToken* token
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "remove_ContainsFullScreenElementChanged")]
-		public abstract int remove_contains_full_screen_element_changed (
-			EventRegistrationToken token
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "get_ContainsFullScreenElement")]
-		public abstract int get_contains_full_screen_element (
-			int* contains_full_screen_element
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "add_WebResourceRequested")]
-		public abstract int add_web_resource_requested (
-			void* event_handler,
-			EventRegistrationToken* token
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "remove_WebResourceRequested")]
-		public abstract int remove_web_resource_requested (
-			EventRegistrationToken token
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "AddWebResourceRequestedFilter")]
-		public abstract int add_web_resource_requested_filter (
-			void* uri,
-			const COREWEBVIEW2WebRESOURCECONTEXT resource_context
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "RemoveWebResourceRequestedFilter")]
-		public abstract int remove_web_resource_requested_filter (
-			void* uri,
-			const COREWEBVIEW2WebRESOURCECONTEXT resource_context
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "add_WindowCloseRequested")]
-		public abstract int add_window_close_requested (
-			void* event_handler,
-			EventRegistrationToken* token
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "remove_WindowCloseRequested")]
-		public abstract int remove_window_close_requested (
-			EventRegistrationToken token
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
 	}
 
-	[CCode (cname = "ICoreWebView2NavigationCompletedEventHandler", ref_function = "", unref_function = "")]
-	public interface ICoreWebView2NavigationCompletedEventHandler : IUnknown {
-		[CCode (cname = "Invoke")]
-		public abstract int invoke (
-			unowned ICoreWebView2 sender,
-			unowned ICoreWebView2NavigationCompletedEventArgs args
+
+	[CCode (cname = $(VapiEmitter.quoted_c_string (t.Name)), ref_function = "", unref_function = "")]
+	public interface $(t.Name) : $(parent) {
+
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
 	}
 
-	[CCode (cname = "ICoreWebView2ExecuteScriptCompletedHandler", ref_function = "", unref_function = "")]
-	public interface ICoreWebView2ExecuteScriptCompletedHandler : IUnknown {
-		[CCode (cname = "Invoke")]
-		public abstract int invoke (
-			int error_code,
-			[CCode (type_id = "LPCWSTR")] uint16* result
+
+	[CCode (cname = $(VapiEmitter.quoted_c_string (t.Name)), ref_function = "", unref_function = "")]
+	public interface $(t.Name) : $(parent) {
+
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
 	}
 
-	[CCode (cname = "ICoreWebView2CapturePreviewCompletedHandler", ref_function = "", unref_function = "")]
-	public interface ICoreWebView2CapturePreviewCompletedHandler : IUnknown {
-		[CCode (cname = "Invoke")]
-		public abstract int invoke (
-			int error_code
+
+	[CCode (cname = $(VapiEmitter.quoted_c_string (t.Name)), ref_function = "", unref_function = "")]
+	public interface $(t.Name) : $(parent) {
+
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
 	}
 
-	[CCode (cname = "ICoreWebView2Controller", ref_function = "", unref_function = "")]
-	public interface ICoreWebView2Controller : IUnknown {
-		[CCode (cname = "get_IsVisible")]
-		public abstract int get_is_visible (
-			int* is_visible
+
+	[CCode (cname = $(VapiEmitter.quoted_c_string (t.Name)), ref_function = "", unref_function = "")]
+	public interface $(t.Name) : $(parent) {
+
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "put_IsVisible")]
-		public abstract int put_is_visible (
-			int is_visible
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "get_Bounds")]
-		public abstract int get_bounds (
-			Win32.Foundation.Rect* bounds
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "put_Bounds")]
-		public abstract int put_bounds (
-			Win32.Foundation.Rect bounds
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "get_ZoomFactor")]
-		public abstract int get_zoom_factor (
-			double* zoom_factor
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "put_ZoomFactor")]
-		public abstract int put_zoom_factor (
-			double zoom_factor
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "add_ZoomFactorChanged")]
-		public abstract int add_zoom_factor_changed (
-			void* event_handler,
-			EventRegistrationToken* token
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "remove_ZoomFactorChanged")]
-		public abstract int remove_zoom_factor_changed (
-			EventRegistrationToken token
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "SetBoundsAndZoomFactor")]
-		public abstract int set_bounds_and_zoom_factor (
-			Win32.Foundation.Rect bounds,
-			double zoom_factor
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "MoveFocus")]
-		public abstract int move_focus (
-			COREWEBVIEW2MOVEFOCUSREASON reason
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "add_MoveFocusRequested")]
-		public abstract int add_move_focus_requested (
-			void* event_handler,
-			EventRegistrationToken* token
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "remove_MoveFocusRequested")]
-		public abstract int remove_move_focus_requested (
-			EventRegistrationToken token
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "add_GotFocus")]
-		public abstract int add_got_focus (
-			void* event_handler,
-			EventRegistrationToken* token
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "remove_GotFocus")]
-		public abstract int remove_got_focus (
-			EventRegistrationToken token
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "add_LostFocus")]
-		public abstract int add_lost_focus (
-			void* event_handler,
-			EventRegistrationToken* token
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "remove_LostFocus")]
-		public abstract int remove_lost_focus (
-			EventRegistrationToken token
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "add_AcceleratorKeyPressed")]
-		public abstract int add_accelerator_key_pressed (
-			void* event_handler,
-			EventRegistrationToken* token
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "remove_AcceleratorKeyPressed")]
-		public abstract int remove_accelerator_key_pressed (
-			EventRegistrationToken token
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "get_ParentWindow")]
-		public abstract int get_parent_window (
-			[CCode (type_id = "HWND")] void** parent_window
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "put_ParentWindow")]
-		public abstract int put_parent_window (
-			[CCode (type_id = "HWND")] void* parent_window
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "NotifyParentWindowPositionChanged")]
-		public abstract int notify_parent_window_position_changed (
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
 		);
 
-		[CCode (cname = "Close")]
-		public abstract int close (
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
 		);
 
-		[CCode (cname = "get_CoreWebView2")]
-		public abstract int get_core_web_view2 (
-			out unowned ICoreWebView2 core_web_view2
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
 	}
 
-	[CCode (cname = "ICoreWebView2Environment", ref_function = "", unref_function = "")]
-	public interface ICoreWebView2Environment : IUnknown {
-		[CCode (cname = "CreateCoreWebView2Controller")]
-		public abstract int create_core_web_view2controller (
-			[CCode (type_id = "HWND")] void* parent_window,
-			unowned ICoreWebView2CreateCoreWebView2ControllerCompletedHandler handler
+
+	[CCode (cname = $(VapiEmitter.quoted_c_string (t.Name)), ref_function = "", unref_function = "")]
+	public interface $(t.Name) : $(parent) {
+
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "CreateWebResourceResponse")]
-		public abstract int create_web_resource_response (
-			void* content,
-			void* status_code,
-			[CCode (type_id = "LPCWSTR")] uint16* reason_phrase,
-			[CCode (type_id = "LPCWSTR")] uint16* headers,
-			void* response
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
+			$(ptype) $(pname)$(comma)
+
+
+			$(ptype) $(pname)$(comma)
+
+
+			$(ptype) $(pname)$(comma)
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "get_BrowserVersionString")]
-		public abstract int get_browser_version_string (
-			[CCode (type_id = "LPCWSTR")] uint16** version_info
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "add_NewBrowserVersionAvailable")]
-		public abstract int add_new_browser_version_available (
-			void* event_handler,
-			EventRegistrationToken* token
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "remove_NewBrowserVersionAvailable")]
-		public abstract int remove_new_browser_version_available (
-			EventRegistrationToken token
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
 	}
 
-	[CCode (cname = "ICoreWebView2CreateCoreWebView2ControllerCompletedHandler", ref_function = "", unref_function = "")]
-	public interface ICoreWebView2CreateCoreWebView2ControllerCompletedHandler : IUnknown {
-		[CCode (cname = "Invoke")]
-		public abstract int invoke (
-			int error_code,
-			unowned ICoreWebView2Controller result
+
+	[CCode (cname = $(VapiEmitter.quoted_c_string (t.Name)), ref_function = "", unref_function = "")]
+	public interface $(t.Name) : $(parent) {
+
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
 	}
 
-	[CCode (cname = "ICoreWebView2CreateCoreWebView2EnvironmentCompletedHandler", ref_function = "", unref_function = "")]
-	public interface ICoreWebView2CreateCoreWebView2EnvironmentCompletedHandler : IUnknown {
-		[CCode (cname = "Invoke")]
-		public abstract int invoke (
-			int error_code,
-			unowned ICoreWebView2Environment result
+
+	[CCode (cname = $(VapiEmitter.quoted_c_string (t.Name)), ref_function = "", unref_function = "")]
+	public interface $(t.Name) : $(parent) {
+
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
 	}
 
-	[CCode (cname = "ICoreWebView2NavigationCompletedEventArgs", ref_function = "", unref_function = "")]
-	public interface ICoreWebView2NavigationCompletedEventArgs : IUnknown {
-		[CCode (cname = "get_IsSuccess")]
-		public abstract int get_is_success (
-			int* is_success
+
+	[CCode (cname = $(VapiEmitter.quoted_c_string (t.Name)), ref_function = "", unref_function = "")]
+	public interface $(t.Name) : $(parent) {
+
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "get_WebErrorStatus")]
-		public abstract int get_web_error_status (
-			COREWEBVIEW2WebERRORSTATUS* web_error_status
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
-		[CCode (cname = "get_NavigationId")]
-		public abstract int get_navigation_id (
-			void** navigation_id
+
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		public abstract $(ret) $(vala_name) (
+
+
+			$(ptype) $(pname)$(comma)
+
+
 		);
 
 	}

@@ -438,9 +438,11 @@ namespace Win32 {
 			if (t.Interface != null && t.Interface.Name.length > 0) {
 				parent = t.Interface.Name;
 			}
-			this.buffer.append ("""	[CCode (cname = $(VapiEmitter.quoted_c_string (t.Name)), ref_function = "", unref_function = "")]
+			this.buffer.append (@"
+	[CCode (cname = $(VapiEmitter.quoted_c_string (t.Name)), ref_function = """", unref_function = """")]
 	public interface $(t.Name) : $(parent) {
-""");
+
+");
 			foreach (var method in t.Methods) {
 				this.emit_com_method (method);
 			}
@@ -450,8 +452,10 @@ namespace Win32 {
 		void emit_com_method (Parse.Function method) {
 			var vala_name = NameMapper.com_method_name (method.Name);
 			var ret = VapiEmitter.com_return_type (method.ReturnType);
-			this.buffer.append (@"		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+			this.buffer.append (@"
+		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
 		public abstract $(ret) $(vala_name) (
+
 ");
 			var n = method.Params.size;
 			for (int i = 0; i < n; i++) {
@@ -459,10 +463,15 @@ namespace Win32 {
 				var ptype = VapiEmitter.com_param_type (p, this.shard_basename, this.emitted_com_names);
 				var pname = NameMapper.to_snake (p.Name.length > 0 ? p.Name : @"param$(i)");
 				var comma = i < n - 1 ? "," : "";
-				this.buffer.append (@"			$(ptype) $(pname)$(comma)
+				this.buffer.append (@"
+			$(ptype) $(pname)$(comma)
+
 ");
 			}
-			this.buffer.append ("\t\t);\n\n");
+			this.buffer.append (@"
+		);
+
+");
 		}
 
 		static string com_return_type (Parse.TypeRef type_ref) {
@@ -497,7 +506,26 @@ namespace Win32 {
 				}
 				return "unowned " + iface;
 			}
+			if (type_ref.Kind == "PointerTo" && type_ref.Child != null
+				&& VapiEmitter.com_param_is_out (p)) {
+				if (type_ref.Child.Name == "EventRegistrationToken") {
+					return "out EventRegistrationToken";
+				}
+				var inner = VapiEmitter.vala_type_for_ref (type_ref.Child, "", p.Attrs, shard_basename);
+				return "out " + inner;
+			}
 			return VapiEmitter.vala_param_type (p, shard_basename);
+		}
+
+		static bool com_param_is_out (Parse.Parameter p) {
+			if (VapiEmitter.attrs_contain (p.Attrs, "Out") || VapiEmitter.attrs_contain (p.Attrs, "Retval")) {
+				return true;
+			}
+			if (p.Type.Kind == "PointerTo" && p.Type.Child != null
+				&& p.Type.Child.Name == "EventRegistrationToken") {
+				return true;
+			}
+			return false;
 		}
 
 		void emit_function (Parse.Function f) {
@@ -777,6 +805,7 @@ namespace Win32 {
 			case "HANDLE":
 				return "void*";
 			case "HRESULT":
+			case "int":
 				return "int";
 			case "DOUBLE":
 			case "double":

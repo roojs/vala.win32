@@ -72,6 +72,13 @@ int main (string[] args) {
 	return 0;
 }
 
+static string normalize_attr (string a) {
+	if (a.length == 0) {
+		return a;
+	}
+	return a.substring (0, 1).up () + a.substring (1).down ();
+}
+
 static Json.Object api_ref (string name, bool com = false, string api = "WebView2") {
 	var o = new Json.Object ();
 	o.set_string_member ("Kind", "ApiRef");
@@ -130,7 +137,7 @@ static Json.Array extract_param_attrs (string raw) {
 			}
 			a = a.strip ();
 			if (a.length > 0) {
-				attrs.add_string_element (a);
+				attrs.add_string_element (normalize_attr (a));
 			}
 		}
 		pos = close + 2;

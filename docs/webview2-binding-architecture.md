@@ -34,9 +34,19 @@ The capture experiment lives in **`src/webview2-capture-spike.c`** only — see 
 
 WinMD is optional upstream input; today we scrape the **vendored `WebView2.h`** so Linux can regen the JSON without .NET.
 
-## Suggested next step (7i)
+## Regenerating vapi (Phase 7i)
 
-- Teach `generate-binding` to emit `Kind: Com` from `metadata/webview2/api/WebView2.json`.
-- Shrink plumbing to loader-only; apps use generated bindings.
+```bash
+./scripts/regen-webview2-vapi.sh
+```
+
+Or: `meson compile -C build regen-webview2-vapi`
+
+Writes [`vapi/win32-webview2.vapi`](../vapi/win32-webview2.vapi) from committed JSON via `generate-binding` (`Kind: Com` emit). Filter: [`metadata/filters/webview2.filter`](../metadata/filters/webview2.filter).
+
+## Still open after 7i bootstrap
+
+- Shrink `webview2-plumbing.c` to loader-only; migrate demo to generated `ICoreWebView2*` bindings.
+- Expand filter / dep types as apps need more of the SDK surface.
 
 See [9. phase 7 webview2 research and integration.md](plans/9.%20phase%207%20webview2%20research%20and%20integration.md).
