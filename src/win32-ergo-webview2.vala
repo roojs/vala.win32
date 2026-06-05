@@ -1,5 +1,5 @@
 /* Hand-maintained ergonomic baseline (Phase 7h).
- * Target for generator: pkg win32-webview2 / Win32.WebView widget profile.
+ * Target for generator: pkg win32-ergo-webview2 / Win32.WebView widget profile.
  * One WebView per process today (Ui.WebView glue singleton).
  *
  * Layout lives here (x, y, width, height) — glue only receives set_bounds_xywh. */

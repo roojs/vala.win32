@@ -111,7 +111,6 @@ regen_base_cmd = [
   '--filter', filter_file,
   '--api-list', api_list_file,
   '--out', vapidir,
-  '--debug-critical',
 ]
 
 regen_vapi = custom_target(
@@ -388,14 +387,14 @@ webview2_header = webview2_sdk / 'include' / 'WebView2.h'
 webview2_loader_x64 = webview2_sdk / 'x64' / 'WebView2Loader.dll'
 have_webview2_sdk = run_command('test', '-f', webview2_header, check: false).returncode() == 0
 vendor_webview2 = find_program('scripts/vendor-webview2-sdk.sh')
-webview2_loader_c = project_root / 'src' / 'webview2-loader.c'
-webview2_com_glue_c = project_root / 'src' / 'webview2-com-glue.c'
-webview2_host_vala = files('src/webview2-host.vala')
-webview2_capture_spike_c = project_root / 'src' / 'webview2-capture-spike.c'
-webview2_link_libs = ['-lole32', '-luuid', '-lshlwapi', '-lshell32', '-ladvapi32']
+webview2_loader_c = project_root / 'src' / 'win32-ui-webview2-loader.c'
+webview2_com_glue_c = project_root / 'src' / 'win32-ui-webview2-com-glue.c'
+webview2_host_glue_c = project_root / 'src' / 'win32-ui-webview2-host-glue.c'
+webview2_host_vala = files('src/win32-ui-webview2-host.vala')
+webview2_link_libs = ['-lole32', '-luuid', '-lshell32', '-ladvapi32']
 
 if have_webview2_sdk
-  webview2_vala_args = ['--vapidir', vapidir, '--profile=posix', '--pkg', 'win32-webview2']
+  webview2_vala_args = ['--vapidir', vapidir, '--profile=posix', '--pkg', 'win32-ui-webview2']
   foreach pkg : example_pkgs
     webview2_vala_args += ['--pkg', pkg]
   endforeach
@@ -416,7 +415,7 @@ if have_webview2_sdk and host_machine.system() == 'windows'
     wide_strings_vala,
     webview2_loader_c,
     webview2_com_glue_c,
-    webview2_capture_spike_c,
+    webview2_host_glue_c,
   ]
   if get_option('regen_on_build')
     webview2_sources += regen_vapi
@@ -426,6 +425,7 @@ if have_webview2_sdk and host_machine.system() == 'windows'
     webview2_sources,
     vala_args: webview2_vala_args + webview2_vala_link,
     include_directories: webview2_inc,
+    c_args: vala_win32_c_quiet,
     link_args: ['-mwindows'] + webview2_link_libs,
     install: false,
   )
@@ -439,6 +439,56 @@ if have_webview2_sdk and host_machine.system() == 'windows'
     depends: webview2_host_exe,
     build_by_default: true,
   )
+
+  webview2_ergo_glib = dependency('glib-2.0', required: false)
+  webview2_ergo_gobject = dependency('gobject-2.0', required: false)
+  have_webview2_ergo = webview2_ergo_glib.found() and webview2_ergo_gobject.found()
+  if have_webview2_ergo
+    webview2_ergo_vala_args = ['--vapidir', vapidir, '--profile=gobject', '--pkg', 'win32-ui-webview2']
+    foreach pkg : example_pkgs
+      webview2_ergo_vala_args += ['--pkg', pkg]
+    endforeach
+    webview2_ergo_link = ['-X', '-mwindows'] + vala_win32_quiet_x
+    foreach lib : webview2_link_libs
+      webview2_ergo_link += ['-X', lib]
+    endforeach
+    webview2_ergo_sources = [
+      files('examples/webview2-ergo-demo.vala'),
+      files('src/win32-ergo-webview2.vala'),
+      webview2_host_vala,
+      control_strings_vala,
+      wide_strings_vala,
+      widgets_vala,
+      webview2_loader_c,
+      webview2_com_glue_c,
+      webview2_host_glue_c,
+    ]
+    if get_option('regen_on_build')
+      webview2_ergo_sources += regen_vapi
+    endif
+    webview2_ergo_exe = executable(
+      'webview2-ergo-demo',
+      webview2_ergo_sources,
+      vala_args: webview2_ergo_vala_args + webview2_ergo_link,
+      include_directories: webview2_inc,
+      c_args: vala_win32_c_quiet,
+      dependencies: [webview2_ergo_glib, webview2_ergo_gobject],
+      link_args: ['-mwindows'] + webview2_link_libs,
+      install: false,
+    )
+    custom_target(
+      'webview2-ergo-copy-loader',
+      output: 'webview2-ergo-loader.stamp',
+      command: [
+        'cp', webview2_loader_x64, meson.current_build_dir(),
+        '&&', 'touch', '@OUTPUT@',
+      ],
+      depends: webview2_ergo_exe,
+      build_by_default: true,
+    )
+  else
+    warning('webview2-ergo-demo skipped: install glib2-devel (MSYS2 UCRT64) for Track B WebView')
+  endif
 elif host_machine.system() == 'windows'
   warning('webview2-host-demo skipped: run ./scripts/vendor-webview2-sdk.sh')
 endif
@@ -458,7 +508,7 @@ regen_webview2_vapi_cmd = [
   '--out', vapidir,
   '--symbol-prefix', 'Microsoft.Web.WebView2.Win32',
   '--no-basename-in-symbol',
-  '--cheader', 'WebView2.h',
+  '--cheader', 'win32-ui-webview2-sdk.h',
   '--vala-namespace', 'Microsoft.Web.WebView2.Win32',
   '--vapi-only',
 ]
