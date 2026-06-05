@@ -44,6 +44,7 @@ control_strings_vala = generated_root / 'win32-ui-control-strings.vala'
 wide_strings_vala = generated_root / 'win32-wide-strings.vala'
 widgets_vala = generated_root / 'win32-widgets.vala'
 errors_vala = generated_root / 'win32-errors.vala'
+webview2_host_glue_vala = generated_root / 'win32-ui-webview2-host-glue.vala'
 
 example_pkg_dialogs = 'win32-ui-controls-dialogs'
 example_pkg_gdi = 'win32-graphics-gdi'
@@ -75,7 +76,9 @@ generate_sources = files(
   'src/Generate/ErrorEmitter.vala',
   'src/Generate/WidgetCodegen.vala',
   'src/Generate/WidgetEmitter.vala',
+  'src/Generate/WebView2GlueEmitter.vala',
   'src/Generate/WideStringsEmitter.vala',
+  'src/Generate/Parser/ErgoNativeMapEntry.vala',
   'src/Generate/Parser/WidgetBehaviorProfileSpec.vala',
   'src/Generate/Parser/WidgetConventionsFile.vala',
   'src/Generate/Parser/ApiFileEntry.vala',

@@ -229,6 +229,17 @@ int main (string[] args) {
 		return 1;
 	}
 
+	try {
+		var webview2_glue_emitter = new Generate.WebView2GlueEmitter ();
+		var webview2_glue = webview2_glue_emitter.emit (conventions);
+		var webview2_glue_path = GLib.Path.build_filename (generated_dir, "win32-ui-webview2-host-glue.vala");
+		GLib.FileUtils.set_contents (webview2_glue_path, webview2_glue);
+		print ("wrote %s (%u bytes)\n", webview2_glue_path, webview2_glue.length);
+	} catch (GLib.Error e) {
+		stderr.printf ("webview2 glue emit: %s\n", e.message);
+		return 1;
+	}
+
 	var errors_emitter = new Generate.ErrorEmitter ();
 	var errors_path = GLib.Path.build_filename (generated_dir, "win32-errors.vala");
 	try {

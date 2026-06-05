@@ -1,11 +1,7 @@
-/* Phase 7i: WebView2 glue — hand baseline for generator (not ergo).
+/* Phase 7i: WebView2 glue — hand host shell (async bootstrap, layout, shared helpers).
  *
- * HAND (keep): HostState, async bootstrap, navigate queue, bounds, take_com_string.
- * GENERATOR TARGET: public methods below marked "glue map" — one template per
- *   ergo_native_map row in metadata/widget-conventions.json WebView2.
- *
- * COM calls use win32-ui-webview2.vapi. Hand C: win32-ui-webview2-{loader,com-glue}.c only.
- * Ergo: src/win32-ergo-webview2.vala → delegates here (Win32.Ui.WebView). */
+ * Sync glue methods: generated/win32-ui-webview2-host-glue.vala (from ergo_native_map).
+ * Ergo: src/win32-ergo-webview2.vala → Win32.WebView. Hand C: loader + com-glue only. */
 
 using Microsoft.Web.WebView2.Win32;
 using Win32.Ui;
@@ -61,6 +57,14 @@ private Microsoft.Web.WebView2.Win32.Rect client_rect (void* hwnd) {
 
 private bool com_ok (int hr) {
 	return hr >= 0;
+}
+
+private bool webview_ready () {
+	return g_host != null && g_host.ready && g_host.webview != null;
+}
+
+private bool controller_ready () {
+	return g_host != null && g_host.ready && g_host.controller != null;
 }
 
 private string take_com_string (uint16* com_str) {
@@ -184,153 +188,6 @@ public bool navigate (string url) {
 		flush_pending_navigate ();
 	}
 	return true;
-}
-
-/* --- glue map (generator): webview sync void → com_ok(g_host.webview.<name>()) --- */
-
-[CCode (cname = "vala_webview2_host_navigate_to_string")]
-public bool navigate_to_string (string html) {
-	if (g_host == null || !g_host.ready || g_host.webview == null || html.length == 0) {
-		return false;
-	}
-	return com_ok (g_host.webview.navigate_to_string (WideString (html).ptr));
-}
-
-[CCode (cname = "vala_webview2_host_reload")]
-public bool reload () {
-	if (g_host == null || !g_host.ready || g_host.webview == null) {
-		return false;
-	}
-	return com_ok (g_host.webview.reload ());
-}
-
-[CCode (cname = "vala_webview2_host_stop")]
-public bool stop () {
-	if (g_host == null || !g_host.ready || g_host.webview == null) {
-		return false;
-	}
-	return com_ok (g_host.webview.stop ());
-}
-
-[CCode (cname = "vala_webview2_host_go_back")]
-public bool go_back () {
-	if (g_host == null || !g_host.ready || g_host.webview == null) {
-		return false;
-	}
-	return com_ok (g_host.webview.go_back ());
-}
-
-[CCode (cname = "vala_webview2_host_go_forward")]
-public bool go_forward () {
-	if (g_host == null || !g_host.ready || g_host.webview == null) {
-		return false;
-	}
-	return com_ok (g_host.webview.go_forward ());
-}
-
-[CCode (cname = "vala_webview2_host_execute_script")]
-public bool execute_script (string js) {
-	/* vapi needs ICoreWebView2ExecuteScriptCompletedHandler — wiring deferred. */
-	if (g_host == null || !g_host.ready || g_host.webview == null || js.length == 0) {
-		return false;
-	}
-	return false;
-}
-
-[CCode (cname = "vala_webview2_host_post_web_message_as_json")]
-public bool post_web_message_as_json (string json) {
-	if (g_host == null || !g_host.ready || g_host.webview == null || json.length == 0) {
-		return false;
-	}
-	return com_ok (g_host.webview.post_web_message_as_json (WideString (json).ptr));
-}
-
-[CCode (cname = "vala_webview2_host_get_source")]
-public string get_source () {
-	if (g_host == null || !g_host.ready || g_host.webview == null) {
-		return "";
-	}
-	uint16* uri = null;
-	if (!com_ok (g_host.webview.get_source (out uri))) {
-		return "";
-	}
-	return take_com_string (uri);
-}
-
-[CCode (cname = "vala_webview2_host_get_can_go_back")]
-public bool get_can_go_back () {
-	if (g_host == null || !g_host.ready || g_host.webview == null) {
-		return false;
-	}
-	int val = 0;
-	if (!com_ok (g_host.webview.get_can_go_back (out val))) {
-		return false;
-	}
-	return val != 0;
-}
-
-[CCode (cname = "vala_webview2_host_get_can_go_forward")]
-public bool get_can_go_forward () {
-	if (g_host == null || !g_host.ready || g_host.webview == null) {
-		return false;
-	}
-	int val = 0;
-	if (!com_ok (g_host.webview.get_can_go_forward (out val))) {
-		return false;
-	}
-	return val != 0;
-}
-
-[CCode (cname = "vala_webview2_host_get_document_title")]
-public string get_document_title () {
-	if (g_host == null || !g_host.ready || g_host.webview == null) {
-		return "";
-	}
-	uint16* title = null;
-	if (!com_ok (g_host.webview.get_document_title (out title))) {
-		return "";
-	}
-	return take_com_string (title);
-}
-
-[CCode (cname = "vala_webview2_host_put_is_visible")]
-public bool put_is_visible (bool visible) {
-	if (g_host == null || !g_host.ready || g_host.controller == null) {
-		return false;
-	}
-	return com_ok (g_host.controller.put_is_visible (visible ? 1 : 0));
-}
-
-[CCode (cname = "vala_webview2_host_get_is_visible")]
-public bool get_is_visible () {
-	if (g_host == null || !g_host.ready || g_host.controller == null) {
-		return false;
-	}
-	int val = 0;
-	if (!com_ok (g_host.controller.get_is_visible (out val))) {
-		return false;
-	}
-	return val != 0;
-}
-
-[CCode (cname = "vala_webview2_host_put_zoom_factor")]
-public bool put_zoom_factor (double zoom) {
-	if (g_host == null || !g_host.ready || g_host.controller == null) {
-		return false;
-	}
-	return com_ok (g_host.controller.put_zoom_factor (zoom));
-}
-
-[CCode (cname = "vala_webview2_host_get_zoom_factor")]
-public double get_zoom_factor () {
-	if (g_host == null || !g_host.ready || g_host.controller == null) {
-		return 1.0;
-	}
-	double val = 1.0;
-	if (!com_ok (g_host.controller.get_zoom_factor (out val))) {
-		return 1.0;
-	}
-	return val;
 }
 
 [CCode (cname = "vala_webview2_host_on_size")]
