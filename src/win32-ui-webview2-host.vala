@@ -1,7 +1,7 @@
 /* Phase 7i: WebView2 glue — hand host shell(async bootstrap, layout, shared helpers).
  *
- * Sync glue methods: generated/win32-ui-webview2-host-glue.vala(from ergo_native_map).
- * Ergo: src/win32-ergo-webview2.vala → Win32.WebView. Hand C: loader + com-glue only. */
+ * Sync glue methods: generated/win32-ui-webview2-host-glue.vala(WebView2MethodCatalog).
+ * Ergo: generated/win32-ergo-webview2.vala → Win32.WebView. Hand C: loader + com-glue only. */
 
 using Microsoft.Web.WebView2.Win32;
 using Win32.Ui;
@@ -141,6 +141,7 @@ public void finish_setup(
 		stderr.printf("WebView2 put_is_visible failed: 0x%08x\n", (uint) vis);
 	}
 	flush_pending_navigate();
+	events_register(host_webview_com());
 }
 
 [CCode(cname = "vala_webview2_host_create_with_xywh")]
@@ -215,9 +216,18 @@ public void on_size(void* parent_hwnd) {
 
 [CCode(cname = "vala_webview2_host_destroy")]
 public void destroy() {
+	if (webview_ready()) {
+		events_unregister(host_webview_com());
+	}
 	com_release_host();
 	g_host = null;
 }
+
+[CCode(cheader_filename = "win32-ui-webview2-events.h", cname = "vala_webview2_events_register")]
+extern void events_register(ICoreWebView2 webview);
+
+[CCode(cheader_filename = "win32-ui-webview2-events.h", cname = "vala_webview2_events_unregister")]
+extern void events_unregister(ICoreWebView2 webview);
 
 [CCode(cname = "vala_webview2_host_is_ready")]
 public bool is_ready() {

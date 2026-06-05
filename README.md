@@ -94,7 +94,7 @@ C:\msys64\msys2_shell.cmd -defterm -no-start -ucrt64 -c 'cd /x/vala.win32/build-
 |------|--------|
 | Phases 0–5 | Done — win32json vendor, generator, per-shard vapi, common controls, dialogs/menus, widget codegen (`Win32.*` ergonomic layer) |
 | Phase 6 | In progress — API coverage, filter expansion, gap reports |
-| Phase 7 | In progress — COM vapi `win32-ui-webview2.vapi`; hand ergo `Win32.WebView` in `src/win32-ergo-webview2.vala` (→ `win32-ergo-webview2` generator); demos `webview2-host-native` + `webview2-demo` |
+| Phase 7 | In progress — COM vapi `win32-ui-webview2.vapi`; generated ergo `Win32.WebView` in `generated/win32-ergo-webview2.vala`; demos `webview2-host-native` + `webview2-demo` |
 | Phase 8 | Not started — Valadoc, CI, polish |
 
 **Examples:** default **`examples/*.vala`** — `Win32.*` widgets (`--profile=gobject` + MinGW GLib). **`examples/native/`** — raw generated vapi (`native-*` exe names, `--profile=posix`). WebView2 host lives under **`examples/native/`** (`Win32.Ui.WebView` plumbing vapi).
@@ -119,7 +119,7 @@ metadata/             # win32json filter lists; webview2 JSON (committed)
 tools/                # generate-binding, generate-webview2-json
 src/Generate/         # Generator and widget templates
 src/win32-ui-webview2-*.c/h/vala   # WebView2 COM host glue + low-level API
-src/win32-ergo-webview2.vala          # Hand ergo Win32.WebView (→ win32-ergo-webview2 generator)
+generated/win32-ergo-webview2.vala    # Generated ergo Win32.WebView (catalog + shell profile)
 scripts/              # vendor-win32json, setup-mingw-libs, build-win, …
 docs/                 # Build guides, architecture, plans, coverage
 ```

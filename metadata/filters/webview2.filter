@@ -9,6 +9,9 @@
 +Microsoft.Web.WebView2.Win32.ICoreWebView2CapturePreviewCompletedHandler
 +Microsoft.Web.WebView2.Win32.ICoreWebView2NavigationCompletedEventHandler
 +Microsoft.Web.WebView2.Win32.ICoreWebView2NavigationCompletedEventArgs
++Microsoft.Web.WebView2.Win32.ICoreWebView2NavigationStartingEventHandler
++Microsoft.Web.WebView2.Win32.ICoreWebView2NavigationStartingEventArgs
++Microsoft.Web.WebView2.Win32.ICoreWebView2DocumentTitleChangedEventHandler
 +Microsoft.Web.WebView2.Win32.COREWEBVIEW2_CAPTURE_PREVIEW_IMAGE_FORMAT
 +Microsoft.Web.WebView2.Win32.COREWEBVIEW2_MOVE_FOCUS_REASON
 +Microsoft.Web.WebView2.Win32.COREWEBVIEW2_WEB_ERROR_STATUS

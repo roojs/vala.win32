@@ -1,5 +1,5 @@
 /*
- * Emit Win32.Ui.WebView glue methods from profiles.WebView2.ergo_native_map.
+ * Emit Win32.Ui.WebView glue methods from WebView2MethodCatalog.
  */
 
 namespace Generate {
@@ -15,90 +15,10 @@ namespace Win32.Ui.WebView {
 
 """;
 
-		enum EmitKind {
-			SKIP,
-			WEBVIEW_VOID,
-			WEBVIEW_STRING,
-			WEBVIEW_GET_COM_STRING,
-			WEBVIEW_GET_BOOL,
-			WEBVIEW_STUB,
-			CONTROLLER_PUT_BOOL,
-			CONTROLLER_GET_BOOL,
-			CONTROLLER_PUT_DOUBLE,
-			CONTROLLER_GET_DOUBLE,
-		}
-
-		public string emit(Parse.WidgetConventionsFile conventions) {
-			return emit_entries(collect_entries(conventions));
-		}
-
 		static WebView2ComSyncEmitter? sync_emitter;
 
 		public void set_sync_emitter(WebView2ComSyncEmitter emitter) {
 			sync_emitter = emitter;
-		}
-
-		public string emit_from_file(string conventions_path) throws GLib.Error {
-			var parser = new Json.Parser();
-			parser.load_from_file(conventions_path);
-			var root = parser.get_root();
-			if (root == null || root.get_node_type() != Json.NodeType.OBJECT) {
-				throw new GLib.IOError.FAILED("conventions root must be object");
-			}
-			var profiles = root.get_object().get_object_member("profiles");
-			if (profiles == null || !profiles.has_member("WebView2")) {
-				return GENERATED_HEADER + GENERATED_FOOTER;
-			}
-			var webview2 = profiles.get_object_member("WebView2");
-			var map_node = webview2.get_member("ergo_native_map");
-			if (map_node == null || map_node.get_node_type() != Json.NodeType.ARRAY) {
-				return GENERATED_HEADER + GENERATED_FOOTER;
-			}
-			var entries = new Gee.ArrayList<Parse.ErgoNativeMapEntry> ();
-			var arr = map_node.get_array();
-			for (uint i = 0; i < arr.get_length(); i++) {
-				var entry = Json.gobject_deserialize(
-					typeof (Parse.ErgoNativeMapEntry),
-					arr.get_element(i)
-				) as Parse.ErgoNativeMapEntry;
-				if (entry != null) {
-					entries.add(entry);
-				}
-			}
-			return emit_entries(entries);
-		}
-
-		static Gee.ArrayList<Parse.ErgoNativeMapEntry> collect_entries(
-			Parse.WidgetConventionsFile conventions
-		) {
-			var entries = new Gee.ArrayList<Parse.ErgoNativeMapEntry> ();
-			if (!conventions.profiles.has_key("WebView2")) {
-				return entries;
-			}
-			foreach (var entry in conventions.profiles["WebView2"].ergo_native_map) {
-				entries.add(entry);
-			}
-			return entries;
-		}
-
-		string emit_entries(Gee.ArrayList<Parse.ErgoNativeMapEntry> entries) {
-			var sb = new GLib.StringBuilder(GENERATED_HEADER);
-			var seen = new Gee.HashSet<string> ();
-			foreach (var entry in entries) {
-				foreach (var name in glue_method_names(entry.glue)) {
-					if (seen.contains(name)) {
-						continue;
-					}
-					var kind = classify(name, entry);
-					if (kind == EmitKind.SKIP) {
-						continue;
-					}
-					seen.add(name);
-					emit_method(sb, name, kind);
-				}
-			}
-			sb.append(GENERATED_FOOTER);
-			return sb.str;
 		}
 
 		public static string[] glue_method_names(string glue) {
@@ -130,49 +50,27 @@ namespace Win32.Ui.WebView {
 			return { local };
 		}
 
-		static EmitKind classify(string name, Parse.ErgoNativeMapEntry entry) {
-			if (entry.kind == "lifecycle" || entry.kind == "layout" || entry.kind == "signal") {
-				return EmitKind.SKIP;
+		public string emit_from_catalog(WebView2MethodCatalog catalog) {
+			var sb = new GLib.StringBuilder(GENERATED_HEADER);
+			foreach (var entry in catalog.entries) {
+				if (!entry.emit_glue) {
+					continue;
+				}
+				emit_method(sb, entry);
 			}
-			if (name == "navigate") {
-				return EmitKind.SKIP;
-			}
-			if (name == "execute_script") {
-				return EmitKind.WEBVIEW_STUB;
-			}
-			switch (name) {
-			case "reload":
-			case "stop":
-			case "go_back":
-			case "go_forward":
-				return EmitKind.WEBVIEW_VOID;
-			case "navigate_to_string":
-			case "post_web_message_as_json":
-				return EmitKind.WEBVIEW_STRING;
-			case "get_source":
-			case "get_document_title":
-				return EmitKind.WEBVIEW_GET_COM_STRING;
-			case "get_can_go_back":
-			case "get_can_go_forward":
-				return EmitKind.WEBVIEW_GET_BOOL;
-			case "put_is_visible":
-				return EmitKind.CONTROLLER_PUT_BOOL;
-			case "get_is_visible":
-				return EmitKind.CONTROLLER_GET_BOOL;
-			case "put_zoom_factor":
-				return EmitKind.CONTROLLER_PUT_DOUBLE;
-			case "get_zoom_factor":
-				return EmitKind.CONTROLLER_GET_DOUBLE;
-			default:
-				return EmitKind.SKIP;
-			}
+			sb.append(GENERATED_FOOTER);
+			return sb.str;
 		}
 
-		static void emit_method(GLib.StringBuilder sb, string name, EmitKind kind) {
+		static void emit_method(GLib.StringBuilder sb, WebView2CatalogEntry entry) {
+			var name = entry.glue_name;
+			var kind = entry.glue_kind;
+			var controller = entry.host == "controller";
+			var ready_fn = controller ? "controller_ready" : "webview_ready";
 			var cname = "vala_webview2_host_" + name;
 			var sync = sync_emitter != null ? sync_emitter.method_for(name) : null;
 			switch (kind) {
-			case EmitKind.WEBVIEW_VOID:
+			case WebView2GlueKind.WEBVIEW_VOID:
 				sb.append_printf(
 					"""[CCode(cname = "%s")]
 public bool %s() {
@@ -188,7 +86,7 @@ public bool %s() {
 					sync != null ? sync.vala_call : "g_host.webview." + name + "()"
 				);
 				break;
-			case EmitKind.WEBVIEW_STRING:
+			case WebView2GlueKind.WEBVIEW_STRING:
 				var arg = string_param_name(name);
 				sb.append_printf(
 					"""[CCode(cname = "%s")]
@@ -207,7 +105,7 @@ public bool %s(string %s) {
 					sync != null ? sync.vala_call : "g_host.webview." + name + "(WideString(" + arg + ").ptr)"
 				);
 				break;
-			case EmitKind.WEBVIEW_GET_COM_STRING:
+			case WebView2GlueKind.WEBVIEW_GET_COM_STRING:
 				var out_var = com_string_out_name(name);
 				sb.append_printf(
 					"""[CCode(cname = "%s")]
@@ -230,11 +128,11 @@ public string %s() {
 					out_var
 				);
 				break;
-			case EmitKind.WEBVIEW_GET_BOOL:
+			case WebView2GlueKind.WEBVIEW_GET_BOOL:
 				sb.append_printf(
 					"""[CCode(cname = "%s")]
 public bool %s() {
-	if (!webview_ready()) {
+	if (!%s()) {
 		return false;
 	}
 	int val = 0;
@@ -247,14 +145,15 @@ public bool %s() {
 """,
 					cname,
 					name,
+					ready_fn,
 					sync != null ? sync.vala_call : "g_host.webview." + name + "(out val)"
 				);
 				break;
-			case EmitKind.WEBVIEW_STUB:
+			case WebView2GlueKind.WEBVIEW_STUB:
 				sb.append_printf(
 					"""[CCode(cname = "%s")]
 public bool %s(string js) {
-	/* vapi needs ICoreWebView2ExecuteScriptCompletedHandler — wiring deferred. */
+	/* async COM — completed-handler wiring deferred. */
 	if (!webview_ready() || js.length == 0) {
 		return false;
 	}
@@ -266,11 +165,11 @@ public bool %s(string js) {
 					name
 				);
 				break;
-			case EmitKind.CONTROLLER_PUT_BOOL:
+			case WebView2GlueKind.WEBVIEW_PUT_BOOL:
 				sb.append_printf(
 					"""[CCode(cname = "%s")]
 public bool %s(bool visible) {
-	if (!controller_ready()) {
+	if (!%s()) {
 		return false;
 	}
 	return com_ok(%s);
@@ -279,34 +178,15 @@ public bool %s(bool visible) {
 """,
 					cname,
 					name,
+					ready_fn,
 					sync != null ? sync.vala_call : "g_host.controller." + name + "(visible ? 1 : 0)"
 				);
 				break;
-			case EmitKind.CONTROLLER_GET_BOOL:
-				sb.append_printf(
-					"""[CCode(cname = "%s")]
-public bool %s() {
-	if (!controller_ready()) {
-		return false;
-	}
-	int val = 0;
-	if (!com_ok(%s)) {
-		return false;
-	}
-	return val != 0;
-}
-
-""",
-					cname,
-					name,
-					sync != null ? sync.vala_call : "g_host.controller." + name + "(out val)"
-				);
-				break;
-			case EmitKind.CONTROLLER_PUT_DOUBLE:
+			case WebView2GlueKind.WEBVIEW_PUT_DOUBLE:
 				sb.append_printf(
 					"""[CCode(cname = "%s")]
 public bool %s(double zoom) {
-	if (!controller_ready()) {
+	if (!%s()) {
 		return false;
 	}
 	return com_ok(%s);
@@ -315,14 +195,15 @@ public bool %s(double zoom) {
 """,
 					cname,
 					name,
+					ready_fn,
 					sync != null ? sync.vala_call : "g_host.controller." + name + "(zoom)"
 				);
 				break;
-			case EmitKind.CONTROLLER_GET_DOUBLE:
+			case WebView2GlueKind.WEBVIEW_GET_DOUBLE:
 				sb.append_printf(
 					"""[CCode(cname = "%s")]
 public double %s() {
-	if (!controller_ready()) {
+	if (!%s()) {
 		return 1.0;
 	}
 	double val = 1.0;
@@ -335,6 +216,7 @@ public double %s() {
 """,
 					cname,
 					name,
+					ready_fn,
 					sync != null ? sync.vala_call : "g_host.controller." + name + "(out val)"
 				);
 				break;
@@ -349,6 +231,8 @@ public double %s() {
 				return "html";
 			case "post_web_message_as_json":
 				return "json";
+			case "post_web_message_as_string":
+				return "text";
 			default:
 				return "text";
 			}

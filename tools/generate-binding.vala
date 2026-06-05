@@ -232,8 +232,18 @@ int main(string[] args) {
 
 	try {
 		var webview2_json_path = GLib.Path.build_filename(project_root, "metadata", "webview2", "api", "WebView2.json");
+		var webview2_filter_path = GLib.Path.build_filename(project_root, "metadata", "filters", "webview2.filter");
+		var webview2_overrides_path = GLib.Path.build_filename(project_root, "metadata", "webview2-host-overrides.json");
+		var webview2_catalog = new Generate.WebView2MethodCatalog();
+		webview2_catalog.load(webview2_json_path, webview2_filter_path, webview2_overrides_path);
+		print(
+			"webview2 catalog: %u glue/com-sync entries(from WebView2.json + %s)\n",
+			webview2_catalog.entries.size,
+			webview2_overrides_path
+		);
+
 		var webview2_sync_emitter = new Generate.WebView2ComSyncEmitter();
-		webview2_sync_emitter.load_from_files(conventions_path, webview2_json_path);
+		webview2_sync_emitter.load_from_catalog(webview2_catalog);
 		var webview2_sync_c = webview2_sync_emitter.emit_c();
 		var webview2_sync_h = webview2_sync_emitter.emit_h();
 		var webview2_sync_vala = webview2_sync_emitter.emit_vala_externs();
@@ -249,10 +259,22 @@ int main(string[] args) {
 
 		var webview2_glue_emitter = new Generate.WebView2GlueEmitter();
 		webview2_glue_emitter.set_sync_emitter(webview2_sync_emitter);
-		var webview2_glue = webview2_glue_emitter.emit_from_file(conventions_path);
+		var webview2_glue = webview2_glue_emitter.emit_from_catalog(webview2_catalog);
 		var webview2_glue_path = GLib.Path.build_filename(generated_dir, "win32-ui-webview2-host-glue.vala");
 		GLib.FileUtils.set_contents(webview2_glue_path, webview2_glue);
 		print("wrote %s(%u bytes)\n", webview2_glue_path, webview2_glue.length);
+
+		var webview2_event_emitter = new Generate.WebView2EventEmitter();
+		webview2_event_emitter.emit_files(webview2_overrides_path, generated_dir);
+		print("wrote %s\n", GLib.Path.build_filename(generated_dir, "win32-ui-webview2-events.c"));
+		print("wrote %s\n", GLib.Path.build_filename(generated_dir, "win32-ui-webview2-events.h"));
+		print("wrote %s\n", GLib.Path.build_filename(generated_dir, "win32-ui-webview2-events-bridge.vala"));
+
+		var ergo_webview2_emitter = new Generate.ErgoWebView2Emitter();
+		var ergo_webview2 = ergo_webview2_emitter.emit(webview2_catalog, conventions_path);
+		var ergo_webview2_path = GLib.Path.build_filename(generated_dir, "win32-ergo-webview2.vala");
+		GLib.FileUtils.set_contents(ergo_webview2_path, ergo_webview2);
+		print("wrote %s(%u bytes)\n", ergo_webview2_path, ergo_webview2.length);
 	} catch (GLib.Error e) {
 		stderr.printf("webview2 emit: %s\n", e.message);
 		return 1;

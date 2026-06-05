@@ -45,8 +45,11 @@ wide_strings_vala = generated_root / 'win32-wide-strings.vala'
 widgets_vala = generated_root / 'win32-widgets.vala'
 errors_vala = generated_root / 'win32-errors.vala'
 webview2_host_glue_vala = generated_root / 'win32-ui-webview2-host-glue.vala'
+webview2_ergo_vala = generated_root / 'win32-ergo-webview2.vala'
 webview2_com_sync_c = generated_root / 'win32-ui-webview2-com-sync.c'
 webview2_com_sync_vala = generated_root / 'win32-ui-webview2-com-sync.vala'
+webview2_events_c = generated_root / 'win32-ui-webview2-events.c'
+webview2_events_bridge_vala = generated_root / 'win32-ui-webview2-events-bridge.vala'
 
 example_pkg_dialogs = 'win32-ui-controls-dialogs'
 example_pkg_gdi = 'win32-graphics-gdi'
@@ -79,6 +82,9 @@ generate_sources = files(
   'src/Generate/WidgetCodegen.vala',
   'src/Generate/WidgetEmitter.vala',
   'src/Generate/WebView2GlueEmitter.vala',
+  'src/Generate/WebView2MethodCatalog.vala',
+  'src/Generate/ErgoWebView2Emitter.vala',
+  'src/Generate/WebView2EventEmitter.vala',
   'src/Generate/WebView2ComSyncEmitter.vala',
   'src/Generate/WideStringsEmitter.vala',
   'src/Generate/Parser/ErgoNativeMapEntry.vala',
@@ -492,6 +498,8 @@ if have_webview2_sdk and host_machine.system() == 'windows'
     webview2_com_sync_vala,
     wide_strings_vala,
     webview2_com_sync_c,
+    webview2_events_c,
+    webview2_events_bridge_vala,
     webview2_loader_c,
     webview2_com_glue_c,
   ]
@@ -534,7 +542,7 @@ if have_webview2_sdk and host_machine.system() == 'windows'
     webview2_ergo_link += ['-X', 'comdlg32', '-X', 'comctl32']
     webview2_ergo_sources = [
       files('examples/webview2-demo.vala'),
-      files('src/win32-ergo-webview2.vala'),
+      webview2_ergo_vala,
       webview2_host_vala,
       webview2_host_glue_vala,
       webview2_com_sync_vala,
@@ -542,6 +550,8 @@ if have_webview2_sdk and host_machine.system() == 'windows'
       wide_strings_vala,
       widgets_vala,
       webview2_com_sync_c,
+      webview2_events_c,
+      webview2_events_bridge_vala,
       webview2_loader_c,
       webview2_com_glue_c,
     ]

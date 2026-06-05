@@ -157,39 +157,22 @@
       "dispatch_route": "NONE",
       "uses_control_id": false,
       "constructor": "Window parent, int x, int y, int width, int height",
-      "hand_baseline_source": "src/win32-ergo-webview2.vala",
+      "hand_baseline_source": "generated/win32-ergo-webview2.vala",
+      "ergo_generated_source": "generated/win32-ergo-webview2.vala",
       "glue_baseline_source": "src/win32-ui-webview2-host.vala",
       "glue_generated_source": "generated/win32-ui-webview2-host-glue.vala",
+      "glue_catalog_source": "metadata/webview2/api/WebView2.json",
+      "glue_overrides_source": "metadata/webview2-host-overrides.json",
       "ergo_pkg": "win32-ergo-webview2",
-      "notes": "Not a WC_* HWND — fixed bounds; same Vala names as win32-ui-webview2.vapi where possible.",
+      "notes": "Glue/COM sync/ergo API: WebView2MethodCatalog(WebView2.json + webview2.filter + webview2-host-overrides.json). ergo_native_map: widget shell only(ctor, layout, lifecycle, signals).",
       "ergo_native_map": [
-        { "kind": "lifecycle", "ergo": "create (ctor layout)", "glue": "Ui.WebView.create_with_xywh", "com": "CreateCoreWebView2Controller + put_Bounds", "status": "done" },
-        { "kind": "lifecycle", "ergo": "ready", "glue": "Ui.WebView.is_ready", "com": "(async host state)", "status": "done" },
-        { "kind": "lifecycle", "ergo": "destroy", "glue": "Ui.WebView.destroy", "com": "ICoreWebView2Controller.Close", "status": "done" },
-        { "kind": "layout", "ergo": "set_bounds / move / resize (x,y,w,h)", "glue": "Ui.WebView.set_bounds_xywh", "com": "ICoreWebView2Controller.put_Bounds", "sync_com": { "glue": "put_bounds", "host": "controller" }, "status": "done" },
-        { "kind": "method", "ergo": "navigate(string url)", "glue": "Ui.WebView.navigate", "com": "ICoreWebView2.Navigate", "sync_com": true, "status": "done" },
-        { "kind": "method", "ergo": "navigate_to_string(string html)", "glue": "Ui.WebView.navigate_to_string", "com": "ICoreWebView2.NavigateToString", "sync_com": true, "status": "hand" },
-        { "kind": "method", "ergo": "reload()", "glue": "Ui.WebView.reload", "com": "ICoreWebView2.Reload", "sync_com": true, "status": "hand" },
-        { "kind": "method", "ergo": "stop()", "glue": "Ui.WebView.stop", "com": "ICoreWebView2.Stop", "sync_com": true, "status": "hand" },
-        { "kind": "method", "ergo": "go_back()", "glue": "Ui.WebView.go_back", "com": "ICoreWebView2.GoBack", "sync_com": true, "status": "hand" },
-        { "kind": "method", "ergo": "go_forward()", "glue": "Ui.WebView.go_forward", "com": "ICoreWebView2.GoForward", "sync_com": true, "status": "hand" },
-        { "kind": "method", "ergo": "execute_script(string js)", "glue": "Ui.WebView.execute_script", "com": "ICoreWebView2.ExecuteScript", "status": "hand_stub" },
-        { "kind": "method", "ergo": "post_web_message_as_json(string json)", "glue": "Ui.WebView.post_web_message_as_json", "com": "ICoreWebView2.PostWebMessageAsJson", "sync_com": true, "status": "hand" },
-        { "kind": "property", "ergo": "source", "glue": "Ui.WebView.get_source", "com": "ICoreWebView2.get_Source", "sync_com": true, "status": "hand" },
-        { "kind": "property", "ergo": "can_go_back", "glue": "Ui.WebView.get_can_go_back", "com": "ICoreWebView2.get_CanGoBack", "sync_com": true, "status": "hand" },
-        { "kind": "property", "ergo": "can_go_forward", "glue": "Ui.WebView.get_can_go_forward", "com": "ICoreWebView2.get_CanGoForward", "sync_com": true, "status": "hand" },
-        { "kind": "property", "ergo": "document_title", "glue": "Ui.WebView.get_document_title", "com": "ICoreWebView2.get_DocumentTitle", "sync_com": true, "status": "hand" },
-        { "kind": "property", "ergo": "visible", "glue": "Ui.WebView.put_is_visible / get_is_visible", "com": "ICoreWebView2Controller.put/get_IsVisible", "sync_com": [
-          { "glue": "put_is_visible", "com": "ICoreWebView2Controller.put_IsVisible", "host": "controller" },
-          { "glue": "get_is_visible", "com": "ICoreWebView2Controller.get_IsVisible", "host": "controller" }
-        ], "status": "hand" },
-        { "kind": "property", "ergo": "zoom_factor", "glue": "Ui.WebView.put/get_zoom_factor", "com": "ICoreWebView2Controller.put/get_ZoomFactor", "sync_com": [
-          { "glue": "put_zoom_factor", "com": "ICoreWebView2Controller.put_ZoomFactor", "host": "controller" },
-          { "glue": "get_zoom_factor", "com": "ICoreWebView2Controller.get_ZoomFactor", "host": "controller" }
-        ], "status": "hand" },
-        { "kind": "signal", "ergo": "navigation_completed(bool success)", "glue": "Ui.WebView (NavigationCompleted handler)", "com": "add_NavigationCompleted", "status": "hand_stub" },
-        { "kind": "signal", "ergo": "navigation_starting(cancellable?)", "glue": "Ui.WebView (NavigationStarting handler)", "com": "add_NavigationStarting", "status": "hand_stub" },
-        { "kind": "signal", "ergo": "document_title_changed()", "glue": "Ui.WebView (DocumentTitleChanged handler)", "com": "add_DocumentTitleChanged", "status": "hand_stub" }
+        { "kind": "lifecycle", "ergo": "create (ctor layout)", "glue": "Ui.WebView.create_with_xywh", "status": "done" },
+        { "kind": "lifecycle", "ergo": "ready", "glue": "Ui.WebView.is_ready", "status": "done" },
+        { "kind": "lifecycle", "ergo": "destroy", "glue": "Ui.WebView.destroy", "status": "done" },
+        { "kind": "layout", "ergo": "set_bounds / move / resize (x,y,w,h)", "glue": "Ui.WebView.set_bounds_xywh", "status": "done" },
+        { "kind": "signal", "ergo": "navigation_completed(bool success)", "status": "generated" },
+        { "kind": "signal", "ergo": "navigation_starting(cancellable?)", "status": "generated" },
+        { "kind": "signal", "ergo": "document_title_changed()", "status": "generated" }
       ]
     }
   }
