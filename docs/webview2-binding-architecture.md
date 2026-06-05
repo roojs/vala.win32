@@ -33,6 +33,29 @@ Writes committed [`metadata/webview2/api/WebView2.json`](../metadata/webview2/ap
 
 **What stays hand-written C:** Loader bootstrap and async completed-handler vtables only (Vala cannot implement raw `IUnknown` vtables). Sync COM calls go through the generated vapi from glue Vala — no per-method C wrappers.
 
+**What is hand baseline vs generated (glue Vala):** Most of `win32-ui-webview2-host.vala` is repetitive on purpose — it is the **generator template** for glue methods, not logic that should stay hand-maintained long term.
+
+| Region in `host.vala` | Stay hand? | Why |
+|-----------------------|------------|-----|
+| `HostState`, `g_host` | Yes | Singleton host refs + async state |
+| `create_*`, `finish_setup`, `destroy`, `navigate` queue | Yes | WebView2 async bootstrap |
+| `apply_bounds`, `set_bounds*`, `on_size` | Yes | Layout + native resize |
+| `take_com_string`, `CoTaskMemFree` | Yes (or shared util) | COM string ownership |
+| `reload`, `go_back`, `get_source`, … | **No — generate** | Same pattern: ready check → vapi call |
+
+Generator reads `ergo_native_map` and emits **both** layers:
+
+```vala
+// ergo (win32-ergo-webview2) — generated
+public void reload () { Ui.WebView.reload (); }
+
+// glue (win32-ui-webview2-host) — generated
+public bool reload () {
+    if (!webview_ready ()) return false;
+    return com_ok (g_host.webview.reload ());
+}
+```
+
 ## File naming
 
 | Prefix | Layer | Examples |

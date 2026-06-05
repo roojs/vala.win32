@@ -1,10 +1,11 @@
-/* Phase 7i: WebView2 host glue — loader/com-glue C + Vala surface on generated vapi.
+/* Phase 7i: WebView2 glue — hand baseline for generator (not ergo).
  *
- * COM method calls use win32-ui-webview2.vapi (ICoreWebView2*, ICoreWebView2Controller*).
- * Hand C stays in win32-ui-webview2-{loader,com-glue}.c only (async vtables + bootstrap).
+ * HAND (keep): HostState, async bootstrap, navigate queue, bounds, take_com_string.
+ * GENERATOR TARGET: public methods below marked "glue map" — one template per
+ *   ergo_native_map row in metadata/widget-conventions.json WebView2.
  *
- * Layout: ergo uses create_with_xywh / set_bounds_xywh; on_size() is native Track A only.
- * Ergo API: src/win32-ergo-webview2.vala (Win32.WebView). */
+ * COM calls use win32-ui-webview2.vapi. Hand C: win32-ui-webview2-{loader,com-glue}.c only.
+ * Ergo: src/win32-ergo-webview2.vala → delegates here (Win32.Ui.WebView). */
 
 using Microsoft.Web.WebView2.Win32;
 using Win32.Ui;
@@ -184,6 +185,8 @@ public bool navigate (string url) {
 	}
 	return true;
 }
+
+/* --- glue map (generator): webview sync void → com_ok(g_host.webview.<name>()) --- */
 
 [CCode (cname = "vala_webview2_host_navigate_to_string")]
 public bool navigate_to_string (string html) {
