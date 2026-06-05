@@ -389,7 +389,6 @@ have_webview2_sdk = run_command('test', '-f', webview2_header, check: false).ret
 vendor_webview2 = find_program('scripts/vendor-webview2-sdk.sh')
 webview2_loader_c = project_root / 'src' / 'win32-ui-webview2-loader.c'
 webview2_com_glue_c = project_root / 'src' / 'win32-ui-webview2-com-glue.c'
-webview2_host_glue_c = project_root / 'src' / 'win32-ui-webview2-host-glue.c'
 webview2_host_vala = files('src/win32-ui-webview2-host.vala')
 webview2_link_libs = ['-lole32', '-luuid', '-lshell32', '-ladvapi32']
 
@@ -415,7 +414,6 @@ if have_webview2_sdk and host_machine.system() == 'windows'
     wide_strings_vala,
     webview2_loader_c,
     webview2_com_glue_c,
-    webview2_host_glue_c,
   ]
   if get_option('regen_on_build')
     webview2_sources += regen_vapi
@@ -461,7 +459,6 @@ if have_webview2_sdk and host_machine.system() == 'windows'
       widgets_vala,
       webview2_loader_c,
       webview2_com_glue_c,
-      webview2_host_glue_c,
     ]
     if get_option('regen_on_build')
       webview2_ergo_sources += regen_vapi

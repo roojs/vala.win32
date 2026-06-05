@@ -1,10 +1,9 @@
-/* Phase 7i: WebView2 host glue — loader/com-glue C + minimal Vala surface.
+/* Phase 7i: WebView2 host glue — loader/com-glue C + Vala surface on generated vapi.
  *
- * Layout: use set_bounds_xywh / create_with_xywh from ergo; set_bounds(Rect) and
- * on_size() are native-track (full client rect). Ergo owns x/y/width/height.
+ * COM method calls use win32-ui-webview2.vapi (ICoreWebView2*, ICoreWebView2Controller*).
+ * Hand C stays in win32-ui-webview2-{loader,com-glue}.c only (async vtables + bootstrap).
  *
- * Stack: Win32.WebView.navigate → Ui.WebView.navigate → webview_navigate (C) → Navigate (COM)
- *
+ * Layout: ergo uses create_with_xywh / set_bounds_xywh; on_size() is native Track A only.
  * Ergo API: src/win32-ergo-webview2.vala (Win32.WebView). */
 
 using Microsoft.Web.WebView2.Win32;
@@ -13,8 +12,6 @@ using Win32.Ui.WindowsAndMessaging;
 using Win32.Foundation;
 
 namespace Win32.Ui.WebView {
-
-const int STRING_BUF_CHARS = 2048;
 
 [CCode (cheader_filename = "win32-ui-webview2-com-glue.h", cname = "vala_webview2_com_begin_host")]
 extern bool com_begin_host (
@@ -26,79 +23,8 @@ extern bool com_begin_host (
 [CCode (cheader_filename = "win32-ui-webview2-com-glue.h", cname = "vala_webview2_com_release_host")]
 extern void com_release_host ();
 
-[CCode (cheader_filename = "win32-ui-webview2-host-glue.h", cname = "vala_webview2_controller_put_bounds")]
-extern int controller_put_bounds (
-	ICoreWebView2Controller controller,
-	Microsoft.Web.WebView2.Win32.Rect* bounds
-);
-
-[CCode (cheader_filename = "win32-ui-webview2-host-glue.h", cname = "vala_webview2_webview_navigate")]
-extern int webview_navigate (
-	ICoreWebView2 webview,
-	[CCode (type_id = "LPCWSTR")] uint16* url
-);
-
-[CCode (cheader_filename = "win32-ui-webview2-host-glue.h", cname = "vala_webview2_webview_navigate_to_string")]
-extern int webview_navigate_to_string (
-	ICoreWebView2 webview,
-	[CCode (type_id = "LPCWSTR")] uint16* html
-);
-
-[CCode (cheader_filename = "win32-ui-webview2-host-glue.h", cname = "vala_webview2_webview_reload")]
-extern int webview_reload (ICoreWebView2 webview);
-
-[CCode (cheader_filename = "win32-ui-webview2-host-glue.h", cname = "vala_webview2_webview_stop")]
-extern int webview_stop (ICoreWebView2 webview);
-
-[CCode (cheader_filename = "win32-ui-webview2-host-glue.h", cname = "vala_webview2_webview_go_back")]
-extern int webview_go_back (ICoreWebView2 webview);
-
-[CCode (cheader_filename = "win32-ui-webview2-host-glue.h", cname = "vala_webview2_webview_go_forward")]
-extern int webview_go_forward (ICoreWebView2 webview);
-
-[CCode (cheader_filename = "win32-ui-webview2-host-glue.h", cname = "vala_webview2_webview_post_web_message_as_json")]
-extern int webview_post_web_message_as_json (
-	ICoreWebView2 webview,
-	[CCode (type_id = "LPCWSTR")] uint16* json
-);
-
-[CCode (cheader_filename = "win32-ui-webview2-host-glue.h", cname = "vala_webview2_webview_execute_script")]
-extern int webview_execute_script (
-	ICoreWebView2 webview,
-	[CCode (type_id = "LPCWSTR")] uint16* script
-);
-
-[CCode (cheader_filename = "win32-ui-webview2-host-glue.h", cname = "vala_webview2_webview_get_can_go_back")]
-extern int webview_get_can_go_back (ICoreWebView2 webview, bool* out);
-
-[CCode (cheader_filename = "win32-ui-webview2-host-glue.h", cname = "vala_webview2_webview_get_can_go_forward")]
-extern int webview_get_can_go_forward (ICoreWebView2 webview, bool* out);
-
-[CCode (cheader_filename = "win32-ui-webview2-host-glue.h", cname = "vala_webview2_webview_copy_source")]
-extern int webview_copy_source (
-	ICoreWebView2 webview,
-	[CCode (array_length = false)] uint16[] buf,
-	size_t buf_chars
-);
-
-[CCode (cheader_filename = "win32-ui-webview2-host-glue.h", cname = "vala_webview2_webview_copy_document_title")]
-extern int webview_copy_document_title (
-	ICoreWebView2 webview,
-	[CCode (array_length = false)] uint16[] buf,
-	size_t buf_chars
-);
-
-[CCode (cheader_filename = "win32-ui-webview2-host-glue.h", cname = "vala_webview2_controller_put_is_visible")]
-extern int controller_put_is_visible (ICoreWebView2Controller controller, bool visible);
-
-[CCode (cheader_filename = "win32-ui-webview2-host-glue.h", cname = "vala_webview2_controller_get_is_visible")]
-extern int controller_get_is_visible (ICoreWebView2Controller controller, bool* out);
-
-[CCode (cheader_filename = "win32-ui-webview2-host-glue.h", cname = "vala_webview2_controller_put_zoom_factor")]
-extern int controller_put_zoom_factor (ICoreWebView2Controller controller, double zoom);
-
-[CCode (cheader_filename = "win32-ui-webview2-host-glue.h", cname = "vala_webview2_controller_get_zoom_factor")]
-extern int controller_get_zoom_factor (ICoreWebView2Controller controller, double* out);
+[CCode (cheader_filename = "objbase.h", cname = "CoTaskMemFree")]
+extern void co_task_mem_free (void* ptr);
 
 [Compact]
 private struct HostState {
@@ -132,26 +58,53 @@ private Microsoft.Web.WebView2.Win32.Rect client_rect (void* hwnd) {
 	};
 }
 
+private bool com_ok (int hr) {
+	return hr >= 0;
+}
+
+private string take_com_string (uint16* com_str) {
+	if (com_str == null) {
+		return "";
+	}
+	var s = utf16_ptr_to_string (com_str);
+	co_task_mem_free (com_str);
+	return s;
+}
+
+private string utf16_ptr_to_string (uint16* wide) {
+	if (wide == null) {
+		return "";
+	}
+	int len = 0;
+	while (wide[len] != 0) {
+		len++;
+	}
+	var buf = new uint16[len + 1];
+	for (int i = 0; i <= len; i++) {
+		buf[i] = wide[i];
+	}
+	return utf16_buffer_to_string (buf);
+}
+
 private void apply_bounds () {
 	if (g_host == null || g_host.controller == null) {
 		return;
 	}
-	controller_put_bounds (g_host.controller, &g_host.bounds);
+	var hr = g_host.controller.put_bounds (g_host.bounds);
+	if (!com_ok (hr)) {
+		stderr.printf ("WebView2 put_bounds failed: 0x%08x\n", (uint) hr);
+	}
 }
 
 private void flush_pending_navigate () {
 	if (g_host == null || !g_host.ready || g_host.webview == null || g_host.pending_url == null) {
 		return;
 	}
-	var nav = webview_navigate (g_host.webview, g_host.pending_url.ptr);
-	if (nav < 0) {
+	var nav = g_host.webview.navigate (g_host.pending_url.ptr);
+	if (!com_ok (nav)) {
 		stderr.printf ("WebView2 navigate failed: 0x%08x\n", (uint) nav);
 	}
 	g_host.pending_url = null;
-}
-
-private bool com_ok (int hr) {
-	return hr >= 0;
 }
 
 [CCode (cname = "vala_webview2_host_finish_setup")]
@@ -171,7 +124,6 @@ public void finish_setup (
 	flush_pending_navigate ();
 }
 
-/** Ergo/bootstrap: parent client coordinates as x, y, width, height. */
 [CCode (cname = "vala_webview2_host_create_with_xywh")]
 public bool create_with_xywh (
 	void* parent_hwnd,
@@ -181,7 +133,6 @@ public bool create_with_xywh (
 	return create_with_bounds (parent_hwnd, rect_xywh (x, y, width, height), url);
 }
 
-/** Async bootstrap with bounds in parent client coordinates. url null skips initial navigate. */
 [CCode (cname = "vala_webview2_host_create_with_bounds")]
 public bool create_with_bounds (
 	void* parent_hwnd,
@@ -198,7 +149,6 @@ public bool create_with_bounds (
 	return com_begin_host (parent_hwnd, url, &g_host.bounds);
 }
 
-/** Native Track A: bounds = parent client rect; navigates immediately. */
 [CCode (cname = "vala_webview2_host_create")]
 public bool create (void* parent_hwnd, uint16* url) {
 	if (parent_hwnd == null || url == null) {
@@ -223,7 +173,6 @@ public void set_bounds (Microsoft.Web.WebView2.Win32.Rect bounds) {
 	}
 }
 
-/** ICoreWebView2::Navigate — queues until async controller setup completes. */
 [CCode (cname = "vala_webview2_host_navigate")]
 public bool navigate (string url) {
 	if (g_host == null || url.length == 0) {
@@ -241,8 +190,7 @@ public bool navigate_to_string (string html) {
 	if (g_host == null || !g_host.ready || g_host.webview == null || html.length == 0) {
 		return false;
 	}
-	var wide = WideString (html);
-	return com_ok (webview_navigate_to_string (g_host.webview, wide.ptr));
+	return com_ok (g_host.webview.navigate_to_string (WideString (html).ptr));
 }
 
 [CCode (cname = "vala_webview2_host_reload")]
@@ -250,7 +198,7 @@ public bool reload () {
 	if (g_host == null || !g_host.ready || g_host.webview == null) {
 		return false;
 	}
-	return com_ok (webview_reload (g_host.webview));
+	return com_ok (g_host.webview.reload ());
 }
 
 [CCode (cname = "vala_webview2_host_stop")]
@@ -258,7 +206,7 @@ public bool stop () {
 	if (g_host == null || !g_host.ready || g_host.webview == null) {
 		return false;
 	}
-	return com_ok (webview_stop (g_host.webview));
+	return com_ok (g_host.webview.stop ());
 }
 
 [CCode (cname = "vala_webview2_host_go_back")]
@@ -266,7 +214,7 @@ public bool go_back () {
 	if (g_host == null || !g_host.ready || g_host.webview == null) {
 		return false;
 	}
-	return com_ok (webview_go_back (g_host.webview));
+	return com_ok (g_host.webview.go_back ());
 }
 
 [CCode (cname = "vala_webview2_host_go_forward")]
@@ -274,16 +222,16 @@ public bool go_forward () {
 	if (g_host == null || !g_host.ready || g_host.webview == null) {
 		return false;
 	}
-	return com_ok (webview_go_forward (g_host.webview));
+	return com_ok (g_host.webview.go_forward ());
 }
 
 [CCode (cname = "vala_webview2_host_execute_script")]
 public bool execute_script (string js) {
+	/* vapi needs ICoreWebView2ExecuteScriptCompletedHandler — wiring deferred. */
 	if (g_host == null || !g_host.ready || g_host.webview == null || js.length == 0) {
 		return false;
 	}
-	var wide = WideString (js);
-	return com_ok (webview_execute_script (g_host.webview, wide.ptr));
+	return false;
 }
 
 [CCode (cname = "vala_webview2_host_post_web_message_as_json")]
@@ -291,8 +239,7 @@ public bool post_web_message_as_json (string json) {
 	if (g_host == null || !g_host.ready || g_host.webview == null || json.length == 0) {
 		return false;
 	}
-	var wide = WideString (json);
-	return com_ok (webview_post_web_message_as_json (g_host.webview, wide.ptr));
+	return com_ok (g_host.webview.post_web_message_as_json (WideString (json).ptr));
 }
 
 [CCode (cname = "vala_webview2_host_get_source")]
@@ -300,11 +247,11 @@ public string get_source () {
 	if (g_host == null || !g_host.ready || g_host.webview == null) {
 		return "";
 	}
-	var buf = new uint16[STRING_BUF_CHARS];
-	if (!com_ok (webview_copy_source (g_host.webview, buf, STRING_BUF_CHARS))) {
+	uint16* uri = null;
+	if (!com_ok (g_host.webview.get_source (out uri))) {
 		return "";
 	}
-	return utf16_buffer_to_string (buf);
+	return take_com_string (uri);
 }
 
 [CCode (cname = "vala_webview2_host_get_can_go_back")]
@@ -312,11 +259,11 @@ public bool get_can_go_back () {
 	if (g_host == null || !g_host.ready || g_host.webview == null) {
 		return false;
 	}
-	bool val = false;
-	if (!com_ok (webview_get_can_go_back (g_host.webview, &val))) {
+	int val = 0;
+	if (!com_ok (g_host.webview.get_can_go_back (out val))) {
 		return false;
 	}
-	return val;
+	return val != 0;
 }
 
 [CCode (cname = "vala_webview2_host_get_can_go_forward")]
@@ -324,11 +271,11 @@ public bool get_can_go_forward () {
 	if (g_host == null || !g_host.ready || g_host.webview == null) {
 		return false;
 	}
-	bool val = false;
-	if (!com_ok (webview_get_can_go_forward (g_host.webview, &val))) {
+	int val = 0;
+	if (!com_ok (g_host.webview.get_can_go_forward (out val))) {
 		return false;
 	}
-	return val;
+	return val != 0;
 }
 
 [CCode (cname = "vala_webview2_host_get_document_title")]
@@ -336,11 +283,11 @@ public string get_document_title () {
 	if (g_host == null || !g_host.ready || g_host.webview == null) {
 		return "";
 	}
-	var buf = new uint16[STRING_BUF_CHARS];
-	if (!com_ok (webview_copy_document_title (g_host.webview, buf, STRING_BUF_CHARS))) {
+	uint16* title = null;
+	if (!com_ok (g_host.webview.get_document_title (out title))) {
 		return "";
 	}
-	return utf16_buffer_to_string (buf);
+	return take_com_string (title);
 }
 
 [CCode (cname = "vala_webview2_host_put_is_visible")]
@@ -348,7 +295,7 @@ public bool put_is_visible (bool visible) {
 	if (g_host == null || !g_host.ready || g_host.controller == null) {
 		return false;
 	}
-	return com_ok (controller_put_is_visible (g_host.controller, visible));
+	return com_ok (g_host.controller.put_is_visible (visible ? 1 : 0));
 }
 
 [CCode (cname = "vala_webview2_host_get_is_visible")]
@@ -356,11 +303,11 @@ public bool get_is_visible () {
 	if (g_host == null || !g_host.ready || g_host.controller == null) {
 		return false;
 	}
-	bool val = false;
-	if (!com_ok (controller_get_is_visible (g_host.controller, &val))) {
+	int val = 0;
+	if (!com_ok (g_host.controller.get_is_visible (out val))) {
 		return false;
 	}
-	return val;
+	return val != 0;
 }
 
 [CCode (cname = "vala_webview2_host_put_zoom_factor")]
@@ -368,7 +315,7 @@ public bool put_zoom_factor (double zoom) {
 	if (g_host == null || !g_host.ready || g_host.controller == null) {
 		return false;
 	}
-	return com_ok (controller_put_zoom_factor (g_host.controller, zoom));
+	return com_ok (g_host.controller.put_zoom_factor (zoom));
 }
 
 [CCode (cname = "vala_webview2_host_get_zoom_factor")]
@@ -377,13 +324,12 @@ public double get_zoom_factor () {
 		return 1.0;
 	}
 	double val = 1.0;
-	if (!com_ok (controller_get_zoom_factor (g_host.controller, &val))) {
+	if (!com_ok (g_host.controller.get_zoom_factor (out val))) {
 		return 1.0;
 	}
 	return val;
 }
 
-/** Native Track A: resize webview to full parent client area (not used by ergo layout). */
 [CCode (cname = "vala_webview2_host_on_size")]
 public void on_size (void* parent_hwnd) {
 	if (g_host == null || g_host.controller == null || parent_hwnd != g_host.parent) {
