@@ -540,7 +540,8 @@ namespace Win32 {
 				if (type_ref.Child.Name == "EventRegistrationToken") {
 					return finish ("out EventRegistrationToken");
 				}
-				var inner = VapiEmitter.vala_type_for_ref (type_ref.Child, "", p.Attrs, shard_basename);
+				/* Attrs already carry Out — do not pass them into vala_type_for_ref (double "out"). */
+				var inner = VapiEmitter.vala_type_for_ref (type_ref.Child, "", null, shard_basename);
 				return finish ("out " + inner);
 			}
 			return finish (VapiEmitter.vala_param_type (p, shard_basename));
