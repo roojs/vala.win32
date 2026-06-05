@@ -133,12 +133,20 @@ private int64 widget_window_proc(
 	return def_window_proc(h_wnd, msg, w_param, l_param);
 }
 
+/**
+ * Low-level dispatcher hooks for applications that own a Win32 window procedure.
+ */
 public class WidgetDispatch {
+	/** Dispatch a WM_COMMAND wParam to registered widget or menu signal handlers. */
 	public static bool try_wm_command(ulong w_param) {
 		return wm_command_dispatch(w_param);
 	}
 
-	/* ScrollBar: call def_window_proc, then emit value_changed when l_param is a registered HWND. */
+	/**
+	 * Dispatch a WM_HSCROLL or WM_VSCROLL message to a registered {@link ScrollBar}.
+	 *
+	 * Calls DefWindowProc first, then emits {@link ScrollBar.value_changed} when lParam is a known HWND.
+	 */
 	public static bool try_wm_hscroll(
 		void* parent_wnd,
 		uint msg,
@@ -169,6 +177,7 @@ public class WidgetDispatch {
 		return true;
 	}
 
+	/** Print registered WM_COMMAND and scroll targets when WIN32_WIDGET_DEBUG is enabled. */
 	public static void debug_dump_registry() {
 		if (!widget_debug_enabled()) {
 			return;
@@ -538,12 +547,17 @@ private bool wm_command_dispatch(ulong w_param) {
 	return false;
 }
 
+/**
+ * Top-level overlapped Win32 window with the default widget message loop.
+ */
 public class Window {
 	/** Fired when this window receives WM_DESTROY(before the demo message loop exits). */
 	public signal void destroyed();
 	/** Fired on WM_SIZE with the new client-area size in pixels. */
 	public signal void resized(uint width, uint height);
+	/** Native HWND for the created top-level window. */
 	public void* handle { get; private set; }
+	/** HINSTANCE used when creating child controls. */
 	public void* instance { get; private set; }
 	private WideString registered_class_name;
 
@@ -588,6 +602,7 @@ public class Window {
 		window_registry_add(this);
 	}
 
+	/** Run the standard GetMessage / TranslateMessage / DispatchMessage loop. */
 	public int run() {
 		Msg msg;
 		while (get_message(out msg, null, 0, 0) > 0) {
@@ -597,11 +612,13 @@ public class Window {
 		return 0;
 	}
 
+	/** Window title text. */
 	public string title {
 		owned get { return window_text_get(handle); }
 		set { window_text_set(handle, value); }
 	}
 
+	/** Destroy the native window handle. */
 	public void close() {
 		if (handle != null) {
 			destroy_window(handle);
@@ -627,6 +644,7 @@ const int IDC_ARROW = 32512;
 public class NativeDialogs {
 	const int FILE_BUF_CHARS = 260;
 
+	/** Show a modal MessageBoxW dialog owned by the optional parent window. */
 	public static MESSAGEBOXRESULT show_message(
 		Window? parent,
 		string text,
@@ -641,6 +659,7 @@ public class NativeDialogs {
 		);
 	}
 
+	/** Open the common file picker and return true when a file was chosen. */
 	public static bool try_open_file(Window parent, out string path) {
 		var file_buf = new uint16[FILE_BUF_CHARS];
 		var filter = WideString("Text(*.txt)\0*.txt\0All(*.*)\0*.*\0");
@@ -664,6 +683,7 @@ public class NativeDialogs {
 		return false;
 	}
 
+	/** Open the common color picker, updating rgb when the user confirms. */
 	public static bool try_choose_color(Window parent, ref uint rgb) {
 		var cc = CHOOSECOLOR();
 		cc.lStructSize = (uint) sizeof (CHOOSECOLOR);
@@ -682,8 +702,11 @@ public class NativeDialogs {
  * Hand-maintained Phase 4 baseline: menu bar + WM_COMMAND menu ids.
  */
 public class MenuBar {
+	/** Fired when any registered menu item is selected. */
 	public signal void activated(int menu_id);
+	/** Parent window that owns this menu bar. */
 	public Window parent { get; private set; }
+	/** Native HMENU for this menu bar. */
 	public void* handle { get; private set; }
 
 	public MenuBar(Window parent) {
@@ -702,13 +725,18 @@ public class MenuBar {
 		return new MenuPopup(this, popup);
 	}
 
+	/** Attach this menu bar to its parent window. */
 	public void attach() {
 		set_menu(parent.handle, handle);
 	}
 }
 
+/**
+ * Popup submenu builder returned by {@link MenuBar.add_submenu}.
+ */
 public class MenuPopup {
 	MenuBar bar;
+	/** Native HMENU for this popup menu. */
 	public void* handle { get; private set; }
 
 	public MenuPopup(MenuBar bar, void* popup_handle) {
@@ -716,6 +744,7 @@ public class MenuPopup {
 		handle = popup_handle;
 	}
 
+	/** Add a command item and register its id with the parent menu bar dispatcher. */
 	public void add_item(int menu_id, string label) {
 		append_menu(
 			handle,
@@ -731,6 +760,7 @@ public class MenuPopup {
  * Layout group(WC_BUTTON + BS_GROUPBOX). Decorative frame only — no command signal.
  */
 public class GroupBox {
+	/** Native HWND for the decorative group box. */
 	public void* handle { get; private set; }
 
 	public GroupBox(
@@ -758,8 +788,11 @@ public class Widget {
 	const int WID_BASE = 100;
 	static int next_wid = WID_BASE;
 
+	/** Parent top-level window that owns this child control. */
 	public Window parent { get; protected set; }
+	/** Native HWND for this child control. */
 	public void* handle { get; protected set; }
+	/** Child-window identifier used for WM_COMMAND dispatch. */
 	public int WID { get; protected set; }
 
 	protected Widget(Window parent) {

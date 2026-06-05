@@ -587,6 +587,7 @@ endif
 
 check_regen = find_program('scripts/check-regen.sh')
 compile_check = find_program('scripts/compile-check.sh')
+build_valadoc = find_program('scripts/build-valadoc.sh')
 
 run_target('vendor-webview2', command: [vendor_webview2])
 
@@ -638,5 +639,15 @@ run_target(
   command: regen_base_cmd + [
     '--coverage-only',
     '--coverage-report', project_root / 'docs/coverage/6a-coverage-matrix.md',
+  ],
+)
+
+run_target(
+  'valadoc',
+  command: [
+    build_valadoc,
+    '--build-dir', meson.current_build_dir(),
+    '--output-dir', meson.current_build_dir() / 'docs' / 'valadoc',
+    '--package-version', meson.project_version(),
   ],
 )

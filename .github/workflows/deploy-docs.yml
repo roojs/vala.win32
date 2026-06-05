@@ -1,0 +1,74 @@
+name: Deploy Documentation to GitHub Pages
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'generated/**/*.vala'
+      - 'src/Generate/**/*.vala'
+      - 'src/Generate/templates/**/*.vala'
+      - 'vapi/**/*.vapi'
+      - 'scripts/build-valadoc.sh'
+      - 'meson.build'
+      - 'meson.options'
+      - '.github/workflows/deploy-docs.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            meson \
+            ninja-build \
+            valac \
+            valadoc \
+            libgee-0.8-dev \
+            libglib2.0-dev \
+            libjson-glib-dev \
+            build-essential \
+            pkg-config
+
+      - name: Setup meson build
+        run: |
+          meson setup build
+
+      - name: Build documentation
+        run: |
+          meson compile -C build valadoc
+
+      - name: Create .nojekyll file
+        run: |
+          touch build/docs/valadoc/.nojekyll
+
+      - name: Upload pages artifact
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: build/docs/valadoc
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
