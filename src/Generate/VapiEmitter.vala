@@ -474,7 +474,13 @@ namespace Win32 {
 			var n = method.Params.size;
 			for (int i = 0; i < n; i++) {
 				var p = method.Params.get (i);
-				var ptype = VapiEmitter.com_param_type (p, this.shard_basename, this.emitted_com_names, is_getter);
+				var ptype = VapiEmitter.com_param_type (
+					p,
+					this.shard_basename,
+					this.emitted_com_names,
+					is_getter,
+					this.cheader_filename
+				);
 				var pname = NameMapper.to_snake (p.Name.length > 0 ? p.Name : @"param$(i)");
 				var comma = i < n - 1 ? "," : "";
 				this.buffer.append (@"			$(ptype) $(pname)$(comma)
@@ -494,8 +500,12 @@ namespace Win32 {
 			Parse.Parameter p,
 			string shard_basename,
 			Gee.HashSet<string> emitted_com,
-			bool getter_method = false
+			bool getter_method = false,
+			string cheader_filename = "windows.h"
 		) {
+			string finish (string mapped) {
+				return VapiEmitter.rewrite_webview2_rect (mapped, cheader_filename);
+			}
 			var type_ref = p.Type;
 			if (type_ref.Kind == "PointerTo" && type_ref.Child != null
 				&& type_ref.Child.Kind == "PointerTo" && type_ref.Child.Child != null
@@ -505,7 +515,7 @@ namespace Win32 {
 				if (!emitted_com.contains (iface)) {
 					return "void*";
 				}
-				return "out unowned " + iface;
+				return finish ("out unowned " + iface);
 			}
 			if (type_ref.Kind == "PointerTo" && type_ref.Child != null
 				&& type_ref.Child.Kind == "ApiRef"
@@ -514,26 +524,33 @@ namespace Win32 {
 				if (!emitted_com.contains (iface) && iface != "IUnknown") {
 					return "void*";
 				}
-				return iface;
+				return finish (iface);
 			}
 			if (getter_method && type_ref.Kind == "PointerTo") {
 				if (type_ref.Child != null && type_ref.Child.Name == "LPWSTR") {
-					return "out uint16*";
+					return finish ("out uint16*");
 				}
 				if (type_ref.Child != null && type_ref.Child.Kind == "ApiRef"
 					&& type_ref.Child.Name == "BOOL") {
-					return "out int";
+					return finish ("out int");
 				}
 			}
 			if (type_ref.Kind == "PointerTo" && type_ref.Child != null
 				&& VapiEmitter.com_param_is_out (p)) {
 				if (type_ref.Child.Name == "EventRegistrationToken") {
-					return "out EventRegistrationToken";
+					return finish ("out EventRegistrationToken");
 				}
 				var inner = VapiEmitter.vala_type_for_ref (type_ref.Child, "", p.Attrs, shard_basename);
-				return "out " + inner;
+				return finish ("out " + inner);
 			}
-			return VapiEmitter.vala_param_type (p, shard_basename);
+			return finish (VapiEmitter.vala_param_type (p, shard_basename));
+		}
+
+		static string rewrite_webview2_rect (string mapped, string cheader_filename) {
+			if (cheader_filename == "WebView2.h") {
+				return mapped.replace ("Win32.Foundation.Rect", "Rect");
+			}
+			return mapped;
 		}
 
 		static bool com_param_is_out (Parse.Parameter p) {

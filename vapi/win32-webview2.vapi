@@ -481,12 +481,12 @@ namespace Microsoft.Web.WebView2.Win32 {
 
 		[CCode (cname = "get_Bounds")]
 		public abstract int get_bounds (
-			Win32.Foundation.Rect* bounds
+			Rect* bounds
 		);
 
 		[CCode (cname = "put_Bounds")]
 		public abstract int put_bounds (
-			Win32.Foundation.Rect bounds
+			Rect bounds
 		);
 
 		[CCode (cname = "get_ZoomFactor")]
@@ -512,7 +512,7 @@ namespace Microsoft.Web.WebView2.Win32 {
 
 		[CCode (cname = "SetBoundsAndZoomFactor")]
 		public abstract int set_bounds_and_zoom_factor (
-			Win32.Foundation.Rect bounds,
+			Rect bounds,
 			double zoom_factor
 		);
 
