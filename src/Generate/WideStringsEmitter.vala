@@ -1,5 +1,5 @@
 /*
- * Emit generated/win32-wide-strings.vala from template (G3).
+ * Emit generated/win32-wide-strings.vala from template(G3).
  */
 
 namespace Generate {
@@ -8,18 +8,18 @@ namespace Generate {
 
 """;
 
-		public string emit_from_template (string template_path) throws GLib.Error {
+		public string emit_from_template(string template_path) throws GLib.Error {
 			string body;
-			GLib.FileUtils.get_contents (template_path, out body);
-			body = strip_template_preamble (body);
+			GLib.FileUtils.get_contents(template_path, out body);
+			body = strip_template_preamble(body);
 			return GENERATED_HEADER + body;
 		}
 
-		static string strip_template_preamble (string body) {
-			if (!body.has_prefix ("/*")) {
+		static string strip_template_preamble(string body) {
+			if (!body.has_prefix("/*")) {
 				return body;
 			}
-			var end = body.index_of ("*/");
+			var end = body.index_of("*/");
 			if (end < 0) {
 				return body;
 			}
@@ -31,7 +31,7 @@ namespace Generate {
 				}
 				i++;
 			}
-			return body.substring (i);
+			return body.substring(i);
 		}
 	}
 }

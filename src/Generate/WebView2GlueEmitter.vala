@@ -28,94 +28,100 @@ namespace Win32.Ui.WebView {
 			CONTROLLER_GET_DOUBLE,
 		}
 
-		public string emit (Parse.WidgetConventionsFile conventions) {
-			return emit_entries (collect_entries (conventions));
+		public string emit(Parse.WidgetConventionsFile conventions) {
+			return emit_entries(collect_entries(conventions));
 		}
 
-		public string emit_from_file (string conventions_path) throws GLib.Error {
-			var parser = new Json.Parser ();
-			parser.load_from_file (conventions_path);
-			var root = parser.get_root ();
-			if (root == null || root.get_node_type () != Json.NodeType.OBJECT) {
-				throw new GLib.IOError.FAILED ("conventions root must be object");
+		static WebView2ComSyncEmitter? sync_emitter;
+
+		public void set_sync_emitter(WebView2ComSyncEmitter emitter) {
+			sync_emitter = emitter;
+		}
+
+		public string emit_from_file(string conventions_path) throws GLib.Error {
+			var parser = new Json.Parser();
+			parser.load_from_file(conventions_path);
+			var root = parser.get_root();
+			if (root == null || root.get_node_type() != Json.NodeType.OBJECT) {
+				throw new GLib.IOError.FAILED("conventions root must be object");
 			}
-			var profiles = root.get_object ().get_object_member ("profiles");
-			if (profiles == null || !profiles.has_member ("WebView2")) {
+			var profiles = root.get_object().get_object_member("profiles");
+			if (profiles == null || !profiles.has_member("WebView2")) {
 				return GENERATED_HEADER + GENERATED_FOOTER;
 			}
-			var webview2 = profiles.get_object_member ("WebView2");
-			var map_node = webview2.get_member ("ergo_native_map");
-			if (map_node == null || map_node.get_node_type () != Json.NodeType.ARRAY) {
+			var webview2 = profiles.get_object_member("WebView2");
+			var map_node = webview2.get_member("ergo_native_map");
+			if (map_node == null || map_node.get_node_type() != Json.NodeType.ARRAY) {
 				return GENERATED_HEADER + GENERATED_FOOTER;
 			}
 			var entries = new Gee.ArrayList<Parse.ErgoNativeMapEntry> ();
-			var arr = map_node.get_array ();
-			for (uint i = 0; i < arr.get_length (); i++) {
-				var entry = Json.gobject_deserialize (
+			var arr = map_node.get_array();
+			for (uint i = 0; i < arr.get_length(); i++) {
+				var entry = Json.gobject_deserialize(
 					typeof (Parse.ErgoNativeMapEntry),
-					arr.get_element (i)
+					arr.get_element(i)
 				) as Parse.ErgoNativeMapEntry;
 				if (entry != null) {
-					entries.add (entry);
+					entries.add(entry);
 				}
 			}
-			return emit_entries (entries);
+			return emit_entries(entries);
 		}
 
-		static Gee.ArrayList<Parse.ErgoNativeMapEntry> collect_entries (
+		static Gee.ArrayList<Parse.ErgoNativeMapEntry> collect_entries(
 			Parse.WidgetConventionsFile conventions
 		) {
 			var entries = new Gee.ArrayList<Parse.ErgoNativeMapEntry> ();
-			if (!conventions.profiles.has_key ("WebView2")) {
+			if (!conventions.profiles.has_key("WebView2")) {
 				return entries;
 			}
 			foreach (var entry in conventions.profiles["WebView2"].ergo_native_map) {
-				entries.add (entry);
+				entries.add(entry);
 			}
 			return entries;
 		}
 
-		string emit_entries (Gee.ArrayList<Parse.ErgoNativeMapEntry> entries) {
-			var sb = new GLib.StringBuilder (GENERATED_HEADER);
+		string emit_entries(Gee.ArrayList<Parse.ErgoNativeMapEntry> entries) {
+			var sb = new GLib.StringBuilder(GENERATED_HEADER);
 			var seen = new Gee.HashSet<string> ();
 			foreach (var entry in entries) {
-				foreach (var name in glue_method_names (entry.glue)) {
-					if (seen.contains (name)) {
+				foreach (var name in glue_method_names(entry.glue)) {
+					if (seen.contains(name)) {
 						continue;
 					}
-					var kind = classify (name, entry);
+					var kind = classify(name, entry);
 					if (kind == EmitKind.SKIP) {
 						continue;
 					}
-					seen.add (name);
-					emit_method (sb, name, kind);
+					seen.add(name);
+					emit_method(sb, name, kind);
 				}
 			}
-			sb.append (GENERATED_FOOTER);
+			sb.append(GENERATED_FOOTER);
 			return sb.str;
 		}
 
-		static string[] glue_method_names (string glue) {
+		public static string[] glue_method_names(string glue) {
 			var local = glue;
-			var dot = local.last_index_of (".");
+			var dot = local.last_index_of(".");
 			if (dot >= 0) {
-				local = local.substring (dot + 1);
+				local = local.substring(dot + 1);
 			}
-			local = local.strip ();
-			if (local.contains (" / ")) {
-				var parts = local.split (" / ");
+			local = local.strip();
+			if (local.contains(" / ")) {
+				var parts = local.split(" / ");
 				var names = new Gee.ArrayList<string> ();
 				foreach (var part in parts) {
-					names.add (part.strip ());
+					names.add(part.strip());
 				}
-				return names.to_array ();
+				return names.to_array();
 			}
-			if (local.contains ("/")) {
-				var slash = local.index_of ("/");
-				var left = local.substring (0, slash).strip ();
-				var right = local.substring (slash + 1).strip ();
-				if (right.has_prefix ("get_")) {
-					var suffix = right.substring (4);
+			if (local.contains("/")) {
+				var slash = local.index_of("/");
+				var left = local.substring(0, slash).strip();
+				var right = local.substring(slash + 1).strip();
+				if (right.has_prefix("get_")) {
+					var suffix = right.substring(4);
 					if (left == "put") {
 						return { "put_" + suffix, right };
 					}
@@ -124,7 +130,7 @@ namespace Win32.Ui.WebView {
 			return { local };
 		}
 
-		static EmitKind classify (string name, Parse.ErgoNativeMapEntry entry) {
+		static EmitKind classify(string name, Parse.ErgoNativeMapEntry entry) {
 			if (entry.kind == "lifecycle" || entry.kind == "layout" || entry.kind == "signal") {
 				return EmitKind.SKIP;
 			}
@@ -162,35 +168,35 @@ namespace Win32.Ui.WebView {
 			}
 		}
 
-		static void emit_method (GLib.StringBuilder sb, string name, EmitKind kind) {
+		static void emit_method(GLib.StringBuilder sb, string name, EmitKind kind) {
 			var cname = "vala_webview2_host_" + name;
+			var sync = sync_emitter != null ? sync_emitter.method_for(name) : null;
 			switch (kind) {
 			case EmitKind.WEBVIEW_VOID:
-				sb.append_printf (
-					"""[CCode (cname = "%s")]
-public bool %s () {
-	if (!webview_ready ()) {
+				sb.append_printf(
+					"""[CCode(cname = "%s")]
+public bool %s() {
+	if (!webview_ready()) {
 		return false;
 	}
-	return com_ok (g_host.webview.%s ());
+	return com_ok(%s);
 }
 
 """,
 					cname,
 					name,
-					name
+					sync != null ? sync.vala_call : "g_host.webview." + name + "()"
 				);
 				break;
 			case EmitKind.WEBVIEW_STRING:
-				var arg = string_param_name (name);
-				var vapi = name;
-				sb.append_printf (
-					"""[CCode (cname = "%s")]
-public bool %s (string %s) {
-	if (!webview_ready () || %s.length == 0) {
+				var arg = string_param_name(name);
+				sb.append_printf(
+					"""[CCode(cname = "%s")]
+public bool %s(string %s) {
+	if (!webview_ready() || %s.length == 0) {
 		return false;
 	}
-	return com_ok (g_host.webview.%s (WideString (%s).ptr));
+	return com_ok(%s);
 }
 
 """,
@@ -198,43 +204,41 @@ public bool %s (string %s) {
 					name,
 					arg,
 					arg,
-					vapi,
-					arg
+					sync != null ? sync.vala_call : "g_host.webview." + name + "(WideString(" + arg + ").ptr)"
 				);
 				break;
 			case EmitKind.WEBVIEW_GET_COM_STRING:
-				var out_var = com_string_out_name (name);
-				sb.append_printf (
-					"""[CCode (cname = "%s")]
-public string %s () {
-	if (!webview_ready ()) {
+				var out_var = com_string_out_name(name);
+				sb.append_printf(
+					"""[CCode(cname = "%s")]
+public string %s() {
+	if (!webview_ready()) {
 		return "";
 	}
 	uint16* %s = null;
-	if (!com_ok (g_host.webview.%s (out %s))) {
+	if (!com_ok(%s)) {
 		return "";
 	}
-	return take_com_string (%s);
+	return take_com_string(%s);
 }
 
 """,
 					cname,
 					name,
 					out_var,
-					name,
-					out_var,
+					sync != null ? sync.vala_call : "g_host.webview." + name + "(out " + out_var + ")",
 					out_var
 				);
 				break;
 			case EmitKind.WEBVIEW_GET_BOOL:
-				sb.append_printf (
-					"""[CCode (cname = "%s")]
-public bool %s () {
-	if (!webview_ready ()) {
+				sb.append_printf(
+					"""[CCode(cname = "%s")]
+public bool %s() {
+	if (!webview_ready()) {
 		return false;
 	}
 	int val = 0;
-	if (!com_ok (g_host.webview.%s (out val))) {
+	if (!com_ok(%s)) {
 		return false;
 	}
 	return val != 0;
@@ -243,15 +247,15 @@ public bool %s () {
 """,
 					cname,
 					name,
-					name
+					sync != null ? sync.vala_call : "g_host.webview." + name + "(out val)"
 				);
 				break;
 			case EmitKind.WEBVIEW_STUB:
-				sb.append_printf (
-					"""[CCode (cname = "%s")]
-public bool %s (string js) {
+				sb.append_printf(
+					"""[CCode(cname = "%s")]
+public bool %s(string js) {
 	/* vapi needs ICoreWebView2ExecuteScriptCompletedHandler — wiring deferred. */
-	if (!webview_ready () || js.length == 0) {
+	if (!webview_ready() || js.length == 0) {
 		return false;
 	}
 	return false;
@@ -263,30 +267,30 @@ public bool %s (string js) {
 				);
 				break;
 			case EmitKind.CONTROLLER_PUT_BOOL:
-				sb.append_printf (
-					"""[CCode (cname = "%s")]
-public bool %s (bool visible) {
-	if (!controller_ready ()) {
+				sb.append_printf(
+					"""[CCode(cname = "%s")]
+public bool %s(bool visible) {
+	if (!controller_ready()) {
 		return false;
 	}
-	return com_ok (g_host.controller.%s (visible ? 1 : 0));
+	return com_ok(%s);
 }
 
 """,
 					cname,
 					name,
-					name
+					sync != null ? sync.vala_call : "g_host.controller." + name + "(visible ? 1 : 0)"
 				);
 				break;
 			case EmitKind.CONTROLLER_GET_BOOL:
-				sb.append_printf (
-					"""[CCode (cname = "%s")]
-public bool %s () {
-	if (!controller_ready ()) {
+				sb.append_printf(
+					"""[CCode(cname = "%s")]
+public bool %s() {
+	if (!controller_ready()) {
 		return false;
 	}
 	int val = 0;
-	if (!com_ok (g_host.controller.%s (out val))) {
+	if (!com_ok(%s)) {
 		return false;
 	}
 	return val != 0;
@@ -295,34 +299,34 @@ public bool %s () {
 """,
 					cname,
 					name,
-					name
+					sync != null ? sync.vala_call : "g_host.controller." + name + "(out val)"
 				);
 				break;
 			case EmitKind.CONTROLLER_PUT_DOUBLE:
-				sb.append_printf (
-					"""[CCode (cname = "%s")]
-public bool %s (double zoom) {
-	if (!controller_ready ()) {
+				sb.append_printf(
+					"""[CCode(cname = "%s")]
+public bool %s(double zoom) {
+	if (!controller_ready()) {
 		return false;
 	}
-	return com_ok (g_host.controller.%s (zoom));
+	return com_ok(%s);
 }
 
 """,
 					cname,
 					name,
-					name
+					sync != null ? sync.vala_call : "g_host.controller." + name + "(zoom)"
 				);
 				break;
 			case EmitKind.CONTROLLER_GET_DOUBLE:
-				sb.append_printf (
-					"""[CCode (cname = "%s")]
-public double %s () {
-	if (!controller_ready ()) {
+				sb.append_printf(
+					"""[CCode(cname = "%s")]
+public double %s() {
+	if (!controller_ready()) {
 		return 1.0;
 	}
 	double val = 1.0;
-	if (!com_ok (g_host.controller.%s (out val))) {
+	if (!com_ok(%s)) {
 		return 1.0;
 	}
 	return val;
@@ -331,7 +335,7 @@ public double %s () {
 """,
 					cname,
 					name,
-					name
+					sync != null ? sync.vala_call : "g_host.controller." + name + "(out val)"
 				);
 				break;
 			default:
@@ -339,7 +343,7 @@ public double %s () {
 			}
 		}
 
-		static string string_param_name (string glue_method) {
+		static string string_param_name(string glue_method) {
 			switch (glue_method) {
 			case "navigate_to_string":
 				return "html";
@@ -350,7 +354,7 @@ public double %s () {
 			}
 		}
 
-		static string com_string_out_name (string glue_method) {
+		static string com_string_out_name(string glue_method) {
 			switch (glue_method) {
 			case "get_source":
 				return "uri";

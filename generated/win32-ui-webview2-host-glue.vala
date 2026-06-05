@@ -2,146 +2,146 @@
 
 namespace Win32.Ui.WebView {
 
-[CCode (cname = "vala_webview2_host_navigate_to_string")]
-public bool navigate_to_string (string html) {
-	if (!webview_ready () || html.length == 0) {
+[CCode(cname = "vala_webview2_host_navigate_to_string")]
+public bool navigate_to_string(string html) {
+	if (!webview_ready() || html.length == 0) {
 		return false;
 	}
-	return com_ok (g_host.webview.navigate_to_string (WideString (html).ptr));
+	return com_ok(com_webview_navigate_to_string (g_host.webview, WideString(html).ptr));
 }
 
-[CCode (cname = "vala_webview2_host_reload")]
-public bool reload () {
-	if (!webview_ready ()) {
+[CCode(cname = "vala_webview2_host_reload")]
+public bool reload() {
+	if (!webview_ready()) {
 		return false;
 	}
-	return com_ok (g_host.webview.reload ());
+	return com_ok(com_webview_reload (g_host.webview));
 }
 
-[CCode (cname = "vala_webview2_host_stop")]
-public bool stop () {
-	if (!webview_ready ()) {
+[CCode(cname = "vala_webview2_host_stop")]
+public bool stop() {
+	if (!webview_ready()) {
 		return false;
 	}
-	return com_ok (g_host.webview.stop ());
+	return com_ok(com_webview_stop (g_host.webview));
 }
 
-[CCode (cname = "vala_webview2_host_go_back")]
-public bool go_back () {
-	if (!webview_ready ()) {
+[CCode(cname = "vala_webview2_host_go_back")]
+public bool go_back() {
+	if (!webview_ready()) {
 		return false;
 	}
-	return com_ok (g_host.webview.go_back ());
+	return com_ok(com_webview_go_back (g_host.webview));
 }
 
-[CCode (cname = "vala_webview2_host_go_forward")]
-public bool go_forward () {
-	if (!webview_ready ()) {
+[CCode(cname = "vala_webview2_host_go_forward")]
+public bool go_forward() {
+	if (!webview_ready()) {
 		return false;
 	}
-	return com_ok (g_host.webview.go_forward ());
+	return com_ok(com_webview_go_forward (g_host.webview));
 }
 
-[CCode (cname = "vala_webview2_host_execute_script")]
-public bool execute_script (string js) {
+[CCode(cname = "vala_webview2_host_execute_script")]
+public bool execute_script(string js) {
 	/* vapi needs ICoreWebView2ExecuteScriptCompletedHandler — wiring deferred. */
-	if (!webview_ready () || js.length == 0) {
+	if (!webview_ready() || js.length == 0) {
 		return false;
 	}
 	return false;
 }
 
-[CCode (cname = "vala_webview2_host_post_web_message_as_json")]
-public bool post_web_message_as_json (string json) {
-	if (!webview_ready () || json.length == 0) {
+[CCode(cname = "vala_webview2_host_post_web_message_as_json")]
+public bool post_web_message_as_json(string json) {
+	if (!webview_ready() || json.length == 0) {
 		return false;
 	}
-	return com_ok (g_host.webview.post_web_message_as_json (WideString (json).ptr));
+	return com_ok(com_webview_post_web_message_as_json (g_host.webview, WideString(json).ptr));
 }
 
-[CCode (cname = "vala_webview2_host_get_source")]
-public string get_source () {
-	if (!webview_ready ()) {
+[CCode(cname = "vala_webview2_host_get_source")]
+public string get_source() {
+	if (!webview_ready()) {
 		return "";
 	}
 	uint16* uri = null;
-	if (!com_ok (g_host.webview.get_source (out uri))) {
+	if (!com_ok(com_webview_get_source (g_host.webview, out uri))) {
 		return "";
 	}
-	return take_com_string (uri);
+	return take_com_string(uri);
 }
 
-[CCode (cname = "vala_webview2_host_get_can_go_back")]
-public bool get_can_go_back () {
-	if (!webview_ready ()) {
+[CCode(cname = "vala_webview2_host_get_can_go_back")]
+public bool get_can_go_back() {
+	if (!webview_ready()) {
 		return false;
 	}
 	int val = 0;
-	if (!com_ok (g_host.webview.get_can_go_back (out val))) {
+	if (!com_ok(com_webview_get_can_go_back (g_host.webview, out val))) {
 		return false;
 	}
 	return val != 0;
 }
 
-[CCode (cname = "vala_webview2_host_get_can_go_forward")]
-public bool get_can_go_forward () {
-	if (!webview_ready ()) {
+[CCode(cname = "vala_webview2_host_get_can_go_forward")]
+public bool get_can_go_forward() {
+	if (!webview_ready()) {
 		return false;
 	}
 	int val = 0;
-	if (!com_ok (g_host.webview.get_can_go_forward (out val))) {
+	if (!com_ok(com_webview_get_can_go_forward (g_host.webview, out val))) {
 		return false;
 	}
 	return val != 0;
 }
 
-[CCode (cname = "vala_webview2_host_get_document_title")]
-public string get_document_title () {
-	if (!webview_ready ()) {
+[CCode(cname = "vala_webview2_host_get_document_title")]
+public string get_document_title() {
+	if (!webview_ready()) {
 		return "";
 	}
 	uint16* title = null;
-	if (!com_ok (g_host.webview.get_document_title (out title))) {
+	if (!com_ok(com_webview_get_document_title (g_host.webview, out title))) {
 		return "";
 	}
-	return take_com_string (title);
+	return take_com_string(title);
 }
 
-[CCode (cname = "vala_webview2_host_put_is_visible")]
-public bool put_is_visible (bool visible) {
-	if (!controller_ready ()) {
+[CCode(cname = "vala_webview2_host_put_is_visible")]
+public bool put_is_visible(bool visible) {
+	if (!controller_ready()) {
 		return false;
 	}
-	return com_ok (g_host.controller.put_is_visible (visible ? 1 : 0));
+	return com_ok(com_controller_put_is_visible (g_host.controller, visible ? 1 : 0));
 }
 
-[CCode (cname = "vala_webview2_host_get_is_visible")]
-public bool get_is_visible () {
-	if (!controller_ready ()) {
+[CCode(cname = "vala_webview2_host_get_is_visible")]
+public bool get_is_visible() {
+	if (!controller_ready()) {
 		return false;
 	}
 	int val = 0;
-	if (!com_ok (g_host.controller.get_is_visible (out val))) {
+	if (!com_ok(com_controller_get_is_visible (g_host.controller, out val))) {
 		return false;
 	}
 	return val != 0;
 }
 
-[CCode (cname = "vala_webview2_host_put_zoom_factor")]
-public bool put_zoom_factor (double zoom) {
-	if (!controller_ready ()) {
+[CCode(cname = "vala_webview2_host_put_zoom_factor")]
+public bool put_zoom_factor(double zoom) {
+	if (!controller_ready()) {
 		return false;
 	}
-	return com_ok (g_host.controller.put_zoom_factor (zoom));
+	return com_ok(com_controller_put_zoom_factor (g_host.controller, zoom));
 }
 
-[CCode (cname = "vala_webview2_host_get_zoom_factor")]
-public double get_zoom_factor () {
-	if (!controller_ready ()) {
+[CCode(cname = "vala_webview2_host_get_zoom_factor")]
+public double get_zoom_factor() {
+	if (!controller_ready()) {
 		return 1.0;
 	}
 	double val = 1.0;
-	if (!com_ok (g_host.controller.get_zoom_factor (out val))) {
+	if (!com_ok(com_controller_get_zoom_factor (g_host.controller, out val))) {
 		return 1.0;
 	}
 	return val;

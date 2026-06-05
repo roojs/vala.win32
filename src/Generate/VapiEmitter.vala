@@ -8,12 +8,12 @@ namespace Generate {
 
 """;
 		const string WORD_HELPERS = """
-	[CCode (cheader_filename = "")]
-	public static uint loword (ulong l) {
+	[CCode(cheader_filename = "")]
+	public static uint loword(ulong l) {
 		return (uint) (l & 0xffff);
 	}
 
-	public static uint hiword (ulong l) {
+	public static uint hiword(ulong l) {
 		return (uint) ((l >> 16) & 0xffff);
 	}
 
@@ -30,266 +30,266 @@ namespace Generate {
 		private bool iunknown_emitted = false;
 		private Gee.HashSet<string> emitted_com_names = new Gee.HashSet<string> ();
 
-		public VapiEmitter (SymbolFilter filter) {
+		public VapiEmitter(SymbolFilter filter) {
 			this.filter = filter;
-			this.buffer = new GLib.StringBuilder ();
+			this.buffer = new GLib.StringBuilder();
 		}
 
-		string full_symbol_name (string basename, string symbol_name) {
+		string full_symbol_name(string basename, string symbol_name) {
 			if (this.basename_in_symbol) {
-				return this.symbol_prefix + "." + basename.slice (0, -5) + "." + symbol_name;
+				return this.symbol_prefix + "." + basename.slice(0, -5) + "." + symbol_name;
 			}
 			return this.symbol_prefix + "." + symbol_name;
 		}
 
-		string shard_vala_namespace (string json_basename) {
+		string shard_vala_namespace(string json_basename) {
 			if (this.vala_namespace_override.length > 0) {
 				return this.vala_namespace_override;
 			}
-			return NameMapper.vala_namespace_from_basename (json_basename);
+			return NameMapper.vala_namespace_from_basename(json_basename);
 		}
 
-		bool claim_vala_name (string vala_name) {
-			if (this.emitted_vala_names.contains (vala_name)) {
+		bool claim_vala_name(string vala_name) {
+			if (this.emitted_vala_names.contains(vala_name)) {
 				return false;
 			}
-			this.emitted_vala_names.add (vala_name);
+			this.emitted_vala_names.add(vala_name);
 			return true;
 		}
 
-		static string quoted_c_string (string value) {
+		static string quoted_c_string(string value) {
 			return "\"" + value + "\"";
 		}
 
-		void reset_shard () {
-			this.buffer = new GLib.StringBuilder ();
-			this.emitted_vala_names.clear ();
+		void reset_shard() {
+			this.buffer = new GLib.StringBuilder();
+			this.emitted_vala_names.clear();
 			this.shard_basename = "";
 			this.iunknown_emitted = false;
-			this.emitted_com_names.clear ();
+			this.emitted_com_names.clear();
 		}
 
-		void append_namespace_open (string ns, bool with_ccode) {
+		void append_namespace_open(string ns, bool with_ccode) {
 			if (with_ccode) {
-				this.buffer.append (
-					@"$(GENERATED_HEADER)[CCode (cprefix = $(VapiEmitter.quoted_c_string ("")), cheader_filename = $(VapiEmitter.quoted_c_string (this.cheader_filename)))]
+				this.buffer.append(
+					@"$(GENERATED_HEADER)[CCode(cprefix = $(VapiEmitter.quoted_c_string("")), cheader_filename = $(VapiEmitter.quoted_c_string(this.cheader_filename)))]
 namespace $(ns) {
 "
 				);
 			} else {
-				this.buffer.append (@"$(GENERATED_HEADER)namespace $(ns) {
+				this.buffer.append(@"$(GENERATED_HEADER)namespace $(ns) {
 ");
 			}
 		}
 
-		void append_namespace_close () {
-			this.buffer.append ("}\n");
+		void append_namespace_close() {
+			this.buffer.append("}\n");
 		}
 
-		/** WC_* wide class strings — emitted as .vala (Vala vapi cannot hold const values). */
-		public string emit_control_class_strings (Parse.ApiFileEntry entry) {
-			this.reset_shard ();
-			var ns = NameMapper.vala_namespace_from_basename (entry.basename);
-			this.append_namespace_open (ns, false);
+		/** WC_* wide class strings — emitted as .vala(Vala vapi cannot hold const values). */
+		public string emit_control_class_strings(Parse.ApiFileEntry entry) {
+			this.reset_shard();
+			var ns = NameMapper.vala_namespace_from_basename(entry.basename);
+			this.append_namespace_open(ns, false);
 			var basename = entry.basename;
 			foreach (var c in entry.document.Constants) {
-				if (NameMapper.skip_ansi_name (c.Name)) {
+				if (NameMapper.skip_ansi_name(c.Name)) {
 					continue;
 				}
-				if (!VapiEmitter.is_control_class_string (c.Name)) {
+				if (!VapiEmitter.is_control_class_string(c.Name)) {
 					continue;
 				}
-				if (!VapiEmitter.is_string_constant (c)) {
+				if (!VapiEmitter.is_string_constant(c)) {
 					continue;
 				}
-				var full = this.full_symbol_name (basename, c.Name);
-				if (!this.filter.include_symbol (full)) {
+				var full = this.full_symbol_name(basename, c.Name);
+				if (!this.filter.include_symbol(full)) {
 					continue;
 				}
-				var vala_name = NameMapper.to_constant_name (c.Name);
-				if (!this.claim_vala_name (vala_name)) {
+				var vala_name = NameMapper.to_constant_name(c.Name);
+				if (!this.claim_vala_name(vala_name)) {
 					continue;
 				}
-				this.emit_string_constant (c, vala_name);
+				this.emit_string_constant(c, vala_name);
 			}
-			this.append_namespace_close ();
+			this.append_namespace_close();
 			return this.buffer.str;
 		}
 
 		/** One vapi shard: namespace Win32.Ui.* { … } */
-		public string emit_shard (Parse.ApiFileEntry entry) {
-			this.reset_shard ();
+		public string emit_shard(Parse.ApiFileEntry entry) {
+			this.reset_shard();
 			this.iunknown_emitted = false;
-			var ns = this.shard_vala_namespace (entry.basename);
-			this.append_namespace_open (ns, true);
+			var ns = this.shard_vala_namespace(entry.basename);
+			this.append_namespace_open(ns, true);
 			if (this.cheader_filename == "WebView2.h"
 			    || this.cheader_filename == "win32-ui-webview2-sdk.h") {
-				this.emit_webview2_foundation_stub ();
+				this.emit_webview2_foundation_stub();
 			}
-			this.emit_shard_body (entry);
+			this.emit_shard_body(entry);
 			if (entry.basename == "UI.WindowsAndMessaging.json") {
-				this.emit_word_helpers ();
+				this.emit_word_helpers();
 			}
-			this.append_namespace_close ();
+			this.append_namespace_close();
 			return this.buffer.str;
 		}
 
-		/** Phase 1 monolith (deprecated for apps). */
-		public string emit_all (Generate.Parse.ApiFileEntry[] files) {
-			this.reset_shard ();
-			this.buffer.append (@"$(GENERATED_HEADER)[CCode (cprefix = $(VapiEmitter.quoted_c_string ("")), cheader_filename = $(VapiEmitter.quoted_c_string ("windows.h")))]
+		/** Phase 1 monolith(deprecated for apps). */
+		public string emit_all(Generate.Parse.ApiFileEntry[] files) {
+			this.reset_shard();
+			this.buffer.append(@"$(GENERATED_HEADER)[CCode(cprefix = $(VapiEmitter.quoted_c_string("")), cheader_filename = $(VapiEmitter.quoted_c_string("windows.h")))]
 namespace Win32 {
 ");
 			foreach (var entry in files) {
-				this.emit_shard_body (entry);
+				this.emit_shard_body(entry);
 			}
-			this.append_namespace_close ();
+			this.append_namespace_close();
 			return this.buffer.str;
 		}
 
-		public Gee.HashMap<string, string> emit_all_shards (Generate.Parse.ApiFileEntry[] files) {
+		public Gee.HashMap<string, string> emit_all_shards(Generate.Parse.ApiFileEntry[] files) {
 			var map = new Gee.HashMap<string, string> ();
 			foreach (var entry in files) {
-				var pkg_id = NameMapper.json_basename_to_pkg_id (entry.basename);
-				map[pkg_id] = this.emit_shard (entry);
+				var pkg_id = NameMapper.json_basename_to_pkg_id(entry.basename);
+				map[pkg_id] = this.emit_shard(entry);
 			}
 			return map;
 		}
 
-		void emit_shard_body (Parse.ApiFileEntry entry) {
+		void emit_shard_body(Parse.ApiFileEntry entry) {
 			this.shard_basename = entry.basename;
 			var basename = entry.basename;
 			var doc = entry.document;
 
 			foreach (var c in doc.Constants) {
-				if (NameMapper.skip_ansi_name (c.Name)) {
+				if (NameMapper.skip_ansi_name(c.Name)) {
 					continue;
 				}
-				var full = this.full_symbol_name (basename, c.Name);
-				if (!this.filter.include_symbol (full)) {
+				var full = this.full_symbol_name(basename, c.Name);
+				if (!this.filter.include_symbol(full)) {
 					continue;
 				}
-				this.emit_constant (c);
+				this.emit_constant(c);
 			}
 
 			foreach (var t in doc.Types) {
-				if (NameMapper.skip_ansi_name (t.Name)) {
+				if (NameMapper.skip_ansi_name(t.Name)) {
 					continue;
 				}
-				var full = this.full_symbol_name (basename, t.Name);
-				if (!this.filter.include_symbol (full)) {
+				var full = this.full_symbol_name(basename, t.Name);
+				if (!this.filter.include_symbol(full)) {
 					continue;
 				}
 				if (t.Kind == "Enum") {
-					this.emit_enum (t);
+					this.emit_enum(t);
 				}
 			}
 
 			foreach (var t in doc.Types) {
-				if (NameMapper.skip_ansi_name (t.Name)) {
+				if (NameMapper.skip_ansi_name(t.Name)) {
 					continue;
 				}
-				var full = this.full_symbol_name (basename, t.Name);
-				if (!this.filter.include_symbol (full)) {
+				var full = this.full_symbol_name(basename, t.Name);
+				if (!this.filter.include_symbol(full)) {
 					continue;
 				}
 				if (t.Kind == "FunctionPointer") {
-					this.emit_delegate (t);
+					this.emit_delegate(t);
 				}
 			}
 
 			foreach (var t in doc.Types) {
-				if (NameMapper.skip_ansi_name (t.Name)) {
+				if (NameMapper.skip_ansi_name(t.Name)) {
 					continue;
 				}
-				var full = this.full_symbol_name (basename, t.Name);
-				if (!this.filter.include_symbol (full)) {
+				var full = this.full_symbol_name(basename, t.Name);
+				if (!this.filter.include_symbol(full)) {
 					continue;
 				}
 				if (t.Kind == "Struct") {
-					this.emit_struct (t);
+					this.emit_struct(t);
 				}
 			}
 
 			foreach (var t in doc.Types) {
-				if (NameMapper.skip_ansi_name (t.Name)) {
+				if (NameMapper.skip_ansi_name(t.Name)) {
 					continue;
 				}
-				var full = this.full_symbol_name (basename, t.Name);
-				if (!this.filter.include_symbol (full)) {
+				var full = this.full_symbol_name(basename, t.Name);
+				if (!this.filter.include_symbol(full)) {
 					continue;
 				}
 				if (t.Kind == "Com") {
-					this.emitted_com_names.add (t.Name);
+					this.emitted_com_names.add(t.Name);
 				}
 			}
 
 			foreach (var t in doc.Types) {
-				if (NameMapper.skip_ansi_name (t.Name)) {
+				if (NameMapper.skip_ansi_name(t.Name)) {
 					continue;
 				}
-				var full = this.full_symbol_name (basename, t.Name);
-				if (!this.filter.include_symbol (full)) {
+				var full = this.full_symbol_name(basename, t.Name);
+				if (!this.filter.include_symbol(full)) {
 					continue;
 				}
 				if (t.Kind == "Com") {
-					this.maybe_emit_iunknown ();
-					this.emit_com (t);
+					this.maybe_emit_iunknown();
+					this.emit_com(t);
 				}
 			}
 
 			foreach (var f in doc.Functions) {
-				if (NameMapper.skip_ansi_name (f.Name)) {
+				if (NameMapper.skip_ansi_name(f.Name)) {
 					continue;
 				}
-				var full = this.full_symbol_name (basename, f.Name);
-				if (!this.filter.include_symbol (full)) {
+				var full = this.full_symbol_name(basename, f.Name);
+				if (!this.filter.include_symbol(full)) {
 					continue;
 				}
-				this.emit_function (f);
+				this.emit_function(f);
 			}
 		}
 
-		void emit_constant (Parse.Constant c) {
-			var vala_name = NameMapper.to_constant_name (c.Name);
-			if (!this.claim_vala_name (vala_name)) {
+		void emit_constant(Parse.Constant c) {
+			var vala_name = NameMapper.to_constant_name(c.Name);
+			if (!this.claim_vala_name(vala_name)) {
 				return;
 			}
-			if (VapiEmitter.is_string_constant (c)) {
+			if (VapiEmitter.is_string_constant(c)) {
 				return;
 			}
-			var vala_type = VapiEmitter.vala_type_for (c.Type, c.ValueType);
-			if (!VapiEmitter.is_valid_const_vala_type (vala_type)) {
+			var vala_type = VapiEmitter.vala_type_for(c.Type, c.ValueType);
+			if (!VapiEmitter.is_valid_const_vala_type(vala_type)) {
 				return;
 			}
-			this.buffer.append (@"	[CCode (cname = $(VapiEmitter.quoted_c_string (c.Name)))]
+			this.buffer.append(@"	[CCode(cname = $(VapiEmitter.quoted_c_string(c.Name)))]
 	public const $(vala_type) $(vala_name);
 
 ");
 		}
 
-		void emit_string_constant (Parse.Constant c, string vala_name) {
+		void emit_string_constant(Parse.Constant c, string vala_name) {
 			if (c.ValueText.length == 0) {
 				return;
 			}
 			var parts = new Gee.ArrayList<string> ();
 			for (int i = 0; i < c.ValueText.length; i++) {
-				parts.add (@"'$(c.ValueText[i])'");
+				parts.add(@"'$(c.ValueText[i])'");
 			}
-			var chars = string.joinv (", ", parts.to_array ());
-			this.buffer.append (@"	[CCode (array_length = false, array_null_terminated = true)]
+			var chars = string.joinv(", ", parts.to_array());
+			this.buffer.append(@"	[CCode(array_length = false, array_null_terminated = true)]
 	public const uint16[] $(vala_name) = { $(chars), 0 };
 
 ");
 		}
 
-		void emit_word_helpers () {
-			this.buffer.append (WORD_HELPERS);
+		void emit_word_helpers() {
+			this.buffer.append(WORD_HELPERS);
 		}
 
-		/** Registerable Win32 / commctrl window class string constants (CreateWindow lpClassName). */
-		public static bool is_control_class_string (string name) {
-			if (name.has_prefix ("WC_")) {
+		/** Registerable Win32 / commctrl window class string constants(CreateWindow lpClassName). */
+		public static bool is_control_class_string(string name) {
+			if (name.has_prefix("WC_")) {
 				return true;
 			}
 			switch (name) {
@@ -304,7 +304,7 @@ namespace Win32 {
 			}
 		}
 
-		public static bool is_string_constant (Parse.Constant c) {
+		public static bool is_string_constant(Parse.Constant c) {
 			if (c.ValueType == "String") {
 				return true;
 			}
@@ -314,36 +314,36 @@ namespace Win32 {
 			return false;
 		}
 
-		void emit_enum (Parse.MetadataType t) {
+		void emit_enum(Parse.MetadataType t) {
 			if (t.Values.size == 0) {
 				return;
 			}
-			var vala_name = t.Name.has_prefix ("COREWEBVIEW2_") ? t.Name : NameMapper.to_vala_type (t.Name);
-			if (!this.claim_vala_name (vala_name)) {
+			var vala_name = t.Name.has_prefix("COREWEBVIEW2_") ? t.Name : NameMapper.to_vala_type(t.Name);
+			if (!this.claim_vala_name(vala_name)) {
 				return;
 			}
 			var flags = t.Flags ? "\t[Flags]\n" : "";
-			var enum_cname = VapiEmitter.enum_c_type_id (t.IntegerBase);
-			this.buffer.append (@"$(flags)	[CCode (cname = $(VapiEmitter.quoted_c_string (enum_cname)), has_type_id = false)]
+			var enum_cname = VapiEmitter.enum_c_type_id(t.IntegerBase);
+			this.buffer.append(@"$(flags)	[CCode(cname = $(VapiEmitter.quoted_c_string(enum_cname)), has_type_id = false)]
 	public enum $(vala_name) {
 ");
 			var members = new Gee.HashSet<string> ();
 			foreach (var v in t.Values) {
-				if (NameMapper.skip_ansi_name (v.Name)) {
+				if (NameMapper.skip_ansi_name(v.Name)) {
 					continue;
 				}
-				if (members.contains (v.Name)) {
+				if (members.contains(v.Name)) {
 					continue;
 				}
-				members.add (v.Name);
-				this.buffer.append (@"		[CCode (cname = $(VapiEmitter.quoted_c_string (v.Name)))]
-		$(v.Name) = $(VapiEmitter.format_enum_value (v.Value)),
+				members.add(v.Name);
+				this.buffer.append(@"		[CCode(cname = $(VapiEmitter.quoted_c_string(v.Name)))]
+		$(v.Name) = $(VapiEmitter.format_enum_value(v.Value)),
 ");
 			}
-			this.buffer.append ("\t}\n\n");
+			this.buffer.append("\t}\n\n");
 		}
 
-		static string enum_c_type_id (string integer_base) {
+		static string enum_c_type_id(string integer_base) {
 			switch (integer_base) {
 			case "Int32":
 				return "INT";
@@ -356,90 +356,90 @@ namespace Win32 {
 			}
 		}
 
-		static string format_enum_value (int64 value) {
+		static string format_enum_value(int64 value) {
 			if (value < 0) {
-				return value.to_string ();
+				return value.to_string();
 			}
 			if (value > 0xFFFF) {
-				return "0x%08llx".printf ((ulong) value);
+				return "0x%08llx".printf((ulong) value);
 			}
-			return value.to_string ();
+			return value.to_string();
 		}
 
-		void emit_struct (Parse.MetadataType t) {
-			if (NameMapper.skip_ansi_variant_name (t.Name)) {
+		void emit_struct(Parse.MetadataType t) {
+			if (NameMapper.skip_ansi_variant_name(t.Name)) {
 				return;
 			}
-			var vala_name = NameMapper.to_vala_type (t.Name);
-			if (!this.claim_vala_name (vala_name)) {
+			var vala_name = NameMapper.to_vala_type(t.Name);
+			if (!this.claim_vala_name(vala_name)) {
 				return;
 			}
-			this.buffer.append (@"	[CCode (cname = $(VapiEmitter.quoted_c_string (t.Name)))]
+			this.buffer.append(@"	[CCode(cname = $(VapiEmitter.quoted_c_string(t.Name)))]
 	public struct $(vala_name) {
 ");
 			foreach (var field in t.Fields) {
 				if (t.Name == "MSG" && field.Name == "pt") {
-					this.buffer.append (@"		public int pt_x;
+					this.buffer.append(@"		public int pt_x;
 		public int pt_y;
 ");
 					continue;
 				}
-				var ftype = VapiEmitter.vala_type_for_field (field.Type, this.shard_basename);
-				if (ftype.index_of ("Anonymous") >= 0) {
+				var ftype = VapiEmitter.vala_type_for_field(field.Type, this.shard_basename);
+				if (ftype.index_of("Anonymous") >= 0) {
 					ftype = "void*";
 				}
-				this.buffer.append (@"		public $(ftype) $(field.Name);
+				this.buffer.append(@"		public $(ftype) $(field.Name);
 ");
 			}
-			this.buffer.append ("\t}\n\n");
+			this.buffer.append("\t}\n\n");
 		}
 
-		string shard_param_type (Parse.Parameter p) {
-			var void_ptr = VapiEmitter.com_type_as_void_ptr_if_missing (p.Type, this.emitted_com_names);
+		string shard_param_type(Parse.Parameter p) {
+			var void_ptr = VapiEmitter.com_type_as_void_ptr_if_missing(p.Type, this.emitted_com_names);
 			if (void_ptr != null) {
 				return void_ptr;
 			}
-			return VapiEmitter.vala_param_type (p, this.shard_basename);
+			return VapiEmitter.vala_param_type(p, this.shard_basename);
 		}
 
-		static string? com_type_as_void_ptr_if_missing (
+		static string? com_type_as_void_ptr_if_missing(
 			Parse.TypeRef type_ref,
 			Gee.HashSet<string> emitted_com
 		) {
 			if (type_ref.Kind == "ApiRef" && type_ref.TargetKind == "Com") {
-				if (!emitted_com.contains (type_ref.Name) && type_ref.Name != "IUnknown") {
+				if (!emitted_com.contains(type_ref.Name) && type_ref.Name != "IUnknown") {
 					return "void*";
 				}
 				return null;
 			}
 			if (type_ref.Kind == "PointerTo" && type_ref.Child != null) {
-				return VapiEmitter.com_type_as_void_ptr_if_missing (type_ref.Child, emitted_com);
+				return VapiEmitter.com_type_as_void_ptr_if_missing(type_ref.Child, emitted_com);
 			}
 			return null;
 		}
 
-		void emit_delegate (Parse.MetadataType t) {
-			var vala_name = NameMapper.to_vala_type (t.Name);
-			if (!this.claim_vala_name (vala_name)) {
+		void emit_delegate(Parse.MetadataType t) {
+			var vala_name = NameMapper.to_vala_type(t.Name);
+			if (!this.claim_vala_name(vala_name)) {
 				return;
 			}
-			var ret_type = VapiEmitter.vala_type_for (t.ReturnType, "");
-			this.buffer.append (@"	[CCode (cname = $(VapiEmitter.quoted_c_string (t.Name)), has_target = false)]
+			var ret_type = VapiEmitter.vala_type_for(t.ReturnType, "");
+			this.buffer.append(@"	[CCode(cname = $(VapiEmitter.quoted_c_string(t.Name)), has_target = false)]
 	public delegate $(ret_type) $(vala_name) (
 ");
 			var n = t.Params.size;
 			for (int i = 0; i < n; i++) {
-				var p = t.Params.get (i);
-				var ptype = this.shard_param_type (p);
+				var p = t.Params.get(i);
+				var ptype = this.shard_param_type(p);
 				var comma = i < n - 1 ? "," : "";
-				this.buffer.append (@"		$(ptype) $(NameMapper.delegate_param_name (t.Name, p.Name, i))$(comma)
+				this.buffer.append(@"		$(ptype) $(NameMapper.delegate_param_name(t.Name, p.Name, i))$(comma)
 ");
 			}
-			this.buffer.append ("\t);\n\n");
+			this.buffer.append("\t);\n\n");
 		}
 
-		void emit_webview2_foundation_stub () {
-			this.buffer.append ("""	[CCode (cname = "RECT")]
+		void emit_webview2_foundation_stub() {
+			this.buffer.append("""	[CCode(cname = "RECT")]
 	public struct Rect {
 		public int left;
 		public int top;
@@ -450,86 +450,86 @@ namespace Win32 {
 """);
 		}
 
-		void maybe_emit_iunknown () {
+		void maybe_emit_iunknown() {
 			if (this.iunknown_emitted) {
 				return;
 			}
 			this.iunknown_emitted = true;
-			this.buffer.append ("""	[CCode (cheader_filename = "objbase.h", cname = "IUnknown", ref_function = "", unref_function = "")]
+			this.buffer.append("""	[CCode(cheader_filename = "objbase.h", cname = "IUnknown", ref_function = "", unref_function = "")]
 	public interface IUnknown {
-		[CCode (cname = "QueryInterface")]
-		public abstract int query_interface (void* riid, void** ppv_object);
+		[CCode(cname = "QueryInterface")]
+		public abstract int query_interface(void* riid, void** ppv_object);
 
-		[CCode (cname = "AddRef")]
-		public abstract uint add_ref ();
+		[CCode(cname = "AddRef")]
+		public abstract uint add_ref();
 
-		[CCode (cname = "Release")]
-		public abstract uint release ();
+		[CCode(cname = "Release")]
+		public abstract uint release();
 	}
 
 """);
 		}
 
-		void emit_com (Parse.MetadataType t) {
-			if (!this.claim_vala_name (t.Name)) {
+		void emit_com(Parse.MetadataType t) {
+			if (!this.claim_vala_name(t.Name)) {
 				return;
 			}
 			var parent = "IUnknown";
 			if (t.Interface != null && t.Interface.Name.length > 0) {
 				parent = t.Interface.Name;
 			}
-			this.buffer.append (
-				@"	[CCode (cname = $(VapiEmitter.quoted_c_string (t.Name)), ref_function = $(VapiEmitter.quoted_c_string ("")), unref_function = $(VapiEmitter.quoted_c_string ("")))]
+			this.buffer.append(
+				@"	[CCode(cname = $(VapiEmitter.quoted_c_string(t.Name)), ref_function = $(VapiEmitter.quoted_c_string("")), unref_function = $(VapiEmitter.quoted_c_string("")))]
 	public interface $(t.Name) : $(parent) {
 "
 			);
 			foreach (var method in t.Methods) {
-				this.emit_com_method (method);
+				this.emit_com_method(method);
 			}
-			this.buffer.append ("\t}\n\n");
+			this.buffer.append("\t}\n\n");
 		}
 
-		void emit_com_method (Parse.Function method) {
-			var is_getter = method.Name.has_prefix ("get_");
-			var vala_name = NameMapper.com_method_name (method.Name);
-			var ret = VapiEmitter.com_return_type (method.ReturnType);
-			this.buffer.append (@"		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+		void emit_com_method(Parse.Function method) {
+			var is_getter = method.Name.has_prefix("get_");
+			var vala_name = NameMapper.com_method_name(method.Name);
+			var ret = VapiEmitter.com_return_type(method.ReturnType);
+			this.buffer.append(@"		[CCode(cname = $(VapiEmitter.quoted_c_string(method.Name)))]
 		public abstract $(ret) $(vala_name) (
 ");
 			var n = method.Params.size;
 			for (int i = 0; i < n; i++) {
-				var p = method.Params.get (i);
-				var ptype = VapiEmitter.com_param_type (
+				var p = method.Params.get(i);
+				var ptype = VapiEmitter.com_param_type(
 					p,
 					this.shard_basename,
 					this.emitted_com_names,
 					is_getter,
 					this.cheader_filename
 				);
-				var pname = NameMapper.to_snake (p.Name.length > 0 ? p.Name : @"param$(i)");
+				var pname = NameMapper.to_snake(p.Name.length > 0 ? p.Name : @"param$(i)");
 				var comma = i < n - 1 ? "," : "";
-				this.buffer.append (@"			$(ptype) $(pname)$(comma)
+				this.buffer.append(@"			$(ptype) $(pname)$(comma)
 ");
 			}
-			this.buffer.append ("\t\t);\n\n");
+			this.buffer.append("\t\t);\n\n");
 		}
 
-		static string com_return_type (Parse.TypeRef type_ref) {
+		static string com_return_type(Parse.TypeRef type_ref) {
 			if (type_ref.Name == "HRESULT") {
 				return "int";
 			}
-			return VapiEmitter.vala_type_for_ref (type_ref, "", null);
+			return VapiEmitter.vala_type_for_ref(type_ref, "", null);
 		}
 
-		static string com_param_type (
+		static string com_param_type(
 			Parse.Parameter p,
 			string shard_basename,
 			Gee.HashSet<string> emitted_com,
 			bool getter_method = false,
 			string cheader_filename = "windows.h"
 		) {
-			string finish (string mapped) {
-				return VapiEmitter.rewrite_webview2_rect (mapped, cheader_filename);
+			string finish(string mapped) {
+				return VapiEmitter.rewrite_webview2_rect(mapped, cheader_filename);
 			}
 			var type_ref = p.Type;
 			if (type_ref.Kind == "PointerTo" && type_ref.Child != null
@@ -537,51 +537,57 @@ namespace Win32 {
 				&& type_ref.Child.Child.Kind == "ApiRef"
 				&& type_ref.Child.Child.TargetKind == "Com") {
 				var iface = type_ref.Child.Child.Name;
-				if (!emitted_com.contains (iface)) {
+				if (!emitted_com.contains(iface)) {
 					return "void*";
 				}
-				return finish ("out unowned " + iface);
+				return finish("out unowned " + iface);
 			}
 			if (type_ref.Kind == "PointerTo" && type_ref.Child != null
 				&& type_ref.Child.Kind == "ApiRef"
 				&& type_ref.Child.TargetKind == "Com") {
 				var iface = type_ref.Child.Name;
-				if (!emitted_com.contains (iface) && iface != "IUnknown") {
+				if (!emitted_com.contains(iface) && iface != "IUnknown") {
 					return "void*";
 				}
-				return finish (iface);
+				return finish(iface);
 			}
 			if (getter_method && type_ref.Kind == "PointerTo") {
 				if (type_ref.Child != null && type_ref.Child.Name == "LPWSTR") {
-					return finish ("out uint16*");
+					return finish("out uint16*");
 				}
 				if (type_ref.Child != null && type_ref.Child.Kind == "ApiRef"
 					&& type_ref.Child.Name == "BOOL") {
-					return finish ("out int");
+					return finish("out int");
+				}
+				if (type_ref.Child != null && type_ref.Child.Name == "DOUBLE") {
+					return finish("out double");
+				}
+				if (type_ref.Child != null && type_ref.Child.Name == "double") {
+					return finish("out double");
 				}
 			}
 			if (type_ref.Kind == "PointerTo" && type_ref.Child != null
-				&& VapiEmitter.com_param_is_out (p)) {
+				&& VapiEmitter.com_param_is_out(p)) {
 				if (type_ref.Child.Name == "EventRegistrationToken") {
-					return finish ("out EventRegistrationToken");
+					return finish("out EventRegistrationToken");
 				}
-				/* Attrs already carry Out — do not pass them into vala_type_for_ref (double "out"). */
-				var inner = VapiEmitter.vala_type_for_ref (type_ref.Child, "", null, shard_basename);
-				return finish ("out " + inner);
+				/* Attrs already carry Out — do not pass them into vala_type_for_ref(double "out"). */
+				var inner = VapiEmitter.vala_type_for_ref(type_ref.Child, "", null, shard_basename);
+				return finish("out " + inner);
 			}
-			return finish (VapiEmitter.vala_param_type (p, shard_basename));
+			return finish(VapiEmitter.vala_param_type(p, shard_basename));
 		}
 
-		static string rewrite_webview2_rect (string mapped, string cheader_filename) {
+		static string rewrite_webview2_rect(string mapped, string cheader_filename) {
 			if (cheader_filename == "WebView2.h"
 			    || cheader_filename == "win32-ui-webview2-sdk.h") {
-				return mapped.replace ("Win32.Foundation.Rect", "Rect");
+				return mapped.replace("Win32.Foundation.Rect", "Rect");
 			}
 			return mapped;
 		}
 
-		static bool com_param_is_out (Parse.Parameter p) {
-			if (VapiEmitter.attrs_contain (p.Attrs, "Out") || VapiEmitter.attrs_contain (p.Attrs, "Retval")) {
+		static bool com_param_is_out(Parse.Parameter p) {
+			if (VapiEmitter.attrs_contain(p.Attrs, "Out") || VapiEmitter.attrs_contain(p.Attrs, "Retval")) {
 				return true;
 			}
 			if (p.Type.Kind == "PointerTo" && p.Type.Child != null
@@ -591,53 +597,53 @@ namespace Win32 {
 			return false;
 		}
 
-		void emit_function (Parse.Function f) {
-			var vala_name = NameMapper.to_snake_function (f.Name);
-			if (!this.claim_vala_name (vala_name)) {
+		void emit_function(Parse.Function f) {
+			var vala_name = NameMapper.to_snake_function(f.Name);
+			if (!this.claim_vala_name(vala_name)) {
 				return;
 			}
-			var ret = VapiEmitter.vala_type_for_ref (f.ReturnType, "", null, this.shard_basename);
-			this.buffer.append (@"	[CCode (cname = $(VapiEmitter.quoted_c_string (f.Name)))]
+			var ret = VapiEmitter.vala_type_for_ref(f.ReturnType, "", null, this.shard_basename);
+			this.buffer.append(@"	[CCode(cname = $(VapiEmitter.quoted_c_string(f.Name)))]
 	public extern $(ret) $(vala_name) (
 ");
 			var n = f.Params.size;
 			for (int i = 0; i < n; i++) {
-				var p = f.Params.get (i);
-				var ptype = this.shard_param_type (p);
-				var pname = VapiEmitter.param_vala_name (f.Name, p);
+				var p = f.Params.get(i);
+				var ptype = this.shard_param_type(p);
+				var pname = VapiEmitter.param_vala_name(f.Name, p);
 				var comma = i < n - 1 ? "," : "";
-				this.buffer.append (@"		$(ptype) $(pname)$(comma)
+				this.buffer.append(@"		$(ptype) $(pname)$(comma)
 ");
 			}
-			this.buffer.append ("\t);\n\n");
+			this.buffer.append("\t);\n\n");
 		}
 
-		static string param_vala_name (string function_c_name, Parse.Parameter p) {
-			if (p.Name == "param0" && function_c_name.has_prefix ("RegisterClassEx")) {
+		static string param_vala_name(string function_c_name, Parse.Parameter p) {
+			if (p.Name == "param0" && function_c_name.has_prefix("RegisterClassEx")) {
 				return "lp_wcx";
 			}
 			if (p.Name == "param0") {
-				if (function_c_name.has_prefix ("GetOpenFileName")
-					|| function_c_name.has_prefix ("GetSaveFileName")
-					|| function_c_name.has_prefix ("ChooseColor")
-					|| function_c_name.has_prefix ("ChooseFont")
-					|| function_c_name.has_prefix ("FindText")
-					|| function_c_name.has_prefix ("ReplaceText")
-					|| function_c_name.has_prefix ("PrintDlg")) {
+				if (function_c_name.has_prefix("GetOpenFileName")
+					|| function_c_name.has_prefix("GetSaveFileName")
+					|| function_c_name.has_prefix("ChooseColor")
+					|| function_c_name.has_prefix("ChooseFont")
+					|| function_c_name.has_prefix("FindText")
+					|| function_c_name.has_prefix("ReplaceText")
+					|| function_c_name.has_prefix("PrintDlg")) {
 					return "lp_dialog";
 				}
 			}
-			return NameMapper.to_snake (p.Name);
+			return NameMapper.to_snake(p.Name);
 		}
 
-		public static bool is_valid_const_vala_type (string vala_type) {
+		public static bool is_valid_const_vala_type(string vala_type) {
 			if (vala_type == "void*") {
 				return false;
 			}
-			return vala_type.index_of_char ('*') < 0;
+			return vala_type.index_of_char('*') < 0;
 		}
 
-		static string foundation_vala_type (string name) {
+		static string foundation_vala_type(string name) {
 			switch (name) {
 			case "POINT":
 				return "Win32.Foundation.Point";
@@ -647,43 +653,46 @@ namespace Win32 {
 				return "Win32.Foundation.Size";
 			case "BOOL":
 				return "int";
+			case "COLORREF":
+			case "DWORD":
+				return "uint";
 			default:
-				return VapiEmitter.map_type_name (name);
+				return VapiEmitter.map_type_name(name);
 			}
 		}
 
-		static string api_ref_vala_name (string name) {
-			if (name.has_prefix ("Anonymous")) {
+		static string api_ref_vala_name(string name) {
+			if (name.has_prefix("Anonymous")) {
 				return "void*";
 			}
-			if (NameMapper.skip_ansi_name (name)) {
+			if (NameMapper.skip_ansi_name(name)) {
 				return "void*";
 			}
-			if (name.has_prefix ("ICoreWebView2") || name == "IUnknown") {
+			if (name.has_prefix("ICoreWebView2") || name == "IUnknown") {
 				return name;
 			}
-			if (name.has_prefix ("COREWEBVIEW2_")) {
+			if (name.has_prefix("COREWEBVIEW2_")) {
 				return name;
 			}
 			if (name == "IStream") {
 				return "void*";
 			}
-			var mapped = VapiEmitter.map_type_name (name);
+			var mapped = VapiEmitter.map_type_name(name);
 			if (mapped != "void*") {
 				return mapped;
 			}
 			/* HBITMAP, HWND, … — keep void* + CCode type_id; not Vala struct names. */
-			if (name.length >= 2 && name[0] == 'H' && name == name.up () && name.index_of_char ('_') < 0) {
+			if (name.length >= 2 && name[0] == 'H' && name == name.up() && name.index_of_char('_') < 0) {
 				return "void*";
 			}
-			if (!VapiEmitter.prefer_vala_type_name (name)) {
+			if (!VapiEmitter.prefer_vala_type_name(name)) {
 				return "void*";
 			}
-			return NameMapper.to_vala_type (name);
+			return NameMapper.to_vala_type(name);
 		}
 
-		static bool prefer_vala_type_name (string name) {
-			if (name.index_of_char ('_') >= 0) {
+		static bool prefer_vala_type_name(string name) {
+			if (name.index_of_char('_') >= 0) {
 				return true;
 			}
 			string[] suffixes = {
@@ -691,26 +700,26 @@ namespace Win32 {
 				"PAGE", "NOTIFY", "SETUP", "EX", "INFO", "MASK", "TYPE",
 				"NAME", "MODE", "PROC", "HOOK", "REPLACE", "DLG",
 			};
-			if (name.has_prefix ("OPENFILENAME") || name.has_prefix ("CHOOSE")) {
+			if (name.has_prefix("OPENFILENAME") || name.has_prefix("CHOOSE")) {
 				return true;
 			}
 			foreach (var suffix in suffixes) {
-				if (name.has_suffix (suffix)) {
+				if (name.has_suffix(suffix)) {
 					return true;
 				}
 			}
 			return false;
 		}
 
-		static string qualified_api_type (Parse.TypeRef type_ref, string shard_basename) {
+		static string qualified_api_type(Parse.TypeRef type_ref, string shard_basename) {
 			var type_name = type_ref.TargetKind == "FunctionPointer"
-				? NameMapper.to_vala_type (type_ref.Name)
-				: VapiEmitter.api_ref_vala_name (type_ref.Name);
+				? NameMapper.to_vala_type(type_ref.Name)
+				: VapiEmitter.api_ref_vala_name(type_ref.Name);
 			if (type_ref.TargetKind == "Com") {
 				return type_ref.Name;
 			}
 			if (type_ref.Api == "Foundation") {
-				return VapiEmitter.foundation_vala_type (type_ref.Name);
+				return VapiEmitter.foundation_vala_type(type_ref.Name);
 			}
 			if (type_ref.Api == "" || shard_basename == "") {
 				return type_name;
@@ -725,41 +734,38 @@ namespace Win32 {
 			if (type_ref.Api == "System.Power") {
 				return "uint";
 			}
-			var ns = NameMapper.vala_namespace_from_basename (ref_basename);
+			var ns = NameMapper.vala_namespace_from_basename(ref_basename);
 			return ns + "." + type_name;
 		}
 
-		public static string vala_type_for (Parse.TypeRef type_ref, string value_type_fallback) {
-			return VapiEmitter.vala_type_for_ref (type_ref, value_type_fallback, null);
+		public static string vala_type_for(Parse.TypeRef type_ref, string value_type_fallback) {
+			return VapiEmitter.vala_type_for_ref(type_ref, value_type_fallback, null);
 		}
 
-		public static string vala_type_for_field (Parse.TypeRef type_ref, string shard_basename = "") {
-			var base_type = VapiEmitter.vala_type_for_ref (type_ref, "", null, shard_basename);
-			if (VapiEmitter.is_wide_string_vala_type (type_ref, base_type)) {
+		public static string vala_type_for_field(Parse.TypeRef type_ref, string shard_basename = "") {
+			var base_type = VapiEmitter.vala_type_for_ref(type_ref, "", null, shard_basename);
+			if (VapiEmitter.is_wide_string_vala_type(type_ref, base_type)) {
 				return "unowned " + base_type;
 			}
 			return base_type;
 		}
 
-		public static string vala_param_type (Parse.Parameter p, string shard_basename = "") {
-			var base_type = VapiEmitter.vala_type_for_ref (p.Type, "", p.Attrs, shard_basename);
-			var tid = VapiEmitter.type_id_for (p.Type.Name);
-			if (tid == null && p.Type.Child != null) {
-				tid = VapiEmitter.type_id_for (p.Type.Child.Name);
-			}
+		public static string vala_param_type(Parse.Parameter p, string shard_basename = "") {
+			var base_type = VapiEmitter.vala_type_for_ref(p.Type, "", p.Attrs, shard_basename);
+			var tid = VapiEmitter.type_id_for_param(p.Type);
 			if (tid == null) {
 				return base_type;
 			}
 			// unowned on extern In wide-string params is already Vala's default — explicit unowned warns.
-			return "[CCode (type_id = \"%s\")] ".printf (tid) + base_type;
+			return "[CCode(type_id = \"%s\")] ".printf(tid) + base_type;
 		}
 
-		static bool is_wide_string_vala_type (Parse.TypeRef type_ref, string base_type) {
+		static bool is_wide_string_vala_type(Parse.TypeRef type_ref, string base_type) {
 			if (base_type != "uint16*") {
 				return false;
 			}
 			if (type_ref.Kind == "ApiRef") {
-				return VapiEmitter.type_id_for (type_ref.Name) == "LPCWSTR";
+				return VapiEmitter.type_id_for(type_ref.Name) == "LPCWSTR";
 			}
 			if (type_ref.Kind == "PointerTo" && type_ref.Child != null) {
 				return type_ref.Child.Name == "UInt16" || type_ref.Child.Name == "WCHAR";
@@ -767,26 +773,26 @@ namespace Win32 {
 			return false;
 		}
 
-		static string vala_type_for_ref (
+		static string vala_type_for_ref(
 			Parse.TypeRef type_ref,
 			string value_type_fallback,
 			Gee.ArrayList<string>? attrs,
 			string shard_basename = ""
 		) {
 			if (type_ref.Kind == "PointerTo" && type_ref.Child != null) {
-				var inner = VapiEmitter.vala_type_for_ref (type_ref.Child, "", null, shard_basename);
+				var inner = VapiEmitter.vala_type_for_ref(type_ref.Child, "", null, shard_basename);
 				if (attrs != null
-					&& VapiEmitter.attrs_contain (attrs, "In")
-					&& VapiEmitter.attrs_contain (attrs, "Out")) {
-					if (inner != "void*" && inner.index_of_char ('*') < 0) {
+					&& VapiEmitter.attrs_contain(attrs, "In")
+					&& VapiEmitter.attrs_contain(attrs, "Out")) {
+					if (inner != "void*" && inner.index_of_char('*') < 0) {
 						return "ref " + inner;
 					}
 				}
-				if (attrs != null && VapiEmitter.attrs_contain (attrs, "Out")) {
+				if (attrs != null && VapiEmitter.attrs_contain(attrs, "Out")) {
 					return "out " + inner;
 				}
-				if (attrs != null && VapiEmitter.attrs_contain (attrs, "In")) {
-					if (inner == "void*" || inner.has_suffix ("*")) {
+				if (attrs != null && VapiEmitter.attrs_contain(attrs, "In")) {
+					if (inner == "void*" || inner.has_suffix("*")) {
 						return inner;
 					}
 					return "ref " + inner;
@@ -795,31 +801,38 @@ namespace Win32 {
 			}
 
 			if (type_ref.Kind == "ApiRef") {
-				if (NameMapper.skip_ansi_name (type_ref.Name)) {
+				if (NameMapper.skip_ansi_name(type_ref.Name)) {
 					return "void*";
 				}
 				if (type_ref.TargetKind == "Com") {
 					return type_ref.Name;
 				}
 				if (type_ref.TargetKind == "FunctionPointer") {
-					return VapiEmitter.qualified_api_type (type_ref, shard_basename);
+					return VapiEmitter.qualified_api_type(type_ref, shard_basename);
 				}
-				return VapiEmitter.qualified_api_type (type_ref, shard_basename);
+				return VapiEmitter.qualified_api_type(type_ref, shard_basename);
+			}
+
+			if (type_ref.Kind == "Native") {
+				if (type_ref.Name == "UIntPtr") {
+					return "ulong";
+				}
+				if (type_ref.Name == "Void") {
+					return "void*";
+				}
+				return VapiEmitter.map_type_name(type_ref.Name);
 			}
 
 			if (type_ref.Name != "") {
-				return VapiEmitter.map_type_name (type_ref.Name);
+				return VapiEmitter.map_type_name(type_ref.Name);
 			}
 			if (value_type_fallback != "") {
-				return VapiEmitter.map_type_name (value_type_fallback);
-			}
-			if (type_ref.Kind == "Native" && type_ref.Name == "Void") {
-				return "void*";
+				return VapiEmitter.map_type_name(value_type_fallback);
 			}
 			return "void*";
 		}
 
-		static bool attrs_contain (Gee.ArrayList<string> attrs, string needle) {
+		static bool attrs_contain(Gee.ArrayList<string> attrs, string needle) {
 			foreach (var a in attrs) {
 				if (a == needle) {
 					return true;
@@ -828,7 +841,7 @@ namespace Win32 {
 			return false;
 		}
 
-		static string? type_id_for (string name) {
+		static string? type_id_for(string name) {
 			switch (name) {
 			case "HWND":
 			case "HINSTANCE":
@@ -841,12 +854,28 @@ namespace Win32 {
 			case "LPWSTR":
 			case "PWSTR":
 				return "LPCWSTR";
+			case "COLORREF":
+			case "DWORD":
+				return name;
+			case "UIntPtr":
+				return "UINT_PTR";
 			default:
 				return null;
 			}
 		}
 
-		static string map_type_name (string name) {
+		static string? type_id_for_param(Parse.TypeRef type_ref) {
+			var tid = VapiEmitter.type_id_for(type_ref.Name);
+			if (tid != null) {
+				return tid;
+			}
+			if (type_ref.Child != null) {
+				return VapiEmitter.type_id_for(type_ref.Child.Name);
+			}
+			return null;
+		}
+
+		static string map_type_name(string name) {
 			switch (name) {
 			case "UInt32":
 			case "uint":
@@ -900,10 +929,10 @@ namespace Win32 {
 			case "WNDPROC":
 				return "WndProc";
 			default:
-				if (name.has_suffix ("_STYLE") || name.has_suffix ("_STYLES")) {
+				if (name.has_suffix("_STYLE") || name.has_suffix("_STYLES")) {
 					return "uint";
 				}
-				if (name.has_prefix ("WINDOW_") || name.has_prefix ("WNDCLASS_")) {
+				if (name.has_prefix("WINDOW_") || name.has_prefix("WNDCLASS_")) {
 					return "uint";
 				}
 				return "void*";

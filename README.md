@@ -37,7 +37,7 @@ Or `make` after setup (same as `meson compile -C build`).
 wine build/hello-window.exe          # start here (ergonomic Win32.Window)
 wine build/button-demo.exe
 wine build/widgets-demo.exe
-# Raw generated vapi: wine build/native-hello-window.exe, native-button-demo.exe, …
+# Raw generated vapi: wine build/hello-window-native.exe, button-demo-native.exe, …
 ```
 
 ### WebView2 (metadata on Linux; demo on Windows only)
@@ -52,7 +52,7 @@ Regenerate API metadata on Linux or Windows (commit the result):
 
 Details: [metadata/webview2/README.md](metadata/webview2/README.md)
 
-`webview2-host-demo` is **not** built by the Linux cross-compile graph. Build and run on real Windows — see [docs/windows-build.md](docs/windows-build.md) (`./scripts/build-win.sh`).
+`webview2-host-native` is **not** built by the Linux cross-compile graph. Build and run on real Windows — see [docs/windows-build.md](docs/windows-build.md) (`./scripts/build-win.sh`).
 
 ### Checks (optional)
 
@@ -83,7 +83,7 @@ C:\msys64\msys2_shell.cmd -defterm -no-start -ucrt64 -c 'cd /x/vala.win32 && ./s
 Run at the desktop:
 
 ```powershell
-C:\msys64\msys2_shell.cmd -defterm -no-start -ucrt64 -c 'cd /x/vala.win32/build-win && ./webview2-host-demo.exe https://example.com/'
+C:\msys64\msys2_shell.cmd -defterm -no-start -ucrt64 -c 'cd /x/vala.win32/build-win && ./webview2-host-native.exe https://example.com/'
 ```
 
 ---
@@ -94,7 +94,7 @@ C:\msys64\msys2_shell.cmd -defterm -no-start -ucrt64 -c 'cd /x/vala.win32/build-
 |------|--------|
 | Phases 0–5 | Done — win32json vendor, generator, per-shard vapi, common controls, dialogs/menus, widget codegen (`Win32.*` ergonomic layer) |
 | Phase 6 | In progress — API coverage, filter expansion, gap reports |
-| Phase 7 | In progress — COM vapi `win32-ui-webview2.vapi`; hand ergo `Win32.WebView` in `src/win32-ergo-webview2.vala` (→ `win32-ergo-webview2` generator); demos `webview2-host-demo` + `webview2-ergo-demo` |
+| Phase 7 | In progress — COM vapi `win32-ui-webview2.vapi`; hand ergo `Win32.WebView` in `src/win32-ergo-webview2.vala` (→ `win32-ergo-webview2` generator); demos `webview2-host-native` + `webview2-demo` |
 | Phase 8 | Not started — Valadoc, CI, polish |
 
 **Examples:** default **`examples/*.vala`** — `Win32.*` widgets (`--profile=gobject` + MinGW GLib). **`examples/native/`** — raw generated vapi (`native-*` exe names, `--profile=posix`). WebView2 host lives under **`examples/native/`** (`Win32.Ui.WebView` plumbing vapi).
@@ -113,8 +113,8 @@ C:\msys64\msys2_shell.cmd -defterm -no-start -ucrt64 -c 'cd /x/vala.win32/build-
 ```
 vapi/                 # Generated Win32 shards + small hand stubs
 generated/            # Regen helpers (widgets, wide strings, errors, …)
-examples/             # Default ergonomic demos (hello-window, webview2-ergo-demo, …)
-examples/native/      # Raw vapi + webview2-host-demo (native-* exes)
+examples/             # Track B demos (hello-window, webview2-demo, …)
+examples/native/      # Track A raw vapi (hello-window-native, webview2-host-native, …)
 metadata/             # win32json filter lists; webview2 JSON (committed)
 tools/                # generate-binding, generate-webview2-json
 src/Generate/         # Generator and widget templates

@@ -4,7 +4,7 @@ using Win32.Ui.WindowsAndMessaging;
 
 namespace Win32.Ui {
 
-private uint16[] utf8_to_utf16 (string text) {
+private uint16[] utf8_to_utf16(string text) {
 	var wide = new uint16[text.length * 2 + 1];
 	int out = 0;
 	unowned char* p = text;
@@ -46,11 +46,11 @@ private uint16[] utf8_to_utf16 (string text) {
 	return wide;
 }
 
-public string utf16_buffer_to_string (uint16[] wide) {
-	return utf16_to_utf8 (wide);
+public string utf16_buffer_to_string(uint16[] wide) {
+	return utf16_to_utf8(wide);
 }
 
-private int utf8_append_codepoint (uint8[] buf, int len, uint32 c) {
+private int utf8_append_codepoint(uint8[] buf, int len, uint32 c) {
 	if (c <= 0x7f) {
 		buf[len++] = (uint8) c;
 	} else if (c <= 0x7ff) {
@@ -69,7 +69,7 @@ private int utf8_append_codepoint (uint8[] buf, int len, uint32 c) {
 	return len;
 }
 
-private string utf16_to_utf8 (uint16[] wide) {
+private string utf16_to_utf8(uint16[] wide) {
 	var bytes = new uint8[wide.length * 4 + 1];
 	int len = 0;
 	for (int i = 0; i < wide.length && wide[i] != 0; i++) {
@@ -81,7 +81,7 @@ private string utf16_to_utf8 (uint16[] wide) {
 				i++;
 			}
 		}
-		len = utf8_append_codepoint (bytes, len, c);
+		len = utf8_append_codepoint(bytes, len, c);
 	}
 	bytes[len] = 0;
 	bytes.length = len + 1;
@@ -91,8 +91,8 @@ private string utf16_to_utf8 (uint16[] wide) {
 public struct WideString {
 	uint16[] _utf16;
 
-	public WideString (string text) {
-		_utf16 = utf8_to_utf16 (text);
+	public WideString(string text) {
+		_utf16 = utf8_to_utf16(text);
 	}
 
 	public uint16* ptr {
@@ -100,21 +100,21 @@ public struct WideString {
 	}
 }
 
-public string window_text_get (void* hwnd, int max_chars = 256) {
+public string window_text_get(void* hwnd, int max_chars = 256) {
 	if (hwnd == null) {
 		return "";
 	}
 	var buf = new uint16[max_chars];
-	get_window_text (hwnd, buf, max_chars);
-	return utf16_to_utf8 (buf);
+	get_window_text(hwnd, buf, max_chars);
+	return utf16_to_utf8(buf);
 }
 
-public void window_text_set (void* hwnd, string text) {
+public void window_text_set(void* hwnd, string text) {
 	if (hwnd == null) {
 		return;
 	}
-	uint16[] wide = utf8_to_utf16 (text);
-	set_window_text (hwnd, wide);
+	uint16[] wide = utf8_to_utf16(text);
+	set_window_text(hwnd, wide);
 }
 
 }

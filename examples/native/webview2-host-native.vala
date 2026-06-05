@@ -1,8 +1,11 @@
-/* Track A(native): Win32 message loop via generated vapi shards — see examples/hello-window.vala for ergonomic API. */
+/* Phase 7i: Win32 host window + WebView2(generated COM vapi; async; needs message loop). */
 
+using Win32.Ui.WebView;
 using Win32.Ui;
 using Win32.Ui.WindowsAndMessaging;
 using Win32.System;
+
+private void* g_hwnd;
 
 private int64 window_proc(
 	[CCode(type_id = "HWND")] void* h_wnd,
@@ -10,7 +13,12 @@ private int64 window_proc(
 	ulong w_param,
 	int64 l_param
 ) {
+	if (msg == WM_SIZE) {
+		on_size(g_hwnd);
+		return 0;
+	}
 	if (msg == WM_DESTROY) {
+		destroy();
 		post_quit_message(0);
 		return 0;
 	}
@@ -19,9 +27,8 @@ private int64 window_proc(
 
 public static int main(string[] args) {
 	void* inst = get_module_handle(null);
-
-	var class_name = WideString("ValaWin32Hello");
-	var window_title = WideString("vala.win32 Phase 2");
+	var class_name = WideString("ValaWin32WebView2Host");
+	var window_title = WideString("vala.win32 WebView2 host(7i)");
 
 	var wc = WndClassEx();
 	wc.cbSize = (uint) sizeof (WndClassEx);
@@ -35,22 +42,32 @@ public static int main(string[] args) {
 		return 1;
 	}
 
-	void* hwnd = create_window_ex(
+	g_hwnd = create_window_ex(
 		0,
 		class_name.ptr,
 		window_title.ptr,
 		WindowStyle.WS_OVERLAPPEDWINDOW | WindowStyle.WS_VISIBLE,
 		CW_USEDEFAULT,
 		CW_USEDEFAULT,
-		640,
-		480,
+		1024,
+		768,
 		null,
 		null,
 		inst,
 		null
 	);
-	if (hwnd == null) {
+	if (g_hwnd == null) {
 		stderr.printf("CreateWindowExW failed\n");
+		return 1;
+	}
+
+	var start_url = "https://example.com/";
+	if (args.length > 1) {
+		start_url = args[1];
+	}
+	var url = WideString(start_url);
+	if (!create(g_hwnd, url.ptr)) {
+		stderr.printf("WebView2 create failed(runtime/loader missing?)\n");
 		return 1;
 	}
 

@@ -1,7 +1,7 @@
 # WebView2 metadata (committed JSON)
 
 win32json-shaped input for Phase **7i** (`generate-binding` + Com emit).  
-**Regenerate JSON/vapi on Linux or Windows** (needs vendored SDK + Meson build). **`webview2-host-demo`** is built only on a Windows host — see [docs/windows-build.md](../../docs/windows-build.md).
+**Regenerate JSON/vapi on Linux or Windows** (needs vendored SDK + Meson build). **`webview2-host-native`** is built only on a Windows host — see [docs/windows-build.md](../../docs/windows-build.md).
 
 | File | Role |
 |------|------|
@@ -42,6 +42,6 @@ Optional: `BUILD_WINMD=1 ./scripts/regen-webview2-json.sh` also builds `Microsof
 ## More context
 
 - [docs/webview2-binding-architecture.md](../../docs/webview2-binding-architecture.md) — pipeline and Phase 7i
-- [docs/windows-build.md](../../docs/windows-build.md) — build/run `webview2-host-demo` on Windows
+- [docs/windows-build.md](../../docs/windows-build.md) — build/run `webview2-host-native` and `webview2-demo` on Windows
 
 Last regenerated against SDK pin **1.0.2792.45**.

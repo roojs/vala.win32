@@ -144,7 +144,7 @@ Output: `build/vendor/webview2/include/WebView2.h`, `x64/WebView2Loader.dll` (gi
 
 **Prerequisites:** §1 (runtime), §3 (toolchain), §4 (if using `X:`).
 
-**One PowerShell line** (vendors SDK, compiles `webview2-host-demo`):
+**One PowerShell line** (vendors SDK, compiles `webview2-host-native`):
 
 `build-win.sh` uses a **local** Meson dir (`C:\msys64\tmp\vala-win32-build-win`) — not on `X:` — then copies the `.exe` to `build-win\`. That avoids Samba slowness, huge logs from `--reconfigure`, and a Vala bug where generated `.c` files vanish on UNC paths.
 
@@ -154,15 +154,15 @@ Options: no Track A/B demos, **no full vapi regen** (uses committed `vapi/` + `g
 C:\msys64\msys2_shell.cmd -defterm -no-start -ucrt64 -c 'cd /x/vala.win32 && ./scripts/build-win.sh'
 ```
 
-Or step by step: §5 vendor line, then separate `-c` lines for `meson setup build-win` and `meson compile -C build-win webview2-host-demo`.
+Or step by step: §5 vendor line, then separate `-c` lines for `meson setup build-win` and `meson compile -C build-win webview2-host-native`.
 
 **Run the demo** at the **logged-on desktop** (Explorer, or):
 
 ```powershell
-C:\msys64\msys2_shell.cmd -defterm -no-start -ucrt64 -c 'cd /x/vala.win32/build-win && ./webview2-host-demo.exe https://example.com/'
+C:\msys64\msys2_shell.cmd -defterm -no-start -ucrt64 -c 'cd /x/vala.win32/build-win && ./webview2-host-native.exe https://example.com/'
 ```
 
-Or double-click `X:\vala.win32\build-win\webview2-host-demo.exe` after §1 installed the runtime.
+Or double-click `X:\vala.win32\build-win\webview2-host-native.exe` after §1 installed the runtime.
 
 `WebView2Loader.dll` must be next to the `.exe` (Meson copies it into `build-win/`).
 
@@ -215,7 +215,7 @@ Paste the **last ~80 lines** of `build-win\last-build.log` (around `FAILED:` / `
 
 | Problem | Fix |
 |---------|-----|
-| `webview2-host-demo skipped` | Run the §5 vendor line in PowerShell |
+| `webview2-host-native skipped` | Run the §5 vendor line in PowerShell |
 | `LoadLibrary WebView2Loader.dll failed` | Run from `build-win/` where Meson copied the DLL |
 | Samba access denied on `build-win/` | Map `X:` as `alan` (Snappr §D), not guest |
 | Wanted Visual Studio only | Install VS Build Tools anyway; use MSYS2 path above until MSVC Meson is added |

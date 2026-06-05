@@ -1,4 +1,4 @@
-/* Phase 3 Track A: common controls demo (Button through ProgressBar). */
+/* Phase 3 Track A: common controls demo(Button through ProgressBar). */
 
 using Win32.Ui;
 using Win32.Ui.Controls;
@@ -22,109 +22,109 @@ private void* combo_hwnd = null;
 private void* scroll_hwnd = null;
 private void* progress_hwnd = null;
 
-private int64 makelparam (uint lo, uint hi) {
+private int64 makelparam(uint lo, uint hi) {
 	return (int64) (lo | (hi << 16));
 }
 
-private void list_add (void* hwnd, string text) {
-	var wide = WideString (text);
-	send_message (hwnd, LB_ADDSTRING, 0, (int64) wide.ptr);
+private void list_add(void* hwnd, string text) {
+	var wide = WideString(text);
+	send_message(hwnd, LB_ADDSTRING, 0, (int64) wide.ptr);
 }
 
-private void combo_add (void* hwnd, string text) {
-	var wide = WideString (text);
-	send_message (hwnd, CB_ADDSTRING, 0, (int64) wide.ptr);
+private void combo_add(void* hwnd, string text) {
+	var wide = WideString(text);
+	send_message(hwnd, CB_ADDSTRING, 0, (int64) wide.ptr);
 }
 
-private void set_title_from_list (void* frame) {
+private void set_title_from_list(void* frame) {
 	if (list_hwnd == null) {
 		return;
 	}
-	int index = (int) send_message (list_hwnd, LB_GETCURSEL, 0, 0);
+	int index = (int) send_message(list_hwnd, LB_GETCURSEL, 0, 0);
 	if (index < 0) {
 		return;
 	}
 	var text = new uint16[TEXT_MAX];
-	send_message (list_hwnd, LB_GETTEXT, (ulong) index, (int64) text);
-	window_text_set (frame, (string) text);
+	send_message(list_hwnd, LB_GETTEXT, (ulong) index, (int64) text);
+	window_text_set(frame, (string) text);
 }
 
-private void set_title_from_combo (void* frame) {
+private void set_title_from_combo(void* frame) {
 	if (combo_hwnd == null) {
 		return;
 	}
-	int index = (int) send_message (combo_hwnd, CB_GETCURSEL, 0, 0);
+	int index = (int) send_message(combo_hwnd, CB_GETCURSEL, 0, 0);
 	if (index < 0) {
 		return;
 	}
 	var text = new uint16[TEXT_MAX];
-	send_message (combo_hwnd, CB_GETLBTEXT, (ulong) index, (int64) text);
-	window_text_set (frame, (string) text);
+	send_message(combo_hwnd, CB_GETLBTEXT, (ulong) index, (int64) text);
+	window_text_set(frame, (string) text);
 }
 
-private void sync_progress_from_scroll () {
+private void sync_progress_from_scroll() {
 	if (scroll_hwnd == null || progress_hwnd == null) {
 		return;
 	}
-	int pos = (int) send_message (scroll_hwnd, SBM_GETPOS, 0, 0);
-	send_message (progress_hwnd, PBM_SETPOS, (ulong) pos, 0);
+	int pos = (int) send_message(scroll_hwnd, SBM_GETPOS, 0, 0);
+	send_message(progress_hwnd, PBM_SETPOS, (ulong) pos, 0);
 }
 
-private int64 window_proc (
-	[CCode (type_id = "HWND")] void* h_wnd,
+private int64 window_proc(
+	[CCode(type_id = "HWND")] void* h_wnd,
 	uint msg,
 	ulong w_param,
 	int64 l_param
 ) {
 	if (msg == WM_COMMAND) {
-		var id = loword (w_param);
-		var code = hiword (w_param);
+		var id = loword(w_param);
+		var code = hiword(w_param);
 		if (id == ID_CLICK_ME && code == BN_CLICKED) {
 			if (edit_hwnd != null) {
-				window_text_set (h_wnd, window_text_get (edit_hwnd, TEXT_MAX));
+				window_text_set(h_wnd, window_text_get(edit_hwnd, TEXT_MAX));
 			}
 			return 0;
 		}
 		if (id == ID_LIST && code == LBN_SELCHANGE) {
-			set_title_from_list (h_wnd);
+			set_title_from_list(h_wnd);
 			return 0;
 		}
 		if (id == ID_COMBO && code == CBN_SELCHANGE) {
-			set_title_from_combo (h_wnd);
+			set_title_from_combo(h_wnd);
 			return 0;
 		}
 	}
 	if (msg == WM_HSCROLL && (void*) l_param == scroll_hwnd) {
-		var result = def_window_proc (h_wnd, msg, w_param, l_param);
-		sync_progress_from_scroll ();
+		var result = def_window_proc(h_wnd, msg, w_param, l_param);
+		sync_progress_from_scroll();
 		return result;
 	}
 	if (msg == WM_DESTROY) {
-		post_quit_message (0);
+		post_quit_message(0);
 		return 0;
 	}
-	return def_window_proc (h_wnd, msg, w_param, l_param);
+	return def_window_proc(h_wnd, msg, w_param, l_param);
 }
 
-public static int main (string[] args) {
-	void* inst = get_module_handle (null);
+public static int main(string[] args) {
+	void* inst = get_module_handle(null);
 
-	var class_name = WideString ("ValaControlsDemo");
-	var window_title = WideString ("vala.win32 controls");
+	var class_name = WideString("ValaControlsDemo");
+	var window_title = WideString("vala.win32 controls");
 
-	var wc = WndClassEx ();
+	var wc = WndClassEx();
 	wc.cbSize = (uint) sizeof (WndClassEx);
 	wc.lpfnWndProc = window_proc;
 	wc.hInstance = inst;
 	wc.hbrBackground = (void*) (SysColorIndex.COLOR_WINDOW + 1);
 	wc.lpszClassName = class_name.ptr;
 
-	if (register_class_ex (ref wc) == 0) {
-		stderr.printf ("RegisterClassExW failed\n");
+	if (register_class_ex(ref wc) == 0) {
+		stderr.printf("RegisterClassExW failed\n");
 		return 1;
 	}
 
-	void* hwnd = create_window_ex (
+	void* hwnd = create_window_ex(
 		0,
 		class_name.ptr,
 		window_title.ptr,
@@ -139,16 +139,16 @@ public static int main (string[] args) {
 		null
 	);
 	if (hwnd == null) {
-		stderr.printf ("CreateWindowExW failed\n");
+		stderr.printf("CreateWindowExW failed\n");
 		return 1;
 	}
 
 	uint static_style = (uint) (WindowStyle.WS_CHILD | WindowStyle.WS_VISIBLE);
 
-	void* name_label = create_window_ex (
+	void* name_label = create_window_ex(
 		0,
 		WC_STATIC,
-		WideString ("Name:").ptr,
+		WideString("Name:").ptr,
 		static_style,
 		20,
 		16,
@@ -160,7 +160,7 @@ public static int main (string[] args) {
 		null
 	);
 	if (name_label == null) {
-		stderr.printf ("CreateWindowExW (static name) failed\n");
+		stderr.printf("CreateWindowExW(static name) failed\n");
 		return 1;
 	}
 
@@ -172,7 +172,7 @@ public static int main (string[] args) {
 		0x0080
 	);
 
-	edit_hwnd = create_window_ex (
+	edit_hwnd = create_window_ex(
 		0,
 		WC_EDIT,
 		null,
@@ -187,10 +187,10 @@ public static int main (string[] args) {
 		null
 	);
 	if (edit_hwnd == null) {
-		stderr.printf ("CreateWindowExW (edit) failed\n");
+		stderr.printf("CreateWindowExW(edit) failed\n");
 		return 1;
 	}
-	window_text_set (edit_hwnd, "Hello, Edit");
+	window_text_set(edit_hwnd, "Hello, Edit");
 
 	uint btn_style = (uint) (
 		WindowStyle.WS_CHILD |
@@ -199,10 +199,10 @@ public static int main (string[] args) {
 		BS_DEFPUSHBUTTON
 	);
 
-	void* btn = create_window_ex (
+	void* btn = create_window_ex(
 		0,
 		WC_BUTTON,
-		WideString ("Click me").ptr,
+		WideString("Click me").ptr,
 		btn_style,
 		20,
 		44,
@@ -214,14 +214,14 @@ public static int main (string[] args) {
 		null
 	);
 	if (btn == null) {
-		stderr.printf ("CreateWindowExW (button) failed\n");
+		stderr.printf("CreateWindowExW(button) failed\n");
 		return 1;
 	}
 
-	void* list_label = create_window_ex (
+	void* list_label = create_window_ex(
 		0,
 		WC_STATIC,
-		WideString ("List:").ptr,
+		WideString("List:").ptr,
 		static_style,
 		20,
 		84,
@@ -233,7 +233,7 @@ public static int main (string[] args) {
 		null
 	);
 	if (list_label == null) {
-		stderr.printf ("CreateWindowExW (static list) failed\n");
+		stderr.printf("CreateWindowExW(static list) failed\n");
 		return 1;
 	}
 
@@ -246,7 +246,7 @@ public static int main (string[] args) {
 		0x0001
 	);
 
-	list_hwnd = create_window_ex (
+	list_hwnd = create_window_ex(
 		0,
 		WC_LISTBOX,
 		null,
@@ -261,18 +261,18 @@ public static int main (string[] args) {
 		null
 	);
 	if (list_hwnd == null) {
-		stderr.printf ("CreateWindowExW (listbox) failed\n");
+		stderr.printf("CreateWindowExW(listbox) failed\n");
 		return 1;
 	}
-	list_add (list_hwnd, "Red");
-	list_add (list_hwnd, "Green");
-	list_add (list_hwnd, "Blue");
-	send_message (list_hwnd, LB_SETCURSEL, 0, 0);
+	list_add(list_hwnd, "Red");
+	list_add(list_hwnd, "Green");
+	list_add(list_hwnd, "Blue");
+	send_message(list_hwnd, LB_SETCURSEL, 0, 0);
 
-	void* pick_label = create_window_ex (
+	void* pick_label = create_window_ex(
 		0,
 		WC_STATIC,
-		WideString ("Pick:").ptr,
+		WideString("Pick:").ptr,
 		static_style,
 		20,
 		192,
@@ -284,7 +284,7 @@ public static int main (string[] args) {
 		null
 	);
 	if (pick_label == null) {
-		stderr.printf ("CreateWindowExW (static pick) failed\n");
+		stderr.printf("CreateWindowExW(static pick) failed\n");
 		return 1;
 	}
 
@@ -296,7 +296,7 @@ public static int main (string[] args) {
 		CBS_DROPDOWNLIST
 	);
 
-	combo_hwnd = create_window_ex (
+	combo_hwnd = create_window_ex(
 		0,
 		WC_COMBOBOX,
 		null,
@@ -311,18 +311,18 @@ public static int main (string[] args) {
 		null
 	);
 	if (combo_hwnd == null) {
-		stderr.printf ("CreateWindowExW (combobox) failed\n");
+		stderr.printf("CreateWindowExW(combobox) failed\n");
 		return 1;
 	}
-	combo_add (combo_hwnd, "Small");
-	combo_add (combo_hwnd, "Medium");
-	combo_add (combo_hwnd, "Large");
-	send_message (combo_hwnd, CB_SETCURSEL, 0, 0);
+	combo_add(combo_hwnd, "Small");
+	combo_add(combo_hwnd, "Medium");
+	combo_add(combo_hwnd, "Large");
+	send_message(combo_hwnd, CB_SETCURSEL, 0, 0);
 
-	void* scroll_label = create_window_ex (
+	void* scroll_label = create_window_ex(
 		0,
 		WC_STATIC,
-		WideString ("Scroll:").ptr,
+		WideString("Scroll:").ptr,
 		static_style,
 		20,
 		320,
@@ -334,7 +334,7 @@ public static int main (string[] args) {
 		null
 	);
 	if (scroll_label == null) {
-		stderr.printf ("CreateWindowExW (static scroll) failed\n");
+		stderr.printf("CreateWindowExW(static scroll) failed\n");
 		return 1;
 	}
 
@@ -345,7 +345,7 @@ public static int main (string[] args) {
 		SBS_HORZ
 	);
 
-	scroll_hwnd = create_window_ex (
+	scroll_hwnd = create_window_ex(
 		0,
 		WC_SCROLLBAR,
 		null,
@@ -360,21 +360,21 @@ public static int main (string[] args) {
 		null
 	);
 	if (scroll_hwnd == null) {
-		stderr.printf ("CreateWindowExW (scrollbar) failed\n");
+		stderr.printf("CreateWindowExW(scrollbar) failed\n");
 		return 1;
 	}
-	send_message (
+	send_message(
 		scroll_hwnd,
 		SBM_SETRANGE,
 		0,
-		makelparam (0, (uint) SCROLL_MAX)
+		makelparam(0, (uint) SCROLL_MAX)
 	);
-	send_message (scroll_hwnd, SBM_SETPOS, 1, 50);
+	send_message(scroll_hwnd, SBM_SETPOS, 1, 50);
 
-	void* progress_label = create_window_ex (
+	void* progress_label = create_window_ex(
 		0,
 		WC_STATIC,
-		WideString ("Progress:").ptr,
+		WideString("Progress:").ptr,
 		static_style,
 		20,
 		376,
@@ -386,7 +386,7 @@ public static int main (string[] args) {
 		null
 	);
 	if (progress_label == null) {
-		stderr.printf ("CreateWindowExW (static progress) failed\n");
+		stderr.printf("CreateWindowExW(static progress) failed\n");
 		return 1;
 	}
 
@@ -396,7 +396,7 @@ public static int main (string[] args) {
 		PBS_SMOOTH
 	);
 
-	progress_hwnd = create_window_ex (
+	progress_hwnd = create_window_ex(
 		0,
 		PROGRESS_CLASS,
 		null,
@@ -411,16 +411,16 @@ public static int main (string[] args) {
 		null
 	);
 	if (progress_hwnd == null) {
-		stderr.printf ("CreateWindowExW (progress) failed\n");
+		stderr.printf("CreateWindowExW(progress) failed\n");
 		return 1;
 	}
-	send_message (progress_hwnd, PBM_SETRANGE32, 0, (int64) SCROLL_MAX);
-	sync_progress_from_scroll ();
+	send_message(progress_hwnd, PBM_SETRANGE32, 0, (int64) SCROLL_MAX);
+	sync_progress_from_scroll();
 
 	Msg msg;
-	while (get_message (out msg, null, 0, 0) > 0) {
-		translate_message (ref msg);
-		dispatch_message (ref msg);
+	while (get_message(out msg, null, 0, 0) > 0) {
+		translate_message(ref msg);
+		dispatch_message(ref msg);
 	}
 
 	return 0;

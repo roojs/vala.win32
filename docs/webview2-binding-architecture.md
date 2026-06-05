@@ -13,7 +13,7 @@ Writes committed [`metadata/webview2/api/WebView2.json`](../metadata/webview2/ap
 | Step | Linux | Windows |
 |------|-------|---------|
 | Regen JSON / vapi | Yes | Yes (MSYS2 bash) |
-| Build `webview2-host-demo` | No | Yes (`scripts/build-win.sh`) |
+| Build `webview2-host-native` | No | Yes (`scripts/build-win.sh`) |
 | Run WebView2 in a window | No | Yes (Evergreen runtime) |
 
 ## Host layers (Phase 7i)
@@ -25,13 +25,11 @@ Writes committed [`metadata/webview2/api/WebView2.json`](../metadata/webview2/ap
 | `src/win32-ui-webview2-com-glue.c` | Async env/controller completed-handler vtables; initial `put_Bounds` + `Navigate` |
 | `src/win32-ui-webview2-host.vala` | Glue API (`Win32.Ui.WebView`); calls generated vapi on stored COM refs |
 
-**What is generated:** COM interface surface in [`vapi/win32-ui-webview2.vapi`](../vapi/win32-ui-webview2.vapi) — `Navigate`, `GoBack`, `get_DocumentTitle`, etc. Regenerated from committed JSON via `generate-binding`.
+**What is generated:** COM types in [`vapi/win32-ui-webview2.vapi`](../vapi/win32-ui-webview2.vapi). Sync COBJMACROS wrappers in [`generated/win32-ui-webview2-com-sync.c`](../generated/win32-ui-webview2-com-sync.c) are driven by `sync_com` on rows in [`metadata/widget-conventions.json`](../metadata/widget-conventions.json) (`ergo_native_map`); signatures come from [`metadata/webview2/api/WebView2.json`](../metadata/webview2/api/WebView2.json). Vala glue calls the wrappers (interface method calls do not vtable-dispatch on MinGW).
 
-**Ergo (7h hand baseline):** [`src/win32-ergo-webview2.vala`](../src/win32-ergo-webview2.vala) — `Win32.WebView` delegates to `Win32.Ui.WebView` glue.
+**`sync_com` config:** `"sync_com": true` on a row (glue name taken from `glue`; COM from `com`). Object overrides: `{ "glue": "put_bounds", "host": "controller" }`. Array for split put/get properties. Optional `vala_call` when host code needs a non-default argument expression.
 
-**Call stack (go_back):** `Win32.WebView.go_back` → `Win32.Ui.WebView.go_back` → `ICoreWebView2.go_back` (generated vapi).
-
-**What stays hand-written C:** Loader bootstrap and async completed-handler vtables only (Vala cannot implement raw `IUnknown` vtables). Sync COM calls go through the generated vapi from glue Vala — no per-method C wrappers.
+**What stays hand-written C:** Loader bootstrap and async completed-handler vtables only.
 
 **What is hand baseline vs generated (glue Vala):** Most of `win32-ui-webview2-host.vala` is repetitive on purpose — it is the **generator template** for glue methods, not logic that should stay hand-maintained long term.
 
@@ -52,7 +50,7 @@ public void reload () { Ui.WebView.reload (); }
 // glue (win32-ui-webview2-host) — generated
 public bool reload () {
     if (!webview_ready ()) return false;
-    return com_ok (g_host.webview.reload ());
+    return com_ok (com_webview_reload (g_host.webview));
 }
 ```
 
@@ -61,8 +59,9 @@ public bool reload () {
 | Prefix | Layer | Examples |
 |--------|-------|----------|
 | `win32-ui-webview2-*` | Glue / COM bindings | `win32-ui-webview2-host.vala`, `vapi/win32-ui-webview2.vapi` |
-| `win32-ergo-webview2*` | Ergonomic widget | `src/win32-ergo-webview2.vala`, `examples/webview2-ergo-demo.vala`, future `vapi/win32-ergo-webview2.vapi` |
-| `webview2-host-demo` | Native Track A demo | `examples/native/webview2-host-demo.vala` |
+| `win32-ergo-webview2*` | Ergonomic widget | `src/win32-ergo-webview2.vala`, `examples/webview2-demo.vala`, future `vapi/win32-ergo-webview2.vapi` |
+| `webview2-host-native` | Native Track A demo | `examples/native/webview2-host-native.vala` |
+| `webview2-demo` | Track B demo | `examples/webview2-demo.vala` |
 
 **Ergo (7h hand baseline):** [`src/win32-ergo-webview2.vala`](../src/win32-ergo-webview2.vala) — `Win32.WebView` delegates to `Win32.Ui.WebView` glue with aligned names (`navigate`, `create_with_xywh`, …).
 

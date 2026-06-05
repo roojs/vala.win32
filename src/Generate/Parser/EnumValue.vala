@@ -1,5 +1,5 @@
 /*
- * win32json enum member (Types[].Values[]).
+ * win32json enum member(Types[].Values[]).
  */
 
 namespace Generate.Parse {
