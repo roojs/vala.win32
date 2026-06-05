@@ -2,7 +2,7 @@
 
 Generated **Vala vapi** bindings for native Win32 GUI. Application `.vala` compiles to C that calls Win32 directly—no monolithic `libwin32`. Metadata comes from [win32json](https://github.com/marlersoft/win32json) (filtered Microsoft win32metadata); a small generator emits per-area `.vapi` shards and ergonomic helpers. **WebView2** (Edge Chromium in an HWND) is integrated alongside the Win32 work—host demo and plumbing today, generated COM bindings next.
 
-**Prior art (credits only, unrelated codebase):** [emrevit/vala-win32](https://github.com/emrevit/vala-win32)
+**Thanks** to [emrevit/vala-win32](https://github.com/emrevit/vala-win32) for the early ideas on Vala, Win32, and cross-compiling with MinGW GLib.
 
 ---
 
