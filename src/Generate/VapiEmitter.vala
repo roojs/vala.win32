@@ -438,13 +438,9 @@ namespace Win32 {
 			if (t.Interface != null && t.Interface.Name.length > 0) {
 				parent = t.Interface.Name;
 			}
-			this.buffer.append (
-				"\t[CCode (cname = %s, ref_function = \"\", unref_function = \"\")]\n\tpublic interface %s : %s {\n".printf (
-					VapiEmitter.quoted_c_string (t.Name),
-					t.Name,
-					parent
-				)
-			);
+			this.buffer.append ("""	[CCode (cname = $(VapiEmitter.quoted_c_string (t.Name)), ref_function = "", unref_function = "")]
+	public interface $(t.Name) : $(parent) {
+""");
 			foreach (var method in t.Methods) {
 				this.emit_com_method (method);
 			}
