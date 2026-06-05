@@ -113,26 +113,24 @@ static Json.Array extract_param_attrs (string raw) {
 			break;
 		}
 		var body = raw.substring (open + 2, close - open - 2).strip ();
-		if (body.has_prefix ("[")) {
-			body = body.substring (1);
+		var bracket = body.index_of ("[");
+		if (bracket >= 0) {
+			body = body.substring (bracket + 1);
 		}
 		if (body.has_suffix ("]")) {
 			body = body.substring (0, body.length - 1);
 		}
-		foreach (var token in body.split ("]")) {
-			var part = token.strip ();
-			if (part.has_prefix ("[")) {
-				part = part.substring (1);
+		foreach (var attr in body.split (",")) {
+			var a = attr.strip ();
+			if (a.has_prefix ("[")) {
+				a = a.substring (1);
 			}
-			part = part.strip ();
-			if (part.length == 0) {
-				continue;
+			if (a.has_suffix ("]")) {
+				a = a.substring (0, a.length - 1);
 			}
-			foreach (var attr in part.split (",")) {
-				var a = attr.strip ();
-				if (a.length > 0) {
-					attrs.add_string_element (a);
-				}
+			a = a.strip ();
+			if (a.length > 0) {
+				attrs.add_string_element (a);
 			}
 		}
 		pos = close + 2;
@@ -217,9 +215,9 @@ static Json.Object? parse_param (string raw) {
 	}
 	var ctype = cleaned.substring (0, space).strip ();
 	var pname = cleaned.substring (space + 1).strip ();
-	if (pname.has_suffix ("*")) {
+	while (pname.has_prefix ("*")) {
 		ctype += "*";
-		pname = pname.substring (0, pname.length - 1).strip ();
+		pname = pname.substring (1).strip ();
 	}
 	var param = new Json.Object ();
 	param.set_string_member ("Name", pname);

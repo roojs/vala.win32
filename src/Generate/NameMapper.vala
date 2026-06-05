@@ -54,6 +54,17 @@ namespace Generate {
 		 *
 		 * @param name metadata field name
 		 */
+		/** COM property/event accessors: get_Settings → get_settings */
+		public static string com_method_name (string c_name) {
+			string[] prefixes = { "get_", "put_", "add_", "remove_" };
+			foreach (var prefix in prefixes) {
+				if (c_name.has_prefix (prefix) && c_name.length > prefix.length) {
+					return prefix + NameMapper.to_snake (c_name.substring (prefix.length));
+				}
+			}
+			return NameMapper.to_snake (c_name);
+		}
+
 		public static string to_snake (string name) {
 			var sb = new GLib.StringBuilder ();
 			var prev_lower = false;

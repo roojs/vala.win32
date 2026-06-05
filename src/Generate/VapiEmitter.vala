@@ -28,6 +28,7 @@ namespace Generate {
 		public string cheader_filename { get; set; default = "windows.h"; }
 		public string vala_namespace_override { get; set; default = ""; }
 		private bool iunknown_emitted = false;
+		private Gee.HashSet<string> emitted_com_names = new Gee.HashSet<string> ();
 
 		public VapiEmitter (SymbolFilter filter) {
 			this.filter = filter;
@@ -65,6 +66,7 @@ namespace Generate {
 			this.emitted_vala_names.clear ();
 			this.shard_basename = "";
 			this.iunknown_emitted = false;
+			this.emitted_com_names.clear ();
 		}
 
 		void append_namespace_open (string ns, bool with_ccode) {
@@ -202,6 +204,19 @@ namespace Win32 {
 				}
 				if (t.Kind == "Struct") {
 					this.emit_struct (t);
+				}
+			}
+
+			foreach (var t in doc.Types) {
+				if (NameMapper.skip_ansi_name (t.Name)) {
+					continue;
+				}
+				var full = this.full_symbol_name (basename, t.Name);
+				if (!this.filter.include_symbol (full)) {
+					continue;
+				}
+				if (t.Kind == "Com") {
+					this.emitted_com_names.add (t.Name);
 				}
 			}
 
@@ -437,7 +452,7 @@ namespace Win32 {
 		}
 
 		void emit_com_method (Parse.Function method) {
-			var vala_name = NameMapper.to_snake (method.Name);
+			var vala_name = NameMapper.com_method_name (method.Name);
 			var ret = VapiEmitter.com_return_type (method.ReturnType);
 			this.buffer.append (@"		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
 		public abstract $(ret) $(vala_name) (
@@ -445,7 +460,7 @@ namespace Win32 {
 			var n = method.Params.size;
 			for (int i = 0; i < n; i++) {
 				var p = method.Params.get (i);
-				var ptype = VapiEmitter.com_param_type (p, this.shard_basename);
+				var ptype = VapiEmitter.com_param_type (p, this.shard_basename, this.emitted_com_names);
 				var pname = NameMapper.to_snake (p.Name.length > 0 ? p.Name : @"param$(i)");
 				var comma = i < n - 1 ? "," : "";
 				this.buffer.append (@"			$(ptype) $(pname)$(comma)
@@ -461,8 +476,51 @@ namespace Win32 {
 			return VapiEmitter.vala_type_for_ref (type_ref, "", null);
 		}
 
-		static string com_param_type (Parse.Parameter p, string shard_basename) {
-			return VapiEmitter.vala_param_type (p, shard_basename);
+		static string com_param_type (
+			Parse.Parameter p,
+			string shard_basename,
+			Gee.HashSet<string> emitted_com
+		) {
+			var mapped = VapiEmitter.vala_param_type (p, shard_basename);
+			return VapiEmitter.rewrite_unbound_com_param (p.Type, mapped, emitted_com);
+		}
+
+		static string rewrite_unbound_com_param (
+			Parse.TypeRef type_ref,
+			string mapped,
+			Gee.HashSet<string> emitted_com
+		) {
+			if (type_ref.Kind == "ApiRef" && type_ref.TargetKind == "Com") {
+				if (!emitted_com.contains (type_ref.Name) && type_ref.Name != "IUnknown") {
+					return "void*";
+				}
+				return mapped.replace ("*", "");
+			}
+			if (type_ref.Kind == "PointerTo" && type_ref.Child != null) {
+				if (type_ref.Child.Kind == "ApiRef" && type_ref.Child.TargetKind == "Com") {
+					if (!emitted_com.contains (type_ref.Child.Name) && type_ref.Child.Name != "IUnknown") {
+						return "void*";
+					}
+				}
+				if (type_ref.Child.Kind == "PointerTo" && type_ref.Child.Child != null) {
+					var inner = type_ref.Child.Child;
+					if (inner.Kind == "ApiRef" && inner.TargetKind == "Com") {
+						if (!emitted_com.contains (inner.Name)) {
+							return "void*";
+						}
+						var iface = inner.Name;
+						if (VapiEmitter.attrs_contain (type_ref.Child.Attrs, "Out")
+							|| VapiEmitter.attrs_contain (p_attrs_from_chain (type_ref), "Out")) {
+							return "out unowned " + iface;
+						}
+					}
+				}
+			}
+			return mapped;
+		}
+
+		static Gee.ArrayList<string> p_attrs_from_chain (Parse.TypeRef type_ref) {
+			return new Gee.ArrayList<string> ();
 		}
 
 		void emit_function (Parse.Function f) {
