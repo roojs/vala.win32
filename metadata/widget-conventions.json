@@ -158,6 +158,7 @@
       "constructor": "Window parent, int x, int y, int width, int height",
       "hand_baseline_source": "src/win32-ergo-webview2.vala",
       "glue_baseline_source": "src/win32-ui-webview2-host.vala",
+      "glue_generated_source": "generated/win32-ui-webview2-host-glue.vala",
       "ergo_pkg": "win32-ergo-webview2",
       "notes": "Not a WC_* HWND — fixed bounds; same Vala names as win32-ui-webview2.vapi where possible.",
       "ergo_native_map": [

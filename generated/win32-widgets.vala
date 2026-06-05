@@ -71,6 +71,16 @@ private bool window_destroy_dispatch (void* hwnd) {
 	return false;
 }
 
+private bool window_size_dispatch (void* hwnd, uint width, uint height) {
+	for (int i = 0; i < window_registry_count; i++) {
+		if (window_registry_handles[i] == hwnd) {
+			window_registry_windows[i].resized (width, height);
+			return true;
+		}
+	}
+	return false;
+}
+
 private int64 makelparam_uint (uint lo, uint hi) {
 	return (int64) (lo | (hi << 16));
 }
@@ -109,6 +119,11 @@ private int64 widget_window_proc (
 	int64 scroll_result;
 	if (WidgetDispatch.try_wm_hscroll (h_wnd, msg, w_param, l_param, out scroll_result)) {
 		return scroll_result;
+	}
+	if (msg == WM_SIZE) {
+		var width = (uint) (l_param & 0xffff);
+		var height = (uint) ((l_param >> 16) & 0xffff);
+		window_size_dispatch (h_wnd, width, height);
 	}
 	if (msg == WM_DESTROY) {
 		window_destroy_dispatch (h_wnd);
@@ -526,6 +541,8 @@ private bool wm_command_dispatch (ulong w_param) {
 public class Window {
 	/** Fired when this window receives WM_DESTROY (before the demo message loop exits). */
 	public signal void destroyed ();
+	/** Fired on WM_SIZE with the new client-area size in pixels. */
+	public signal void resized (uint width, uint height);
 	public void* handle { get; private set; }
 	public void* instance { get; private set; }
 	WideString _class_name;

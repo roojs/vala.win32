@@ -414,6 +414,7 @@ if have_webview2_sdk and host_machine.system() == 'windows'
   webview2_sources = [
     files('examples/native/webview2-host-demo.vala'),
     webview2_host_vala,
+    webview2_host_glue_vala,
     wide_strings_vala,
     webview2_loader_c,
     webview2_com_glue_c,
@@ -457,6 +458,7 @@ if have_webview2_sdk and host_machine.system() == 'windows'
       files('examples/webview2-ergo-demo.vala'),
       files('src/win32-ergo-webview2.vala'),
       webview2_host_vala,
+      webview2_host_glue_vala,
       control_strings_vala,
       wide_strings_vala,
       widgets_vala,

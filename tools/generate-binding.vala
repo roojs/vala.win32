@@ -102,8 +102,9 @@ int main (string[] args) {
 
 	var conventions_path = GLib.Path.build_filename (project_root, "metadata", "widget-conventions.json");
 	Generate.WidgetCodegen? widget_codegen = null;
+	Generate.Parse.WidgetConventionsFile? conventions = null;
 	try {
-		var conventions = Generate.Parse.WidgetConventionsFile.load_from_file (conventions_path);
+		conventions = Generate.Parse.WidgetConventionsFile.load_from_file (conventions_path);
 		widget_codegen = new Generate.WidgetCodegen (filter, conventions);
 		if (controls_entry != null) {
 			widget_codegen.load_catalog (controls_entry);
