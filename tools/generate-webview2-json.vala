@@ -120,25 +120,24 @@ static Json.Array extract_param_attrs (string raw) {
 			break;
 		}
 		var body = raw.substring (open + 2, close - open - 2).strip ();
-		var bracket = body.index_of ("[");
-		if (bracket >= 0) {
-			body = body.substring (bracket + 1);
-		}
-		if (body.has_suffix ("]")) {
-			body = body.substring (0, body.length - 1);
-		}
-		foreach (var attr in body.split (",")) {
-			var a = attr.strip ();
-			if (a.has_prefix ("[")) {
-				a = a.substring (1);
+		var scan = body;
+		while (scan.length > 0) {
+			var lb = scan.index_of ("[");
+			if (lb < 0) {
+				break;
 			}
-			if (a.has_suffix ("]")) {
-				a = a.substring (0, a.length - 1);
+			var rb = scan.index_of ("]", lb + 1);
+			if (rb < 0) {
+				break;
 			}
-			a = a.strip ();
-			if (a.length > 0) {
-				attrs.add_string_element (normalize_attr (a));
+			var inner = scan.substring (lb + 1, rb - lb - 1).strip ();
+			foreach (var attr in inner.split (",")) {
+				var a = attr.strip ();
+				if (a.length > 0) {
+					attrs.add_string_element (normalize_attr (a));
+				}
 			}
+			scan = scan.substring (rb + 1);
 		}
 		pos = close + 2;
 	}

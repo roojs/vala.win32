@@ -450,6 +450,7 @@ namespace Win32 {
 		}
 
 		void emit_com_method (Parse.Function method) {
+			var is_getter = method.Name.has_prefix ("get_");
 			var vala_name = NameMapper.com_method_name (method.Name);
 			var ret = VapiEmitter.com_return_type (method.ReturnType);
 			this.buffer.append (@"		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
@@ -458,7 +459,7 @@ namespace Win32 {
 			var n = method.Params.size;
 			for (int i = 0; i < n; i++) {
 				var p = method.Params.get (i);
-				var ptype = VapiEmitter.com_param_type (p, this.shard_basename, this.emitted_com_names);
+				var ptype = VapiEmitter.com_param_type (p, this.shard_basename, this.emitted_com_names, is_getter);
 				var pname = NameMapper.to_snake (p.Name.length > 0 ? p.Name : @"param$(i)");
 				var comma = i < n - 1 ? "," : "";
 				this.buffer.append (@"			$(ptype) $(pname)$(comma)
@@ -477,7 +478,8 @@ namespace Win32 {
 		static string com_param_type (
 			Parse.Parameter p,
 			string shard_basename,
-			Gee.HashSet<string> emitted_com
+			Gee.HashSet<string> emitted_com,
+			bool getter_method = false
 		) {
 			var type_ref = p.Type;
 			if (type_ref.Kind == "PointerTo" && type_ref.Child != null
@@ -498,6 +500,15 @@ namespace Win32 {
 					return "void*";
 				}
 				return "unowned " + iface;
+			}
+			if (getter_method && type_ref.Kind == "PointerTo") {
+				if (type_ref.Child != null && type_ref.Child.Name == "LPWSTR") {
+					return "out uint16*";
+				}
+				if (type_ref.Child != null && type_ref.Child.Kind == "ApiRef"
+					&& type_ref.Child.Name == "BOOL") {
+					return "out int";
+				}
 			}
 			if (type_ref.Kind == "PointerTo" && type_ref.Child != null
 				&& VapiEmitter.com_param_is_out (p)) {
