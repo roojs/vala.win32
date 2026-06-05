@@ -1,7 +1,4 @@
-/* Phase 4d: GetLastError helpers (generated win32-errors.vala, POSIX-safe).
- *
- * Prints two intentional API failures and exits 0. No CreateWindowExW — on some
- * Wine builds that call raises a SEH fault dialog even when it returns NULL. */
+/* Track B / Phase 4d: win32_bool_ok helpers (no Window — hand baseline). */
 
 using Win32;
 using Win32.Ui;
@@ -12,10 +9,9 @@ public static int main (string[] args) {
 	void* inst = get_module_handle (null);
 	uint err = 0;
 
-	stderr.printf ("error-demo: two intentional API failures (expect clean exit 0)\n");
+	stderr.printf ("error-demo: intentional failures (expect exit 0)\n");
 
-	/* Invalid cbSize → RegisterClassExW fails (ERROR_INVALID_PARAMETER = 87). */
-	var class_name = WideString ("ValaErrorDemoBadClass");
+	var class_name = WideString ("ValaErgoErrorBadClass");
 	var wc = WndClassEx ();
 	wc.cbSize = 0;
 	wc.hInstance = inst;
@@ -27,9 +23,8 @@ public static int main (string[] args) {
 	}
 	stderr.printf ("RegisterClassExW failed as expected (code %u)\n", err);
 
-	/* Class never registered → UnregisterClassW fails (ERROR_CLASS_DOES_NOT_EXIST = 1411). */
-	var bogus_class = WideString ("NoSuchClass_12345");
-	if (win32_bool_ok (unregister_class (bogus_class.ptr, inst), out err)) {
+	var bogus = WideString ("NoSuchClass_12345");
+	if (win32_bool_ok (unregister_class (bogus.ptr, inst), out err)) {
 		stderr.printf ("unexpected: UnregisterClassW succeeded\n");
 		return 1;
 	}

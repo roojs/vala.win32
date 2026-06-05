@@ -51,18 +51,18 @@ example_pkg_gdi = 'win32-graphics-gdi'
 # Track A — raw Win32 (--profile=posix, no GLib)
 # [name, source, companion .vala sources, extra --pkg, extra -l libs]
 posix_example_apps = [
-  ['hello-window', 'examples/hello-window.vala', [wide_strings_vala], [], []],
-  ['button-demo', 'examples/button-demo.vala', [control_strings_vala, wide_strings_vala], [], []],
-  ['dialog-demo', 'examples/dialog-demo.vala', [wide_strings_vala], [], []],
+  ['native-hello-window', 'examples/native/hello-window.vala', [wide_strings_vala], [], []],
+  ['native-button-demo', 'examples/native/button-demo.vala', [control_strings_vala, wide_strings_vala], [], []],
+  ['native-dialog-demo', 'examples/native/dialog-demo.vala', [wide_strings_vala], [], []],
   [
-    'common-dialog-demo',
-    'examples/common-dialog-demo.vala',
+    'native-common-dialog-demo',
+    'examples/native/common-dialog-demo.vala',
     [control_strings_vala, wide_strings_vala],
     [example_pkg_dialogs],
     ['comdlg32'],
   ],
-  ['menu-demo', 'examples/menu-demo.vala', [wide_strings_vala], [], []],
-  ['error-demo', 'examples/error-demo.vala', [errors_vala, wide_strings_vala], [], []],
+  ['native-menu-demo', 'examples/native/menu-demo.vala', [wide_strings_vala], [], []],
+  ['native-error-demo', 'examples/native/error-demo.vala', [errors_vala, wide_strings_vala], [], []],
 ]
 
 generate_sources = files(
@@ -129,7 +129,7 @@ endif
 
 mingw_cc = find_program('x86_64-w64-mingw32-gcc', required: false)
 mingw_windres = find_program('x86_64-w64-mingw32-windres', required: false)
-ergonomic_widgets_rc = project_root / 'examples' / 'ergonomic-widgets-demo.rc'
+widgets_demo_rc = project_root / 'examples' / 'widgets-demo.rc'
 mingw64_lib = project_root / 'mingw-libs' / 'mingw64'
 mingw_pc_dir = mingw64_lib / 'lib' / 'pkgconfig'
 gobject_spike_pc = mingw_pc_dir / 'glib-2.0.pc'
@@ -194,6 +194,8 @@ foreach app : posix_example_apps
     )
   elif mingw_cc.found()
     app_build_dir = 'track-a-' + app_name
+    app_source_parts = app_source.split('/')
+    app_vala_basename = app_source_parts[-1].substring(0, -5)
     companion_c_files = []
     app_vala_inputs = [files(app_source)]
     foreach src : app_companion_sources
@@ -219,7 +221,7 @@ foreach app : posix_example_apps
       ] + vala_win32_c_quiet + [
         '-mwindows',
         '-o', '@OUTPUT@',
-        app_build_dir + '/' + app_name + '.c',
+        app_build_dir + '/' + app_vala_basename + '.c',
         companion_c_files,
       ] + app_link_libs,
       depends: regen_dep,
@@ -237,43 +239,50 @@ ergonomic_widget_companion = [control_strings_vala, wide_strings_vala, widgets_v
 
 ergonomic_apps = [
   [
-    'ergonomic-button-demo',
-    'examples/ergonomic-button-demo.vala',
+    'hello-window',
+    'examples/hello-window.vala',
     ergonomic_widget_companion,
     [],
     [],
   ],
   [
-    'ergonomic-widgets-demo',
-    'examples/ergonomic-widgets-demo.vala',
+    'button-demo',
+    'examples/button-demo.vala',
     ergonomic_widget_companion,
     [],
     [],
   ],
   [
-    'ergonomic-dialog-demo',
-    'examples/ergonomic-dialog-demo.vala',
+    'widgets-demo',
+    'examples/widgets-demo.vala',
     ergonomic_widget_companion,
     [],
     [],
   ],
   [
-    'ergonomic-common-dialog-demo',
-    'examples/ergonomic-common-dialog-demo.vala',
+    'dialog-demo',
+    'examples/dialog-demo.vala',
+    ergonomic_widget_companion,
+    [],
+    [],
+  ],
+  [
+    'common-dialog-demo',
+    'examples/common-dialog-demo.vala',
     ergonomic_widget_companion,
     [],
     ['comdlg32'],
   ],
   [
-    'ergonomic-menu-demo',
-    'examples/ergonomic-menu-demo.vala',
+    'menu-demo',
+    'examples/menu-demo.vala',
     ergonomic_widget_companion,
     [],
     [],
   ],
   [
-    'ergonomic-error-demo',
-    'examples/ergonomic-error-demo.vala',
+    'error-demo',
+    'examples/error-demo.vala',
     [errors_vala, wide_strings_vala],
     [],
     [],
@@ -315,7 +324,7 @@ if get_option('build_ergonomic_examples') and mingw_cc.found() and have_mingw_gl
     endforeach
     ergo_cc_extra = []
     ergo_link_objs = []
-    if app_name == 'ergonomic-widgets-demo' and mingw_windres.found()
+    if app_name == 'widgets-demo' and mingw_windres.found()
       ergo_link_objs += [ergo_build_dir + '/manifest.o']
     endif
     ergo_link_cmd = [
@@ -336,12 +345,12 @@ if get_option('build_ergonomic_examples') and mingw_cc.found() and have_mingw_gl
       '-d', ergo_build_dir,
       '@INPUT@',
     ]
-    if app_name == 'ergonomic-widgets-demo' and mingw_windres.found()
+    if app_name == 'widgets-demo' and mingw_windres.found()
       ergo_build_cmd += [
         '&&',
         mingw_windres,
         '-I', project_root / 'examples',
-        '-i', ergonomic_widgets_rc,
+        '-i', widgets_demo_rc,
         '-o', ergo_build_dir + '/manifest.o',
       ]
     endif
@@ -399,7 +408,7 @@ endif
 
 if have_webview2_sdk and host_machine.system() == 'windows'
   webview2_sources = [
-    files('examples/webview2-host-demo.vala'),
+    files('examples/native/webview2-host-demo.vala'),
     wide_strings_vala,
     webview2_plumbing_c,
     webview2_capture_spike_c,
@@ -429,7 +438,7 @@ elif have_webview2_sdk and mingw_cc.found()
   webview2_build_dir = 'track-webview2-host-demo'
   webview2_companion = [wide_strings_vala]
   webview2_companion_c = []
-  webview2_vala_inputs = [files('examples/webview2-host-demo.vala')]
+  webview2_vala_inputs = [files('examples/native/webview2-host-demo.vala')]
   foreach src : webview2_companion
     webview2_vala_inputs += src
     parts = src.split('/')

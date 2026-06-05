@@ -102,9 +102,10 @@ public static int main (string[] args) {
 	tree_view.add_child (projects, "Track A — raw vapi");
 	tree_view.add_child (projects, "Track B — widgets");
 	var track_b = tree_view.add_child (projects, "Demos");
-	tree_view.add_child (track_b, "ergonomic-button-demo");
-	tree_view.add_child (track_b, "ergonomic-widgets-demo");
-	tree_view.add_child (track_b, "ergonomic-dialog-demo");
+	tree_view.add_child (track_b, "hello-window");
+	tree_view.add_child (track_b, "button-demo");
+	tree_view.add_child (track_b, "widgets-demo");
+	tree_view.add_child (track_b, "dialog-demo");
 	var coverage = tree_view.add_root ("Coverage");
 	tree_view.add_child (coverage, "6a matrix");
 	tree_view.add_child (coverage, "6b filter trials");

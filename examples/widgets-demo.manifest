@@ -3,9 +3,9 @@
   <assemblyIdentity
     version="1.0.0.0"
     processorArchitecture="*"
-    name="ValaWin32.ErgoWidgetsDemo"
+    name="ValaWin32.WidgetsDemo"
     type="win32"/>
-  <description>vala.win32 ergonomic-widgets-demo</description>
+  <description>vala.win32 widgets-demo</description>
   <dependency>
     <dependentAssembly>
       <assemblyIdentity

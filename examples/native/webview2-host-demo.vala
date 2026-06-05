@@ -1,6 +1,6 @@
 /* Phase 7b: Win32 host window + WebView2 plumbing (async; needs message loop). */
 
-using WebView2.Plumbing;
+using Win32.Ui.WebView;
 using Win32.Ui;
 using Win32.Ui.WindowsAndMessaging;
 using Win32.System;
@@ -17,7 +17,7 @@ private int64 window_proc (
 		host_on_size (g_hwnd);
 		return 0;
 	}
-	if (msg == WebView2.Plumbing.SPIKE_DONE_MESSAGE) {
+	if (msg == Win32.Ui.WebView.SPIKE_DONE_MESSAGE) {
 		post_quit_message (host_capture_spike_result () < 0 ? 2 : 0);
 		return 0;
 	}

@@ -2,13 +2,13 @@ option(
   'build_posix_examples',
   type: 'boolean',
   value: true,
-  description: 'Build Track A example executables (hello-window, button-demo, …)',
+  description: 'Build Track A native examples (native-hello-window, native-button-demo, …)',
 )
 option(
   'build_ergonomic_examples',
   type: 'boolean',
   value: true,
-  description: 'Build Track B GLib ergonomic demos (needs mingw-libs or native GLib)',
+  description: 'Build default examples/ demos (hello-window, button-demo, …; needs mingw-libs)',
 )
 option(
   'regen_on_build',

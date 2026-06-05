@@ -52,43 +52,50 @@ namespace Generate {
 		static ErgoExampleRow[] ergo_examples () {
 			return {
 				ErgoExampleRow () {
-					exe = "ergonomic-button-demo",
-					source = "examples/ergonomic-button-demo.vala",
+					exe = "hello-window",
+					source = "examples/hello-window.vala",
+					widgets = "`Window`",
+					patterns = "`Window.run`",
+					notes = "Top-level hello; start here",
+				},
+				ErgoExampleRow () {
+					exe = "button-demo",
+					source = "examples/button-demo.vala",
 					widgets = "`Window`, `Label`, `Edit`, `Button`, `ListBox`, `ComboBox`, `ScrollBar`, `ProgressBar`",
 					patterns = "`.clicked`, `.changed`, `.selection_changed`, `.value_changed`; `.text` on `Edit`",
 					notes = "Canonical WM_COMMAND set; best starter",
 				},
 				ErgoExampleRow () {
-					exe = "ergonomic-widgets-demo",
-					source = "examples/ergonomic-widgets-demo.vala",
+					exe = "widgets-demo",
+					source = "examples/widgets-demo.vala",
 					widgets = "above + `GroupBox`, `ListView`, `TreeView`, `TabControl`, `MonthCalendar`, `Toolbar`, `DateTimePicker`, `ToolTips`",
 					patterns = "WM_NOTIFY signals; `add_column` / `append_row`, `add_root` / `add_child`, `add_page`; status via `Label.text`",
 					notes = "Integration showcase; shells (toolbar, tooltips) may not behave fully on Wine",
 				},
 				ErgoExampleRow () {
-					exe = "ergonomic-dialog-demo",
-					source = "examples/ergonomic-dialog-demo.vala",
+					exe = "dialog-demo",
+					source = "examples/dialog-demo.vala",
 					widgets = "`Window`",
 					patterns = "`frame.show_message (...)` → `NativeDialogs`",
 					notes = "Modal message box only",
 				},
 				ErgoExampleRow () {
-					exe = "ergonomic-common-dialog-demo",
-					source = "examples/ergonomic-common-dialog-demo.vala",
+					exe = "common-dialog-demo",
+					source = "examples/common-dialog-demo.vala",
 					widgets = "`Window`, `Button`",
 					patterns = "`NativeDialogs.try_open_file`, `try_choose_color` + button `.clicked`",
 					notes = "Common dialogs shard",
 				},
 				ErgoExampleRow () {
-					exe = "ergonomic-menu-demo",
-					source = "examples/ergonomic-menu-demo.vala",
+					exe = "menu-demo",
+					source = "examples/menu-demo.vala",
 					widgets = "`Window`, `MenuBar`, `MenuPopup`",
 					patterns = "`.activated` on menu bar",
 					notes = "Menus (template shell, not catalog WC_*)",
 				},
 				ErgoExampleRow () {
-					exe = "ergonomic-error-demo",
-					source = "examples/ergonomic-error-demo.vala",
+					exe = "error-demo",
+					source = "examples/error-demo.vala",
 					widgets = "— (no widget UI)",
 					patterns = "`win32_bool_ok` + `WideString` (CLI smoke, not a layout demo)",
 					notes = "Error helpers only; console exit 0",
@@ -97,7 +104,7 @@ namespace Generate {
 		}
 
 		void append_ergo_examples (GLib.StringBuilder sb) {
-			sb.append ("## Ergonomic examples (`examples/ergonomic-*.vala`)\n\n");
+			sb.append ("## Ergonomic examples (`examples/*.vala`; raw Win32 in `examples/native/`)\n\n");
 			sb.append (
 				"| Build | Source | `Win32.*` used | Signals / API style | Notes |\n"
 			);
@@ -144,7 +151,7 @@ namespace Generate {
 				string? wc = wc_for_class (class_name);
 				if (class_name == "GroupBox") {
 					sb.append (
-						"| GroupBox | ergonomic-widgets-demo | — | Template helper (layout frame) |\n"
+						"| GroupBox | widgets-demo | — | Template helper (layout frame) |\n"
 					);
 					continue;
 				}
@@ -176,16 +183,16 @@ namespace Generate {
 				"| `Window`, `Window.title`, `Window.run` | all UI demos | Top-level frame |\n"
 			);
 			sb.append (
-				"| `NativeDialogs.show_message` | ergonomic-dialog-demo | MessageBox |\n"
+				"| `NativeDialogs.show_message` | dialog-demo | MessageBox |\n"
 			);
 			sb.append (
-				"| `NativeDialogs.try_open_file` / `try_choose_color` | ergonomic-common-dialog-demo | File/color picker |\n"
+				"| `NativeDialogs.try_open_file` / `try_choose_color` | common-dialog-demo | File/color picker |\n"
 			);
 			sb.append (
-				"| `MenuBar` / `MenuPopup` | ergonomic-menu-demo | Not from `UI.Controls` catalog |\n"
+				"| `MenuBar` / `MenuPopup` | menu-demo | Not from `UI.Controls` catalog |\n"
 			);
 			sb.append (
-				"| `win32_bool_ok` | ergonomic-error-demo | `generated/win32-errors.vala` |\n"
+				"| `win32_bool_ok` | error-demo | `generated/win32-errors.vala` |\n"
 			);
 		}
 
@@ -215,7 +222,7 @@ namespace Generate {
 				|| wc_symbol == "WC_COMBOBOX"
 				|| wc_symbol == "WC_SCROLLBAR"
 				|| wc_symbol == "PROGRESS_CLASS") {
-				return "ergonomic-button-demo (+ widgets-demo for some)";
+				return "button-demo (+ widgets-demo for some)";
 			}
 			switch (wc_symbol) {
 			case "WC_LISTVIEW":
@@ -225,7 +232,7 @@ namespace Generate {
 			case "MONTHCAL_CLASS":
 			case "DATETIMEPICK_CLASS":
 			case "TOOLTIPS_CLASS":
-				return "ergonomic-widgets-demo";
+				return "widgets-demo";
 			default:
 				return "—";
 			}
@@ -253,7 +260,7 @@ namespace Generate {
 		void append_not_in_ergo_format (GLib.StringBuilder sb) {
 			sb.append ("\n## Not in ergonomic format yet\n\n");
 			sb.append (
-				"These matter for product UX but have **no** `examples/ergonomic-*.vala` story (vapi or shell only):\n\n"
+				"These matter for product UX but have **no** ergonomic example yet (vapi or shell only):\n\n"
 			);
 			sb.append ("| Want | Suggested next step |\n");
 			sb.append ("|------|---------------------|\n");
@@ -261,7 +268,7 @@ namespace Generate {
 				"| Multiline edit | `MultilineEdit` profile or extend `Edit`; add to button or widgets demo |\n"
 			);
 			sb.append (
-				"| Rich text | `RichEdit` widget + `win32-ui-controls-richedit`; new `ergonomic-richtext-demo` |\n"
+				"| Rich text | `RichEdit` widget + `win32-ui-controls-richedit`; new `richtext-demo` |\n"
 			);
 			sb.append (
 				"| Working tooltips | `ToolTips.attach(control, text)` profile; wire on button-demo |\n"
@@ -270,7 +277,7 @@ namespace Generate {
 				"| Header, IP address, link, combo ex, pager, … | Profile + one line in widgets-demo or dedicated ergo demo |\n"
 			);
 			sb.append (
-				"| Track A `button-demo` etc. | Legacy raw vapi — **not** ergo format; ignore unless debugging generator |\n"
+				"| Track A `examples/native/*` | Raw generated vapi — `native-*-demo` exes; debugging generator |\n"
 			);
 		}
 
@@ -278,9 +285,10 @@ namespace Generate {
 			sb.append ("\n## Run ergonomic builds\n\n");
 			sb.append ("```bash\n");
 			sb.append ("meson setup build && meson compile -C build\n");
-			sb.append ("wine build/ergonomic-button-demo.exe\n");
-			sb.append ("wine build/ergonomic-widgets-demo.exe\n");
-			sb.append ("# WIN32_WIDGET_DEBUG=1 wine build/ergonomic-widgets-demo.exe\n");
+			sb.append ("wine build/hello-window.exe\n");
+			sb.append ("wine build/button-demo.exe\n");
+			sb.append ("wine build/widgets-demo.exe\n");
+			sb.append ("# WIN32_WIDGET_DEBUG=1 wine build/widgets-demo.exe\n");
 			sb.append ("```\n\n");
 			sb.append (
 				"Build all Track B exes: `meson compile -C build` (needs MinGW + `scripts/setup-mingw-libs.sh`). "

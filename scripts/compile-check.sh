@@ -20,7 +20,7 @@ compile() {
 	shift
 	echo "compile-check: $name"
 	# shellcheck disable=SC2086
-	$valac $vala_common "$root/examples/${name}.vala" "$@"
+	$valac $vala_common "$root/examples/native/${name}.vala" "$@"
 }
 
 compile hello-window "$wide"

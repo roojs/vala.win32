@@ -29,7 +29,8 @@ The capture experiment lives in **`src/webview2-capture-spike.c`** only — see 
 | **Generated vapi** | `generate-binding` (Phase 7i) | `Navigate`, `ExecuteScript`, `CapturePreview`, … |
 | **Committed JSON** | `regen-webview2-json.sh` | win32json-shaped `metadata/webview2/api/WebView2.json` |
 | **Thin runtime glue** | Small C | `WebView2Loader.dll`, async “host ready” setup |
-| **Ergonomic API** | `Win32.WebView` (later) | What application code calls |
+| **Ergonomic API** | `Win32.*` widget layer (later) | What application code calls |
+| **Native plumbing vapi** | `Win32.Ui.WebView` | Phase 7b host (`webview2.vapi`) |
 
 WinMD is optional upstream input; today we scrape the **vendored `WebView2.h`** so Linux can regen the JSON without .NET.
 

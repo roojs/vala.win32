@@ -2,7 +2,7 @@
 # Run a cross-built .exe under Wine with MinGW runtime DLLs on the search path.
 #
 # Usage:
-#   ./scripts/run-wine.sh build/ergonomic-button-demo.exe
+#   ./scripts/run-wine.sh build/button-demo.exe
 #   ./scripts/run-wine.sh build/hello-window.exe
 
 set -euo pipefail

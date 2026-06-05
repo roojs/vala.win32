@@ -101,7 +101,7 @@ Example link flags:
   pkg-config --cflags --libs glib-2.0 gobject-2.0
 
 Copy runtime DLLs from \$MINGW_LIBDIR/mingw64/bin next to your .exe when testing with Wine
-(meson build does this automatically for ergonomic-button-demo).
+(meson build copies DLLs next to each Track B demo exe automatically).
 
 If libintl-8.dll was missing, re-run this script after upgrading gettext-runtime
 (was: gettext → gettext-tools only, no libintl DLL).
