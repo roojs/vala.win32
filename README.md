@@ -1,121 +1,128 @@
 # vala.win32
 
-Thin **Vala vapi** bindings for native Win32 GUI. Application code compiles to C that calls Win32 directly—no `libwin32` monolith.
+Generated **Vala vapi** bindings for native Win32 GUI. Application `.vala` compiles to C that calls Win32 directly—no monolithic `libwin32`. Metadata comes from [win32json](https://github.com/marlersoft/win32json) (filtered Microsoft win32metadata); a small generator emits per-area `.vapi` shards and ergonomic helpers. **WebView2** (Edge Chromium in an HWND) is integrated alongside the Win32 work—host demo and plumbing today, generated COM bindings next.
 
 **Prior art (credits only, unrelated codebase):** [emrevit/vala-win32](https://github.com/emrevit/vala-win32)
 
-Design and roadmap: [docs/plans/1. project overview.md](docs/plans/1.%20project%20overview.md) (plans `2`–`7` done; **`9` WebView2** is the current focus; see `docs/plans/`)
+---
 
-## Phase 2 (apps) + Phase 1 (generator)
+## Build on Linux
 
-**Apps** use **generated vapi shards** (`win32-ui-windowsandmessaging`, …) plus a tiny hand stub (`win32-system-stub`) for `GetModuleHandleW` until loader JSON is vendored. Regen writes one `.vapi` per line in `metadata/win32json-api.files`.
+Cross-compile with **MinGW** (`x86_64-w64-mingw32-gcc`). Run demos under **Wine** for smoke tests. WebView2 rendering is unreliable in Wine; treat Windows as the real runtime for that demo.
 
-**Track A** (`hello-window`, `button-demo`, `dialog-demo`, `common-dialog-demo`, `menu-demo`, `error-demo`) — raw vapi, `--profile=posix`, no GLib.
+### Prerequisites
 
-**Track B** (`ergonomic-*-demo`) — hand-maintained `Win32.*` widgets in `src/Generate/templates/win32-widgets.vala` (regen → `generated/win32-widgets.vala`); `--profile=gobject` + MinGW GLib. Includes Phase 4 ergonomic counterparts: `ergonomic-dialog-demo`, `ergonomic-common-dialog-demo`, `ergonomic-menu-demo`, `ergonomic-error-demo` (baseline for Phase 5 generator comparison). After compile, runtime DLLs from `mingw-libs/` are copied next to each `.exe`.
+- Meson, Ninja, Vala, MinGW-w64 cross toolchain
+- Wine (to run `.exe` outputs)
+- For **ergonomic** demos (GLib profile): `./scripts/setup-mingw-libs.sh` once, then `meson setup build --reconfigure`
 
-### Build
+Win32 JSON for regen (if `metadata/win32json/api/` is empty): `./scripts/vendor-win32json.sh`
+
+### Compile
 
 ```bash
 meson setup build          # once
-./scripts/setup-mingw-libs.sh   # required for Track B ergonomic demos
+./scripts/setup-mingw-libs.sh   # Track B ergonomic demos only
 meson setup build --reconfigure # after mingw-libs
 meson compile -C build
-wine build/hello-window.exe
-wine build/button-demo.exe
-wine build/dialog-demo.exe
-wine build/common-dialog-demo.exe
-wine build/menu-demo.exe
-wine build/error-demo.exe
-wine build/ergonomic-button-demo.exe
-wine build/ergonomic-widgets-demo.exe   # grouped layout; comctl32 v6 manifest on native Windows
-wine build/ergonomic-dialog-demo.exe
-wine build/ergonomic-common-dialog-demo.exe
-wine build/ergonomic-menu-demo.exe
-wine build/ergonomic-error-demo.exe
-
-# Debug WM_COMMAND / WM_NOTIFY (ergonomic-widgets-demo exercises most Track B widgets):
-# WIN32_WIDGET_DEBUG=1 wine build/ergonomic-widgets-demo.exe 2>&1 | tee /tmp/ergo-debug.log
 ```
 
-Or `make` (same as `meson compile -C build` after setup).
+Or `make` after setup (same as `meson compile -C build`).
 
-**Phase 6 checks:**
+### Run (Wine)
 
 ```bash
-meson compile -C build check-regen      # vapi drift vs metadata
-meson compile -C build compile-check    # Track A examples → C (no link)
-meson compile -C build coverage-report  # docs/coverage/6a-coverage-matrix.md (ergonomic examples)
-# Gap analysis (Phase 6e): docs/coverage/6e-gap-report.md
+wine build/hello-window.exe
+wine build/ergonomic-widgets-demo.exe
+# … other targets under build/ (button-demo, dialog-demo, menu-demo, ergonomic-*-demo, etc.)
 ```
 
-Win32 JSON for regen: run `./scripts/vendor-win32json.sh` once if `metadata/win32json/api/` is empty.
+### WebView2 (cross-build)
 
-### WebView2 (Phase 7)
-
-**Regenerate API metadata JSON** (Linux or Windows — commit the result):
+Regenerate API metadata (Linux or Windows—commit the result):
 
 ```bash
 ./scripts/vendor-webview2-sdk.sh   # if needed
-meson setup build
 ./scripts/regen-webview2-json.sh   # → metadata/webview2/api/WebView2.json
 ```
 
-Details: **[metadata/webview2/README.md](metadata/webview2/README.md)**
-
-**Linux cross-build** (`build/`):
+Details: [metadata/webview2/README.md](metadata/webview2/README.md)
 
 ```bash
-./scripts/vendor-webview2-sdk.sh
 meson setup build --reconfigure
 meson compile -C build webview2-host-demo
 wine build/webview2-host-demo.exe https://example.com/   # optional; often blank under Wine
 ```
 
-**Windows native** (`build-win/` on the Samba share — no `C:` mirror needed):
-
-See **[docs/windows-build.md](docs/windows-build.md)** — **Visual Studio Build Tools** (recommended long-term for WebView2) vs **MSYS2 MinGW** (what Meson uses today). They are not mixed in one link.
-
-On Windows: one PowerShell line runs `scripts/build-win.sh` via `msys2_shell.cmd -ucrt64` (after `setup-msys2-toolchain.sh` for the compiler tools) — [docs/windows-build.md](docs/windows-build.md). Run `build-win\webview2-host-demo.exe` at the desktop.
-
-Ship `WebView2Loader.dll` next to the exe (Meson copies it into the build dir). Runtime must be installed on the Windows machine.
-
-### Win32 metadata (JSON)
-
-Filtered subset from [marlersoft/win32json](https://github.com/marlersoft/win32json) (community export of [win32metadata](https://github.com/microsoft/win32metadata)):
+### Checks (optional)
 
 ```bash
-./scripts/vendor-win32json.sh
-# → build/vendor/win32json/        shallow clone (gitignored)
-# → metadata/win32json/api/        files listed in metadata/win32json-api.files
+meson compile -C build check-regen      # vapi drift vs metadata
+meson compile -C build compile-check    # Track A examples → C (no link)
+meson compile -C build coverage-report  # docs/coverage/6a-coverage-matrix.md
 ```
 
-**Include scope** = edit `metadata/win32json-api.files` (which JSON blobs to copy). **Exclude rules** for symbols inside those files = `metadata/filters/gui.filter` (`-` Ansi / Interop / Tests only).
+Do not hand-edit generated `.vapi` shards or `generated/win32-widgets.vala`; change `src/Generate/` (or templates) and run `meson compile -C build regen`.
 
-Pin upstream with `metadata/win32json-ref.txt` or `WIN32JSON_REF=…`.
+---
 
-### Layout
+## Build on Windows
 
-```
-vapi/
-  win32-ui-windowsandmessaging.vapi   # generated (regen)
-  win32-system-stub.vapi                # hand stub until loader JSON vendored
-  archive/win32-ui-native.vapi          # Phase 0 spike (reference only)
-generated/
-  win32-ui-control-strings.vala         # WC_* (regen)
-  win32-wide-strings.vala               # UTF-8 ↔ UTF-16 (regen from template)
-  win32-widgets.vala                    # Win32.* widgets (full WC_* catalog + profiles)
-  win32-errors.vala                     # GetLastError helpers (regen)
-examples/             # Consumer apps only
-metadata/             # win32json-api.files, gui.filter; win32json/ from vendor script
-tools/                # generate-binding (Phase 1+)
-scripts/vendor-win32json.sh   # clone win32json → copy filtered api/*.json
-scripts/setup-mingw-libs.sh   # MSYS2 GLib tree for Track B cross-link
-docs/plans/           # Project plans
-docs/windows-build.md # Windows native build-win, SSH, WebView2 runtime
+WebView2 **must** run on real Windows with the [Evergreen WebView2 Runtime](https://developer.microsoft.com/en-us/microsoft-edge/webview2/).
+
+Native output lives in **`build-win/`** (gitignored). Meson uses **MSYS2 MinGW** today (`WebView2Loader.dll` next to the exe). Visual Studio / MSVC is documented for a future path but is not the default Meson backend yet.
+
+**Full steps** (MSYS2 from PowerShell, Samba `X:` share, runtime install, `build-win.sh`): **[docs/windows-build.md](docs/windows-build.md)**
+
+Quick compile after toolchain setup:
+
+```powershell
+C:\msys64\msys2_shell.cmd -defterm -no-start -ucrt64 -c 'cd /x/vala.win32 && ./scripts/build-win.sh'
 ```
 
-Do not hand-edit generated shard vapi or `generated/win32-widgets.vala`; change `src/Generate/` (or `src/Generate/templates/win32-widgets.vala` for Track B widgets) and run `meson compile -C build regen`.
+Run at the desktop:
+
+```powershell
+C:\msys64\msys2_shell.cmd -defterm -no-start -ucrt64 -c 'cd /x/vala.win32/build-win && ./webview2-host-demo.exe https://example.com/'
+```
+
+---
+
+## Status
+
+| Area | State |
+|------|--------|
+| Phases 0–5 | Done — win32json vendor, generator, per-shard vapi, common controls, dialogs/menus, widget codegen (`Win32.*` ergonomic layer) |
+| Phase 6 | In progress — API coverage, filter expansion, gap reports |
+| Phase 7 | In progress — WebView2 host on Windows; JSON regen from SDK header; generated COM vapi still planned |
+| Phase 8 | Not started — Valadoc, CI, polish |
+
+**Two demo tracks:** **Track A** — raw generated vapi, `--profile=posix`, no GLib. **Track B** — ergonomic widgets in `generated/win32-widgets.vala`, `--profile=gobject` + MinGW GLib.
+
+**Technical documentation**
+
+- [docs/plans/1. project overview.md](docs/plans/1.%20project%20overview.md) — roadmap and phase index (`docs/plans/`)
+- [docs/webview2-binding-architecture.md](docs/webview2-binding-architecture.md) — WebView2 layers and next steps
+- [docs/windows-build.md](docs/windows-build.md) — native Windows build and lab setup
+- [docs/coverage/6a-coverage-matrix.md](docs/coverage/6a-coverage-matrix.md) — binding coverage matrix
+
+---
+
+## Repository layout
+
+```
+vapi/                 # Generated Win32 shards + small hand stubs
+generated/            # Regen helpers (widgets, wide strings, errors, …)
+examples/             # Consumer demo apps
+metadata/             # win32json filter lists; webview2 JSON (committed)
+tools/                # generate-binding, generate-webview2-json
+src/Generate/         # Generator and widget templates
+src/webview2-plumbing.c   # Temporary WebView2 host bootstrap (C)
+scripts/              # vendor-win32json, setup-mingw-libs, build-win, …
+docs/                 # Build guides, architecture, plans, coverage
+```
+
+---
 
 ## License
 
