@@ -441,7 +441,6 @@ namespace Win32 {
 			this.buffer.append (
 				@"	[CCode (cname = $(VapiEmitter.quoted_c_string (t.Name)), ref_function = $(VapiEmitter.quoted_c_string ("")), unref_function = $(VapiEmitter.quoted_c_string ("")))]
 	public interface $(t.Name) : $(parent) {
-
 "
 			);
 			foreach (var method in t.Methods) {
@@ -453,10 +452,8 @@ namespace Win32 {
 		void emit_com_method (Parse.Function method) {
 			var vala_name = NameMapper.com_method_name (method.Name);
 			var ret = VapiEmitter.com_return_type (method.ReturnType);
-			this.buffer.append (@"
-		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
+			this.buffer.append (@"		[CCode (cname = $(VapiEmitter.quoted_c_string (method.Name)))]
 		public abstract $(ret) $(vala_name) (
-
 ");
 			var n = method.Params.size;
 			for (int i = 0; i < n; i++) {
@@ -464,15 +461,10 @@ namespace Win32 {
 				var ptype = VapiEmitter.com_param_type (p, this.shard_basename, this.emitted_com_names);
 				var pname = NameMapper.to_snake (p.Name.length > 0 ? p.Name : @"param$(i)");
 				var comma = i < n - 1 ? "," : "";
-				this.buffer.append (@"
-			$(ptype) $(pname)$(comma)
-
+				this.buffer.append (@"			$(ptype) $(pname)$(comma)
 ");
 			}
-			this.buffer.append (@"
-		);
-
-");
+			this.buffer.append ("\t\t);\n\n");
 		}
 
 		static string com_return_type (Parse.TypeRef type_ref) {
