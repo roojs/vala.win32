@@ -9,9 +9,6 @@
 #include "webview2-loader.h"
 #include "WebView2.h"
 
-struct ICoreWebView2;
-struct ICoreWebView2Controller;
-
 void vala_webview2_host_finish_setup (
 	ICoreWebView2Controller *controller,
 	ICoreWebView2 *webview,

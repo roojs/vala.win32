@@ -1,4 +1,4 @@
-/* Phase 7b: Win32 host window + WebView2 plumbing (async; needs message loop). */
+/* Phase 7i: Win32 host window + WebView2 (generated COM vapi; async; needs message loop). */
 
 using Win32.Ui.WebView;
 using Win32.Ui;
@@ -32,7 +32,7 @@ private int64 window_proc (
 public static int main (string[] args) {
 	void* inst = get_module_handle (null);
 	var class_name = WideString ("ValaWin32WebView2Host");
-	var window_title = WideString ("vala.win32 WebView2 host (7b)");
+	var window_title = WideString ("vala.win32 WebView2 host (7i)");
 
 	var wc = WndClassEx ();
 	wc.cbSize = (uint) sizeof (WndClassEx);

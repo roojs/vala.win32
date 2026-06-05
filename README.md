@@ -118,7 +118,9 @@ examples/native/      # Raw vapi + webview2-host-demo (native-* exes)
 metadata/             # win32json filter lists; webview2 JSON (committed)
 tools/                # generate-binding, generate-webview2-json
 src/Generate/         # Generator and widget templates
-src/webview2-plumbing.c   # Temporary WebView2 host bootstrap (C)
+src/webview2-loader.c     # WebView2Loader.dll bootstrap (C)
+src/webview2-com-glue.c   # Async COM completed handlers (C)
+src/webview2-host.vala    # Host logic via win32-webview2.vapi (Vala)
 scripts/              # vendor-win32json, setup-mingw-libs, build-win, …
 docs/                 # Build guides, architecture, plans, coverage
 ```
