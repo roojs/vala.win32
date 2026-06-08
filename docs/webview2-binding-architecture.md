@@ -64,7 +64,7 @@ public bool reload () {
 | `webview2-host-native` | Native Track A demo | `examples/native/webview2-host-native.vala` |
 | `webview2-demo` | Track B demo | `examples/webview2-demo.vala` |
 
-**Ergo (generated):** [`generated/win32-ergo-webview2.vala`](../generated/win32-ergo-webview2.vala) — `Win32.WebView` delegates to `Win32.Ui.WebView` glue with aligned names (`navigate`, `create_with_xywh`, …).
+**Ergo (generated):** [`generated/win32-ergo-webview2.vala`](../generated/win32-ergo-webview2.vala) — shell from [`src/Generate/templates/win32-ergo-webview2-shell.vala`](../src/Generate/templates/win32-ergo-webview2-shell.vala) (ctor, layout, lifecycle helpers); catalog methods/properties spliced at `@WEBVIEW2_CATALOG@`.
 
 **Call stack (navigate):** `Win32.WebView.navigate` → `Win32.Ui.WebView.navigate` → `ICoreWebView2.navigate` (generated vapi).
 

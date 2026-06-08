@@ -176,15 +176,19 @@ int main(string[] args) {
 	GLib.DirUtils.create_with_parents(generated_dir, 0755);
 
 	if (controls_entry != null) {
-		var literals = emitter.emit_control_class_strings(controls_entry);
+		string control_strings_header;
+		var literals = emitter.emit_control_class_strings(controls_entry, out control_strings_header);
 		var literals_path = GLib.Path.build_filename(generated_dir, "win32-ui-control-strings.vala");
+		var literals_header_path = GLib.Path.build_filename(generated_dir, "win32-ui-control-strings.h");
 		try {
 			GLib.FileUtils.set_contents(literals_path, literals);
+			GLib.FileUtils.set_contents(literals_header_path, control_strings_header);
 		} catch (GLib.Error e) {
 			stderr.printf("write %s: %s\n", literals_path, e.message);
 			return 1;
 		}
 		print("wrote %s(%u bytes)\n", literals_path, literals.length);
+		print("wrote %s(%u bytes)\n", literals_header_path, control_strings_header.length);
 	}
 
 	if (widget_codegen != null) {
@@ -270,11 +274,21 @@ int main(string[] args) {
 		print("wrote %s\n", GLib.Path.build_filename(generated_dir, "win32-ui-webview2-events.h"));
 		print("wrote %s\n", GLib.Path.build_filename(generated_dir, "win32-ui-webview2-events-bridge.vala"));
 
+		var ergo_webview2_template = GLib.Path.build_filename(
+			project_root, "src", "Generate", "templates", "win32-ergo-webview2-shell.vala"
+		);
 		var ergo_webview2_emitter = new Generate.ErgoWebView2Emitter();
-		var ergo_webview2 = ergo_webview2_emitter.emit(webview2_catalog, conventions_path);
+		var ergo_webview2 = ergo_webview2_emitter.emit(
+			webview2_catalog,
+			conventions_path,
+			ergo_webview2_template
+		);
 		var ergo_webview2_path = GLib.Path.build_filename(generated_dir, "win32-ergo-webview2.vala");
+		var ergo_webview2_header_path = GLib.Path.build_filename(generated_dir, "win32-ergo-webview2.h");
 		GLib.FileUtils.set_contents(ergo_webview2_path, ergo_webview2);
+		GLib.FileUtils.set_contents(ergo_webview2_header_path, Generate.ErgoWebView2Emitter.emit_c_header());
 		print("wrote %s(%u bytes)\n", ergo_webview2_path, ergo_webview2.length);
+		print("wrote %s(%u bytes)\n", ergo_webview2_header_path, Generate.ErgoWebView2Emitter.emit_c_header().length);
 	} catch (GLib.Error e) {
 		stderr.printf("webview2 emit: %s\n", e.message);
 		return 1;

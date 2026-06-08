@@ -1,6 +1,7 @@
 /* Track B widget shell — dispatch, Window, dialogs, menus; control classes emitted at @TRACK_B_WIDGETS@ */
 
 using GLib;
+using Win32.Foundation;
 using Win32.Graphics.Gdi;
 using Win32.System;
 using Win32.Ui;

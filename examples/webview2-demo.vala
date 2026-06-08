@@ -1,6 +1,8 @@
 /* Track B: ergonomic WebView2 — Win32.Window + Win32.WebView (Phase 7h/7j baseline). */
 
 using GLib;
+using Win32.Foundation;
+using Win32.Ui.WindowsAndMessaging;
 
 static void dump_web_state(Win32.WebView web, string action) {
 	stderr.printf(

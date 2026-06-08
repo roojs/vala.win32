@@ -87,10 +87,16 @@ namespace $(ns) {
 		}
 
 		/** WC_* wide class strings — emitted as .vala(Vala vapi cannot hold const values). */
-		public string emit_control_class_strings(Parse.ApiFileEntry entry) {
+		public string emit_control_class_strings(Parse.ApiFileEntry entry, out string c_header) {
 			this.reset_shard();
 			var ns = NameMapper.vala_namespace_from_basename(entry.basename);
-			this.append_namespace_open(ns, false);
+			var c_prefix = VapiEmitter.vala_namespace_to_cprefix(ns);
+			this.buffer.append(
+				@"$(GENERATED_HEADER)[CCode(cprefix = $(VapiEmitter.quoted_c_string(c_prefix)), cheader_filename = $(VapiEmitter.quoted_c_string("win32-ui-control-strings.h")))]
+namespace $(ns) {
+"
+			);
+			var header_symbols = new Gee.ArrayList<string> ();
 			var basename = entry.basename;
 			foreach (var c in entry.document.Constants) {
 				if (NameMapper.skip_ansi_name(c.Name)) {
@@ -111,9 +117,51 @@ namespace $(ns) {
 					continue;
 				}
 				this.emit_string_constant(c, vala_name);
+				header_symbols.add(
+					@"VALA_EXTERN const guint16 $(c_prefix)$(vala_name)[$(c.ValueText.length + 1)];"
+				);
 			}
 			this.append_namespace_close();
+			c_header = VapiEmitter.emit_control_class_strings_header(header_symbols);
 			return this.buffer.str;
+		}
+
+		static string vala_namespace_to_cprefix(string ns) {
+			var parts = ns.split(".");
+			var upper = new Gee.ArrayList<string> ();
+			foreach (var part in parts) {
+				upper.add(part.up());
+			}
+			return string.joinv("_", upper.to_array()) + "_";
+		}
+
+		static string emit_control_class_strings_header(Gee.ArrayList<string> symbols) {
+			var sb = new GLib.StringBuilder(GENERATED_HEADER);
+			sb.append("""#ifndef VALA_WIN32_UI_CONTROL_STRINGS_H
+#define VALA_WIN32_UI_CONTROL_STRINGS_H
+
+#include <glib.h>
+
+#if !defined(VALA_EXTERN)
+#if defined(_MSC_VER)
+#define VALA_EXTERN __declspec(dllimport) extern
+#elif __GNUC__ >= 4
+#define VALA_EXTERN extern
+#else
+#define VALA_EXTERN extern
+#endif
+#endif
+
+""");
+			foreach (var line in symbols) {
+				sb.append(line);
+				sb.append("\n");
+			}
+			sb.append("""
+#endif
+
+""");
+			return sb.str;
 		}
 
 		/** One vapi shard: namespace Win32.Ui.* { … } */

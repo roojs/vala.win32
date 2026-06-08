@@ -64,10 +64,11 @@ dump_debug_bundle() {
 		fi
 		echo "=== end debug bundle ==="
 	} >> "${DEBUG_LOG}" 2>&1
-	cat "${DEBUG_LOG}" >&2
+	tail -80 "${DEBUG_LOG}" >&2
 }
 
 on_err() {
+	trap - ERR
 	dump_debug_bundle "error line ${1}"
 	echo "[build-win] FAILED — log: ${DEBUG_LOG}" >&2
 	exit 1

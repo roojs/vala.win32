@@ -40,6 +40,7 @@ example_pkgs = [
 ]
 
 generated_root = project_root / 'generated'
+ergo_vala_generated_inc = include_directories('generated')
 control_strings_vala = generated_root / 'win32-ui-control-strings.vala'
 wide_strings_vala = generated_root / 'win32-wide-strings.vala'
 widgets_vala = generated_root / 'win32-widgets.vala'
@@ -365,6 +366,10 @@ if get_option('build_ergonomic_examples')
           vala_args: ergo_vala_args + ergo_vala_link,
           c_args: vala_win32_c_quiet,
           dependencies: [ergo_glib, ergo_gobject],
+          include_directories: [
+            ergo_vala_generated_inc,
+            include_directories(meson.current_build_dir() / (app_name + '.exe.p')),
+          ],
           link_args: app_link,
           objects: ergo_objects,
           install: false,
@@ -400,7 +405,10 @@ if get_option('build_ergonomic_examples')
     foreach lib : app_extra_libs
       app_link += ['-l' + lib]
     endforeach
-    ergo_cc_extra = []
+    ergo_cc_extra = [
+      '-I' + ergo_build_dir,
+      '-I' + generated_root,
+    ]
     ergo_link_objs = []
     if app_name == 'widgets-demo' and mingw_windres.found()
       ergo_link_objs += [ergo_build_dir + '/manifest.o']
@@ -511,7 +519,10 @@ if have_webview2_sdk and host_machine.system() == 'windows'
     'webview2-host-native',
     webview2_sources,
     vala_args: webview2_vala_args + webview2_vala_link,
-    include_directories: webview2_inc,
+    include_directories: [
+      webview2_inc,
+      include_directories(meson.current_build_dir() / 'webview2-host-native.exe.p'),
+    ],
     c_args: vala_win32_c_quiet,
     link_args: ['-mwindows'] + webview2_link_libs,
     install: false,
@@ -563,7 +574,11 @@ if have_webview2_sdk and host_machine.system() == 'windows'
       'webview2-demo',
       webview2_ergo_sources,
       vala_args: webview2_ergo_vala_args + webview2_ergo_link,
-      include_directories: webview2_inc,
+      include_directories: [
+        webview2_inc,
+        ergo_vala_generated_inc,
+        include_directories(meson.current_build_dir() / 'webview2-demo.exe.p'),
+      ],
       c_args: vala_win32_c_quiet,
       dependencies: [webview2_ergo_glib, webview2_ergo_gobject],
       link_args: ['-mwindows'] + webview2_link_libs + ['-lcomdlg32', '-lcomctl32'],

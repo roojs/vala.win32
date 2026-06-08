@@ -67,11 +67,11 @@ Do not hand-edit generated `.vapi` shards or `generated/win32-widgets.vala`; cha
 
 ### Generated API docs (Valadoc)
 
-The Valadoc bundle focuses on the generated `Win32.*` widget API plus the raw shards those widgets use. It intentionally skips the old monolithic VAPI.
+The Valadoc bundle focuses on the generated `Win32.*` widget API (including `Win32.WebView` and `Win32.Ui.WebView`) plus the raw shards those widgets use. It intentionally skips the old monolithic VAPI and the full `Microsoft.Web.WebView2.Win32` COM catalog.
 
 ```bash
 make docs
-# open build/docs/valadoc/index.html (or index.htm on older Valadoc)
+# open build/docs/valadoc/vala.win32/index.htm
 ```
 
 GitHub Pages publishing is automated by `.github/workflows/deploy-docs.yml`, following the OLLMchat pattern: checkout the repo, install the Vala/Valadoc build dependencies, build the docs, upload the Pages artifact, and deploy it with `actions/deploy-pages`.

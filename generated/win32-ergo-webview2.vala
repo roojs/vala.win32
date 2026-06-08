@@ -3,6 +3,7 @@
 using GLib;
 using Win32.Ui.WebView;
 
+[CCode(cheader_filename = "win32-ergo-webview2.h")]
 namespace Win32 {
 
 /**
@@ -15,6 +16,7 @@ public class WebView : Widget {
 	public signal void navigation_starting();
 
 	public signal void document_title_changed();
+
 
 
 	public int x { get; private set; }
@@ -49,7 +51,6 @@ public class WebView : Widget {
 		wire_event_handlers();
 	}
 
-
 	private void wire_event_handlers() {
 		Ui.WebView.bind_navigation_completed ((success) => {
 			navigation_completed(success);
@@ -60,13 +61,12 @@ public class WebView : Widget {
 		Ui.WebView.bind_document_title_changed (() => {
 			document_title_changed();
 		});
-	}
 
+	}
 
 	public bool ready {
 		get { return attached && Ui.WebView.is_ready(); }
 	}
-
 
 	/** Update layout in parent client coordinates (same pattern as MoveWindow children). */
 	public void set_bounds(int x, int y, int width, int height) {
@@ -119,8 +119,8 @@ public class WebView : Widget {
 		}
 	}
 
-	public bool post_web_message_as_json(string json) {
-		return attached && Ui.WebView.post_web_message_as_json(json);
+	public bool post_web_message_as_json(string text) {
+		return attached && Ui.WebView.post_web_message_as_json(text);
 	}
 
 	public void post_web_message_as_string(string text) {
@@ -180,6 +180,7 @@ public class WebView : Widget {
 	}
 
 
+
 	void push_layout() {
 		if (!attached || width <= 0 || height <= 0) {
 			return;
@@ -200,7 +201,6 @@ public class WebView : Widget {
 			attached = false;
 		}
 	}
-
 
 }
 

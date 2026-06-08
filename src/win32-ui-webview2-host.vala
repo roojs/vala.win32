@@ -8,6 +8,8 @@ using Win32.Ui;
 using Win32.Ui.WindowsAndMessaging;
 using Win32.Foundation;
 
+
+[CCode(cheader_filename = "win32-ui-webview2-host.h")]
 namespace Win32.Ui.WebView {
 
 [CCode(cheader_filename = "win32-ui-webview2-com-glue.h", cname = "vala_webview2_com_begin_host")]

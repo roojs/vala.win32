@@ -70,7 +70,13 @@ exec "${VALADOC}" \
 	--pkg=win32-ui-windowsandmessaging \
 	--pkg=win32-ui-controls \
 	--pkg=win32-ui-controls-dialogs \
+	--pkg=win32-ui-webview2 \
 	"${ROOT}/generated/win32-wide-strings.vala" \
 	"${ROOT}/generated/win32-ui-control-strings.vala" \
 	"${ROOT}/generated/win32-errors.vala" \
-	"${ROOT}/generated/win32-widgets.vala"
+	"${ROOT}/generated/win32-widgets.vala" \
+	"${ROOT}/generated/win32-ui-webview2-com-sync.vala" \
+	"${ROOT}/generated/win32-ui-webview2-events-bridge.vala" \
+	"${ROOT}/src/win32-ui-webview2-host.vala" \
+	"${ROOT}/generated/win32-ui-webview2-host-glue.vala" \
+	"${ROOT}/generated/win32-ergo-webview2.vala"

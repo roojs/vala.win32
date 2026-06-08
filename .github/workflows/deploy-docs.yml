@@ -6,6 +6,7 @@ on:
       - master
     paths:
       - 'generated/**/*.vala'
+      - 'src/win32-ui-webview2-host.vala'
       - 'src/Generate/**/*.vala'
       - 'src/Generate/templates/**/*.vala'
       - 'vapi/**/*.vapi'
