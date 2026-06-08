@@ -60,9 +60,23 @@ Details: [metadata/webview2/README.md](metadata/webview2/README.md)
 meson compile -C build check-regen      # vapi drift vs metadata
 meson compile -C build compile-check    # Track A examples → C (no link)
 meson compile -C build coverage-report  # docs/coverage/6a-coverage-matrix.md
+meson compile -C build valadoc          # generated API docs → build/docs/valadoc/
 ```
 
 Do not hand-edit generated `.vapi` shards or `generated/win32-widgets.vala`; change `src/Generate/` (or templates) and run `meson compile -C build regen`.
+
+### Generated API docs (Valadoc)
+
+The Valadoc bundle focuses on the generated `Win32.*` widget API plus the raw shards those widgets use. It intentionally skips the old monolithic VAPI.
+
+```bash
+make docs
+# open build/docs/valadoc/index.html (or index.htm on older Valadoc)
+```
+
+GitHub Pages publishing is automated by `.github/workflows/deploy-docs.yml`, following the OLLMchat pattern: checkout the repo, install the Vala/Valadoc build dependencies, build the docs, upload the Pages artifact, and deploy it with `actions/deploy-pages`.
+
+The workflow runs on pushes to `master` that affect generated Vala/VAPI docs inputs, and can also be started manually with `workflow_dispatch`.
 
 ---
 
@@ -95,7 +109,7 @@ C:\msys64\msys2_shell.cmd -defterm -no-start -ucrt64 -c 'cd /x/vala.win32/build-
 | Phases 0–5 | Done — win32json vendor, generator, per-shard vapi, common controls, dialogs/menus, widget codegen (`Win32.*` ergonomic layer) |
 | Phase 6 | In progress — API coverage, filter expansion, gap reports |
 | Phase 7 | In progress — COM vapi `win32-ui-webview2.vapi`; generated ergo `Win32.WebView` in `generated/win32-ergo-webview2.vala`; demos `webview2-host-native` + `webview2-demo` |
-| Phase 8 | Not started — Valadoc, CI, polish |
+| Phase 8 | Started — Valadoc target and GitHub Pages deploy script; CI and packaging polish remain |
 
 **Examples:** default **`examples/*.vala`** — `Win32.*` widgets (`--profile=gobject` + MinGW GLib). **`examples/native/`** — raw generated vapi (`native-*` exe names, `--profile=posix`). WebView2 host lives under **`examples/native/`** (`Win32.Ui.WebView` plumbing vapi).
 

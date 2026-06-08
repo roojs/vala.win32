@@ -91,6 +91,7 @@ namespace Generate {
  * Minimal `create_window_ex` — add a profile in metadata/widget-conventions.json for signals/dispatch.
  */
 public class $(d.class_name()) : Widget {
+	/** Create a $(d.class_name()) child control using the catalog default style. */
 	public $(d.class_name())(
 		Window parent,
 		int x, int y, int width, int height,
@@ -123,7 +124,8 @@ public class $(d.class_name()) : Widget {
 			emit_class_doc(sb, d);
 			var signal_decl = "";
 			if (d.signal_name() != null) {
-				signal_decl = @"	public signal void $(d.signal_name())();
+				signal_decl = @"	/** $(signal_doc(d)) */
+	public signal void $(d.signal_name())();
 ";
 			}
 			sb.append(@"public class $(d.class_name()) : Widget {
@@ -158,6 +160,19 @@ $(route_line) */
 ");
 		}
 
+		static string signal_doc(WidgetControlDescriptor d) {
+			switch (d.dispatch_route()) {
+			case WidgetDispatchRoute.WM_COMMAND:
+				return @"Fired when WM_COMMAND notify is $(d.wm_notify_const()).";
+			case WidgetDispatchRoute.WM_SCROLL:
+				return "Fired after the parent window handles WM_HSCROLL or WM_VSCROLL.";
+			case WidgetDispatchRoute.WM_NOTIFY:
+				return @"Fired when WM_NOTIFY code is $(d.wm_notify_code_expr() ?? d.wm_notify_const()).";
+			default:
+				return "Fired by the widget dispatcher.";
+			}
+		}
+
 		static void emit_ctor(GLib.StringBuilder sb, WidgetControlDescriptor d, WidgetCodegen symbols) {
 			var extra_params = new GLib.StringBuilder();
 			if (d.wc_symbol == "WC_BUTTON") {
@@ -179,7 +194,8 @@ $(route_line) */
 			var hmnu = d.uses_control_id()
 				? "(void*) (intptr) WID"
 				: "null";
-			sb.append(@"	public $(d.class_name())(
+			sb.append(@"	/** Create a $(d.class_name()) child control. */
+	public $(d.class_name())(
 		Window parent,
 		int x, int y, int width, int height$(extra_params.str)
 	) {
@@ -311,6 +327,7 @@ $(wid_init)		uint style = (uint) (
 			if (d.has_text_property()) {
 				sb.append(@"
 
+	/** Text displayed by this control. */
 	public string text {
 		owned get { return window_text_get(handle); }
 		set { window_text_set(handle, value); }
@@ -332,6 +349,7 @@ $(wid_init)		uint style = (uint) (
 			if (d.has_scroll_value_property()) {
 				sb.append(@"
 
+	/** Current scroll thumb position. */
 	public int value {
 		get { return (int) send_message(handle, SBM_GETPOS, 0, 0); }
 		set { send_message(handle, SBM_SETPOS, 1, (ulong) value); }
@@ -344,11 +362,13 @@ $(wid_init)		uint style = (uint) (
 				var pbm_setrange32 = symbols.uint_constant_expr("PBM_SETRANGE32");
 				sb.append(@"
 
+	/** Current progress position. */
 	public int value {
 		get { return (int) send_message(handle, $(pbm_getpos), 0, 0); }
 		set { send_message(handle, $(pbm_setpos), (ulong) value, 0); }
 	}
 
+	/** Upper bound for this progress bar's range. */
 	public int range_max {
 		set {
 			send_message(handle, $(pbm_setrange32), 0, (int64) value);
@@ -391,16 +411,19 @@ $(wid_init)		uint style = (uint) (
 			var item_helper = is_list ? "list_box_item_text" : "combo_box_item_text";
 			sb.append(@"
 
+	/** Append an item to this selection control. */
 	public void add_item(string text) {
 		var wide = WideString(text);
 		send_message(handle, $(add_msg), 0, (int64) wide.ptr);
 	}
 
+	/** Zero-based selected item index. */
 	public int selected_index {
 		get { return (int) send_message(handle, $(get_sel), 0, 0); }
 		set { send_message(handle, $(set_sel), (ulong) value, 0); }
 	}
 
+	/** Text for the currently selected item. */
 	public string selected_text {
 		owned get { return $(item_helper)(handle, selected_index); }
 	}
@@ -413,6 +436,7 @@ $(wid_init)		uint style = (uint) (
 	private int list_view_column = 0;
 	private int list_view_row = 0;
 
+	/** Append a report-view column. */
 	public void add_column(string title, int width = 120) {
 		var col = LVCOLUMN();
 		col.mask = LVCOLUMNWMASK.LVCF_WIDTH | LVCOLUMNWMASK.LVCF_TEXT;
@@ -422,6 +446,7 @@ $(wid_init)		uint style = (uint) (
 		list_view_column++;
 	}
 
+	/** Append a report-view row, optionally with a second column value. */
 	public void append_row(string primary, string? secondary = null) {
 		var item = LVITEM();
 		item.mask = LVIF_TEXT;
@@ -450,10 +475,12 @@ $(wid_init)		uint style = (uint) (
 		public TVITEM item;
 	}
 
+	/** Add a root tree item and return its native HTREEITEM handle. */
 	public void* add_root(string text) {
 		return insert_item(null, text);
 	}
 
+	/** Add a child tree item below parent and return its native HTREEITEM handle. */
 	public void* add_child(void* parent, string text) {
 		return insert_item(parent, text);
 	}
@@ -472,6 +499,7 @@ $(wid_init)		uint style = (uint) (
 		static void emit_tab_page_helpers(GLib.StringBuilder sb) {
 			sb.append(@"
 
+	/** Add a tab page with the supplied title. */
 	public void add_page(string title) {
 		var item = TCITEM();
 		item.mask = TCITEMHEADERAMASK.TCIF_TEXT;

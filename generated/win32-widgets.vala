@@ -133,12 +133,20 @@ private int64 widget_window_proc(
 	return def_window_proc(h_wnd, msg, w_param, l_param);
 }
 
+/**
+ * Low-level dispatcher hooks for applications that own a Win32 window procedure.
+ */
 public class WidgetDispatch {
+	/** Dispatch a WM_COMMAND wParam to registered widget or menu signal handlers. */
 	public static bool try_wm_command(ulong w_param) {
 		return wm_command_dispatch(w_param);
 	}
 
-	/* ScrollBar: call def_window_proc, then emit value_changed when l_param is a registered HWND. */
+	/**
+	 * Dispatch a WM_HSCROLL or WM_VSCROLL message to a registered {@link ScrollBar}.
+	 *
+	 * Calls DefWindowProc first, then emits {@link ScrollBar.value_changed} when lParam is a known HWND.
+	 */
 	public static bool try_wm_hscroll(
 		void* parent_wnd,
 		uint msg,
@@ -169,6 +177,7 @@ public class WidgetDispatch {
 		return true;
 	}
 
+	/** Print registered WM_COMMAND and scroll targets when WIN32_WIDGET_DEBUG is enabled. */
 	public static void debug_dump_registry() {
 		if (!widget_debug_enabled()) {
 			return;
@@ -538,12 +547,17 @@ private bool wm_command_dispatch(ulong w_param) {
 	return false;
 }
 
+/**
+ * Top-level overlapped Win32 window with the default widget message loop.
+ */
 public class Window {
 	/** Fired when this window receives WM_DESTROY(before the demo message loop exits). */
 	public signal void destroyed();
 	/** Fired on WM_SIZE with the new client-area size in pixels. */
 	public signal void resized(uint width, uint height);
+	/** Native HWND for the created top-level window. */
 	public void* handle { get; private set; }
+	/** HINSTANCE used when creating child controls. */
 	public void* instance { get; private set; }
 	private WideString registered_class_name;
 
@@ -588,6 +602,7 @@ public class Window {
 		window_registry_add(this);
 	}
 
+	/** Run the standard GetMessage / TranslateMessage / DispatchMessage loop. */
 	public int run() {
 		Msg msg;
 		while (get_message(out msg, null, 0, 0) > 0) {
@@ -597,11 +612,13 @@ public class Window {
 		return 0;
 	}
 
+	/** Window title text. */
 	public string title {
 		owned get { return window_text_get(handle); }
 		set { window_text_set(handle, value); }
 	}
 
+	/** Destroy the native window handle. */
 	public void close() {
 		if (handle != null) {
 			destroy_window(handle);
@@ -627,6 +644,7 @@ const int IDC_ARROW = 32512;
 public class NativeDialogs {
 	const int FILE_BUF_CHARS = 260;
 
+	/** Show a modal MessageBoxW dialog owned by the optional parent window. */
 	public static MESSAGEBOXRESULT show_message(
 		Window? parent,
 		string text,
@@ -641,6 +659,7 @@ public class NativeDialogs {
 		);
 	}
 
+	/** Open the common file picker and return true when a file was chosen. */
 	public static bool try_open_file(Window parent, out string path) {
 		var file_buf = new uint16[FILE_BUF_CHARS];
 		var filter = WideString("Text(*.txt)\0*.txt\0All(*.*)\0*.*\0");
@@ -664,6 +683,7 @@ public class NativeDialogs {
 		return false;
 	}
 
+	/** Open the common color picker, updating rgb when the user confirms. */
 	public static bool try_choose_color(Window parent, ref uint rgb) {
 		var cc = CHOOSECOLOR();
 		cc.lStructSize = (uint) sizeof (CHOOSECOLOR);
@@ -682,8 +702,11 @@ public class NativeDialogs {
  * Hand-maintained Phase 4 baseline: menu bar + WM_COMMAND menu ids.
  */
 public class MenuBar {
+	/** Fired when any registered menu item is selected. */
 	public signal void activated(int menu_id);
+	/** Parent window that owns this menu bar. */
 	public Window parent { get; private set; }
+	/** Native HMENU for this menu bar. */
 	public void* handle { get; private set; }
 
 	public MenuBar(Window parent) {
@@ -702,13 +725,18 @@ public class MenuBar {
 		return new MenuPopup(this, popup);
 	}
 
+	/** Attach this menu bar to its parent window. */
 	public void attach() {
 		set_menu(parent.handle, handle);
 	}
 }
 
+/**
+ * Popup submenu builder returned by {@link MenuBar.add_submenu}.
+ */
 public class MenuPopup {
 	MenuBar bar;
+	/** Native HMENU for this popup menu. */
 	public void* handle { get; private set; }
 
 	public MenuPopup(MenuBar bar, void* popup_handle) {
@@ -716,6 +744,7 @@ public class MenuPopup {
 		handle = popup_handle;
 	}
 
+	/** Add a command item and register its id with the parent menu bar dispatcher. */
 	public void add_item(int menu_id, string label) {
 		append_menu(
 			handle,
@@ -731,6 +760,7 @@ public class MenuPopup {
  * Layout group(WC_BUTTON + BS_GROUPBOX). Decorative frame only — no command signal.
  */
 public class GroupBox {
+	/** Native HWND for the decorative group box. */
 	public void* handle { get; private set; }
 
 	public GroupBox(
@@ -752,14 +782,17 @@ public class GroupBox {
 
 /**
  * Base for Track B child controls — parent, HWND, and auto child-window {@link WID}.
- * Win32 child-window identifier maps to CreateWindowEx hMenu / {@link GetDlgCtrlID}.
+ * Win32 child-window identifier maps to CreateWindowEx hMenu and GetDlgCtrlID.
  */
 public class Widget {
 	const int WID_BASE = 100;
 	static int next_wid = WID_BASE;
 
+	/** Parent top-level window that owns this child control. */
 	public Window parent { get; protected set; }
+	/** Native HWND for this child control. */
 	public void* handle { get; protected set; }
+	/** Child-window identifier used for WM_COMMAND dispatch. */
 	public int WID { get; protected set; }
 
 	protected Widget(Window parent) {
@@ -778,8 +811,10 @@ public class Widget {
  * Signal `clicked` when WM_COMMAND notify is BN_CLICKED.
  */
 public class Button : Widget {
+	/** Fired when WM_COMMAND notify is BN_CLICKED. */
 	public signal void clicked();
 
+	/** Create a Button child control. */
 	public Button(
 		Window parent,
 		int x, int y, int width, int height,
@@ -803,6 +838,7 @@ public class Button : Widget {
 	}
 
 
+	/** Text displayed by this control. */
 	public string text {
 		owned get { return window_text_get(handle); }
 		set { window_text_set(handle, value); }
@@ -814,8 +850,10 @@ public class Button : Widget {
  * Signal `selection_changed` when WM_COMMAND notify is CBN_SELCHANGE.
  */
 public class ComboBox : Widget {
+	/** Fired when WM_COMMAND notify is CBN_SELCHANGE. */
 	public signal void selection_changed();
 
+	/** Create a ComboBox child control. */
 	public ComboBox(
 		Window parent,
 		int x, int y, int width, int height
@@ -835,16 +873,19 @@ public class ComboBox : Widget {
 	}
 
 
+	/** Append an item to this selection control. */
 	public void add_item(string text) {
 		var wide = WideString(text);
 		send_message(handle, CB_ADDSTRING, 0, (int64) wide.ptr);
 	}
 
+	/** Zero-based selected item index. */
 	public int selected_index {
 		get { return (int) send_message(handle, CB_GETCURSEL, 0, 0); }
 		set { send_message(handle, CB_SETCURSEL, (ulong) value, 0); }
 	}
 
+	/** Text for the currently selected item. */
 	public string selected_text {
 		owned get { return combo_box_item_text(handle, selected_index); }
 	}
@@ -855,6 +896,7 @@ public class ComboBox : Widget {
  * Minimal `create_window_ex` — add a profile in metadata/widget-conventions.json for signals/dispatch.
  */
 public class ComboBoxEx32 : Widget {
+	/** Create a ComboBoxEx32 child control using the catalog default style. */
 	public ComboBoxEx32(
 		Window parent,
 		int x, int y, int width, int height,
@@ -881,6 +923,7 @@ public class ComboBoxEx32 : Widget {
  * Minimal `create_window_ex` — add a profile in metadata/widget-conventions.json for signals/dispatch.
  */
 public class DateTimePicker : Widget {
+	/** Create a DateTimePicker child control using the catalog default style. */
 	public DateTimePicker(
 		Window parent,
 		int x, int y, int width, int height,
@@ -907,8 +950,10 @@ public class DateTimePicker : Widget {
  * Signal `changed` when WM_COMMAND notify is EN_CHANGE.
  */
 public class Edit : Widget {
+	/** Fired when WM_COMMAND notify is EN_CHANGE. */
 	public signal void changed();
 
+	/** Create a Edit child control. */
 	public Edit(
 		Window parent,
 		int x, int y, int width, int height
@@ -928,6 +973,7 @@ public class Edit : Widget {
 	}
 
 
+	/** Text displayed by this control. */
 	public string text {
 		owned get { return window_text_get(handle); }
 		set { window_text_set(handle, value); }
@@ -940,6 +986,7 @@ public class Edit : Widget {
  */
 public class Label : Widget {
 
+	/** Create a Label child control. */
 	public Label(
 		Window parent,
 		int x, int y, int width, int height,
@@ -961,6 +1008,7 @@ public class Label : Widget {
 	}
 
 
+	/** Text displayed by this control. */
 	public string text {
 		owned get { return window_text_get(handle); }
 		set { window_text_set(handle, value); }
@@ -972,8 +1020,10 @@ public class Label : Widget {
  * Signal `selection_changed` when WM_COMMAND notify is LBN_SELCHANGE.
  */
 public class ListBox : Widget {
+	/** Fired when WM_COMMAND notify is LBN_SELCHANGE. */
 	public signal void selection_changed();
 
+	/** Create a ListBox child control. */
 	public ListBox(
 		Window parent,
 		int x, int y, int width, int height
@@ -993,16 +1043,19 @@ public class ListBox : Widget {
 	}
 
 
+	/** Append an item to this selection control. */
 	public void add_item(string text) {
 		var wide = WideString(text);
 		send_message(handle, LB_ADDSTRING, 0, (int64) wide.ptr);
 	}
 
+	/** Zero-based selected item index. */
 	public int selected_index {
 		get { return (int) send_message(handle, LB_GETCURSEL, 0, 0); }
 		set { send_message(handle, LB_SETCURSEL, (ulong) value, 0); }
 	}
 
+	/** Text for the currently selected item. */
 	public string selected_text {
 		owned get { return list_box_item_text(handle, selected_index); }
 	}
@@ -1013,8 +1066,10 @@ public class ListBox : Widget {
  * Signal `selection_changed` on WM_NOTIFY(0xFFFFFF9Bu). 
  */
 public class ListView : Widget {
+	/** Fired when WM_NOTIFY code is 0xFFFFFF9Bu. */
 	public signal void selection_changed();
 
+	/** Create a ListView child control. */
 	public ListView(
 		Window parent,
 		int x, int y, int width, int height
@@ -1038,6 +1093,7 @@ public class ListView : Widget {
 	private int list_view_column = 0;
 	private int list_view_row = 0;
 
+	/** Append a report-view column. */
 	public void add_column(string title, int width = 120) {
 		var col = LVCOLUMN();
 		col.mask = LVCOLUMNWMASK.LVCF_WIDTH | LVCOLUMNWMASK.LVCF_TEXT;
@@ -1047,6 +1103,7 @@ public class ListView : Widget {
 		list_view_column++;
 	}
 
+	/** Append a report-view row, optionally with a second column value. */
 	public void append_row(string primary, string? secondary = null) {
 		var item = LVITEM();
 		item.mask = LVIF_TEXT;
@@ -1067,6 +1124,7 @@ public class ListView : Widget {
  * Minimal `create_window_ex` — add a profile in metadata/widget-conventions.json for signals/dispatch.
  */
 public class MonthCalendar : Widget {
+	/** Create a MonthCalendar child control using the catalog default style. */
 	public MonthCalendar(
 		Window parent,
 		int x, int y, int width, int height,
@@ -1093,6 +1151,7 @@ public class MonthCalendar : Widget {
  * Minimal `create_window_ex` — add a profile in metadata/widget-conventions.json for signals/dispatch.
  */
 public class NativeFontCtl : Widget {
+	/** Create a NativeFontCtl child control using the catalog default style. */
 	public NativeFontCtl(
 		Window parent,
 		int x, int y, int width, int height,
@@ -1120,6 +1179,7 @@ public class NativeFontCtl : Widget {
  */
 public class ProgressBar : Widget {
 
+	/** Create a ProgressBar child control. */
 	public ProgressBar(
 		Window parent,
 		int x, int y, int width, int height,
@@ -1141,11 +1201,13 @@ public class ProgressBar : Widget {
 	}
 
 
+	/** Current progress position. */
 	public int value {
 		get { return (int) send_message(handle, 0x0408u, 0, 0); }
 		set { send_message(handle, 0x0402u, (ulong) value, 0); }
 	}
 
+	/** Upper bound for this progress bar's range. */
 	public int range_max {
 		set {
 			send_message(handle, 0x0406u, 0, (int64) value);
@@ -1158,8 +1220,10 @@ public class ProgressBar : Widget {
  * Signal `value_changed` after WM_HSCROLL / WM_VSCROLL(parent def_window_proc).
  */
 public class ScrollBar : Widget {
+	/** Fired after the parent window handles WM_HSCROLL or WM_VSCROLL. */
 	public signal void value_changed();
 
+	/** Create a ScrollBar child control. */
 	public ScrollBar(
 		Window parent,
 		int x, int y, int width, int height,
@@ -1189,6 +1253,7 @@ public class ScrollBar : Widget {
 	}
 
 
+	/** Current scroll thumb position. */
 	public int value {
 		get { return (int) send_message(handle, SBM_GETPOS, 0, 0); }
 		set { send_message(handle, SBM_SETPOS, 1, (ulong) value); }
@@ -1200,6 +1265,7 @@ public class ScrollBar : Widget {
  * Minimal `create_window_ex` — add a profile in metadata/widget-conventions.json for signals/dispatch.
  */
 public class SysHeader32 : Widget {
+	/** Create a SysHeader32 child control using the catalog default style. */
 	public SysHeader32(
 		Window parent,
 		int x, int y, int width, int height,
@@ -1226,6 +1292,7 @@ public class SysHeader32 : Widget {
  * Minimal `create_window_ex` — add a profile in metadata/widget-conventions.json for signals/dispatch.
  */
 public class SysIPAddress32 : Widget {
+	/** Create a SysIPAddress32 child control using the catalog default style. */
 	public SysIPAddress32(
 		Window parent,
 		int x, int y, int width, int height,
@@ -1252,6 +1319,7 @@ public class SysIPAddress32 : Widget {
  * Minimal `create_window_ex` — add a profile in metadata/widget-conventions.json for signals/dispatch.
  */
 public class SysLink : Widget {
+	/** Create a SysLink child control using the catalog default style. */
 	public SysLink(
 		Window parent,
 		int x, int y, int width, int height,
@@ -1278,6 +1346,7 @@ public class SysLink : Widget {
  * Minimal `create_window_ex` — add a profile in metadata/widget-conventions.json for signals/dispatch.
  */
 public class SysListView32 : Widget {
+	/** Create a SysListView32 child control using the catalog default style. */
 	public SysListView32(
 		Window parent,
 		int x, int y, int width, int height,
@@ -1304,6 +1373,7 @@ public class SysListView32 : Widget {
  * Minimal `create_window_ex` — add a profile in metadata/widget-conventions.json for signals/dispatch.
  */
 public class SysPager : Widget {
+	/** Create a SysPager child control using the catalog default style. */
 	public SysPager(
 		Window parent,
 		int x, int y, int width, int height,
@@ -1330,6 +1400,7 @@ public class SysPager : Widget {
  * Minimal `create_window_ex` — add a profile in metadata/widget-conventions.json for signals/dispatch.
  */
 public class SysTreeView32 : Widget {
+	/** Create a SysTreeView32 child control using the catalog default style. */
 	public SysTreeView32(
 		Window parent,
 		int x, int y, int width, int height,
@@ -1356,8 +1427,10 @@ public class SysTreeView32 : Widget {
  * Signal `selection_changed` on WM_NOTIFY(0xFFFFFDD5u). 
  */
 public class TabControl : Widget {
+	/** Fired when WM_NOTIFY code is 0xFFFFFDD5u. */
 	public signal void selection_changed();
 
+	/** Create a TabControl child control. */
 	public TabControl(
 		Window parent,
 		int x, int y, int width, int height
@@ -1378,6 +1451,7 @@ public class TabControl : Widget {
 	}
 
 
+	/** Add a tab page with the supplied title. */
 	public void add_page(string title) {
 		var item = TCITEM();
 		item.mask = TCITEMHEADERAMASK.TCIF_TEXT;
@@ -1391,6 +1465,7 @@ public class TabControl : Widget {
  * Minimal `create_window_ex` — add a profile in metadata/widget-conventions.json for signals/dispatch.
  */
 public class ToolTips : Widget {
+	/** Create a ToolTips child control using the catalog default style. */
 	public ToolTips(
 		Window parent,
 		int x, int y, int width, int height,
@@ -1417,6 +1492,7 @@ public class ToolTips : Widget {
  * Minimal `create_window_ex` — add a profile in metadata/widget-conventions.json for signals/dispatch.
  */
 public class Toolbar : Widget {
+	/** Create a Toolbar child control using the catalog default style. */
 	public Toolbar(
 		Window parent,
 		int x, int y, int width, int height,
@@ -1443,8 +1519,10 @@ public class Toolbar : Widget {
  * Signal `selection_changed` on WM_NOTIFY(0xFFFFFF0Du). 
  */
 public class TreeView : Widget {
+	/** Fired when WM_NOTIFY code is 0xFFFFFF0Du. */
 	public signal void selection_changed();
 
+	/** Create a TreeView child control. */
 	public TreeView(
 		Window parent,
 		int x, int y, int width, int height
@@ -1474,10 +1552,12 @@ public class TreeView : Widget {
 		public TVITEM item;
 	}
 
+	/** Add a root tree item and return its native HTREEITEM handle. */
 	public void* add_root(string text) {
 		return insert_item(null, text);
 	}
 
+	/** Add a child tree item below parent and return its native HTREEITEM handle. */
 	public void* add_child(void* parent, string text) {
 		return insert_item(parent, text);
 	}

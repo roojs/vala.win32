@@ -2,7 +2,7 @@
 
 BUILD_DIR ?= build
 
-.PHONY: all vendor clean setup
+.PHONY: all vendor clean setup docs
 
 all: setup
 	meson compile -C $(BUILD_DIR)
@@ -16,6 +16,9 @@ setup:
 
 vendor:
 	./scripts/vendor-win32json.sh
+
+docs: setup
+	meson compile -C $(BUILD_DIR) valadoc
 
 clean:
 	rm -rf $(BUILD_DIR) build-win
