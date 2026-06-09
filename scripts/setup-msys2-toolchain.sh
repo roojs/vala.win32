@@ -6,7 +6,8 @@
 #   C:\msys64\msys2_shell.cmd -defterm -no-start -ucrt64 -c 'cd /x/vala.win32 && ./scripts/setup-msys2-toolchain.sh'
 set -euo pipefail
 
-# Matches meson.build: gee/json-glib (generate-binding), gcc/valac/meson/ninja, curl+unzip (vendor script).
+# Matches meson.build: gee/json-glib (generate-binding), gcc/valac/meson/ninja, curl+unzip (vendor scripts),
+# cppwinrt (WinUI3 header generation in vendor-winui3-sdk.sh).
 readonly PACMAN_PACKAGES=(
 	mingw-w64-ucrt-x86_64-gcc
 	mingw-w64-ucrt-x86_64-binutils
@@ -17,6 +18,7 @@ readonly PACMAN_PACKAGES=(
 	mingw-w64-ucrt-x86_64-libgee
 	mingw-w64-ucrt-x86_64-json-glib
 	mingw-w64-ucrt-x86_64-curl
+	mingw-w64-ucrt-x86_64-cppwinrt
 	unzip
 )
 
@@ -38,7 +40,7 @@ meson_ok() {
 
 verify_ready() {
 	local ok=1
-	command -v gcc valac meson ninja pkg-config curl unzip >/dev/null 2>&1 || ok=0
+	command -v gcc valac meson ninja pkg-config curl unzip cppwinrt >/dev/null 2>&1 || ok=0
 	gcc --version >/dev/null 2>&1 || ok=0
 	valac --version >/dev/null 2>&1 || ok=0
 	meson_ok || ok=0
@@ -54,9 +56,12 @@ fi
 
 if verify_ready; then
 	echo '[setup-msys2] Toolchain and build deps already OK.'
+	echo '[setup-msys2] Ensure package list is current (pacman --needed)...'
+	pacman -S --needed --noconfirm "${PACMAN_PACKAGES[@]}"
 	gcc --version | head -1
 	valac --version | head -1
 	meson --version | head -1
+	command -v cppwinrt >/dev/null 2>&1 && cppwinrt -version 2>/dev/null | head -1 || true
 	echo '[setup-msys2] Done.'
 	exit 0
 fi

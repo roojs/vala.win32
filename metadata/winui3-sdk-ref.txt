@@ -1,3 +1,7 @@
-# Microsoft.WindowsAppSDK.WinUI NuGet package version.
-# Used by scripts/vendor-winui3-sdk.sh
-2.1.0
+# WinUI3 / Windows App SDK versions for scripts/vendor-winui3-sdk.sh
+# Format: package-id version  (one per line, comments with #)
+Microsoft.WindowsAppSDK.WinUI 2.1.0
+Microsoft.WindowsAppSDK.Foundation 2.0.21
+Microsoft.WindowsAppSDK.InteractiveExperiences 2.0.13
+Microsoft.WindowsAppSDK.Runtime 2.1.3
+github.com/microsoft/windows-rs 70

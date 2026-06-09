@@ -1,6 +1,6 @@
 project(
   'vala.win32',
-  ['vala', 'c'],
+  ['vala', 'c', 'cpp'],
   version: '0.1.0',
   meson_version: '>= 1.0.0',
   default_options: ['buildtype=debugoptimized'],
@@ -8,13 +8,18 @@ project(
 
 # Repetitive GCC noise from Vala-generated Win32 C (not actionable for app code).
 vala_win32_c_quiet = []
+vala_win32_cpp_quiet = []
 if host_machine.system() == 'windows'
   vala_win32_c_quiet = [
     '-Wno-discarded-qualifiers',
     '-Wno-incompatible-pointer-types',
     '-Wno-implicit-function-declaration',
   ]
+  vala_win32_cpp_quiet = [
+    '-Wno-deprecated-declarations',
+  ]
   add_project_arguments(vala_win32_c_quiet, language: 'c')
+  add_project_arguments(vala_win32_cpp_quiet, language: 'cpp')
 endif
 
 vala_win32_quiet_x = []
@@ -599,6 +604,76 @@ if have_webview2_sdk and host_machine.system() == 'windows'
   endif
 elif host_machine.system() == 'windows'
   warning('webview2-host-native skipped: run ./scripts/vendor-webview2-sdk.sh')
+endif
+
+# Phase 9 — WinUI3 hello window (Windows native; C++/WinRT host + bootstrap)
+winui3_sdk = project_root / 'build/vendor/winui3'
+winui3_bootstrap_h = winui3_sdk / 'include' / 'MddBootstrap.h'
+winui3_vendor_stamp = winui3_sdk / '.vendor-stamp'
+winui3_cppwinrt_h = winui3_sdk / 'cppwinrt' / 'winrt' / 'impl' / 'Microsoft.UI.Xaml.Controls.1.h'
+winui3_bootstrap_lib = winui3_sdk / 'lib' / 'x64' / 'Microsoft.WindowsAppRuntime.Bootstrap.lib'
+winui3_bootstrap_dll = winui3_sdk / 'bin' / 'x64' / 'Microsoft.WindowsAppRuntime.Bootstrap.dll'
+have_winui3_sdk = (
+  run_command('test', '-f', winui3_bootstrap_h, check: false).returncode() == 0
+  and run_command('test', '-f', winui3_vendor_stamp, check: false).returncode() == 0
+  and run_command('test', '-f', winui3_cppwinrt_h, check: false).returncode() == 0
+  and run_command('test', '-f', winui3_bootstrap_lib, check: false).returncode() == 0
+)
+winui3_host_cpp = files('src/win32-ui-winui3-host.cpp')
+winui3_lib_dir = winui3_sdk / 'lib' / 'x64'
+winui3_link_libs = [
+  '-L' + winui3_lib_dir,
+  '-lMicrosoft.WindowsAppRuntime.Bootstrap',
+  '-lole32',
+  '-loleaut32',
+  '-lruntimeobject',
+  '-luuid',
+  '-static-libgcc',
+  '-static-libstdc++',
+]
+
+if have_winui3_sdk and host_machine.system() == 'windows'
+  winui3_hello_vala_args = [
+    '--vapidir', vapidir,
+    '--profile=posix',
+    '--pkg', 'win32-ui-winui3-host',
+  ]
+  winui3_hello_vala_link = ['-X', '-mwindows', '-X', '-Wl,--subsystem,windows'] + vala_win32_quiet_x
+  foreach lib : winui3_link_libs
+    winui3_hello_vala_link += ['-X', lib]
+  endforeach
+  winui3_inc = include_directories(
+    'src',
+    'build/vendor/winui3/include',
+    'build/vendor/winui3/cppwinrt',
+  )
+  winui3_cpp_args = ['-std=c++20', '-fcoroutines'] + vala_win32_cpp_quiet
+  winui3_hello_exe = executable(
+    'winui3-hello-native',
+    files('examples/native/winui3-hello.vala'),
+    winui3_host_cpp,
+    vala_args: winui3_hello_vala_args + winui3_hello_vala_link,
+    include_directories: winui3_inc,
+    c_args: vala_win32_c_quiet,
+    cpp_args: winui3_cpp_args,
+    link_args: ['-mwindows', '-Wl,--subsystem,windows'] + winui3_link_libs,
+    install: false,
+  )
+  custom_target(
+    'winui3-copy-bootstrap',
+    output: 'winui3-bootstrap.stamp',
+    command: [
+      'cp', winui3_bootstrap_dll, meson.current_build_dir(),
+      '&&', 'touch', '@OUTPUT@',
+    ],
+    depends: winui3_hello_exe,
+    build_by_default: true,
+  )
+elif host_machine.system() == 'windows'
+  warning(
+    'winui3-hello-native skipped: run ./scripts/vendor-winui3-sdk.sh '
+    + '(needs cppwinrt: pacman -S mingw-w64-ucrt-x86_64-cppwinrt)',
+  )
 endif
 
 check_regen = find_program('scripts/check-regen.sh')
