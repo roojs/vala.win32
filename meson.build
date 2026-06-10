@@ -633,12 +633,17 @@ winui3_link_libs = [
 ]
 
 if have_winui3_sdk and host_machine.system() == 'windows'
+  embed_winui3_manifest = find_program('scripts/embed-winui3-manifest.sh')
+  winui3_app_manifest = project_root / 'metadata/winui3-sparse/vala.win32.winui3.manifest'
   winui3_hello_vala_args = [
     '--vapidir', vapidir,
     '--profile=posix',
     '--pkg', 'win32-ui-winui3-host',
   ]
-  winui3_hello_vala_link = ['-X', '-mwindows', '-X', '-Wl,--subsystem,windows'] + vala_win32_quiet_x
+  winui3_hello_vala_link = [
+    '-X', '-mwindows',
+    '-X', '-Wl,--subsystem,windows',
+  ] + vala_win32_quiet_x
   foreach lib : winui3_link_libs
     winui3_hello_vala_link += ['-X', lib]
   endforeach
@@ -648,7 +653,10 @@ if have_winui3_sdk and host_machine.system() == 'windows'
     'build/vendor/winui3/cppwinrt',
   )
   winui3_cpp_args = ['-std=c++20', '-fcoroutines'] + vala_win32_cpp_quiet
-  winui3_native_link = ['-mwindows', '-Wl,--subsystem,windows'] + winui3_link_libs
+  winui3_native_link = [
+    '-mwindows',
+    '-Wl,--subsystem,windows',
+  ] + winui3_link_libs
   winui3_hello_exe = executable(
     'winui3-hello-native',
     files('examples/native/winui3-hello.vala'),
@@ -671,6 +679,30 @@ if have_winui3_sdk and host_machine.system() == 'windows'
     link_args: winui3_native_link,
     install: false,
   )
+  winui3_hello_manifest_stamp = custom_target(
+    'winui3-hello-embed-manifest',
+    input: winui3_app_manifest,
+    output: 'winui3-hello-manifest.stamp',
+    command: [
+      embed_winui3_manifest,
+      meson.current_build_dir() / 'winui3-hello-native.exe',
+      '@INPUT@',
+    ],
+    depends: winui3_hello_exe,
+    build_by_default: true,
+  )
+  winui3_widgets_manifest_stamp = custom_target(
+    'winui3-widgets-embed-manifest',
+    input: winui3_app_manifest,
+    output: 'winui3-widgets-manifest.stamp',
+    command: [
+      embed_winui3_manifest,
+      meson.current_build_dir() / 'winui3-widgets-native.exe',
+      '@INPUT@',
+    ],
+    depends: winui3_widgets_exe,
+    build_by_default: true,
+  )
   custom_target(
     'winui3-copy-bootstrap',
     output: 'winui3-bootstrap.stamp',
@@ -678,7 +710,10 @@ if have_winui3_sdk and host_machine.system() == 'windows'
       'cp', winui3_bootstrap_dll, meson.current_build_dir(),
       '&&', 'touch', '@OUTPUT@',
     ],
-    depends: [winui3_hello_exe, winui3_widgets_exe],
+    depends: [
+      winui3_hello_manifest_stamp,
+      winui3_widgets_manifest_stamp,
+    ],
     build_by_default: true,
   )
 elif host_machine.system() == 'windows'

@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
-# Ensure MSYS2 toolchain (incl. cppwinrt for WinUI3), vendor SDKs, compile all demo EXEs.
+# Ensure MSYS2 toolchain; sparse + runtime before WinUI3 compile; webview2 deferred.
+#
+# Steps: 1 sparse MSIX, 2 runtime, 3 widgets-native, 4 hello-native, 5 webview2 vendor, 6 rest.
 #
 # Uses a **local** Meson build directory (not on X:) — Samba breaks Vala -C paths and
 # makes regen/configure painfully slow. Copies .exe (+ WebView2Loader.dll) back to build-win/ on X:.
@@ -26,8 +28,15 @@ MESON_OPTS=(
 	-Dregen_on_build=false
 )
 
+# Active iteration target first (fast-fail compile before slow WebView2).
+WINUI3_EXES=(
+	winui3-widgets-native
+	winui3-hello-native
+)
+
 # All demo executables (must match meson.build target names).
 DEMO_EXES=(
+	"${WINUI3_EXES[@]}"
 	hello-window-native
 	button-demo-native
 	dialog-demo-native
@@ -43,8 +52,6 @@ DEMO_EXES=(
 	error-demo
 	webview2-host-native
 	webview2-demo
-	winui3-hello-native
-	winui3-widgets-native
 )
 
 dump_debug_bundle() {
@@ -67,10 +74,8 @@ dump_debug_bundle() {
 			echo "--- tail LOCAL meson-log.txt ---"
 			tail -40 "${LOCAL_BUILD}/meson-logs/meson-log.txt"
 		fi
-		if [[ -f "${ROOT}/build-win/winui3-hello-native.exe" ]] && command -v ldd >/dev/null 2>&1; then
-			echo "--- ldd build-win/winui3-hello-native.exe ---"
-			ldd "${ROOT}/build-win/winui3-hello-native.exe" 2>&1 || true
-		elif [[ -f "${LOCAL_BUILD}/winui3-hello-native.exe" ]] && command -v ldd >/dev/null 2>&1; then
+		# ldd cannot read PE files on Samba (X:); use local Meson dir on C:.
+		if [[ -f "${LOCAL_BUILD}/winui3-hello-native.exe" ]] && command -v ldd >/dev/null 2>&1; then
 			echo "--- ldd LOCAL winui3-hello-native.exe ---"
 			ldd "${LOCAL_BUILD}/winui3-hello-native.exe" 2>&1 || true
 		fi
@@ -85,6 +90,12 @@ on_err() {
 		emit_winui3_runtime_stop || true
 		exit 1
 	fi
+	{
+		echo ""
+		echo "=== build failure summary (ERR at line ${1}) ==="
+		grep -E 'FAILED:|c1010070|embed-winui3-manifest|ninja: build stopped' "${DEBUG_LOG}" \
+			| tail -8 || true
+	} >> "${DEBUG_LOG}" 2>&1
 	dump_debug_bundle "error line ${1}"
 	echo "[build-win] FAILED - log: ${DEBUG_LOG}" >&2
 	exit 1
@@ -152,6 +163,32 @@ require_winui3_vendor() {
 
 COMPILE_EXES=("${DEMO_EXES[@]}")
 
+stage_winui3_sparse_assets() {
+	mkdir -p build-win/Assets
+	if [[ -f metadata/winui3-sparse/Assets/StoreLogo.png ]]; then
+		cp -f metadata/winui3-sparse/Assets/StoreLogo.png build-win/Assets/StoreLogo.png
+	fi
+}
+
+copy_winui3_to_build_win() {
+	mkdir -p build-win
+	stage_winui3_sparse_assets
+	if [[ -f build/vendor/winui3-sparse/vala.win32.winui3.sparse.msix ]]; then
+		cp -f build/vendor/winui3-sparse/vala.win32.winui3.sparse.msix build-win/
+	fi
+	local bootstrap_dll="${LOCAL_BUILD}/Microsoft.WindowsAppRuntime.Bootstrap.dll"
+	if [[ -f "${bootstrap_dll}" ]]; then
+		cp -f "${bootstrap_dll}" build-win/
+	elif [[ -f build/vendor/winui3/bin/x64/Microsoft.WindowsAppRuntime.Bootstrap.dll ]]; then
+		cp -f build/vendor/winui3/bin/x64/Microsoft.WindowsAppRuntime.Bootstrap.dll build-win/
+	fi
+	for name in winui3-widgets-native winui3-hello-native; do
+		if [[ -f "${LOCAL_BUILD}/${name}.exe" ]]; then
+			cp -f "${LOCAL_BUILD}/${name}.exe" "build-win/${name}.exe"
+		fi
+	done
+}
+
 copy_artifacts_to_share() {
 	mkdir -p build-win
 	local copied=0
@@ -179,6 +216,10 @@ copy_artifacts_to_share() {
 	elif [[ -f build/vendor/winui3/bin/x64/Microsoft.WindowsAppRuntime.Bootstrap.dll ]]; then
 		cp -f build/vendor/winui3/bin/x64/Microsoft.WindowsAppRuntime.Bootstrap.dll build-win/
 	fi
+	if [[ -f build/vendor/winui3-sparse/vala.win32.winui3.sparse.msix ]]; then
+		cp -f build/vendor/winui3-sparse/vala.win32.winui3.sparse.msix build-win/
+	fi
+	stage_winui3_sparse_assets
 	# Track B demos (webview2-demo, hello-window, …) need MSYS2 GLib beside the exe when not run from UCRT64 shell.
 	local ucrt_bin="${MINGW_PREFIX:-/ucrt64}/bin"
 	if [[ -d "${ucrt_bin}" ]]; then
@@ -203,10 +244,11 @@ copy_artifacts_to_share() {
 }
 
 check_winui3_pe_deps() {
-	local exe="${ROOT}/build-win/winui3-hello-native.exe"
-	local dir="${ROOT}/build-win"
+	local share_exe="${ROOT}/build-win/winui3-hello-native.exe"
+	local share_dir="${ROOT}/build-win"
+	local ldd_exe="${LOCAL_BUILD}/winui3-hello-native.exe"
 
-	if [[ ! -f "${exe}" ]]; then
+	if [[ ! -f "${share_exe}" ]]; then
 		echo "[build-win] error: winui3-hello-native.exe missing after compile" >&2
 		return 1
 	fi
@@ -215,7 +257,7 @@ check_winui3_pe_deps() {
 
 	local missing_beside=()
 	for dll in Microsoft.WindowsAppRuntime.Bootstrap.dll; do
-		if [[ ! -f "${dir}/${dll}" ]]; then
+		if [[ ! -f "${share_dir}/${dll}" ]]; then
 			missing_beside+=("${dll}")
 		fi
 	done
@@ -230,10 +272,19 @@ check_winui3_pe_deps() {
 		echo "[build-win] error: ldd not in PATH (pacman -S mingw-w64-ucrt-x86_64-binutils)" >&2
 		return 1
 	fi
+	if [[ ! -f "${ldd_exe}" ]]; then
+		echo "[build-win] warning: skip ldd (local copy missing: ${ldd_exe})" >&2
+		return 0
+	fi
 
 	local ldd_out=""
-	ldd_out="$(ldd "${exe}" 2>&1)" || true
+	ldd_out="$(ldd "${ldd_exe}" 2>&1)" || true
+	echo "[build-win] ldd ${ldd_exe}"
 	echo "${ldd_out}"
+	if echo "${ldd_out}" | grep -qi 'permission denied'; then
+		echo "[build-win] warning: ldd permission denied; skipping import check" >&2
+		return 0
+	fi
 
 	# MinGW runtime (only if dynamically linked; static-libstdc++ should not need these).
 	local mingw_missing=()
@@ -273,20 +324,43 @@ echo "[build-win] Log: ${DEBUG_LOG}"
 echo "[build-win] Local Meson dir: ${LOCAL_BUILD} (source stays on X:)"
 
 ./scripts/setup-msys2-toolchain.sh
-echo '[build-win] vendor-webview2-sdk.sh'
-./scripts/vendor-webview2-sdk.sh
 echo '[build-win] vendor-winui3-sdk.sh (nupkg extract + cppwinrt can take a few minutes on first run)'
 ./scripts/vendor-winui3-sdk.sh
 require_winui3_vendor
-echo '[build-win] install-winui3-runtime.sh (NuGet redist + quiet installer if needed)'
-./scripts/install-winui3-runtime.sh
-require_winui3_widgets_runtime
 configure_build_win
 
-echo '[build-win] meson compile (all demo targets)'
-meson compile -C "${LOCAL_BUILD}" "${COMPILE_EXES[@]}"
+echo '[build-win] 1/6 vendor-winui3-sparse.sh (sparse MSIX for unpackaged WinUI3 identity)'
+./scripts/vendor-winui3-sparse.sh || echo '[build-win] warning: sparse MSIX not built (need Windows SDK makeappx)'
+echo '[build-win] 2/6 install-winui3-runtime.sh (NuGet redist + quiet installer if needed)'
+./scripts/install-winui3-runtime.sh
+require_winui3_widgets_runtime
+
+if winui3_compile_ready; then
+	echo '[build-win] 3/6 compile winui3-widgets-native (active target, fast-fail)'
+	meson compile -C "${LOCAL_BUILD}" winui3-widgets-embed-manifest
+	echo '[build-win] 4/6 compile winui3-hello-native'
+	meson compile -C "${LOCAL_BUILD}" winui3-hello-embed-manifest
+	copy_winui3_to_build_win
+	./scripts/register-winui3-sparse.sh \
+		|| echo '[build-win] warning: sparse register failed (enable Developer Mode for unsigned MSIX?)'
+fi
+
+echo '[build-win] 5/6 vendor-webview2-sdk.sh'
+./scripts/vendor-webview2-sdk.sh
+
+echo '[build-win] 6/6 compile remaining demo targets'
+rest_targets=()
+for name in "${COMPILE_EXES[@]}"; do
+	case " ${WINUI3_EXES[*]} " in
+		*" ${name} "*) ;;
+		*) rest_targets+=("${name}") ;;
+	esac
+done
+meson compile -C "${LOCAL_BUILD}" "${rest_targets[@]}"
 
 copy_artifacts_to_share
+./scripts/register-winui3-sparse.sh \
+	|| echo '[build-win] warning: sparse register failed (enable Developer Mode for unsigned MSIX?)'
 check_winui3_pe_deps
 
 echo "[build-win] OK - ${#COMPILE_EXES[@]} demos in X:\\vala.win32\\build-win\\"
