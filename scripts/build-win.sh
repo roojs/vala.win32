@@ -13,6 +13,9 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "${ROOT}"
 
+# shellcheck source=scripts/winui3-runtime-gate.sh
+source "${ROOT}/scripts/winui3-runtime-gate.sh"
+
 DEBUG_LOG="${ROOT}/build-win/last-build.log"
 # Native path under MSYS2 (fast; avoids UNC bugs with Vala-generated .c files).
 LOCAL_BUILD="${LOCAL_BUILD_DIR:-/c/msys64/tmp/vala-win32-build-win}"
@@ -41,6 +44,7 @@ DEMO_EXES=(
 	webview2-host-native
 	webview2-demo
 	winui3-hello-native
+	winui3-widgets-native
 )
 
 dump_debug_bundle() {
@@ -77,13 +81,18 @@ dump_debug_bundle() {
 
 on_err() {
 	trap - ERR
+	if winui3_runtime_gate_failed; then
+		emit_winui3_runtime_stop || true
+		exit 1
+	fi
 	dump_debug_bundle "error line ${1}"
-	echo "[build-win] FAILED — log: ${DEBUG_LOG}" >&2
+	echo "[build-win] FAILED - log: ${DEBUG_LOG}" >&2
 	exit 1
 }
 
 start_logging() {
 	mkdir -p "${ROOT}/build-win"
+	clear_winui3_runtime_stop
 	: > "${DEBUG_LOG}"
 	{
 		echo "=== build-win.sh started $(date -Iseconds) ==="
@@ -271,6 +280,7 @@ echo '[build-win] vendor-winui3-sdk.sh (nupkg extract + cppwinrt can take a few 
 require_winui3_vendor
 echo '[build-win] install-winui3-runtime.sh (NuGet redist + quiet installer if needed)'
 ./scripts/install-winui3-runtime.sh
+require_winui3_widgets_runtime
 configure_build_win
 
 echo '[build-win] meson compile (all demo targets)'
@@ -279,13 +289,6 @@ meson compile -C "${LOCAL_BUILD}" "${COMPILE_EXES[@]}"
 copy_artifacts_to_share
 check_winui3_pe_deps
 
-if ! powershell.exe -NoProfile -ExecutionPolicy Bypass \
-	-File "${ROOT}/scripts/check-winui3-runtime.ps1" -Quiet; then
-	echo "[build-win] error: Windows App Runtime not installed (required for winui3-hello-native)" >&2
-	powershell.exe -NoProfile -ExecutionPolicy Bypass \
-		-File "${ROOT}/scripts/check-winui3-runtime.ps1"
-	exit 1
-fi
-
-echo "[build-win] OK — ${#COMPILE_EXES[@]} demos in X:\\vala.win32\\build-win\\"
+echo "[build-win] OK - ${#COMPILE_EXES[@]} demos in X:\\vala.win32\\build-win\\"
+echo "  WinUI3: run build-win\\\\winui3-hello-native.exe and winui3-widgets-native.exe (log: build-win\\\\winui3-debug.log)"
 echo "  Full log: ${DEBUG_LOG}"

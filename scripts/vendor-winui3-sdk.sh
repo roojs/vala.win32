@@ -52,11 +52,12 @@ if [[ -z "${WEBVIEW2_VERSION}" && -f "${WEBVIEW2_REF}" ]]; then
 	WEBVIEW2_VERSION="$(grep -v '^#' "${WEBVIEW2_REF}" | grep -v '^[[:space:]]*$' | head -1)"
 fi
 WEBVIEW2_VERSION="${WEBVIEW2_VERSION:-1.0.2792.45}"
-VENDOR_STAMP="${WINUI_VERSION}|${FOUNDATION_VERSION}|${IX_VERSION}|${RUNTIME_VERSION}|${WINDOWS_RS_VERSION}|${WEBVIEW2_VERSION}"
+VENDOR_STAMP="${WINUI_VERSION}|${FOUNDATION_VERSION}|${IX_VERSION}|${RUNTIME_VERSION}|${WINDOWS_RS_VERSION}|${WEBVIEW2_VERSION}|cppwinrt-full"
 
 cppwinrt_headers_ready() {
 	local base="${1:-${SHARE_OUT}}"
-	[[ -f "${base}/cppwinrt/winrt/impl/Microsoft.UI.Xaml.Controls.1.h" ]]
+	[[ -f "${base}/cppwinrt/winrt/impl/Microsoft.UI.Xaml.Controls.1.h" ]] \
+		&& [[ -f "${base}/cppwinrt/winrt/Microsoft.UI.Xaml.XamlTypeInfo.h" ]]
 }
 
 # Samba (X:) is slow for cppwinrt output — stage on local disk, copy back once.
@@ -275,9 +276,7 @@ run_cppwinrt() {
 		-reference "${ref_dir}" \
 		-output "${OUT}/cppwinrt" \
 		-component \
-		-verbose \
-		-filter Microsoft.UI.Xaml \
-		-filter Microsoft.UI.Xaml.Controls; then
+		-verbose; then
 		if cppwinrt_headers_ready "${OUT}"; then
 			CPPWINRT_READY=1
 			log_step "cppwinrt headers ready"
@@ -342,3 +341,4 @@ fi
 
 echo "Staged WinUI3 SDK -> ${SHARE_OUT}"
 echo "  cppwinrt/winrt/impl/Microsoft.UI.Xaml.Controls.1.h"
+echo "  cppwinrt/winrt/Microsoft.UI.Xaml.XamlTypeInfo.h"

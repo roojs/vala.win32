@@ -648,6 +648,7 @@ if have_winui3_sdk and host_machine.system() == 'windows'
     'build/vendor/winui3/cppwinrt',
   )
   winui3_cpp_args = ['-std=c++20', '-fcoroutines'] + vala_win32_cpp_quiet
+  winui3_native_link = ['-mwindows', '-Wl,--subsystem,windows'] + winui3_link_libs
   winui3_hello_exe = executable(
     'winui3-hello-native',
     files('examples/native/winui3-hello.vala'),
@@ -656,7 +657,18 @@ if have_winui3_sdk and host_machine.system() == 'windows'
     include_directories: winui3_inc,
     c_args: vala_win32_c_quiet,
     cpp_args: winui3_cpp_args,
-    link_args: ['-mwindows', '-Wl,--subsystem,windows'] + winui3_link_libs,
+    link_args: winui3_native_link,
+    install: false,
+  )
+  winui3_widgets_exe = executable(
+    'winui3-widgets-native',
+    files('examples/native/winui3-widgets.vala'),
+    winui3_host_cpp,
+    vala_args: winui3_hello_vala_args + winui3_hello_vala_link,
+    include_directories: winui3_inc,
+    c_args: vala_win32_c_quiet,
+    cpp_args: winui3_cpp_args,
+    link_args: winui3_native_link,
     install: false,
   )
   custom_target(
@@ -666,7 +678,7 @@ if have_winui3_sdk and host_machine.system() == 'windows'
       'cp', winui3_bootstrap_dll, meson.current_build_dir(),
       '&&', 'touch', '@OUTPUT@',
     ],
-    depends: winui3_hello_exe,
+    depends: [winui3_hello_exe, winui3_widgets_exe],
     build_by_default: true,
   )
 elif host_machine.system() == 'windows'
