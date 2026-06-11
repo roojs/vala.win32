@@ -32,8 +32,11 @@ mkdir -p "${OUT}" "${STAGE}/Assets"
 cp -f "${SRC}/AppxManifest.xml" "${STAGE}/"
 cp -f "${SRC}/Assets/StoreLogo.png" "${STAGE}/Assets/"
 
+# Pack/sign on C: first — Samba (X:) breaks rm/makeappx output and signing tools.
+LOCAL_MSIX="${LOCAL_SPARSE_MSIX:-/c/msys64/tmp/vala.win32.winui3.sparse.msix}"
 MSIX="${OUT}/vala.win32.winui3.sparse.msix"
-rm -f "${MSIX}"
+mkdir -p "${OUT}"
+rm -f "${LOCAL_MSIX}" 2>/dev/null || true
 to_win_path() {
 	if command -v cygpath >/dev/null 2>&1; then
 		cygpath -w "$1"
@@ -42,8 +45,10 @@ to_win_path() {
 	fi
 }
 STAGE_WIN="$(to_win_path "${STAGE}")"
-MSIX_WIN="$(to_win_path "${MSIX}")"
+LOCAL_MSIX_WIN="$(to_win_path "${LOCAL_MSIX}")"
 echo "[vendor-winui3-sparse] packing with ${MAKEAPPX} ..."
 # MSYS2 converts /d to a drive path; makeappx needs literal /d and /p flags.
-MSYS2_ARG_CONV_EXCL='*' "${MAKEAPPX}" pack /d "${STAGE_WIN}" /p "${MSIX_WIN}" /o /nv
+MSYS2_ARG_CONV_EXCL='*' "${MAKEAPPX}" pack /d "${STAGE_WIN}" /p "${LOCAL_MSIX_WIN}" /o /nv
+"${ROOT}/scripts/sign-winui3-sparse.sh" "${LOCAL_MSIX}"
+cp -f "${LOCAL_MSIX}" "${MSIX}"
 echo "[vendor-winui3-sparse] OK -> ${MSIX}"

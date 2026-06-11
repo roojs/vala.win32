@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Package
-  IgnorableNamespaces="uap uap10 rescap"
+  IgnorableNamespaces="uap rescap"
   xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
   xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
   xmlns:uap10="http://schemas.microsoft.com/appx/manifest/uap/windows10/10"
@@ -9,7 +9,7 @@
     Name="vala.win32.WinUI3"
     Publisher="CN=vala.win32"
     Version="1.0.0.0"
-    ProcessorArchitecture="x64" />
+    ProcessorArchitecture="neutral" />
   <Properties>
     <DisplayName>vala.win32 WinUI3</DisplayName>
     <PublisherDisplayName>vala.win32</PublisherDisplayName>
@@ -21,10 +21,6 @@
   </Resources>
   <Dependencies>
     <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.19041.0" MaxVersionTested="10.0.26100.0" />
-    <PackageDependency
-      Name="Microsoft.WindowsAppRuntime.2"
-      Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US"
-      MinVersion="8002.1.3.0" />
   </Dependencies>
   <Capabilities>
     <rescap:Capability Name="runFullTrust" />

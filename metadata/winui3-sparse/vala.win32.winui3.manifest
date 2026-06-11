@@ -1,35 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
-  <assemblyIdentity
-    version="1.0.0.0"
-    processorArchitecture="*"
-    name="vala.win32.WinUI3"
-    type="win32" />
-  <description>vala.win32 WinUI3 demos</description>
-  <application xmlns="urn:schemas-microsoft-com:asm.v3">
-    <windowsSettings>
-      <activeCodePage xmlns="http://schemas.microsoft.com/SMI/2019/WindowsSettings">UTF-8</activeCodePage>
-    </windowsSettings>
-  </application>
-  <msix xmlns="urn:schemas-microsoft-com:asm.v3">
-    <packageName>vala.win32.WinUI3</packageName>
-    <publisher>CN=vala.win32</publisher>
-    <applicationId>App</applicationId>
-  </msix>
+<assembly manifestVersion="1.0" xmlns="urn:schemas-microsoft-com:asm.v1">
+  <assemblyIdentity version="0.0.0.0" name="vala.win32.WinUI3" type="win32" />
+  <msix xmlns="urn:schemas-microsoft-com:msix.v1"
+    publisher="CN=vala.win32"
+    packageName="vala.win32.WinUI3"
+    applicationId="App" />
   <compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
     <application>
+      <maxversiontested Id="10.0.19041.0" />
       <supportedOS Id="{8e0f7a12-bfb3-4fe8-b9a5-48fd50a15a9a}" />
     </application>
   </compatibility>
-  <dependency>
-    <dependentAssembly>
-      <assemblyIdentity
-        type="win32"
-        name="Microsoft.Windows.Common-Controls"
-        version="6.0.0.0"
-        processorArchitecture="*"
-        publicKeyToken="6595b64144ccf1df"
-        language="*" />
-    </dependentAssembly>
-  </dependency>
 </assembly>

@@ -13,6 +13,54 @@
 
 ---
 
+## Rsync Linux → Windows (`C:`) — agent / fast local testing
+
+Samba (`X:`) is slow and breaks some Windows SDK tools. **Rsync** from the Linux git host to `C:\msys64\tmp\vala.win32\` avoids that. Your normal builds can still use `X:`; this path is for pushing a fresh tree to the Windows box.
+
+### 1. One-time: install `rsync` on Windows (MSYS2 **MSYS**, not UCRT64)
+
+```powershell
+C:\msys64\msys2_shell.cmd -defterm -no-start -msys -c "pacman -S --needed rsync"
+```
+
+Installs `C:\msys64\usr\bin\rsync.exe`. Windows OpenSSH does not have it in `PATH` by default, so Linux rsync needs `--rsync-path` (below) unless you add `C:\msys64\usr\bin` to the Windows user `PATH`.
+
+### 2. From Linux (`ssh` host `snappr-win` = `192.168.88.244`)
+
+```bash
+cd /path/to/vala.win32   # e.g. /home/alan/gitlive/vala.win32
+
+rsync -avz --delete \
+  --exclude 'build/' --exclude 'build-win/' --exclude '.git/' --exclude 'mingw-libs/' \
+  -e 'ssh -o BatchMode=yes' \
+  --rsync-path='C:/msys64/usr/bin/rsync' \
+  ./ snappr-win:/c/msys64/tmp/vala.win32/
+```
+
+### 3. Run build on the `C:` copy (SSH)
+
+```bash
+ssh snappr-win 'C:\msys64\msys2_shell.cmd -defterm -no-start -ucrt64 -c "cd /c/msys64/tmp/vala.win32 && ./scripts/build-win.sh"'
+```
+
+Meson already uses `C:\msys64\tmp\vala-win32-build-win` for objects; rsync only moves **sources + scripts** off Samba.
+
+### Agent workflow (compile on C:, user runs exe)
+
+| Who | Job |
+|-----|-----|
+| **Agent (Linux)** | `./scripts/agent-remote-build.sh` — rsync, remote build, pull `build-win/` + logs |
+| **You (Windows)** | WinUI3: see [windows-winui3.md](windows-winui3.md) — `build-win/YOUR-TASKS.txt` |
+| **Agent** | `./scripts/agent-remote-build.sh pull` after you run |
+
+---
+
+## WinUI3
+
+**[windows-winui3.md](windows-winui3.md)** — one-time cert/register steps, agent workflow, troubleshooting. Day-to-day: `build-win/YOUR-TASKS.txt`.
+
+---
+
 ## How to run MSYS2 from PowerShell
 
 Do **not** open the MSYS2 / UCRT64 terminal to paste blocks. That paste path is unreliable on this setup.
@@ -227,6 +275,7 @@ Paste the **last ~80 lines** of `build-win\last-build.log` (around `FAILED:` / `
 | Meson `unknown keyword arguments "depends"` | Sync repo (fixed: regen runs via `sources`, not `depends` on Vala targets) |
 | Meson cross file `/home/.../cross/mingw-w64.ini` on `build-win/` | `build-win/` was configured on Linux — rerun `build-win.sh` (removes stale cross metadata) |
 | Meson `build.dat` / version mismatch on `build-win/` | Rerun `build-win.sh` or `rm -rf build-win` then rerun |
+| WinUI3 SxS / sparse / launch blocked | [windows-winui3-status.md](windows-winui3-status.md) (read first), then [windows-winui3.md](windows-winui3.md) |
 
 ### Pacman mirror error (`404` / `failed to commit transaction`)
 
@@ -240,6 +289,9 @@ C:\msys64\msys2_shell.cmd -defterm -no-start -ucrt64 -c 'cd /x/vala.win32 && ./s
 
 ## Related
 
+- [windows-winui3-status.md](windows-winui3-status.md) — WinUI3 **current status** (what's fixed vs SxS launch blocker)
+- [windows-winui3.md](windows-winui3.md) — WinUI3 setup, agent workflow, symptom table
 - [README.md](../README.md) — project overview (includes optional cross-compile from a dev machine)
 - [9. phase 7 webview2](plans/9.%20phase%207%20webview2%20research%20and%20integration.md)
+- [11. phase 9 winui3](plans/11.%20phase%209%20winui3%20winmd%20hand%20binding.md)
 - [app.Snappr windows-build.md](../../app.Snappr/docs/windows-build.md) — VS + Flutter on the same PC

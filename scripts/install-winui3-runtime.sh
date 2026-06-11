@@ -14,7 +14,8 @@ if [[ "${WINUI3_SKIP_RUNTIME_INSTALL:-}" == 1 ]]; then
 fi
 
 if [[ "${MSYSTEM:-}" != UCRT64 ]]; then
-	echo "[install-winui3-runtime] error: run in MSYS2 UCRT64" >&2
+	echo "[install-winui3-runtime] error: launch via msys2_shell.cmd -ucrt64" >&2
+	winui3_build_win_shell_cmd >&2
 	exit 1
 fi
 

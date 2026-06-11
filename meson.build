@@ -321,6 +321,9 @@ if get_option('build_ergonomic_examples')
     native_windres = find_program('windres', required: false)
     if ergo_glib.found() and ergo_gobject.found()
       foreach app : ergonomic_apps
+        run_command('mkdir', '-p', meson.current_build_dir() / (app[0] + '.exe.p'), check: false)
+      endforeach
+      foreach app : ergonomic_apps
         app_name = app[0]
         app_source = app[1]
         app_companion = app[2]
@@ -520,6 +523,7 @@ if have_webview2_sdk and host_machine.system() == 'windows'
   if get_option('regen_on_build')
     webview2_sources += regen_vapi
   endif
+  run_command('mkdir', '-p', meson.current_build_dir() / 'webview2-host-native.exe.p', check: false)
   webview2_host_exe = executable(
     'webview2-host-native',
     webview2_sources,
@@ -575,6 +579,7 @@ if have_webview2_sdk and host_machine.system() == 'windows'
     if get_option('regen_on_build')
       webview2_ergo_sources += regen_vapi
     endif
+    run_command('mkdir', '-p', meson.current_build_dir() / 'webview2-demo.exe.p', check: false)
     webview2_ergo_exe = executable(
       'webview2-demo',
       webview2_ergo_sources,

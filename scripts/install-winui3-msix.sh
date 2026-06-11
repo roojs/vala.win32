@@ -67,7 +67,7 @@ _add_appx() {
 	_say "[install-winui3-msix] Add-AppxPackage $(_basename "${msix_win}")"
 	if powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "
 		try {
-			Add-AppxPackage -LiteralPath '${msix_esc}' -ForceUpdateFromAnyVersion -ErrorAction Stop
+			Add-AppxPackage -Path '${msix_esc}' -ForceUpdateFromAnyVersion -ErrorAction Stop
 			exit 0
 		} catch {
 			Write-Host \$_.Exception.Message
@@ -80,7 +80,7 @@ _add_appx() {
 	powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "
 		\$p = Start-Process -FilePath 'powershell.exe' -Verb RunAs -Wait -PassThru -ArgumentList @(
 			'-NoProfile', '-ExecutionPolicy', 'Bypass', '-Command',
-			\"Add-AppxPackage -LiteralPath '${msix_esc}' -ForceUpdateFromAnyVersion\"
+			\"Add-AppxPackage -Path '${msix_esc}' -ForceUpdateFromAnyVersion\"
 		)
 		if (\$null -eq \$p -or \$p.ExitCode -ne 0) { exit 1 } else { exit 0 }
 	"
@@ -101,7 +101,7 @@ shopt -u nullglob
 
 if [[ ${#_msix_files[@]} -eq 0 ]]; then
 	_say "[install-winui3-msix] error: no .msix in ${MSIX_DIR}"
-	_say "[install-winui3-msix] hint: run ./scripts/build-win.sh in MSYS2 first to stage MSIX"
+	_say "[install-winui3-msix] hint: re-run build-win.sh via msys2_shell.cmd -ucrt64 to stage MSIX"
 	exit 1
 fi
 

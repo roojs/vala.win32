@@ -50,7 +50,7 @@ verify_ready() {
 }
 
 if [[ "${MSYSTEM:-}" != UCRT64 ]]; then
-	echo "error: run in MSYS2 UCRT64 (MSYSTEM=UCRT64)" >&2
+	echo "error: launch via msys2_shell.cmd -ucrt64 (see build-win.sh header)" >&2
 	exit 1
 fi
 

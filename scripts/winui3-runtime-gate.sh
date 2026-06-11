@@ -6,8 +6,22 @@
 : "${ROOT:?ROOT must be set before sourcing winui3-runtime-gate.sh}"
 
 WINUI3_RUNTIME_STOP_FILE="${ROOT}/build-win/WINUI3-RUNTIME-STOP.txt"
+WINUI3_SPARSE_STOP_FILE="${ROOT}/build-win/WINUI3-SPARSE-STOP.txt"
+WINUI3_SPARSE_PACKAGE_NAME='vala.win32.WinUI3'
 WINUI3_ADMIN_STAGING="${WINUI3_ADMIN_STAGING:-/c/msys64/tmp/vala-win32-winui3-runtime}"
 WINUI3_REPO_MSYS="${ROOT}"
+
+# Canonical build command (paste into PowerShell or cmd — same as build-win.sh header).
+winui3_build_win_shell_cmd() {
+	local env_prefix="${1:-}"
+	if [[ -n "${env_prefix}" ]]; then
+		printf "C:\\msys64\\msys2_shell.cmd -defterm -no-start -ucrt64 -c 'cd %s && %s./scripts/build-win.sh'" \
+			"${WINUI3_REPO_MSYS}" "${env_prefix}"
+	else
+		printf "C:\\msys64\\msys2_shell.cmd -defterm -no-start -ucrt64 -c 'cd %s && ./scripts/build-win.sh'" \
+			"${WINUI3_REPO_MSYS}"
+	fi
+}
 
 to_win_path() {
 	local path="$1"
@@ -30,6 +44,172 @@ to_win_path() {
 
 winui3_ps() {
 	powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "$@"
+}
+
+winui3_ps_escape() {
+	printf '%s' "$1" | sed "s/'/''/g"
+}
+
+winui3_windows_reg() {
+	if [[ -x /c/Windows/System32/reg.exe ]]; then
+		printf '%s' '/c/Windows/System32/reg.exe'
+	elif command -v reg.exe >/dev/null 2>&1; then
+		command -v reg.exe
+	else
+		printf '%s' 'reg'
+	fi
+}
+
+# Win10 Pro: AppModelUnlock DWORD (MSYS2 `reg` is not Windows reg.exe — use System32).
+winui3_developer_mode_reg_query() {
+	local value out
+	# MSYS2 eats HKLM\... unless reg runs via cmd.exe /c.
+	for value in AllowDevelopmentWithoutDevLicense AllowAllTrustedApps; do
+		out="$(MSYS2_ARG_CONV_EXCL='*' cmd.exe //c \
+			"reg query HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\AppModelUnlock /v ${value}" \
+			2>/dev/null || true)"
+		if echo "${out}" | grep -qi 'REG_DWORD'; then
+			printf '%s' "${out}"
+			return 0
+		fi
+	done
+	return 1
+}
+
+winui3_developer_mode_enabled() {
+	local out
+	out="$(winui3_developer_mode_reg_query || true)"
+	[[ -n "${out}" ]] && echo "${out}" | grep -qiE 'REG_DWORD[[:space:]]+0x1|REG_DWORD[[:space:]]+1[[:space:]]*$'
+}
+
+winui3_log_developer_mode_status() {
+	local out
+	out="$(winui3_developer_mode_reg_query || true)"
+	if winui3_developer_mode_enabled; then
+		echo '[register-winui3-sparse] Developer Mode (reg): on'
+	elif [[ -n "${out}" ]]; then
+		echo '[register-winui3-sparse] Developer Mode (reg): inconclusive (will try register anyway)'
+		echo "${out}" | sed 's/^/[register-winui3-sparse]   /'
+	else
+		echo '[register-winui3-sparse] Developer Mode (reg): unreadable from MSYS2 (will try register anyway)'
+	fi
+}
+
+winui3_register_sparse_ps() {
+	local msix_win="$1"
+	local dir_win="$2"
+	local msix_esc dir_esc
+	msix_esc="$(winui3_ps_escape "${msix_win}")"
+	dir_esc="$(winui3_ps_escape "${dir_win}")"
+	MSYS2_ARG_CONV_EXCL='*' winui3_ps "Add-AppxPackage -Path '${msix_esc}' -ExternalLocation '${dir_esc}' -ForceUpdateFromAnyVersion"
+}
+
+clear_winui3_sparse_stop() {
+	mkdir -p "${ROOT}/build-win"
+	rm -f "${WINUI3_SPARSE_STOP_FILE}"
+}
+
+# Agent remote build skips register over SSH; user must register once before first launch.
+write_winui3_agent_register_hint() {
+	local build_win="${ROOT}/build-win"
+	local msix_win dir_win register_line hint="${build_win}/WINUI3-REGISTER-FIRST.txt"
+	mkdir -p "${build_win}"
+	dir_win="$(to_win_path "${build_win}")"
+	msix_win="${dir_win}\\vala.win32.winui3.sparse.msix"
+	register_line="Add-AppxPackage -Path '${msix_win}' -ExternalLocation '${dir_win}' -ForceUpdateFromAnyVersion"
+	{
+		echo '================================================================================'
+		echo 'BEFORE FIRST RUN: register sparse WinUI3 package (one-time per machine)'
+		echo '================================================================================'
+		echo ''
+		echo 'Without this, exes fail at startup:'
+		echo '  "side-by-side configuration is incorrect"'
+		echo ''
+		echo 'Paste this ONE line into PowerShell (on the Windows machine):'
+		echo ''
+		echo "${register_line}"
+		echo ''
+		echo 'Or from MSYS2 UCRT64:'
+		echo '  cd /c/msys64/tmp/vala.win32 && ./scripts/register-winui3-sparse.sh'
+		echo ''
+		echo 'Then run:'
+		echo '  C:\\msys64\\tmp\\vala.win32\\build-win\\winui3-widgets-native.exe'
+		echo ''
+		echo '================================================================================'
+	} > "${hint}"
+	echo "[build-win] wrote ${hint}"
+}
+
+write_winui3_sparse_stop_banner() {
+	local reason="${1:-sparse package registration failed}"
+	local msix_win="${2:-}"
+	local dir_win="${3:-}"
+	local register_line=''
+
+	if [[ -n "${msix_win}" && -n "${dir_win}" ]]; then
+		register_line="Add-AppxPackage -Path '${msix_win}' -ExternalLocation '${dir_win}' -ForceUpdateFromAnyVersion"
+	fi
+
+	mkdir -p "${ROOT}/build-win"
+	{
+		echo '================================================================================'
+		echo 'BUILD STOPPED: WinUI3 sparse package registration required'
+		echo '================================================================================'
+		echo ''
+		echo "Reason: ${reason}"
+		echo ''
+		echo 'WinUI3 exes embed an <msix> manifest. Without sparse registration they fail at'
+		echo 'startup with "side-by-side configuration is incorrect".'
+		echo ''
+		if [[ -n "${register_line}" ]]; then
+			echo 'Paste this ONE line into PowerShell:'
+			echo ''
+			echo "${register_line}"
+			echo ''
+		fi
+		if echo "${reason}" | grep -qi '0x800B0100\|digitally signed\|signature'; then
+			echo 'HRESULT 0x800B0100 means the sparse MSIX is unsigned or the dev cert is not trusted.'
+			echo 'Step 1/6 should sign it (openssl + signtool). Check last-build.log for [sign-winui3-sparse].'
+			echo 'Trust cert once (cmd):'
+			echo "  certutil -addstore -user Root X:\\vala.win32\\build\\vendor\\winui3-sparse\\vala.win32.sparse.cer"
+			echo ''
+		fi
+		echo 'Then re-run the build (paste into PowerShell or cmd):'
+		echo ''
+		winui3_build_win_shell_cmd
+		echo ''
+		echo 'Skip WinUI3 widgets (other demos only):'
+		winui3_build_win_shell_cmd 'WINUI3_SKIP_SPARSE_REGISTER=1 '
+		echo ''
+		echo '================================================================================'
+		echo ''
+	} > "${WINUI3_SPARSE_STOP_FILE}"
+
+	emit_winui3_sparse_stop || true
+}
+
+emit_winui3_sparse_stop() {
+	if [[ ! -f "${WINUI3_SPARSE_STOP_FILE}" ]]; then
+		return 1
+	fi
+	{
+		echo ''
+		echo '--- YOU MUST DO THIS (paste into PowerShell) ---'
+		awk '/^Add-AppxPackage /{print; exit}' "${WINUI3_SPARSE_STOP_FILE}" || true
+		echo '--- then re-run build (paste into PowerShell or cmd) ---'
+		winui3_build_win_shell_cmd
+		echo '--- end ---'
+		echo ''
+		cat "${WINUI3_SPARSE_STOP_FILE}"
+		echo ''
+		echo "[build-win] STOPPED: see build-win/WINUI3-SPARSE-STOP.txt"
+		echo ''
+	} >&2
+	return 0
+}
+
+winui3_sparse_gate_failed() {
+	[[ -f "${WINUI3_SPARSE_STOP_FILE}" ]]
 }
 
 # WinApp SDK 2.x registers Main/Singleton as MicrosoftCorporationII.WinAppRuntime.* (not
@@ -118,8 +298,9 @@ winui3_msix_powershell_line() {
 	shopt -u nullglob
 
 	if [[ ${#files[@]} -eq 0 ]]; then
-		printf "Write-Error 'No MSIX in %s. Run ./scripts/build-win.sh in MSYS2 first.'\n" \
-			"$(to_win_path "${msix_dir}")"
+		printf "Write-Error 'No MSIX in %s. Re-run: %s'\n" \
+			"$(to_win_path "${msix_dir}")" \
+			"$(winui3_build_win_shell_cmd)"
 		return 1
 	fi
 
@@ -183,12 +364,12 @@ write_winui3_stop_banner() {
 		echo 'Paste this ONE line into PowerShell (UAC may prompt):'
 		echo ''
 		printf '%s' "${install_line}"
-		echo 'Then in your MSYS2 UCRT64 window:'
-		echo "  cd ${WINUI3_REPO_MSYS}"
-		echo '  ./scripts/build-win.sh'
+		echo 'Then re-run the build (paste into PowerShell or cmd):'
+		echo ''
+		winui3_build_win_shell_cmd
 		echo ''
 		echo 'Skip WinUI3 widgets (other demos only):'
-		echo '  WINUI3_SKIP_RUNTIME_INSTALL=1 ./scripts/build-win.sh'
+		winui3_build_win_shell_cmd 'WINUI3_SKIP_RUNTIME_INSTALL=1 '
 		echo ''
 		echo '================================================================================'
 		echo ''
@@ -203,8 +384,10 @@ emit_winui3_runtime_stop() {
 	fi
 	{
 		echo ''
-		echo '--- PASTE INTO POWERSHELL ---'
+		echo '--- YOU MUST DO THIS (paste into PowerShell) ---'
 		winui3_install_powershell_line
+		echo '--- then re-run build (paste into PowerShell or cmd) ---'
+		winui3_build_win_shell_cmd
 		echo '--- end ---'
 		echo ''
 		cat "${WINUI3_RUNTIME_STOP_FILE}"
@@ -264,7 +447,7 @@ winui3_install_staged_msix() {
 			win="$(to_win_path "${f}")"
 			esc="${win//\'/\'\'}"
 			echo "[install-winui3-runtime] Add-AppxPackage $(basename "${f}")"
-			if ! winui3_ps "Add-AppxPackage -LiteralPath '${esc}' -ForceUpdateFromAnyVersion"; then
+			if ! winui3_ps "Add-AppxPackage -Path '${esc}' -ForceUpdateFromAnyVersion"; then
 				return 1
 			fi
 		done

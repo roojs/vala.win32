@@ -186,8 +186,9 @@ void
 log_bootstrap_failure (HRESULT hr)
 {
 	winui3_logf (
-		"[winui3] ERROR: MddBootstrapInitialize2 failed 0x%08X "
-		"(re-run ./scripts/build-win.sh)\n",
+		"[winui3] ERROR: MddBootstrapInitialize failed 0x%08X "
+		"(Windows App Runtime missing or bootstrap DLL mismatch; "
+		"re-run ./scripts/build-win.sh)\n",
 		(unsigned) hr);
 }
 
@@ -389,19 +390,40 @@ run_winui3_application ()
 		init_apartment (apartment_type::single_threaded);
 
 		const PACKAGE_VERSION min_version{};
-		const HRESULT bootstrap_hr = MddBootstrapInitialize2 (
+		/* OnPackageIdentity_NOOP: sparse/external-location apps already have
+		 * package identity; bootstrap must not error (0x80070032). Same binary
+		 * still bootstraps when run without identity. */
+		const auto bootstrap_options =
+			MddBootstrapInitializeOptions_OnPackageIdentity_NOOP;
+		HRESULT bootstrap_hr = MddBootstrapInitialize2 (
 			WINDOWSAPPSDK_RELEASE_MAJORMINOR,
 			WINDOWSAPPSDK_RELEASE_VERSION_TAG_W,
 			min_version,
-			MddBootstrapInitializeOptions_None);
+			bootstrap_options);
+		if (bootstrap_hr == HRESULT_FROM_WIN32 (ERROR_NOT_SUPPORTED)) {
+			bootstrap_hr = MddBootstrapInitialize (
+				WINDOWSAPPSDK_RELEASE_MAJORMINOR,
+				WINDOWSAPPSDK_RELEASE_VERSION_TAG_W,
+				min_version);
+			if (SUCCEEDED (bootstrap_hr)) {
+				winui3_logf (
+					"[winui3] bootstrap via MddBootstrapInitialize "
+					"(legacy API)\n");
+			}
+		}
 		if (FAILED (bootstrap_hr)) {
 			log_bootstrap_failure (bootstrap_hr);
 			return (int) bootstrap_hr;
 		}
-		winui3_logf (
-			"[winui3] bootstrap OK (SDK 0x%08x tag %ls)\n",
-			(unsigned) WINDOWSAPPSDK_RELEASE_MAJORMINOR,
-			WINDOWSAPPSDK_RELEASE_VERSION_TAG_W);
+		if (winui3_has_package_identity ()) {
+			winui3_logf (
+				"[winui3] bootstrap OK (sparse identity; bootstrap noop)\n");
+		} else {
+			winui3_logf (
+				"[winui3] bootstrap OK (SDK 0x%08x tag %ls)\n",
+				(unsigned) WINDOWSAPPSDK_RELEASE_MAJORMINOR,
+				WINDOWSAPPSDK_RELEASE_VERSION_TAG_W);
+		}
 
 		xaml_check_process_requirements ();
 		winui3_logf ("[winui3] XamlCheckProcessRequirements done\n");

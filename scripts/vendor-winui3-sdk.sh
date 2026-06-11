@@ -175,8 +175,10 @@ stage_webview2_winmd() {
 	fi
 	local nupkg="${VENDOR_DIR}/webview2.nupkg"
 	if [[ ! -f "${nupkg}" ]]; then
-		echo "error: ${nupkg} missing — run ./scripts/vendor-webview2-sdk.sh first" >&2
-		exit 1
+		log_step "webview2.nupkg missing — downloading Microsoft.Web.WebView2 ${WEBVIEW2_VERSION} ..."
+		nupkg="$(download_nupkg Microsoft.Web.WebView2 "${WEBVIEW2_VERSION}")"
+		mkdir -p "${VENDOR_DIR}"
+		cp -f "${nupkg}" "${VENDOR_DIR}/webview2.nupkg"
 	fi
 	local ex="${WORK}/webview2-winmd"
 	extract_nupkg_cached "${nupkg}" "${ex}"
