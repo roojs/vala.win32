@@ -2,14 +2,63 @@
 
 **WebView2 must run on real Windows** with the [Evergreen WebView2 Runtime](https://developer.microsoft.com/en-us/microsoft-edge/webview2/).
 
-**Samba / SSH** (same lab as Snappr): [app.Snappr `windows-ssh-remote.md`](../../app.Snappr/docs/windows-ssh-remote.md) — map **`X:`**, then **`cd vala.win32`**. No `C:` mirror needed for Meson builds on the share.
+**Repo on Windows:** `C:\msys64\tmp\vala.win32\` — rsync mirror from the Linux git host. **Do not build on Samba `X:`** (slow, breaks makeappx/signtool/mt.exe, Vala paths).
 
 | | |
 |--|--|
+| Linux git host | e.g. `/home/alan/gitlive/vala.win32` |
 | Windows SSH | `192.168.88.244`, user `alan` — `ssh snappr-win` |
-| Samba | `\\192.168.88.132\gitlive` → **`X:`** |
+| Windows repo | **`C:\msys64\tmp\vala.win32\`** |
+| Meson objects | **`C:\msys64\tmp\vala-win32-build-win\`** (always on `C:`) |
+| Shipped exes + logs | **`C:\msys64\tmp\vala.win32\build-win\`** |
 
-**Build dir on Windows (gitignored):** **`build-win/`** — native Meson output on the share.
+**Agent (from Linux):** `./scripts/agent-remote-build.sh` — rsync, remote build, cert+register, pull logs.
+
+---
+
+## Rsync Linux → Windows (`C:`)
+
+### 1. One-time: install `rsync` on Windows (MSYS2 **MSYS**, not UCRT64)
+
+```powershell
+C:\msys64\msys2_shell.cmd -defterm -no-start -msys -c "pacman -S --needed rsync"
+```
+
+Installs `C:\msys64\usr\bin\rsync.exe`. Windows OpenSSH does not have it in `PATH` by default, so Linux rsync needs `--rsync-path` (below) unless you add `C:\msys64\usr\bin` to the Windows user `PATH`.
+
+### 2. From Linux (`ssh` host `snappr-win` = `192.168.88.244`)
+
+```bash
+cd /path/to/vala.win32   # e.g. /home/alan/gitlive/vala.win32
+
+rsync -avz --delete \
+  --exclude 'build/' --exclude 'build-win/' --exclude '.git/' --exclude 'mingw-libs/' \
+  -e 'ssh -o BatchMode=yes' \
+  --rsync-path='C:/msys64/usr/bin/rsync' \
+  ./ snappr-win:/c/msys64/tmp/vala.win32/
+```
+
+### 3. Run build on the `C:` copy (SSH)
+
+```bash
+ssh snappr-win 'C:\msys64\msys2_shell.cmd -defterm -no-start -ucrt64 -c "cd /c/msys64/tmp/vala.win32 && ./scripts/build-win.sh"'
+```
+
+Meson already uses `C:\msys64\tmp\vala-win32-build-win` for objects; rsync only moves **sources + scripts** off Samba.
+
+### Agent workflow (compile on C:, user runs exe)
+
+| Who | Job |
+|-----|-----|
+| **Agent (Linux)** | `./scripts/agent-remote-build.sh` — rsync, remote build, pull `build-win/` + logs |
+| **You (Windows)** | WinUI3: see [windows-winui3.md](windows-winui3.md) — `build-win/YOUR-TASKS.txt` |
+| **Agent** | `./scripts/agent-remote-build.sh pull` after you run |
+
+---
+
+## WinUI3
+
+**[windows-winui3.md](windows-winui3.md)** — one-time cert/register steps, agent workflow, troubleshooting. Day-to-day: `build-win/YOUR-TASKS.txt`.
 
 ---
 
@@ -70,20 +119,20 @@ Do **not** open the MSYS2 / UCRT64 terminal to paste blocks. That paste path is 
 **Do** use **bash scripts in `scripts/`** and launch each with **one PowerShell line**:
 
 ```powershell
-C:\msys64\msys2_shell.cmd -defterm -no-start -ucrt64 -c 'cd /x/vala.win32 && ./scripts/SOME-SCRIPT.sh'
+C:\msys64\msys2_shell.cmd -defterm -no-start -ucrt64 -c 'cd /c/msys64/tmp/vala.win32 && ./scripts/SOME-SCRIPT.sh'
 ```
 
 PowerShell only starts MSYS2; **bash** runs the logic.
 
-Repo on `X:` → path `/x/vala.win32` inside the quotes.
+Repo path inside MSYS2: **`/c/msys64/tmp/vala.win32`**.
 
 | Script | One PowerShell line |
 |--------|---------------------|
-| MSYS2 toolchain (§3) | `... -c 'cd /x/vala.win32 && ./scripts/setup-msys2-toolchain.sh'` |
-| WebView2 SDK only (§5) | `... -c 'cd /x/vala.win32 && ./scripts/vendor-webview2-sdk.sh'` |
-| Full `build-win/` compile | `... -c 'cd /x/vala.win32 && ./scripts/build-win.sh'` |
+| MSYS2 toolchain (§3) | `... -c 'cd /c/msys64/tmp/vala.win32 && ./scripts/setup-msys2-toolchain.sh'` |
+| WebView2 SDK only (§5) | `... -c 'cd /c/msys64/tmp/vala.win32 && ./scripts/vendor-webview2-sdk.sh'` |
+| Full `build-win/` compile | `... -c 'cd /c/msys64/tmp/vala.win32 && ./scripts/build-win.sh'` |
 
-Optional (once per PowerShell session): `function msys { & C:\msys64\msys2_shell.cmd -defterm -no-start -ucrt64 -c $args[0] }` then `msys 'cd /x/vala.win32 && ./scripts/setup-msys2-toolchain.sh'`.
+Optional (once per PowerShell session): `function msys { & C:\msys64\msys2_shell.cmd -defterm -no-start -ucrt64 -c $args[0] }` then `msys 'cd /c/msys64/tmp/vala.win32 && ./scripts/setup-msys2-toolchain.sh'`.
 
 ---
 
@@ -153,7 +202,7 @@ When it finishes, MSYS2 lives at `C:\msys64`.
 **3b — Toolchain + build deps** (one PowerShell line; installs everything `meson` needs for `build-win/`):
 
 ```powershell
-C:\msys64\msys2_shell.cmd -defterm -no-start -ucrt64 -c 'cd /x/vala.win32 && ./scripts/setup-msys2-toolchain.sh'
+C:\msys64\msys2_shell.cmd -defterm -no-start -ucrt64 -c 'cd /c/msys64/tmp/vala.win32 && ./scripts/setup-msys2-toolchain.sh'
 ```
 
 Installs via pacman (skipped if already present): **gcc**, **binutils**, **vala**, **python** (for meson), **meson**, **ninja**, **libgee**, **json-glib**, **curl**, **unzip**. Safe to run twice.
@@ -161,27 +210,17 @@ Installs via pacman (skipped if already present): **gcc**, **binutils**, **vala*
 If `meson setup` still fails after a partial run, wipe the build dir then rebuild:
 
 ```powershell
-C:\msys64\msys2_shell.cmd -defterm -no-start -ucrt64 -c 'cd /x/vala.win32 && rm -rf build-win && ./scripts/build-win.sh'
+C:\msys64\msys2_shell.cmd -defterm -no-start -ucrt64 -c 'cd /c/msys64/tmp/vala.win32 && rm -rf /c/msys64/tmp/vala-win32-build-win && ./scripts/build-win.sh'
 ```
 
-### 4. Map `X:` (desktop testing)
-
-```cmd
-net use X: /delete
-net use \\192.168.88.132\gitlive /delete
-net use X: \\192.168.88.132\gitlive /user:alan * /persistent:yes
-X:
-cd vala.win32
-```
-
-### 5. Vendor WebView2 SDK (build-time only — not the runtime)
+### 4. Vendor WebView2 SDK (build-time only — not the runtime)
 
 Downloads **`Microsoft.Web.WebView2`** from NuGet.org (`.nupkg` = zip). Does **not** install the Evergreen runtime (§1).
 
 One PowerShell line:
 
 ```powershell
-C:\msys64\msys2_shell.cmd -defterm -no-start -ucrt64 -c 'cd /x/vala.win32 && ./scripts/vendor-webview2-sdk.sh'
+C:\msys64\msys2_shell.cmd -defterm -no-start -ucrt64 -c 'cd /c/msys64/tmp/vala.win32 && ./scripts/vendor-webview2-sdk.sh'
 ```
 
 Output: `build/vendor/webview2/include/WebView2.h`, `x64/WebView2Loader.dll` (gitignored).
@@ -190,16 +229,16 @@ Output: `build/vendor/webview2/include/WebView2.h`, `x64/WebView2Loader.dll` (gi
 
 ## Build on Windows (MSYS2 + Meson → `build-win/`)
 
-**Prerequisites:** §1 (runtime), §3 (toolchain), §4 (if using `X:`).
+**Prerequisites:** §1 (runtime), §3 (toolchain), rsync §2 (repo on `C:\msys64\tmp\vala.win32`).
 
 **One PowerShell line** (vendors SDK, compiles `webview2-host-native`):
 
-`build-win.sh` uses a **local** Meson dir (`C:\msys64\tmp\vala-win32-build-win`) — not on `X:` — then copies the `.exe` to `build-win\`. That avoids Samba slowness, huge logs from `--reconfigure`, and a Vala bug where generated `.c` files vanish on UNC paths.
+`build-win.sh` uses Meson dir `C:\msys64\tmp\vala-win32-build-win`, then copies `.exe` files to `C:\msys64\tmp\vala.win32\build-win\`.
 
 Options: no Track A/B demos, **no full vapi regen** (uses committed `vapi/` + `generated/`), quiet C warnings.
 
 ```powershell
-C:\msys64\msys2_shell.cmd -defterm -no-start -ucrt64 -c 'cd /x/vala.win32 && ./scripts/build-win.sh'
+C:\msys64\msys2_shell.cmd -defterm -no-start -ucrt64 -c 'cd /c/msys64/tmp/vala.win32 && ./scripts/build-win.sh'
 ```
 
 Or step by step: §5 vendor line, then separate `-c` lines for `meson setup build-win` and `meson compile -C build-win webview2-host-native`.
@@ -207,17 +246,17 @@ Or step by step: §5 vendor line, then separate `-c` lines for `meson setup buil
 **Run the demo** at the **logged-on desktop** (Explorer, or):
 
 ```powershell
-C:\msys64\msys2_shell.cmd -defterm -no-start -ucrt64 -c 'cd /x/vala.win32/build-win && ./webview2-host-native.exe https://example.com/'
+C:\msys64\msys2_shell.cmd -defterm -no-start -ucrt64 -c 'cd /c/msys64/tmp/vala.win32/build-win && ./webview2-host-native.exe https://example.com/'
 ```
 
-Or double-click `X:\vala.win32\build-win\webview2-host-native.exe` after §1 installed the runtime.
+Or double-click `C:\msys64\tmp\vala.win32\build-win\webview2-host-native.exe` after §1 installed the runtime.
 
 `WebView2Loader.dll` must be next to the `.exe` (Meson copies it into `build-win/`).
 
 Other demo:
 
 ```powershell
-C:\msys64\msys2_shell.cmd -defterm -no-start -ucrt64 -c 'cd /x/vala.win32 && meson compile -C build-win hello-window'
+C:\msys64\msys2_shell.cmd -defterm -no-start -ucrt64 -c 'cd /c/msys64/tmp/vala.win32 && meson compile -C /c/msys64/tmp/vala-win32-build-win hello-window'
 ```
 
 ---
@@ -247,7 +286,7 @@ See Snappr [§E](../../app.Snappr/docs/windows-ssh-remote.md#e-for-agents--llm-r
 
 `build-win.sh` copies **everything** (vendor, setup, compile `-v`) to one file on the share:
 
-**`X:\vala.win32\build-win\last-build.log`**
+**`C:\msys64\tmp\vala.win32\build-win\last-build.log`**
 
 Open that in an editor after a failed run. On error the script also appends toolchain versions and the tail of `meson-logs\meson-log.txt`, and prints the log path again.
 
@@ -265,11 +304,11 @@ Paste the **last ~80 lines** of `build-win\last-build.log` (around `FAILED:` / `
 |---------|-----|
 | `webview2-host-native skipped` | Run the §5 vendor line in PowerShell |
 | `LoadLibrary WebView2Loader.dll failed` | Run from `build-win/` where Meson copied the DLL |
-| Samba access denied on `build-win/` | Map `X:` as `alan` (Snappr §D), not guest |
+| `build-win/` missing after build | Run from `C:\msys64\tmp\vala.win32` (rsync §2), not Samba `X:` |
 | Wanted Visual Studio only | Install VS Build Tools anyway; use MSYS2 path above until MSVC Meson is added |
 | `valac` not found in cmd | Use the `msys2_shell.cmd -ucrt64 -c '...'` lines, not bare cmd |
 | Meson: `msys/python` in a MinGW environment | Rerun §3b setup script (installs `mingw-w64-ucrt-x86_64-python`) |
-| `cannot extract .nupkg` / `FileNotFoundError` on `X:` | Sync repo (extracts to `/tmp`). Install unzip: rerun §3b or `... -c 'pacman -S --needed --noconfirm unzip'` |
+| `cannot extract .nupkg` / `FileNotFoundError` | Build on `C:\msys64\tmp\vala.win32` (extracts to `/tmp` on `C:`). Install unzip: rerun §3b |
 | `pacman` 404 on `*.sig` / `failed to commit transaction` | **Pacman mirror error** — rerun §3b setup script |
 | `gee-0.8` / `json-glib` not found (pkg-config) | Rerun §3b (full package set in `setup-msys2-toolchain.sh`) |
 | Meson `unknown keyword arguments "depends"` | Sync repo (fixed: regen runs via `sources`, not `depends` on Vala targets) |
@@ -282,7 +321,7 @@ Paste the **last ~80 lines** of `build-win\last-build.log` (around `FAILED:` / `
 Rerun the setup script (one PowerShell line):
 
 ```powershell
-C:\msys64\msys2_shell.cmd -defterm -no-start -ucrt64 -c 'cd /x/vala.win32 && ./scripts/setup-msys2-toolchain.sh'
+C:\msys64\msys2_shell.cmd -defterm -no-start -ucrt64 -c 'cd /c/msys64/tmp/vala.win32 && ./scripts/setup-msys2-toolchain.sh'
 ```
 
 ---

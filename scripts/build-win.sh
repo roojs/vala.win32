@@ -3,13 +3,13 @@
 #
 # Steps: 1 sparse MSIX, 2 runtime, 3 widgets-native, 4 hello-native, 5 webview2 vendor, 6 rest.
 #
-# Uses a **local** Meson build directory (not on X:) — Samba breaks Vala -C paths and
-# makes regen/configure painfully slow. Copies .exe (+ WebView2Loader.dll) back to build-win/ on X:.
+# Repo on Windows: **C:\msys64\tmp\vala.win32** (rsync from Linux — see agent-remote-build.sh).
+# Meson objects: **C:\msys64\tmp\vala-win32-build-win** (never Samba). Outputs: build-win/ beside sources.
 #
 # Debug log: build-win/last-build.log
 #
 # From Windows PowerShell (one line):
-#   C:\msys64\msys2_shell.cmd -defterm -no-start -ucrt64 -c 'cd /x/vala.win32 && ./scripts/build-win.sh'
+#   C:\msys64\msys2_shell.cmd -defterm -no-start -ucrt64 -c 'cd /c/msys64/tmp/vala.win32 && ./scripts/build-win.sh'
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
@@ -28,11 +28,22 @@ MESON_OPTS=(
 	-Dregen_on_build=false
 )
 
-# Active iteration target first (fast-fail compile before slow WebView2).
-WINUI3_EXES=(
-	winui3-widgets-native
-	winui3-hello-native
-)
+# Incremental WinUI3 restore — see docs/windows-winui3-restore-layers.md
+# hello = cf233c0 (no sparse); widgets = +d6ac214; sparse = +f9bad4e
+WINUI3_LAYER="${WINUI3_LAYER:-hello}"
+
+case "${WINUI3_LAYER}" in
+	hello)
+		WINUI3_EXES=(winui3-hello-native)
+		;;
+	widgets|sparse)
+		WINUI3_EXES=(winui3-widgets-native winui3-hello-native)
+		;;
+	*)
+		echo "[build-win] error: unknown WINUI3_LAYER=${WINUI3_LAYER} (hello|widgets|sparse)" >&2
+		exit 1
+		;;
+esac
 
 # All demo executables (must match meson.build target names).
 DEMO_EXES=(
@@ -176,7 +187,17 @@ require_winui3_vendor() {
 	exit 1
 }
 
-COMPILE_EXES=("${DEMO_EXES[@]}")
+COMPILE_EXES=()
+for _exe in "${DEMO_EXES[@]}"; do
+	case "${WINUI3_LAYER}" in
+		hello)
+			case "${_exe}" in
+				winui3-widgets-native) continue ;;
+			esac
+			;;
+	esac
+	COMPILE_EXES+=("${_exe}")
+done
 
 stage_winui3_sparse_assets() {
 	mkdir -p build-win/Assets
@@ -354,7 +375,8 @@ fi
 
 start_logging
 echo "[build-win] Log: ${DEBUG_LOG}"
-echo "[build-win] Local Meson dir: ${LOCAL_BUILD} (source stays on X:)"
+echo "[build-win] Repo: ${ROOT}"
+echo "[build-win] Meson dir: ${LOCAL_BUILD}"
 
 ./scripts/setup-msys2-toolchain.sh
 echo '[build-win] vendor-winui3-sdk.sh (nupkg extract + cppwinrt can take a few minutes on first run)'
@@ -362,26 +384,46 @@ echo '[build-win] vendor-winui3-sdk.sh (nupkg extract + cppwinrt can take a few 
 require_winui3_vendor
 configure_build_win
 
-echo '[build-win] 1/6 vendor-winui3-sparse.sh (pack sparse MSIX)'
-./scripts/vendor-winui3-sparse.sh
+echo "[build-win] WinUI3 layer: ${WINUI3_LAYER} (see docs/windows-winui3-restore-layers.md)"
+if [[ "${WINUI3_LAYER}" == sparse ]]; then
+	echo '[build-win] 1/6 vendor-winui3-sparse.sh (pack sparse MSIX)'
+	./scripts/vendor-winui3-sparse.sh
+else
+	echo '[build-win] 1/6 skip sparse MSIX (WINUI3_LAYER != sparse)'
+fi
 echo '[build-win] 2/6 install-winui3-runtime.sh (NuGet redist + quiet installer if needed)'
 ./scripts/install-winui3-runtime.sh
-require_winui3_widgets_runtime
+if [[ "${WINUI3_LAYER}" == sparse ]]; then
+	require_winui3_widgets_runtime
+fi
 
 if winui3_compile_ready; then
-	echo '[build-win] 3/6 compile winui3-widgets-native (active target, fast-fail)'
-	meson compile -C "${LOCAL_BUILD}" winui3-widgets-embed-manifest
-	echo '[build-win] 4/6 compile winui3-hello-native'
-	meson compile -C "${LOCAL_BUILD}" winui3-hello-embed-manifest
+	if [[ "${AGENT_REMOTE_BUILD:-}" == 1 ]]; then
+		echo '[build-win] agent: clean WinUI3 exes (force relink after rsync)'
+		ninja -C "${LOCAL_BUILD}" -t clean winui3-hello-native.exe 2>/dev/null || true
+		[[ "${WINUI3_LAYER}" != hello ]] \
+			&& ninja -C "${LOCAL_BUILD}" -t clean winui3-widgets-native.exe 2>/dev/null || true
+	fi
+	echo '[build-win] 3/6 compile winui3-hello-native'
+	meson compile -C "${LOCAL_BUILD}" winui3-hello-native
+	if [[ "${WINUI3_LAYER}" != hello ]]; then
+		echo '[build-win] 4/6 compile winui3-widgets-native (layer widgets/sparse — needs meson targets; not in hello layer)'
+	fi
+	if [[ "${WINUI3_LAYER}" == sparse ]]; then
+		echo '[build-win] 4/6 embed WinUI3 manifests (sparse layer only — restore meson targets first)'
+		meson compile -C "${LOCAL_BUILD}" winui3-widgets-embed-manifest winui3-hello-embed-manifest \
+			|| echo '[build-win] warning: embed targets missing until sparse layer meson restored'
+	fi
 	copy_winui3_to_build_win
-	./scripts/register-winui3-sparse.sh
+	if [[ "${WINUI3_LAYER}" == sparse ]]; then
+		./scripts/register-winui3-sparse.sh
+	fi
 	if [[ "${AGENT_REMOTE_BUILD:-}" == 1 ]]; then
 		check_winui3_pe_deps
-		./scripts/validate-winui3-build-win.sh
+		WINUI3_LAYER="${WINUI3_LAYER}" ./scripts/validate-winui3-build-win.sh
 		BUILD_WIN_WIN="$(to_win_path "${ROOT}/build-win")"
-		echo "[build-win] OK (agent remote, WinUI3 only) - ${BUILD_WIN_WIN}\\"
-		echo "  winui3-hello-native.exe, winui3-widgets-native.exe (log: winui3-debug.log)"
-		echo "  User runs: C:\\msys64\\tmp\\vala.win32\\build-win\\winui3-widgets-native.exe"
+		echo "[build-win] OK (agent remote, layer=${WINUI3_LAYER}) - ${BUILD_WIN_WIN}\\"
+		echo "  Run: C:\\msys64\\tmp\\vala.win32\\build-win\\winui3-hello-native.exe"
 		echo "  Full log: ${DEBUG_LOG}"
 		exit 0
 	fi
@@ -406,13 +448,13 @@ done
 meson compile -C "${LOCAL_BUILD}" "${rest_targets[@]}"
 
 copy_artifacts_to_share
-./scripts/register-winui3-sparse.sh
+if [[ "${WINUI3_LAYER}" == sparse ]]; then
+	./scripts/register-winui3-sparse.sh
+fi
 check_winui3_pe_deps
 
 BUILD_WIN_WIN="$(to_win_path "${ROOT}/build-win")"
 echo "[build-win] OK - ${#COMPILE_EXES[@]} demos in ${BUILD_WIN_WIN}\\"
-echo "  WinUI3: winui3-hello-native.exe, winui3-widgets-native.exe (log: winui3-debug.log)"
+echo "  WinUI3 layer=${WINUI3_LAYER}: winui3-hello-native.exe (log: winui3-debug.log)"
+echo "  Run: C:\\msys64\\tmp\\vala.win32\\build-win\\winui3-hello-native.exe"
 echo "  Full log: ${DEBUG_LOG}"
-if [[ "${ROOT}" == /c/msys64/tmp/vala.win32 ]]; then
-	echo "  Agent C: mirror — user runs: C:\\msys64\\tmp\\vala.win32\\build-win\\winui3-widgets-native.exe"
-fi

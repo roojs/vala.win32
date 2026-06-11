@@ -1,0 +1,55 @@
+---
+description: Agent remote Windows build workflow (rsync C: mirror)
+globs: scripts/**,src/win32-ui-winui3-host.cpp,meson.build
+alwaysApply: true
+---
+
+# Agent Windows test workflow
+
+## Do not guess WinUI3 fixes
+
+Before editing manifests, host bootstrap, or register scripts, read **`docs/windows-winui3-method.md`**, **`docs/windows-winui3-restore-layers.md`**, and **`docs/WINUI3-CHANGELOG.md`**. Default **`WINUI3_LAYER=hello`** (`cf233c0`).
+
+Required: `git diff f9bad4e` on launch-critical files, read `build-win/winui3-debug.log`, match log strings to `git show f9bad4e` / `d801516` source. One layer per change. Append changelog. Do not toggle `PackageDependency`, arch, or `OnPackageIdentity_NOOP` from memory.
+
+**Split:** agent compiles, trusts cert, registers sparse MSIX, and runs the demo over SSH; user only runs the `.exe` locally if they want to see the UI.
+
+## Directories (Windows `snappr-win`)
+
+| Path | Role |
+|------|------|
+| `C:\msys64\tmp\vala.win32\` | Rsync mirror of Linux repo (sources + scripts) |
+| `C:\msys64\tmp\vala-win32-build-win\` | Meson/ninja objects (always on C:, not Samba) |
+| `C:\msys64\tmp\vala.win32\build-win\` | Shipped demos + DLLs + logs for the user to run |
+
+Do **not** use Samba `X:` for builds or WinUI3 testing. User runs exes from **`C:\msys64\tmp\vala.win32\build-win\`**.
+
+## After changing WinUI3 / build scripts
+
+On Linux git host:
+
+```bash
+./scripts/agent-remote-build.sh
+```
+
+This: rsync → remote `./scripts/build-win.sh` → **`agent-remote-winui3-setup.ps1`** (cert + `Add-AppxPackage` over SSH) → optional demo run → pulls `build-win/` back to Linux.
+
+Do **not** ask the user to run `certutil` or `Add-AppxPackage` — use `./scripts/agent-remote-build.sh setup` or `build` instead.
+
+Read failures from `build-win/last-build.log` and `build-win/agent-winui3-setup.log`. Do not ask the user to paste logs if pull succeeded.
+
+Subcommands: `build` (full), `setup` (cert+register only), `run` (setup+demo+log pull), `pull`, `validate`.
+
+## User instructions
+
+After build, read **`build-win/YOUR-TASKS.txt`** — should only mention optional local UI run. Agent prints this after every `build` / `validate` / `pull`.
+
+**Method:** **`docs/windows-winui3-method.md`** · **Changelog:** **`docs/WINUI3-CHANGELOG.md`** · **HRESULT layers:** **`docs/windows-winui3-status.md`**
+
+Setup reference: **`docs/windows-winui3.md`**. Checks: `WINUI3-VALIDATION.txt` (does not prove exe launch).
+
+Do not claim WinUI3 is working until `winui3-widgets-native.exe` launches without SxS and log shows package identity.
+
+## Prerequisites
+
+Windows needs MSYS2 `rsync`: see `docs/windows-build.md` § Rsync. SSH host: `snappr-win` (`AGENT_WIN_HOST` to override).

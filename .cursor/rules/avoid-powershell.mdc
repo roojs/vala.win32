@@ -1,0 +1,44 @@
+---
+description: Avoid PowerShell in build scripts — brittle, prefer bash + native tools
+globs: scripts/**,src/win32-ui-winui3-host.cpp,metadata/winui3-sparse/**
+alwaysApply: false
+---
+
+# Avoid PowerShell in vala.win32 builds
+
+PowerShell from MSYS2/bash is brittle and is its own failure mode. Treat every `powershell.exe` / `winui3_ps` call as a liability to minimize, not a place for logic.
+
+## Default stack
+
+1. **Bash** — orchestration, checks, file layout, STOP banners
+2. **Native Windows CLI** — `makeappx.exe`, `mt.exe`, `signtool.exe`, `reg.exe` (with `MSYS2_ARG_CONV_EXCL='*'` and `cygpath -w` / local `C:` paths)
+3. **PowerShell** — only when no CLI exists, and then **one line, no script file**
+
+## Do not
+
+- Multi-line PowerShell, `.ps1` heredocs, or backtick line continuations inside bash strings (bash eats `` ` ``)
+- Cert creation, trust-store, or signing logic in PowerShell
+- `Add-AppxPackage -LiteralPath` (use `-Path` on this project's Windows builds)
+- UNC/Samba paths (`X:`, `\\server\share`) passed to `mt.exe` / `makeappx` — copy to `C:/msys64/tmp` first
+- Asking the user to run manual steps in chat — emit `build-win/*-STOP.txt` with **YOU MUST DO THIS** + one paste line
+
+## When PowerShell is unavoidable
+
+- Single `Add-AppxPackage -Path '...' -ExternalLocation '...' -ForceUpdateFromAnyVersion` (sparse register)
+- Keep existing runtime-gate one-liners; do not grow them
+
+## Prefer bash instead
+
+- **Developer Mode** — `/c/Windows/System32/reg.exe` on `AppModelUnlock` (MSYS2 `reg` is not Windows); never hard-gate on reg — try the real step first
+- **File/msix present** — `test -f`, `cp`, `mkdir`
+- **Failure output** — `write_winui3_sparse_stop_banner` / `WINUI3-RUNTIME-STOP.txt` pattern in `scripts/winui3-runtime-gate.sh`
+
+## Before adding any PowerShell
+
+Ask: can this be `reg`, a SDK tool, or C++ host code instead? If yes, do that.
+
+## Windows validation (rsync → C:, then SSH)
+
+After rsync is installed on Windows (see `docs/windows-build.md` § Rsync), sync Linux → `C:\msys64\tmp\vala.win32\` and run all builds there. Do not use Samba `X:` for builds or WinUI3 testing.
+
+Use local `C:/msys64/tmp/` in scripts for makeappx, mt.exe, signtool, and cert temp files — not Samba paths.

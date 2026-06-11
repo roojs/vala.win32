@@ -86,18 +86,18 @@ WebView2 **must** run on real Windows with the [Evergreen WebView2 Runtime](http
 
 Native output lives in **`build-win/`** (gitignored). Meson uses **MSYS2 MinGW** today (`WebView2Loader.dll` next to the exe). Visual Studio / MSVC is documented for a future path but is not the default Meson backend yet.
 
-**Full steps** (MSYS2 from PowerShell, Samba `X:` share, runtime install, `build-win.sh`): **[docs/windows-build.md](docs/windows-build.md)**
+**Full steps** (rsync to `C:\msys64\tmp\vala.win32`, MSYS2 from PowerShell, `build-win.sh`): **[docs/windows-build.md](docs/windows-build.md)**
 
 Quick compile after toolchain setup:
 
 ```powershell
-C:\msys64\msys2_shell.cmd -defterm -no-start -ucrt64 -c 'cd /x/vala.win32 && ./scripts/build-win.sh'
+C:\msys64\msys2_shell.cmd -defterm -no-start -ucrt64 -c 'cd /c/msys64/tmp/vala.win32 && ./scripts/build-win.sh'
 ```
 
 Run at the desktop:
 
 ```powershell
-C:\msys64\msys2_shell.cmd -defterm -no-start -ucrt64 -c 'cd /x/vala.win32/build-win && ./webview2-host-native.exe https://example.com/'
+C:\msys64\msys2_shell.cmd -defterm -no-start -ucrt64 -c 'cd /c/msys64/tmp/vala.win32/build-win && ./webview2-host-native.exe https://example.com/'
 ```
 
 

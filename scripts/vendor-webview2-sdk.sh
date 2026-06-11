@@ -8,7 +8,7 @@
 #   x86/WebView2Loader.dll
 #
 # Linux/macOS, or invoked from Windows via:
-#   msys2_shell.cmd -defterm -no-start -ucrt64 -c 'cd /x/vala.win32 && ./scripts/vendor-webview2-sdk.sh'
+#   msys2_shell.cmd -defterm -no-start -ucrt64 -c 'cd /c/msys64/tmp/vala.win32 && ./scripts/vendor-webview2-sdk.sh'
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"

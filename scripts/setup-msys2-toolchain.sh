@@ -3,7 +3,7 @@
 # Idempotent: pacman -S --needed skips what is already installed.
 #
 # From Windows PowerShell (one line):
-#   C:\msys64\msys2_shell.cmd -defterm -no-start -ucrt64 -c 'cd /x/vala.win32 && ./scripts/setup-msys2-toolchain.sh'
+#   C:\msys64\msys2_shell.cmd -defterm -no-start -ucrt64 -c 'cd /c/msys64/tmp/vala.win32 && ./scripts/setup-msys2-toolchain.sh'
 set -euo pipefail
 
 # Matches meson.build: gee/json-glib (generate-binding), gcc/valac/meson/ninja, curl+unzip (vendor scripts),

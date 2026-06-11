@@ -171,7 +171,7 @@ write_winui3_sparse_stop_banner() {
 			echo 'HRESULT 0x800B0100 means the sparse MSIX is unsigned or the dev cert is not trusted.'
 			echo 'Step 1/6 should sign it (openssl + signtool). Check last-build.log for [sign-winui3-sparse].'
 			echo 'Trust cert once (cmd):'
-			echo "  certutil -addstore -user Root X:\\vala.win32\\build\\vendor\\winui3-sparse\\vala.win32.sparse.cer"
+			echo "  certutil -addstore -user Root $(to_win_path "${ROOT}/build/vendor/winui3-sparse/vala.win32.sparse.cer")"
 			echo ''
 		fi
 		echo 'Then re-run the build (paste into PowerShell or cmd):'

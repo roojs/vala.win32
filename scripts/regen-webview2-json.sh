@@ -5,7 +5,7 @@
 # Optional: BUILD_WINMD=1 also builds Microsoft.Web.WebView2.Win32.winmd (needs dotnet + pwsh).
 #
 # One line from Windows:
-#   C:\msys64\msys2_shell.cmd -defterm -no-start -ucrt64 -c 'cd /x/vala.win32 && ./scripts/regen-webview2-json.sh'
+#   C:\msys64\msys2_shell.cmd -defterm -no-start -ucrt64 -c 'cd /c/msys64/tmp/vala.win32 && ./scripts/regen-webview2-json.sh'
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"

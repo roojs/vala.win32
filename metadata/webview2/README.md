@@ -21,10 +21,10 @@ meson setup build                   # once
 That compiles `tools/generate-webview2-json.vala` and writes `metadata/webview2/api/WebView2.json` from  
 `build/vendor/webview2/include/WebView2.h` (same SDK pin as the NuGet — not a live WinMD read).
 
-**Windows one-liner** (Samba `X:\vala.win32`):
+**Windows one-liner** (`C:\msys64\tmp\vala.win32` rsync mirror):
 
 ```powershell
-C:\msys64\msys2_shell.cmd -defterm -no-start -ucrt64 -c 'cd /x/vala.win32 && ./scripts/regen-webview2-json.sh'
+C:\msys64\msys2_shell.cmd -defterm -no-start -ucrt64 -c 'cd /c/msys64/tmp/vala.win32 && ./scripts/regen-webview2-json.sh'
 ```
 
 Commit `api/WebView2.json` after regen when the SDK pin changes.
