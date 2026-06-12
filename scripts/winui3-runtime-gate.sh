@@ -423,6 +423,27 @@ stage_winui3_runtime_for_admin() {
 	return 0
 }
 
+# Remove newer framework packages so vendored 2.1.3 MSIX can install (0x80073D06 otherwise).
+winui3_remove_newer_framework() {
+	[[ "${WINUI3_RUNTIME_REMOVE_NEWER:-}" == 1 ]] || return 0
+	echo "[install-winui3-runtime] WINUI3_RUNTIME_REMOVE_NEWER=1 — remove Microsoft.WindowsAppRuntime.2 >= 2.2.0.0"
+	winui3_ps "$(winui3_runtime_packages_ps)
+		\$removed = @()
+		foreach (\$pkg in \$pkgs) {
+			if (\$pkg.Name -ne 'Microsoft.WindowsAppRuntime.2') { continue }
+			try {
+				\$v = [version]\$pkg.Version
+			} catch { continue }
+			if (\$v -ge [version]'2.2.0.0') {
+				Write-Host \"[install-winui3-runtime] Remove-AppxPackage \$(\$pkg.PackageFullName)\"
+				Remove-AppxPackage -Package \$pkg.PackageFullName -ErrorAction Stop
+				\$removed += \$pkg.PackageFullName
+			}
+		}
+		if (\$removed.Count -eq 0) { Write-Host '[install-winui3-runtime] no Microsoft.WindowsAppRuntime.2 >= 2.2.0.0 to remove' }
+	"
+}
+
 winui3_install_staged_msix() {
 	local msix_dir="${WINUI3_ADMIN_STAGING}/msix/x64"
 	local -a files=()
@@ -457,7 +478,7 @@ winui3_install_staged_msix() {
 }
 
 winui3_try_install_runtime() {
-	if winui3_widgets_ready; then
+	if winui3_widgets_ready && [[ "${WINUI3_FORCE_RUNTIME_MSIX:-}" != 1 ]]; then
 		return 0
 	fi
 
@@ -472,6 +493,7 @@ winui3_try_install_runtime() {
 	fi
 
 	echo "[install-winui3-runtime] trying MSIX packages ..."
+	winui3_remove_newer_framework || true
 	winui3_install_staged_msix || true
 	winui3_widgets_ready
 }

@@ -1,5 +1,9 @@
 # vala.win32
 
+> **Work on this repo has stopped.** The WebView2-in-a-GTK-window spike here became **[webview2-gtk](https://git.roojs.com/webview2-gtk)** — a GTK 4 widget library you can ship as a package, with hello and browser demos.
+>
+> For new programs we **recommend GTK 4** (Linux, macOS, Windows) over native Win32 bindings from this project. Use WebKitGTK on Linux and **webview2-gtk** on Windows for the same Vala/GTK app. vala.win32 remains useful as reference (Win32 metadata, WebView2 COM plumbing, experiments); it is not where we are investing.
+
 Generated **Vala vapi** bindings for native Win32 GUI. Application `.vala` compiles to C that calls Win32 directly—no monolithic `libwin32`. Metadata comes from [win32json](https://github.com/marlersoft/win32json) (filtered Microsoft win32metadata); a small generator emits per-area `.vapi` shards and ergonomic helpers. **WebView2** (Edge Chromium in an HWND) is integrated alongside the Win32 work—host demo and plumbing today, generated COM bindings next.
 
 ![hello-window demo (Wine)](https://github.com/user-attachments/assets/23298046-8cf9-4f10-89f9-deabc6e3a738)
@@ -84,7 +88,7 @@ The workflow runs on pushes to `master` that affect generated Vala/VAPI docs inp
 
 WebView2 **must** run on real Windows with the [Evergreen WebView2 Runtime](https://developer.microsoft.com/en-us/microsoft-edge/webview2/).
 
-Native output lives in **`build-win/`** (gitignored). Meson uses **MSYS2 MinGW** today (`WebView2Loader.dll` next to the exe). Visual Studio / MSVC is documented for a future path but is not the default Meson backend yet.
+Native output lives in **`build-win/`** (gitignored). Meson uses **MSYS2 MinGW** (`WebView2Loader.dll` next to the exe).
 
 **Full steps** (rsync to `C:\msys64\tmp\vala.win32`, MSYS2 from PowerShell, `build-win.sh`): **[docs/windows-build.md](docs/windows-build.md)**
 
@@ -98,8 +102,33 @@ Run at the desktop:
 
 ```powershell
 C:\msys64\msys2_shell.cmd -defterm -no-start -ucrt64 -c 'cd /c/msys64/tmp/vala.win32/build-win && ./webview2-host-native.exe https://example.com/'
+C:\msys64\msys2_shell.cmd -defterm -no-start -ucrt64 -c 'cd /c/msys64/tmp/vala.win32/build-win && ./gtk-webview2-hello.exe'
 ```
 
+---
+
+## WinUI3 — not supported (we tried)
+
+We spent a ridiculous amount of time on WinUI 3: sparse MSIX packages, PriGen, `ExpandPriContent`, `themeresources.xaml`, cert trust, Developer Mode, packaging workloads that do not appear in Visual Studio Installer search, and upstream samples that compile but show a blank window until some `.pri` file nobody can generate without half of Microsoft’s build stack. It is a modern UI framework that still behaves like a UWP side quest from 2012.
+
+**WinUI3 is disabled by default** and we are not pursuing it. This repo is for things that actually build and run:
+
+| Supported | Notes |
+|-----------|--------|
+| **Win32** bindings + demos | Native HWND widgets, dialogs, menus |
+| **WebView2** | Edge Chromium in a window (`webview2-host-native`, `Win32.WebView`) |
+| **GTK + WebView2** | Spike only — continued in **[webview2-gtk](https://git.roojs.com/webview2-gtk)** |
+
+**Want cross-platform UI?** Use **[GTK 4](https://gtk.org/)**. It runs on Linux, macOS, and Windows without negotiating with `Add-AppxPackage`. For web content inside GTK on Windows, use **[webview2-gtk](https://git.roojs.com/webview2-gtk)** (WebKit-class embedding on the GTK stack).
+
+To turn the experimental WinUI3 path back on (not recommended):
+
+```bash
+BUILD_WINUI3=1 ./scripts/build-win.sh
+# meson: -Dbuild_winui3=true
+```
+
+Archive of what we learned: [docs/windows-winui3-status.md](docs/windows-winui3-status.md), [docs/windows-winui3.md](docs/windows-winui3.md).
 
 ---
 
@@ -109,8 +138,9 @@ C:\msys64\msys2_shell.cmd -defterm -no-start -ucrt64 -c 'cd /c/msys64/tmp/vala.w
 |------|--------|
 | Phases 0–5 | Done — win32json vendor, generator, per-shard vapi, common controls, dialogs/menus, widget codegen (`Win32.*` ergonomic layer) |
 | Phase 6 | In progress — API coverage, filter expansion, gap reports |
-| Phase 7 | In progress — COM vapi `win32-ui-webview2.vapi`; generated ergo `Win32.WebView` in `generated/win32-ergo-webview2.vala`; demos `webview2-host-native` + `webview2-demo` |
+| Phase 7 | In progress — COM vapi `win32-ui-webview2.vapi`; generated ergo `Win32.WebView`; demos `webview2-host-native`, `webview2-demo`, `gtk-webview2-hello` |
 | Phase 8 | Started — Valadoc target and GitHub Pages deploy script; CI and packaging polish remain |
+| Phase 9 (WinUI3) | **Abandoned** — MSIX/PRI toolchain; off by default (`BUILD_WINUI3=0`) |
 
 **Examples:** default **`examples/*.vala`** — `Win32.*` widgets (`--profile=gobject` + MinGW GLib). **`examples/native/`** — raw generated vapi (`native-*` exe names, `--profile=posix`). WebView2 host lives under **`examples/native/`** (`Win32.Ui.WebView` plumbing vapi).
 

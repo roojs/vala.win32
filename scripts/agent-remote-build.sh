@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Agent workflow: rsync Linux → Windows C:, build, pull logs back to Linux build-win/.
 #
-# Run on the Linux git host (not on Windows). Requires: ssh snappr-win, rsync on Windows (see docs/windows-build.md § Rsync).
+# WinUI3 is off by default (BUILD_WINUI3=1 to re-enable). See README.md.
 #
 #   ./scripts/agent-remote-build.sh          # sync + build + SSH setup + demo + pull
 #   ./scripts/agent-remote-build.sh setup    # SSH cert trust + sparse register only
@@ -16,6 +16,7 @@ REMOTE_HOST="${AGENT_WIN_HOST:-snappr-win}"
 AGENT_WINUI3_LAYER="${AGENT_WINUI3_LAYER:-hello}"
 REMOTE_ROOT="/c/msys64/tmp/vala.win32"
 REMOTE_BUILD_WIN="${REMOTE_ROOT}/build-win"
+BUILD_WINUI3="${BUILD_WINUI3:-0}"
 RSYNC_SSH=(ssh -o BatchMode=yes)
 RSYNC_PATH=(--rsync-path='C:/msys64/usr/bin/rsync')
 
@@ -41,7 +42,7 @@ sync_to_windows() {
 run_remote_build() {
 	echo "[agent-remote-build] build on ${REMOTE_HOST} (C: mirror)"
 	ssh -o BatchMode=yes "${REMOTE_HOST}" \
-		"C:\\msys64\\msys2_shell.cmd -defterm -no-start -ucrt64 -c \"cd /c/msys64/tmp/vala.win32 && AGENT_REMOTE_BUILD=1 WINUI3_LAYER=${AGENT_WINUI3_LAYER} WINUI3_SKIP_SPARSE_REGISTER=1 ./scripts/build-win.sh\""
+		"C:\\msys64\\msys2_shell.cmd -defterm -no-start -ucrt64 -c \"cd /c/msys64/tmp/vala.win32 && AGENT_REMOTE_BUILD=1 BUILD_WINUI3=${BUILD_WINUI3} WINUI3_LAYER=${AGENT_WINUI3_LAYER} WINUI3_SKIP_SPARSE_REGISTER=1 WINUI3_UNPACKAGED_WIDGETS=${WINUI3_UNPACKAGED_WIDGETS:-0} WINUI3_FORCE_RUNTIME_MSIX=${WINUI3_FORCE_RUNTIME_MSIX:-0} WINUI3_RUNTIME_REMOVE_NEWER=${WINUI3_RUNTIME_REMOVE_NEWER:-0} ./scripts/build-win.sh\""
 }
 
 run_remote_winui3_setup() {
@@ -91,7 +92,11 @@ print_user_tasks() {
 
 print_run_hint() {
 	print_user_tasks
-	echo "(Agent details: build-win/WINUI3-VALIDATION.txt, build-win/last-build.log, build-win/agent-winui3-setup.log)"
+	if [[ "${BUILD_WINUI3}" == 1 ]]; then
+		echo "(Agent details: build-win/WINUI3-VALIDATION.txt, build-win/last-build.log, build-win/agent-winui3-setup.log)"
+	else
+		echo "(WinUI3 disabled — see README.md. Log: build-win/last-build.log)"
+	fi
 }
 
 cmd="${1:-build}"
@@ -102,11 +107,11 @@ case "${cmd}" in
 		build_rc=0
 		run_remote_build || build_rc=$?
 		setup_rc=0
-		if [[ "${build_rc}" -eq 0 && "${AGENT_WINUI3_LAYER}" == sparse ]]; then
+		if [[ "${BUILD_WINUI3}" == 1 && "${build_rc}" -eq 0 && ( "${AGENT_WINUI3_LAYER}" == sparse || "${AGENT_WINUI3_LAYER}" == widgets ) ]]; then
 			run_remote_winui3_setup || setup_rc=$?
 		fi
 		pull_artifacts || true
-		if [[ "${build_rc}" -eq 0 && "${setup_rc}" -eq 0 ]]; then
+		if [[ "${BUILD_WINUI3}" == 1 && "${build_rc}" -eq 0 && "${setup_rc}" -eq 0 ]]; then
 			run_remote_winui3_demo || true
 			pull_artifacts || true
 		fi
@@ -118,6 +123,10 @@ case "${cmd}" in
 		exit "${build_rc}"
 		;;
 	setup)
+		if [[ "${BUILD_WINUI3}" != 1 ]]; then
+			echo "[agent-remote-build] WinUI3 disabled (BUILD_WINUI3=1 required)" >&2
+			exit 1
+		fi
 		sync_to_windows
 		setup_rc=0
 		run_remote_winui3_setup || setup_rc=$?
@@ -125,7 +134,11 @@ case "${cmd}" in
 		exit "${setup_rc}"
 		;;
 	run)
-		if [[ "${AGENT_WINUI3_LAYER}" == sparse ]]; then
+		if [[ "${BUILD_WINUI3}" != 1 ]]; then
+			echo "[agent-remote-build] WinUI3 disabled (BUILD_WINUI3=1 required)" >&2
+			exit 1
+		fi
+		if [[ "${AGENT_WINUI3_LAYER}" == sparse || "${AGENT_WINUI3_LAYER}" == widgets ]]; then
 			run_remote_winui3_setup || true
 		fi
 		run_rc=0

@@ -13,28 +13,31 @@ Method: [windows-winui3-method.md](windows-winui3-method.md) · History: [WINUI3
 | Layer | `WINUI3_LAYER` | Git anchor | What it adds | Proof before next layer |
 |-------|----------------|------------|--------------|-------------------------|
 | **0 — Hello** | `hello` (**default**) | `cf233c0` | Bootstrap only; no sparse MSIX; no embedded `<msix>`; no widgets | `winui3-hello-native.exe` window on Windows; log past bootstrap |
-| **1 — Widgets** | `widgets` | `d6ac214` | `winui3-widgets-native`, expanded host | Widgets demo runs (still no sparse) |
-| **2 — Sparse** | `sparse` | `f9bad4e` | Sparse MSIX, embed manifest, register, package identity gate | Labels window (`themed=0`); register OK on C: |
+| **1 — Widgets (labels)** | `widgets` | `f9bad4e` | Sparse + embed + `winui3-widgets-native`; `themed=0` skips TextBox/Button | Window with TextBlock labels; log `OnLaunched complete (themed=0)` |
+| **2 — Sparse** | `sparse` | (alias) | Same as `widgets` | — |
 
 **Broken — do not use as a layer:** `d801516` (*winui3 totally broken*).
 
 ---
 
-## Current repo state (layer 0)
+## Current repo state
 
-Restored from `cf233c0`:
+**Layer 0 (hello)** — `cf233c0`:
 
-- `src/win32-ui-winui3-host.cpp`, `src/win32-ui-winui3-host.h`
+- `src/win32-ui-winui3-host.cpp` — `winui3_run_hello_window()` is cf233c0 (no sparse); widgets entry is separate
+- `src/win32-ui-winui3-host.h`
 - `meson.build` — `winui3-hello-native` + bootstrap copy only (no embed, no widgets targets)
 
 Kept from forward port (infrastructure, not launch logic):
 
 - Agent rsync, `C:` paths, MinGW DLL copy, runtime install scripts, docs
 
-Gated off until higher layer:
+**Layer 1 (widgets labels)** — `f9bad4e` host + sparse + embed; `WINUI3_LAYER=widgets`
 
-- `metadata/winui3-sparse/*` — files remain in tree but **not used** when `WINUI3_LAYER=hello`
-- `scripts/vendor-winui3-sparse.sh`, `register-winui3-sparse.sh`, `embed-winui3-manifest.sh` — run only when `WINUI3_LAYER=sparse`
+Gated off when `WINUI3_LAYER=hello`:
+
+- sparse vendor/register/embed not run
+- only `winui3-hello-native` compiled
 
 ---
 
@@ -47,10 +50,10 @@ Gated off until higher layer:
 # same as AGENT_WINUI3_LAYER=hello
 ```
 
-**Sparse layer (only after hello proven):**
+**Widgets labels milestone (after hello proven):**
 
 ```bash
-AGENT_WINUI3_LAYER=sparse ./scripts/agent-remote-build.sh build
+AGENT_WINUI3_LAYER=widgets ./scripts/agent-remote-build.sh build
 ```
 
 Requires restoring `meson.build` widgets + embed targets from `f9bad4e` first (not done automatically yet).

@@ -607,6 +607,38 @@ if have_webview2_sdk and host_machine.system() == 'windows'
   else
     warning('webview2-demo skipped: install glib2-devel (MSYS2 UCRT64) for Track B WebView')
   endif
+
+  gtk3 = dependency('gtk+-3.0', required: false)
+  if gtk3.found()
+    build_gtk_webview2 = find_program('scripts/build-gtk-webview2-hello.sh')
+    gtk_build_dir = 'gtk-webview2-hello-build'
+    gtk_vala_inputs = [files('examples/gtk-webview2-hello.vala')]
+    gtk_webview2_exe = custom_target(
+      'gtk-webview2-hello',
+      input: gtk_vala_inputs,
+      output: 'gtk-webview2-hello.exe',
+      command: [
+        build_gtk_webview2,
+        '@OUTPUT@',
+        gtk_build_dir,
+        project_root,
+      ],
+      depends: regen_dep,
+      build_by_default: true,
+    )
+    custom_target(
+      'gtk-webview2-hello-copy-loader',
+      output: 'gtk-webview2-hello-loader.stamp',
+      command: [
+        'cp', webview2_loader_x64, meson.current_build_dir(),
+        '&&', 'touch', '@OUTPUT@',
+      ],
+      depends: gtk_webview2_exe,
+      build_by_default: true,
+    )
+  else
+    warning('gtk-webview2-hello skipped: install gtk3 (MSYS2 UCRT64: pacman -S mingw-w64-ucrt-x86_64-gtk3)')
+  endif
 elif host_machine.system() == 'windows'
   warning('webview2-host-native skipped: run ./scripts/vendor-webview2-sdk.sh')
 endif
@@ -637,15 +669,19 @@ winui3_link_libs = [
   '-static-libstdc++',
 ]
 
-if have_winui3_sdk and host_machine.system() == 'windows'
-  # Layer hello (cf233c0): bootstrap only — no sparse MSIX, no mt.exe embed, no widgets.
-  # Re-enable widgets + sparse via WINUI3_LAYER in build-win.sh (see docs/windows-winui3-restore-layers.md).
+if get_option('build_winui3') and have_winui3_sdk and host_machine.system() == 'windows'
+  # WINUI3_LAYER in build-win.sh: hello (cf233c0) | widgets (f9bad4e labels, themed=0) | sparse (alias)
+  embed_winui3_manifest = find_program('scripts/embed-winui3-manifest.sh')
+  winui3_app_manifest = project_root / 'metadata/winui3-sparse/vala.win32.winui3.manifest'
   winui3_hello_vala_args = [
     '--vapidir', vapidir,
     '--profile=posix',
     '--pkg', 'win32-ui-winui3-host',
   ]
-  winui3_hello_vala_link = ['-X', '-mwindows', '-X', '-Wl,--subsystem,windows'] + vala_win32_quiet_x
+  winui3_hello_vala_link = [
+    '-X', '-mwindows',
+    '-X', '-Wl,--subsystem,windows',
+  ] + vala_win32_quiet_x
   foreach lib : winui3_link_libs
     winui3_hello_vala_link += ['-X', lib]
   endforeach
@@ -655,6 +691,10 @@ if have_winui3_sdk and host_machine.system() == 'windows'
     'build/vendor/winui3/cppwinrt',
   )
   winui3_cpp_args = ['-std=c++20', '-fcoroutines'] + vala_win32_cpp_quiet
+  winui3_native_link = [
+    '-mwindows',
+    '-Wl,--subsystem,windows',
+  ] + winui3_link_libs
   winui3_hello_exe = executable(
     'winui3-hello-native',
     files('examples/native/winui3-hello.vala'),
@@ -663,8 +703,33 @@ if have_winui3_sdk and host_machine.system() == 'windows'
     include_directories: winui3_inc,
     c_args: vala_win32_c_quiet,
     cpp_args: winui3_cpp_args,
-    link_args: ['-mwindows', '-Wl,--subsystem,windows'] + winui3_link_libs,
+    link_args: winui3_native_link,
     install: false,
+  )
+  winui3_widgets_exe = executable(
+    'winui3-widgets-native',
+    files('examples/native/winui3-widgets.vala'),
+    winui3_host_cpp,
+    vala_args: winui3_hello_vala_args + winui3_hello_vala_link,
+    include_directories: winui3_inc,
+    c_args: vala_win32_c_quiet,
+    cpp_args: winui3_cpp_args,
+    link_args: winui3_native_link,
+    install: false,
+  )
+  # Embed <msix> only for widgets layer (build-win.sh requests winui3-widgets-embed-manifest).
+  # Hello layer (cf233c0) must not get embedded sparse identity.
+  winui3_widgets_manifest_stamp = custom_target(
+    'winui3-widgets-embed-manifest',
+    input: winui3_app_manifest,
+    output: 'winui3-widgets-manifest.stamp',
+    command: [
+      embed_winui3_manifest,
+      meson.current_build_dir() / 'winui3-widgets-native.exe',
+      '@INPUT@',
+    ],
+    depends: winui3_widgets_exe,
+    build_by_default: false,
   )
   custom_target(
     'winui3-copy-bootstrap',
@@ -673,10 +738,10 @@ if have_winui3_sdk and host_machine.system() == 'windows'
       'cp', winui3_bootstrap_dll, meson.current_build_dir(),
       '&&', 'touch', '@OUTPUT@',
     ],
-    depends: winui3_hello_exe,
+    depends: [winui3_hello_exe, winui3_widgets_exe],
     build_by_default: true,
   )
-elif host_machine.system() == 'windows'
+elif get_option('build_winui3') and host_machine.system() == 'windows'
   warning(
     'winui3-hello-native skipped: run ./scripts/vendor-winui3-sdk.sh '
     + '(needs cppwinrt: pacman -S mingw-w64-ucrt-x86_64-cppwinrt)',

@@ -19,9 +19,16 @@ if [[ "${MSYSTEM:-}" != UCRT64 ]]; then
 	exit 1
 fi
 
-if winui3_widgets_ready; then
+if winui3_widgets_ready && [[ "${WINUI3_FORCE_RUNTIME_MSIX:-}" != 1 ]]; then
 	echo "[install-winui3-runtime] already installed"
 	exit 0
+fi
+
+if [[ "${WINUI3_FORCE_RUNTIME_MSIX:-}" == 1 ]]; then
+	echo "[install-winui3-runtime] WINUI3_FORCE_RUNTIME_MSIX=1 — re-apply vendored MSIX (align with SDK 2.1.3)"
+fi
+if [[ "${WINUI3_RUNTIME_REMOVE_NEWER:-}" == 1 ]]; then
+	echo "[install-winui3-runtime] WINUI3_RUNTIME_REMOVE_NEWER=1 — remove blocking framework >= 2.2 before MSIX install"
 fi
 
 "${ROOT}/scripts/vendor-winui3-runtime.sh"

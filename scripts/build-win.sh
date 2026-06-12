@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
-# Ensure MSYS2 toolchain; sparse + runtime before WinUI3 compile; webview2 deferred.
+# Ensure MSYS2 toolchain; compile Win32/WebView2/GTK demos into build-win/.
+# WinUI3 is off by default (BUILD_WINUI3=1 to re-enable) — see README.md.
 #
-# Steps: 1 sparse MSIX, 2 runtime, 3 widgets-native, 4 hello-native, 5 webview2 vendor, 6 rest.
+# Steps (WinUI3 disabled): vendor webview2, compile demos.
 #
 # Repo on Windows: **C:\msys64\tmp\vala.win32** (rsync from Linux — see agent-remote-build.sh).
 # Meson objects: **C:\msys64\tmp\vala-win32-build-win** (never Samba). Outputs: build-win/ beside sources.
@@ -28,9 +29,34 @@ MESON_OPTS=(
 	-Dregen_on_build=false
 )
 
-# Incremental WinUI3 restore — see docs/windows-winui3-restore-layers.md
-# hello = cf233c0 (no sparse); widgets = +d6ac214; sparse = +f9bad4e
+# WinUI3 off by default — MSIX/PRI/PriGen rabbit hole; see README.md § WinUI3.
+BUILD_WINUI3="${BUILD_WINUI3:-0}"
+if [[ "${BUILD_WINUI3}" == 1 ]]; then
+	MESON_OPTS+=(-Dbuild_winui3=true)
+else
+	MESON_OPTS+=(-Dbuild_winui3=false)
+fi
+
+# Incremental WinUI3 restore — see docs/windows-winui3-restore-layers.md (BUILD_WINUI3=1 only)
 WINUI3_LAYER="${WINUI3_LAYER:-hello}"
+WINUI3_EXES=()
+
+winui3_build_enabled() {
+	[[ "${BUILD_WINUI3}" == 1 ]]
+}
+
+winui3_layer_needs_sparse() {
+	[[ "${WINUI3_LAYER}" == widgets || "${WINUI3_LAYER}" == sparse ]]
+}
+
+winui3_layer_needs_widgets_exe() {
+	winui3_layer_needs_sparse
+}
+
+# Sparse MSIX + embed + register (skip when WINUI3_UNPACKAGED_WIDGETS=1).
+winui3_use_sparse_identity() {
+	winui3_layer_needs_sparse && [[ "${WINUI3_UNPACKAGED_WIDGETS:-}" != 1 ]]
+}
 
 case "${WINUI3_LAYER}" in
 	hello)
@@ -40,14 +66,15 @@ case "${WINUI3_LAYER}" in
 		WINUI3_EXES=(winui3-widgets-native winui3-hello-native)
 		;;
 	*)
-		echo "[build-win] error: unknown WINUI3_LAYER=${WINUI3_LAYER} (hello|widgets|sparse)" >&2
-		exit 1
+		if winui3_build_enabled; then
+			echo "[build-win] error: unknown WINUI3_LAYER=${WINUI3_LAYER} (hello|widgets|sparse)" >&2
+			exit 1
+		fi
 		;;
 esac
 
 # All demo executables (must match meson.build target names).
 DEMO_EXES=(
-	"${WINUI3_EXES[@]}"
 	hello-window-native
 	button-demo-native
 	dialog-demo-native
@@ -63,7 +90,23 @@ DEMO_EXES=(
 	error-demo
 	webview2-host-native
 	webview2-demo
+	gtk-webview2-hello
 )
+if winui3_build_enabled; then
+	DEMO_EXES=( "${WINUI3_EXES[@]}" "${DEMO_EXES[@]}" )
+fi
+
+ensure_gtk3_for_webview_demo() {
+	if pkg-config --exists gtk+-3.0 2>/dev/null; then
+		return 0
+	fi
+	echo '[build-win] gtk+-3.0 missing; installing mingw-w64-ucrt-x86_64-gtk3...'
+	if pacman -S --needed --noconfirm mingw-w64-ucrt-x86_64-gtk3; then
+		return 0
+	fi
+	echo '[build-win] warning: gtk3 install failed; gtk-webview2-hello will be skipped' >&2
+	SKIP_GTK_WEBVIEW2=1
+}
 
 dump_debug_bundle() {
 	local label="${1:-failure}"
@@ -97,13 +140,15 @@ dump_debug_bundle() {
 
 on_err() {
 	trap - ERR
-	if winui3_runtime_gate_failed; then
-		emit_winui3_runtime_stop || true
-		exit 1
-	fi
-	if winui3_sparse_gate_failed; then
-		emit_winui3_sparse_stop || true
-		exit 1
+	if winui3_build_enabled; then
+		if winui3_runtime_gate_failed; then
+			emit_winui3_runtime_stop || true
+			exit 1
+		fi
+		if winui3_sparse_gate_failed; then
+			emit_winui3_sparse_stop || true
+			exit 1
+		fi
 	fi
 	{
 		echo ""
@@ -113,19 +158,23 @@ on_err() {
 	} >> "${DEBUG_LOG}" 2>&1
 	dump_debug_bundle "error line ${1}"
 	echo "[build-win] FAILED - log: ${DEBUG_LOG}" >&2
-	if [[ -f "${ROOT}/build-win/WINUI3-SPARSE-STOP.txt" ]]; then
-		emit_winui3_sparse_stop || true
-	fi
-	if [[ -f "${ROOT}/build-win/WINUI3-RUNTIME-STOP.txt" ]]; then
-		emit_winui3_runtime_stop || true
+	if winui3_build_enabled; then
+		if [[ -f "${ROOT}/build-win/WINUI3-SPARSE-STOP.txt" ]]; then
+			emit_winui3_sparse_stop || true
+		fi
+		if [[ -f "${ROOT}/build-win/WINUI3-RUNTIME-STOP.txt" ]]; then
+			emit_winui3_runtime_stop || true
+		fi
 	fi
 	exit 1
 }
 
 start_logging() {
 	mkdir -p "${ROOT}/build-win"
-	clear_winui3_runtime_stop
-	clear_winui3_sparse_stop
+	if winui3_build_enabled; then
+		clear_winui3_runtime_stop
+		clear_winui3_sparse_stop
+	fi
 	: > "${DEBUG_LOG}"
 	{
 		echo "=== build-win.sh started $(date -Iseconds) ==="
@@ -189,6 +238,11 @@ require_winui3_vendor() {
 
 COMPILE_EXES=()
 for _exe in "${DEMO_EXES[@]}"; do
+	if ! winui3_build_enabled; then
+		case "${_exe}" in
+			winui3-*) continue ;;
+		esac
+	fi
 	case "${WINUI3_LAYER}" in
 		hello)
 			case "${_exe}" in
@@ -196,6 +250,9 @@ for _exe in "${DEMO_EXES[@]}"; do
 			esac
 			;;
 	esac
+	if [[ "${_exe}" == gtk-webview2-hello && -n "${SKIP_GTK_WEBVIEW2:-}" ]]; then
+		continue
+	fi
 	COMPILE_EXES+=("${_exe}")
 done
 
@@ -216,6 +273,26 @@ copy_mingw_runtime_dlls_to_build_win() {
 	done
 }
 
+copy_ldd_runtime_dlls_to_build_win() {
+	local exe="$1"
+	local ucrt_bin="${MINGW_PREFIX:-/ucrt64}/bin"
+	[[ -f "${exe}" && -d "${ucrt_bin}" ]] || return 0
+	command -v ldd >/dev/null 2>&1 || return 0
+	local line dll path
+	while IFS= read -r line; do
+		case "${line}" in
+			*' => /ucrt64/bin/'*|*' => /'*)
+				path="${line#* => }"
+				path="${path%% (*}"
+				dll="$(basename "${path}")"
+				if [[ -f "${ucrt_bin}/${dll}" ]]; then
+					cp -f "${ucrt_bin}/${dll}" build-win/
+				fi
+				;;
+		esac
+	done < <(ldd "${exe}" 2>/dev/null || true)
+}
+
 copy_winui3_to_build_win() {
 	mkdir -p build-win
 	stage_winui3_sparse_assets
@@ -231,11 +308,17 @@ copy_winui3_to_build_win() {
 	elif [[ -f build/vendor/winui3/bin/x64/Microsoft.WindowsAppRuntime.Bootstrap.dll ]]; then
 		cp -f build/vendor/winui3/bin/x64/Microsoft.WindowsAppRuntime.Bootstrap.dll build-win/
 	fi
-	for name in winui3-widgets-native winui3-hello-native; do
-		if [[ -f "${LOCAL_BUILD}/${name}.exe" ]]; then
-			cp -f "${LOCAL_BUILD}/${name}.exe" "build-win/${name}.exe"
+	if winui3_layer_needs_widgets_exe; then
+		if [[ -f "${LOCAL_BUILD}/winui3-widgets-native.exe" ]]; then
+			cp -f "${LOCAL_BUILD}/winui3-widgets-native.exe" build-win/
 		fi
-	done
+	fi
+	if ! winui3_layer_needs_widgets_exe; then
+		rm -f build-win/winui3-widgets-native.exe
+		if [[ -f "${LOCAL_BUILD}/winui3-hello-native.exe" ]]; then
+			cp -f "${LOCAL_BUILD}/winui3-hello-native.exe" build-win/
+		fi
+	fi
 	copy_mingw_runtime_dlls_to_build_win
 }
 
@@ -281,6 +364,9 @@ copy_artifacts_to_share() {
 		done
 	fi
 	copy_mingw_runtime_dlls_to_build_win
+	if [[ -f "${LOCAL_BUILD}/gtk-webview2-hello.exe" ]]; then
+		copy_ldd_runtime_dlls_to_build_win "${LOCAL_BUILD}/gtk-webview2-hello.exe"
+	fi
 	if [[ ! -f build-win/Microsoft.WindowsAppRuntime.Bootstrap.dll ]]; then
 		echo "[build-win] error: Microsoft.WindowsAppRuntime.Bootstrap.dll missing in build-win/" >&2
 		return 1
@@ -379,57 +465,72 @@ echo "[build-win] Repo: ${ROOT}"
 echo "[build-win] Meson dir: ${LOCAL_BUILD}"
 
 ./scripts/setup-msys2-toolchain.sh
-echo '[build-win] vendor-winui3-sdk.sh (nupkg extract + cppwinrt can take a few minutes on first run)'
-./scripts/vendor-winui3-sdk.sh
-require_winui3_vendor
+ensure_gtk3_for_webview_demo
 configure_build_win
 
-echo "[build-win] WinUI3 layer: ${WINUI3_LAYER} (see docs/windows-winui3-restore-layers.md)"
-if [[ "${WINUI3_LAYER}" == sparse ]]; then
-	echo '[build-win] 1/6 vendor-winui3-sparse.sh (pack sparse MSIX)'
-	./scripts/vendor-winui3-sparse.sh
+if winui3_build_enabled; then
+	echo '[build-win] vendor-winui3-sdk.sh (nupkg extract + cppwinrt can take a few minutes on first run)'
+	./scripts/vendor-winui3-sdk.sh
+	require_winui3_vendor
+
+	echo "[build-win] WinUI3 layer: ${WINUI3_LAYER} (see docs/windows-winui3-restore-layers.md)"
+	if winui3_use_sparse_identity; then
+		echo '[build-win] vendor-winui3-sparse.sh (pack sparse MSIX)'
+		./scripts/vendor-winui3-sparse.sh
+	elif winui3_layer_needs_widgets_exe; then
+		echo '[build-win] skip sparse MSIX (WINUI3_UNPACKAGED_WIDGETS=1)'
+	else
+		echo '[build-win] skip sparse MSIX (WINUI3_LAYER=hello)'
+	fi
+	echo '[build-win] install-winui3-runtime.sh'
+	./scripts/install-winui3-runtime.sh
+	if winui3_layer_needs_widgets_exe; then
+		require_winui3_widgets_runtime
+	fi
+
+	if winui3_compile_ready; then
+		if [[ "${AGENT_REMOTE_BUILD:-}" == 1 ]]; then
+			echo '[build-win] agent: clean WinUI3 exes (force relink after rsync)'
+			ninja -C "${LOCAL_BUILD}" -t clean winui3-hello-native.exe 2>/dev/null || true
+			winui3_layer_needs_sparse \
+				&& ninja -C "${LOCAL_BUILD}" -t clean winui3-widgets-native.exe 2>/dev/null || true
+		fi
+		if winui3_use_sparse_identity; then
+			echo '[build-win] compile winui3-widgets-native + embed'
+			meson compile -C "${LOCAL_BUILD}" winui3-widgets-native \
+				winui3-widgets-embed-manifest
+		elif winui3_layer_needs_widgets_exe; then
+			echo '[build-win] compile winui3-widgets-native (unpackaged; no embed)'
+			meson compile -C "${LOCAL_BUILD}" winui3-widgets-native
+		else
+			echo '[build-win] compile winui3-hello-native (hello layer; no embed)'
+			meson compile -C "${LOCAL_BUILD}" winui3-hello-native
+		fi
+		copy_winui3_to_build_win
+		if winui3_use_sparse_identity; then
+			./scripts/register-winui3-sparse.sh
+		fi
+		if [[ "${AGENT_REMOTE_BUILD:-}" == 1 ]]; then
+			check_winui3_pe_deps
+			WINUI3_LAYER="${WINUI3_LAYER}" WINUI3_UNPACKAGED_WIDGETS="${WINUI3_UNPACKAGED_WIDGETS:-}" \
+				./scripts/validate-winui3-build-win.sh
+			BUILD_WIN_WIN="$(to_win_path "${ROOT}/build-win")"
+			echo "[build-win] OK (agent remote, layer=${WINUI3_LAYER}) - ${BUILD_WIN_WIN}\\"
+			if winui3_layer_needs_sparse; then
+				echo "  Run: C:\\msys64\\tmp\\vala.win32\\build-win\\winui3-widgets-native.exe"
+			else
+				echo "  Run: C:\\msys64\\tmp\\vala.win32\\build-win\\winui3-hello-native.exe"
+			fi
+			echo "  Log: winui3-debug.log"
+			echo "  Full log: ${DEBUG_LOG}"
+			exit 0
+		fi
+	fi
 else
-	echo '[build-win] 1/6 skip sparse MSIX (WINUI3_LAYER != sparse)'
-fi
-echo '[build-win] 2/6 install-winui3-runtime.sh (NuGet redist + quiet installer if needed)'
-./scripts/install-winui3-runtime.sh
-if [[ "${WINUI3_LAYER}" == sparse ]]; then
-	require_winui3_widgets_runtime
+	echo '[build-win] WinUI3 disabled (BUILD_WINUI3=1 to re-enable; see README.md)'
 fi
 
-if winui3_compile_ready; then
-	if [[ "${AGENT_REMOTE_BUILD:-}" == 1 ]]; then
-		echo '[build-win] agent: clean WinUI3 exes (force relink after rsync)'
-		ninja -C "${LOCAL_BUILD}" -t clean winui3-hello-native.exe 2>/dev/null || true
-		[[ "${WINUI3_LAYER}" != hello ]] \
-			&& ninja -C "${LOCAL_BUILD}" -t clean winui3-widgets-native.exe 2>/dev/null || true
-	fi
-	echo '[build-win] 3/6 compile winui3-hello-native'
-	meson compile -C "${LOCAL_BUILD}" winui3-hello-native
-	if [[ "${WINUI3_LAYER}" != hello ]]; then
-		echo '[build-win] 4/6 compile winui3-widgets-native (layer widgets/sparse — needs meson targets; not in hello layer)'
-	fi
-	if [[ "${WINUI3_LAYER}" == sparse ]]; then
-		echo '[build-win] 4/6 embed WinUI3 manifests (sparse layer only — restore meson targets first)'
-		meson compile -C "${LOCAL_BUILD}" winui3-widgets-embed-manifest winui3-hello-embed-manifest \
-			|| echo '[build-win] warning: embed targets missing until sparse layer meson restored'
-	fi
-	copy_winui3_to_build_win
-	if [[ "${WINUI3_LAYER}" == sparse ]]; then
-		./scripts/register-winui3-sparse.sh
-	fi
-	if [[ "${AGENT_REMOTE_BUILD:-}" == 1 ]]; then
-		check_winui3_pe_deps
-		WINUI3_LAYER="${WINUI3_LAYER}" ./scripts/validate-winui3-build-win.sh
-		BUILD_WIN_WIN="$(to_win_path "${ROOT}/build-win")"
-		echo "[build-win] OK (agent remote, layer=${WINUI3_LAYER}) - ${BUILD_WIN_WIN}\\"
-		echo "  Run: C:\\msys64\\tmp\\vala.win32\\build-win\\winui3-hello-native.exe"
-		echo "  Full log: ${DEBUG_LOG}"
-		exit 0
-	fi
-fi
-
-echo '[build-win] 5/6 vendor-webview2-sdk.sh'
+echo '[build-win] vendor-webview2-sdk.sh'
 ./scripts/vendor-webview2-sdk.sh
 if [[ -f "${LOCAL_BUILD}/meson-private/coredata.dat" ]] \
 	&& ! grep -q 'webview2-host-native\.exe:' "${LOCAL_BUILD}/build.ninja" 2>/dev/null; then
@@ -437,7 +538,7 @@ if [[ -f "${LOCAL_BUILD}/meson-private/coredata.dat" ]] \
 	meson setup --reconfigure "${LOCAL_BUILD}" "${ROOT}" "${MESON_OPTS[@]}"
 fi
 
-echo '[build-win] 6/6 compile remaining demo targets'
+echo '[build-win] compile demo targets'
 rest_targets=()
 for name in "${COMPILE_EXES[@]}"; do
 	case " ${WINUI3_EXES[*]} " in
@@ -448,13 +549,24 @@ done
 meson compile -C "${LOCAL_BUILD}" "${rest_targets[@]}"
 
 copy_artifacts_to_share
-if [[ "${WINUI3_LAYER}" == sparse ]]; then
+if winui3_build_enabled && winui3_layer_needs_sparse; then
 	./scripts/register-winui3-sparse.sh
 fi
-check_winui3_pe_deps
+if winui3_build_enabled; then
+	check_winui3_pe_deps
+fi
 
 BUILD_WIN_WIN="$(to_win_path "${ROOT}/build-win")"
 echo "[build-win] OK - ${#COMPILE_EXES[@]} demos in ${BUILD_WIN_WIN}\\"
-echo "  WinUI3 layer=${WINUI3_LAYER}: winui3-hello-native.exe (log: winui3-debug.log)"
-echo "  Run: C:\\msys64\\tmp\\vala.win32\\build-win\\winui3-hello-native.exe"
+if winui3_build_enabled; then
+	if winui3_layer_needs_sparse; then
+		echo "  WinUI3 layer=${WINUI3_LAYER}: winui3-widgets-native.exe (log: winui3-debug.log)"
+		echo "  Run: C:\\msys64\\tmp\\vala.win32\\build-win\\winui3-widgets-native.exe"
+	else
+		echo "  WinUI3 layer=hello: winui3-hello-native.exe (log: winui3-debug.log)"
+		echo "  Run: C:\\msys64\\tmp\\vala.win32\\build-win\\winui3-hello-native.exe"
+	fi
+else
+	echo "  webview2-host-native.exe, gtk-webview2-hello.exe, Win32 demos — see README.md"
+fi
 echo "  Full log: ${DEBUG_LOG}"

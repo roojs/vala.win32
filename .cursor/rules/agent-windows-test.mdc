@@ -8,9 +8,16 @@ alwaysApply: true
 
 ## Do not guess WinUI3 fixes
 
-Before editing manifests, host bootstrap, or register scripts, read **`docs/windows-winui3-method.md`**, **`docs/windows-winui3-restore-layers.md`**, and **`docs/WINUI3-CHANGELOG.md`**. Default **`WINUI3_LAYER=hello`** (`cf233c0`).
+Read **`docs/WINUI3-SITREP.md`** (§ + **§11**), **`docs/windows-winui3-method.md`** (agent loop), **`docs/WINUI3-CHANGELOG.md`**. Default **`WINUI3_LAYER=hello`**.
 
-Required: `git diff f9bad4e` on launch-critical files, read `build-win/winui3-debug.log`, match log strings to `git show f9bad4e` / `d801516` source. One layer per change. Append changelog. Do not toggle `PackageDependency`, arch, or `OnPackageIdentity_NOOP` from memory.
+**Changelog-first (mandatory):**
+
+1. Find error → dedup: grep **`WINUI3-CHANGELOG.md`** + SITREP **Tried** for the exact change.
+2. If **already in changelog or Tried** → **do not edit code**; pick diagnostics or a different lever; log `BLOCKED` in changelog.
+3. Append **PLANNED** entry to **`docs/WINUI3-CHANGELOG.md`** — **then** edit files.
+4. After test → same entry **Result** + update SITREP.
+
+Never re-apply manifest/bootstrap knobs already listed in changelog (neutral/x64, PackageDependency, msix.v1/asm.v3, ignorable, NOOP) without new evidence type (e.g. sxstrace output), not another toggle.
 
 **Split:** agent compiles, trusts cert, registers sparse MSIX, and runs the demo over SSH; user only runs the `.exe` locally if they want to see the UI.
 

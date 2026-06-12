@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Standalone sync: Samples/Directory.Build.props + HybridCRT (no parent tree). -->
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <AppxLogTelemetryFromSideloadingScript>false</AppxLogTelemetryFromSideloadingScript>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalOptions>%(AdditionalOptions) /Qspectre</AdditionalOptions>
+      <ControlFlowGuard>Guard</ControlFlowGuard>
+      <DebugInformationFormat>OldStyle</DebugInformationFormat>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <Link>
+      <AdditionalOptions>%(AdditionalOptions) /dynamicbase</AdditionalOptions>
+      <ControlFlowGuard>Guard</ControlFlowGuard>
+      <CETCompat Condition="'$(Platform)'!='ARM64'">true</CETCompat>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(MSBuildThisFileDirectory)HybridCRT.props" />
+</Project>

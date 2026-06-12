@@ -16,3 +16,9 @@ option(
   value: true,
   description: 'Run generate-binding before compile (slow on Samba; use false for build-win)',
 )
+option(
+  'build_winui3',
+  type: 'boolean',
+  value: false,
+  description: 'Build WinUI3 demos (experimental; off by default — see README.md)',
+)

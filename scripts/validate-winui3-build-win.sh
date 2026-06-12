@@ -17,8 +17,8 @@ USER_TASKS="${BUILD_WIN}/YOUR-TASKS.txt"
 WINUI3_LAYER="${WINUI3_LAYER:-hello}"
 WINUI3_EXES=(winui3-hello-native.exe)
 EXE_RUN='C:\msys64\tmp\vala.win32\build-win\winui3-hello-native.exe'
-if [[ "${WINUI3_LAYER}" != hello ]]; then
-	WINUI3_EXES=(winui3-widgets-native.exe winui3-hello-native.exe)
+if [[ "${WINUI3_LAYER}" == widgets || "${WINUI3_LAYER}" == sparse ]]; then
+	WINUI3_EXES=(winui3-widgets-native.exe)
 	EXE_RUN='C:\msys64\tmp\vala.win32\build-win\winui3-widgets-native.exe'
 fi
 SPARSE_MSIX="${BUILD_WIN}/vala.win32.winui3.sparse.msix"
@@ -98,8 +98,12 @@ check_embedded_manifest() {
 		log_err "${exe}: embedded manifest missing <msix> (sparse identity)"
 		return 1
 	fi
-	if ! grep -q 'urn:schemas-microsoft-com:msix.v1' "${tmp}/extracted.manifest"; then
-		log_err "${exe}: embedded <msix> must use xmlns urn:schemas-microsoft-com:msix.v1 (wrong namespace → SxS at launch)"
+	if grep -q 'urn:schemas-microsoft-com:msix.v1' "${tmp}/extracted.manifest"; then
+		: # msix.v1 (d801516 experiment)
+	elif grep -q 'urn:schemas-microsoft-com:asm.v3' "${tmp}/extracted.manifest"; then
+		: # asm.v3 child elements (f9bad4e labels milestone)
+	else
+		log_err "${exe}: embedded <msix> needs msix.v1 or asm.v3 namespace (SxS at launch)"
 		return 1
 	fi
 	if ! grep -q "${SPARSE_PACKAGE}" "${tmp}/extracted.manifest"; then
@@ -190,6 +194,18 @@ write_user_tasks() {
 			echo ''
 			echo "   ${EXE_RUN}"
 			echo ''
+		elif [[ "${WINUI3_LAYER}" == widgets ]]; then
+			echo '>>> WIDGETS LAYER (f9bad4e) — labels only, themed=0 (no TextBox/Button) <<<'
+			echo ''
+			if [[ "${sparse_registered}" -eq 0 ]]; then
+				echo 'Sparse register pending — agent: ./scripts/agent-remote-build.sh setup'
+				echo ''
+			fi
+			echo 'Run interactively on Windows:'
+			echo ''
+			echo "   ${EXE_RUN}"
+			echo '   Expect log: OnLaunched complete (themed=0)'
+			echo ''
 		elif [[ "${sparse_registered}" -eq 0 ]]; then
 			if [[ "${AGENT_REMOTE_BUILD:-}" == 1 ]]; then
 				echo '>>> Agent will trust cert + register via SSH <<<'
@@ -278,10 +294,12 @@ main() {
 		fi
 		log_ok "${exe_name} exists ($(wc -c < "${exe}" | tr -d ' ') bytes)"
 		check_pe_header "${exe}"
-		if [[ "${WINUI3_LAYER}" == sparse && -n "${mt}" ]]; then
-			check_embedded_manifest "${exe}" "${mt}"
-		elif [[ "${WINUI3_LAYER}" == hello ]]; then
+		if [[ "${WINUI3_LAYER}" == hello ]]; then
 			log_ok "${exe_name}: hello layer — no embedded <msix> required (cf233c0)"
+		elif [[ "${WINUI3_UNPACKAGED_WIDGETS:-}" == 1 ]]; then
+			log_ok "${exe_name}: unpackaged widgets — no embedded <msix> required"
+		elif [[ -n "${mt}" ]]; then
+			check_embedded_manifest "${exe}" "${mt}"
 		fi
 	done
 
@@ -291,7 +309,9 @@ main() {
 		log_err "missing Microsoft.WindowsAppRuntime.Bootstrap.dll in build-win/"
 	fi
 
-	if [[ "${WINUI3_LAYER}" == sparse ]]; then
+	if [[ "${WINUI3_UNPACKAGED_WIDGETS:-}" == 1 ]]; then
+		log_ok "WINUI3_UNPACKAGED_WIDGETS=1 — sparse MSIX/register checks skipped"
+	elif [[ "${WINUI3_LAYER}" == widgets || "${WINUI3_LAYER}" == sparse ]]; then
 		if [[ -f "${STORE_LOGO}" ]]; then
 			log_ok "Assets/StoreLogo.png present (sparse external location)"
 		else

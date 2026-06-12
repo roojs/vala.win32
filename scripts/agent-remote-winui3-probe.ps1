@@ -21,6 +21,31 @@ Add-Content $out '--- appx ---'
 Get-AppxPackage -Name 'vala.win32.WinUI3' -ErrorAction SilentlyContinue |
     Select-Object PackageFullName, InstallLocation | Format-List | Out-String | Add-Content $out
 
+Add-Content $out '--- runtime packages (SITREP SS4 step 1) ---'
+Add-Content $out 'vendored target: Microsoft.WindowsAppSDK.Runtime 2.1.3 (8002.1.3.0)'
+$runtimeNames = @(
+    'Microsoft.WindowsAppRuntime.2',
+    'Microsoft.WindowsAppRuntime.1',
+    'MicrosoftCorporationII.WinAppRuntime.Main*',
+    'Microsoft.WindowsAppRuntime.Main*',
+    'MicrosoftCorporationII.WinAppRuntime.Singleton*',
+    'Microsoft.WindowsAppRuntime.Singleton*',
+    'Microsoft.WindowsAppRuntime.Framework*',
+    'MicrosoftCorporationII.WinAppRuntime.Framework*'
+)
+foreach ($pat in $runtimeNames) {
+    $pkgs = Get-AppxPackage -Name $pat -ErrorAction SilentlyContinue
+    if (-not $pkgs) { continue }
+    foreach ($pkg in @($pkgs)) {
+        Add-Content $out ("  {0}  Version={1}" -f $pkg.Name, $pkg.Version)
+        Add-Content $out ("    {0}" -f $pkg.PackageFullName)
+    }
+}
+$hasFramework = [bool](Get-AppxPackage -Name 'Microsoft.WindowsAppRuntime.2' -ErrorAction SilentlyContinue)
+$hasMain = [bool](Get-AppxPackage -Name '*WinAppRuntime.Main*' -ErrorAction SilentlyContinue)
+$hasSingleton = [bool](Get-AppxPackage -Name '*WinAppRuntime.Singleton*' -ErrorAction SilentlyContinue)
+Add-Content $out ("widgets_ready: framework={0} main={1} singleton={2}" -f $hasFramework, $hasMain, $hasSingleton)
+
 Add-Content $out '--- launch ---'
 $log = Join-Path $buildWin 'winui3-debug.log'
 $etl = 'C:\msys64\tmp\agent-sxs.etl'

@@ -4,9 +4,11 @@
 
 ## Do not guess — use the method
 
-**[windows-winui3-method.md](windows-winui3-method.md)** — mandatory process: diff vs `f9bad4e`, read logs, match log strings to source, one layer at a time, update [WINUI3-CHANGELOG.md](WINUI3-CHANGELOG.md).
+**[windows-winui3-method.md](windows-winui3-method.md)** — mandatory process: diff vs `f9bad4e`, read logs, one layer at a time, update [WINUI3-CHANGELOG.md](WINUI3-CHANGELOG.md).
 
-This status doc is **HRESULT / symptom reference only**. It is not a substitute for `git diff` or the changelog.
+**[WINUI3-SITREP.md](WINUI3-SITREP.md)** — per-error playbook: what was tried, **do not retry**, allowed next steps.
+
+This status doc is **HRESULT / layer overview**. For anti-loop detail use SITREP; for history use changelog.
 
 This document exists because we spent days **guessing** manifest/bootstrap/register tweaks. Stop that loop: method doc first, then this file for layer identification.
 
@@ -38,7 +40,8 @@ Git history stays linear on **`f9bad4e`** (*partly working — window with label
 | Agent SSH setup (cert + register) | **FAIL until register fixed** | `agent-winui3-setup.log` |
 | MinGW runtime DLLs beside exe (agent path) | **OK** | copied in `build-win.sh` |
 | Stale `d801516` binary on C: | **PROVEN** | log: `bootstrap noop` but source is `f9bad4e` — see method doc §3 |
-| **`winui3-hello-native.exe` launch** | **BROKEN** | fix stale link + register before new manifest guesses |
+| **`winui3-hello-native.exe` launch (agent)** | **OK (2026-06-11)** | hello layer SSH run — see SITREP §6 |
+| **`winui3-widgets-native.exe` launch (agent)** | **FAIL** | §1 register → §3 SxS — see SITREP |
 | Themed controls (`themed=1`) | **NOT OK** | Blocked until interactive launch succeeds |
 
 `WINUI3-VALIDATION.txt` can say **READY** while the exe still will not start. Do not treat validation alone as “done.”

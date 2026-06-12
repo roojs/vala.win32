@@ -51,14 +51,14 @@ Meson already uses `C:\msys64\tmp\vala-win32-build-win` for objects; rsync only 
 | Who | Job |
 |-----|-----|
 | **Agent (Linux)** | `./scripts/agent-remote-build.sh` — rsync, remote build, pull `build-win/` + logs |
-| **You (Windows)** | WinUI3: see [windows-winui3.md](windows-winui3.md) — `build-win/YOUR-TASKS.txt` |
+| **You (Windows)** | Run demos from `build-win/` — WinUI3 disabled; see [README.md](../README.md) |
 | **Agent** | `./scripts/agent-remote-build.sh pull` after you run |
 
 ---
 
 ## WinUI3
 
-**[windows-winui3.md](windows-winui3.md)** — one-time cert/register steps, agent workflow, troubleshooting. Day-to-day: `build-win/YOUR-TASKS.txt`.
+**Disabled by default** (`BUILD_WINUI3=0`). See [README.md](../README.md) § WinUI3 — not supported. Archive: [windows-winui3-status.md](windows-winui3-status.md), [windows-winui3.md](windows-winui3.md).
 
 ---
 
@@ -99,14 +99,14 @@ Meson already uses `C:\msys64\tmp\vala-win32-build-win` for objects; rsync only 
 | Who | Job |
 |-----|-----|
 | **Agent (Linux)** | `./scripts/agent-remote-build.sh` — rsync, remote build, pull `build-win/` + logs |
-| **You (Windows)** | WinUI3: see [windows-winui3.md](windows-winui3.md) — `build-win/YOUR-TASKS.txt` |
+| **You (Windows)** | Run demos from `build-win/` — WinUI3 disabled; see [README.md](../README.md) |
 | **Agent** | `./scripts/agent-remote-build.sh pull` after you run |
 
 ---
 
 ## WinUI3
 
-**[windows-winui3.md](windows-winui3.md)** — one-time cert/register steps, agent workflow, troubleshooting. Day-to-day: `build-win/YOUR-TASKS.txt`.
+**Disabled by default** (`BUILD_WINUI3=0`). See [README.md](../README.md) § WinUI3 — not supported. Archive: [windows-winui3-status.md](windows-winui3-status.md), [windows-winui3.md](windows-winui3.md).
 
 ---
 

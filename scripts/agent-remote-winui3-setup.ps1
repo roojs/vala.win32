@@ -43,7 +43,36 @@ if ($existing) {
     Write-SetupLog "OK: removed prior package $($existing.PackageFullName)"
 }
 
-Add-AppxPackage -Path $msix -ExternalLocation $buildWin -ForceUpdateFromAnyVersion
+try {
+    Add-AppxPackage -Path $msix -ExternalLocation $buildWin -ForceUpdateFromAnyVersion
+} catch {
+    $msg = $_.Exception.Message
+    Write-SetupLog "FAIL: Add-AppxPackage: $msg"
+    if ($msg -match 'ActivityId] ([0-9a-f-]+)') {
+        $aid = $Matches[1]
+        Write-SetupLog "Get-AppPackageLog -ActivityID $aid"
+        try {
+            Get-AppPackageLog -ActivityID $aid | ForEach-Object { Write-SetupLog $_.Message }
+        } catch {
+            Write-SetupLog "WARN: Get-AppPackageLog failed: $($_.Exception.Message)"
+        }
+    }
+    try {
+        $dm = Get-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock' -Name AllowDevelopmentWithoutDevLicense -ErrorAction SilentlyContinue
+        Write-SetupLog "DeveloperMode AllowDevelopmentWithoutDevLicense=$($dm.AllowDevelopmentWithoutDevLicense)"
+    } catch {
+        Write-SetupLog 'WARN: could not read Developer Mode registry key'
+    }
+    if (Test-Path $cer) {
+        try {
+            $c = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2($cer)
+            Write-SetupLog "cert Subject=$($c.Subject) Thumbprint=$($c.Thumbprint)"
+        } catch {
+            Write-SetupLog "WARN: could not read .cer: $($_.Exception.Message)"
+        }
+    }
+    exit 1
+}
 $pkg = Get-AppxPackage -Name 'vala.win32.WinUI3' -ErrorAction Stop
 Write-SetupLog "OK: registered $($pkg.PackageFullName)"
 exit 0

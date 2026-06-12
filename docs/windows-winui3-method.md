@@ -16,6 +16,7 @@
 - Match log strings to source at a specific commit
 - Change **one layer** at a time; append [WINUI3-CHANGELOG.md](WINUI3-CHANGELOG.md)
 
+**Known error situations (tried / do-not-retry):** [WINUI3-SITREP.md](WINUI3-SITREP.md) — read the matching § before editing.  
 Symptom tables (HRESULT layers): [windows-winui3-status.md](windows-winui3-status.md)  
 File-level history: [WINUI3-CHANGELOG.md](WINUI3-CHANGELOG.md)
 
@@ -155,11 +156,29 @@ Re-applying any of these requires: diff note, single-layer test, log HRESULT rec
 
 ---
 
+## Agent loop (mandatory until widgets launch)
+
+Repeat until `winui3-widgets-native.exe` starts and log shows `package identity OK` + `OnLaunched complete (themed=0)`:
+
+1. **Find error** — read pulled logs; note HRESULT and SITREP §.
+2. **Dedup** — `grep` [WINUI3-CHANGELOG.md](WINUI3-CHANGELOG.md) Unreleased + Baseline + [WINUI3-SITREP.md](WINUI3-SITREP.md) **Tried** for the exact knob you were about to turn (`neutral`, `x64`, `PackageDependency`, `msix.v1`, `asm.v3`, `OnPackageIdentity_NOOP`, ignorable namespaces, …).
+3. **If already in changelog or SITREP Tried** — **stop**. Do not apply. Use § **Allowed next steps** (e.g. `sxstrace`, `mt.exe` extract, user `f9bad4e` register story) or write “BLOCKED — duplicate” in changelog and end the iteration.
+4. **Changelog FIRST** — append **PLANNED** entry (see changelog “How to maintain”) describing one change, files, expected log delta. **No code edits before this.**
+5. **One change** — one layer; `git diff f9bad4e` on files you touch.
+6. **Test** — `AGENT_WINUI3_LAYER=widgets ./scripts/agent-remote-build.sh build` (+ `setup` / `run` as needed).
+7. **Complete entry** — same changelog heading: **Result** + log proof; update SITREP § (**Tried** or **Proof**).
+8. **Carry on** — step 1 with new error if still failing.
+
+Do not claim progress without log proof on the **current** built binary. Re-applying a PLANNED idea that already failed elsewhere in the changelog is a process failure.
+
+---
+
 ## Quick checklist (agents)
 
-1. [ ] Read [WINUI3-CHANGELOG.md](WINUI3-CHANGELOG.md) Unreleased section
-2. [ ] `git diff f9bad4e --` launch-critical files
-3. [ ] Read `build-win/winui3-debug.log` — match strings to `git show f9bad4e` / `d801516` host
-4. [ ] Confirm build log shows relink, not embed-only
-5. [ ] One layer, one change, changelog updated
-6. [ ] Do not ask user to paste logs if `agent-remote-build.sh pull` succeeded
+1. [ ] Read [WINUI3-SITREP.md](WINUI3-SITREP.md) § for current error
+2. [ ] **Dedup:** grep changelog + SITREP for planned knob — if found, **do not edit code**
+3. [ ] **PLANNED** entry in [WINUI3-CHANGELOG.md](WINUI3-CHANGELOG.md) **before** any file edit
+4. [ ] `git diff f9bad4e --` launch-critical files
+5. [ ] Read pulled logs (`winui3-debug.log`, `agent-winui3-setup.log`)
+6. [ ] Test → **Result** on same changelog entry; SITREP **Tried** or **Proof**
+7. [ ] Do not ask user to paste logs if `agent-remote-build.sh pull` succeeded
